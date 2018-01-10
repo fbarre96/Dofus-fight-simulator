@@ -9,7 +9,6 @@ from constantes import *
 from zones import *
 from classes import *
 from pygame.locals import *
-from copy import deepcopy
 
 
 
