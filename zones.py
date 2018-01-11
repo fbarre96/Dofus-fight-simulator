@@ -6,7 +6,7 @@ def getDistanceX(p1 ,p2):
 	return abs(p1[0]-p2[0])
 
 class TypeZone:
-    def __init__(self):
+    def __init__(self,zonePO):
         pass
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
     	print "zone inconnue"
@@ -67,7 +67,7 @@ class TypeZoneLigne(TypeZone):
                 return (abs(caseTestee[1]-departZone[1]) < self.zonePO) and caseTestee[1]-departZone[1]<=0
 
 class TypeZoneLigneJusque(TypeZone):
-    def __init__(self):
+    def __init__(self,zonePO):
     	pass
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
         horizontal = getDistanceY(joueurLanceur,departZone) == 0

@@ -482,10 +482,10 @@ class Effet(object):
         print "Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat)+" ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues)
 
 class EffetDegats(Effet):
-    def __init__(self,minJet,maxJet,typeDegats, **kwargs):
-        self.minJet = minJet
-        self.maxJet = maxJet
-        self.typeDegats = typeDegats
+    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+        self.minJet = int_minJet
+        self.maxJet = int_maxJet
+        self.typeDegats = str_typeDegats
         super(EffetDegats, self).__init__(**kwargs)
     def appliquerDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort):
         if joueurCaseEffet == None:
@@ -528,8 +528,8 @@ class EffetDegats(Effet):
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""))
 class EffetVolDeVie(EffetDegats):
-    def __init__(self,minJet,maxJet,typeDegats, **kwargs):
-        super(EffetVolDeVie, self).__init__(minJet,maxJet,typeDegats,**kwargs)
+    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+        super(EffetVolDeVie, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         total = super(EffetVolDeVie, self).appliquerDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort"))
         print joueurLanceur.classe+" vol "+ str(total/2) + "PV" 
@@ -538,8 +538,8 @@ class EffetVolDeVie(EffetDegats):
             joueurLanceur.vie = joueurLanceur._vie
 
 class EffetDegatsPosLanceur(EffetDegats):
-    def __init__(self,minJet,maxJet,typeDegats, **kwargs):
-        super(EffetDegatsPosLanceur, self).__init__(minJet,maxJet,typeDegats,**kwargs)
+    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+        super(EffetDegatsPosLanceur, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
         total = super(EffetDegatsPosLanceur, self).appliquerDegats(niveau,joueurCaseEffet, joueurLanceur,str(kwargs.get("nom_sort")))
@@ -549,106 +549,106 @@ class EffetTue(Effet):
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         niveau.tue(joueurCaseEffet)
 class EffetRetPA(Effet):
-    def __init__(self,retrait, **kwargs):
-        self.retrait = retrait
+    def __init__(self,int_retrait, **kwargs):
+        self.retrait = int_retrait
         super(EffetRetPA, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PA"
         
 class EffetRetPM(Effet):
-    def __init__(self,retrait, **kwargs):
-        self.retrait = retrait
+    def __init__(self,int_retrait, **kwargs):
+        self.retrait = int_retrait
         super(EffetRetPM, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM"
 class EffetPropage(Effet):
-    def __init__(self,sort,zonePropagation, **kwargs):
-        self.zonePropagation = zonePropagation
-        self.sort = sort
+    def __init__(self,sort_sort,zone_zone, **kwargs):
+        self.zone = zone_zone
+        self.sort = sort_sort
         super(EffetPropage, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurCaseEffet.appliquerEtat(Etat("temporaire",0,1),joueurLanceur)
-        joueursAppliquables = niveau.getJoueurslesPlusProches(joueurCaseEffet.posX,joueurCaseEffet.posY,joueurLanceur,self.zonePropagation,["!temporaire"],self.ciblesPossibles)
+        joueursAppliquables = niveau.getJoueurslesPlusProches(joueurCaseEffet.posX,joueurCaseEffet.posY,joueurLanceur,self.zone,["!temporaire"],self.ciblesPossibles)
         if len(joueursAppliquables)>0:
             joueurCaseEffet.lanceSort(self.sort,niveau, joueursAppliquables[0].posX, joueursAppliquables[0].posY,joueurLanceur)
 class EffetEtat(Effet):
-    def __init__(self, etat, **kwargs):
-        self.etat = etat
+    def __init__(self, etat_etat, **kwargs):
+        self.etat = etat_etat
         super(EffetEtat, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         etatCopier = self.etat.deepcopy()
         joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur, niveau)
 class EffetGlyphe(Effet):
-    def __init__(self,sortGlyphe,duree,nom,couleur, **kwargs):
-        self.sortGlyphe = sortGlyphe
-        self.duree = duree
-        self.nom = nom
-        self.couleur = couleur
+    def __init__(self,sort_sort,int_duree,str_nom, tuple_couleur, **kwargs):
+        self.sort = sort_sort
+        self.duree = int_duree
+        self.nom = str_nom
+        self.couleur = tuple_couleur
         super(EffetGlyphe, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        nouvelleGlyphe = Glyphe(self.nom, self.sortGlyphe, self.duree, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
+        nouvelleGlyphe = Glyphe(self.nom, self.sort, self.duree, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
         glypheID = niveau.poseGlyphe(nouvelleGlyphe)
         
 class EffetPousser(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetPousser, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         if joueurCaseEffet != None:
             niveau.pousser(self.nbCase,joueurCaseEffet,joueurLanceur,True, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
         
 class EffetRepousser(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetRepousser, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         niveau.pousser(self.nbCase,joueurCaseEffet,joueurLanceur)
         
 class EffetAttire(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetAttire, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         if not(joueurCaseEffet.posX == joueurLanceur.posX and joueurCaseEffet.posY == joueurLanceur.posY):
             niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur)
 
 class EffetAttireAttaquant(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetAttireAttaquant, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         niveau.attire(self.nbCase,joueurLanceur,joueurCaseEffet)
 
 class EffetAttireAllies(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetAttireAllies, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         if joueurCaseEffet.team == joueurLanceur.team:
             niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur)
         
 class EffetDureeEtats(Effet):
-    def __init__(self,deXTours, **kwargs):
-        self.deXTours = deXTours
+    def __init__(self,int_deXTours, **kwargs):
+        self.deXTours = int_deXTours
         super(EffetDureeEtats, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurCaseEffet.changeDureeEffets(self.deXTours, niveau)
 class EffetRetireEtat(Effet):
-    def __init__(self,nomEtat, **kwargs):
-        self.nomEtat = nomEtat
+    def __init__(self,str_nomEtat, **kwargs):
+        self.nomEtat = str_nomEtat
         super(EffetRetireEtat, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurCaseEffet.retirerEtats(self.nomEtat)
 class EffetTeleportePosPrec(Effet):
-    def __init__(self,nbCase, **kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase, **kwargs):
+        self.nbCase = int_nbCase
         super(EffetTeleportePosPrec, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
 
 class EffetTeleportePosPrecLanceur(Effet):
-    def __init__(self,nbCase,**kwargs):
-        self.nbCase = nbCase
+    def __init__(self,int_nbCase,**kwargs):
+        self.nbCase = int_nbCase
         super(EffetTeleportePosPrecLanceur, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
@@ -693,22 +693,22 @@ class EffetTpSymCentre(Effet):
             kwargs.get("cibles_traitees").append(joueurTF)
         
 class EffetEtatSelf(Effet):
-    def __init__(self,etat, **kwargs):
-        self.etat = etat
+    def __init__(self,etat_etat, **kwargs):
+        self.etat = etat_etat
         super(EffetEtatSelf, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         etatCopier = self.etat.deepcopy()
         joueurLanceur.appliquerEtat(etatCopier,joueurLanceur)
         
 class EffetEntiteLanceSort(Effet):
-    def __init__(self,nomEntites,sortALancer, **kwargs):
-        self.nomEntites = nomEntites
-        self.sortALancer = sortALancer
+    def __init__(self,str_nomEntites,sort_sort, **kwargs):
+        self.nomEntites = str_nomEntites
+        self.sort = sort_sort
         super(EffetEntiteLanceSort, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         joueursLanceurs = niveau.getJoueurs(self.nomEntites)
         for joueur in joueursLanceurs:
-            joueur.lanceSort(self.sortALancer,niveau, joueur.posX, joueur.posY)
+            joueur.lanceSort(self.sort,niveau, joueur.posX, joueur.posY)
         
 class EffetEchangePlace(Effet):
     def __init__(self, **kwargs):
@@ -729,8 +729,8 @@ class EffetTp(Effet):
         
 
 class EffetInvoque(Effet):
-    def __init__(self, nominvoque, **kwargs):
-        self.nomInvoque = nominvoque
+    def __init__(self, str_nomInvoque, **kwargs):
+        self.nomInvoque = str_nomInvoque
         super(EffetInvoque, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         invoc = Niveau.INVOCS[self.nomInvoque].deepcopy()
@@ -910,7 +910,7 @@ class Personnage(object):
             sorts.append(Sort(u"Concentration",2,1,1,[EffetDegats(20,24,"terre")],4,3,0,0,"ligne",description=u"Occasionne des dommages Terre. Les dommages sont augmentés contre les Invocations."))
             sorts.append(Sort(u"Accumulation",3,0,4,[EffetDegats(28,32,"terre",cibles_possibles="Ennemis"),EffetEtat(EtatBoostBaseDeg("Accumulation",0,3,"Accumulation",15),cibles_possibles="Lanceur")],2,1,0,0,"ligne",chaine=False,description=u"Occasionne des dommages Terre. Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers."))
             sorts.append(Sort(u"Couper",3,1,4,[EffetDegats(18,22,"feu",zone=TypeZoneLigne(3)),EffetRetPM(3,zone=TypeZoneLigne(3))],2,2,0,1,"ligne",description=u"Occasionne des dommages Feu et retire des PM."))
-            sorts.append(Sort(u"Fracture",4,1,4,[EffetDegats(26,30,"air",zone=TypeZoneLigneJusque())],2,2,0,0,"ligne",description=u"Occasionne des dommages Air jusqu'à la cellule ciblée. Applique un malus d'Érosion."))
+            sorts.append(Sort(u"Fracture",4,1,4,[EffetDegats(26,30,"air",zone=TypeZoneLigneJusque(0))],2,2,0,0,"ligne",description=u"Occasionne des dommages Air jusqu'à la cellule ciblée. Applique un malus d'Érosion."))
             sorts.append(Sort(u"Friction",2,0,5,[EffetEtat(EtatLanceSortSiSubit("Friction",0,2,activationFriction))],1,1,3,0,"cercle",description=u"La cible se rapproche de l'attaquant si elle reçoit des dommages issus de sorts. Nécessite d'être aligné avec la cible."))
             sorts.append(Sort(u"Coup pour coup",2,1,3,[EffetEtat(EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description=u"La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
             sorts.append(Sort(u"Duel",3,1,1,[],1,1,4,0,"cercle",description=u"Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invulnérable aux dommages à distance. Ne fonctionne que si lancé sur un ennemi."))
