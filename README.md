@@ -27,7 +27,7 @@ N'AYEZ PAS CONFIANCE EN N'IMPORTE QUEL EXE CONCERCNANT DOFUS, si vous n'avez pas
 
 
 ## Précisions:
-Ce simulateur ne **remplace pas** Dofus, il sert à visualiser ce que pourrait donner un stuff complet en jeu pour votre personnage ou bien à tester une autre classe. Le programme a donc peu de fonctionnalités avancées.
+Ce simulateur ne **remplace pas** Dofus©, il sert à visualiser ce que pourrait donner un stuff complet en jeu pour votre personnage ou bien à tester une autre classe. Le programme a donc peu de fonctionnalités avancées.
 Le moteur de combat a été codé entièrement à vu de nez (je n'ai pas fait de reverse sur Dofus) donc certains comportements peuvent être différents du vrai jeu (ordre de traitements de cibles concurrentes par exemple)
 
 ## Limitations:
