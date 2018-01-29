@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*
-import pygame
-from tkinter import *
-import tkinter as tk
-from tkinter.ttk import *
+
+from tkinter import Tk
+from tkinter import LabelFrame
+from tkinter import Label
+from tkinter import StringVar
+from tkinter import Entry
+from tkinter import Button
+from tkinter.ttk import Combobox
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from constantes import *
 from zones import *
 from classes import *
 from pygame.locals import *
-
-
-
-
 
 def BoucleDEvenement(niveau,mouse_xy,sortSelectionne):
     
