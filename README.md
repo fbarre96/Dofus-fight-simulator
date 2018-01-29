@@ -1,4 +1,4 @@
-# Dofuk - Simulateur de combat Dofus
+# Dofuk - Simulateur de combat Dofus© d'Ankama
 
 ## /!\\/!\\/!\\DISCLAIMER/!\\/!\\/!\\
 **Ceci est simulateur de combat du jeu de la société Ankama 'Dofus'© 1v1. Ce simulateur ne vise en aucun cas à remplacé le jeu réel.
