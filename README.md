@@ -16,12 +16,15 @@ Le programme:
 
 ## Installation
 ### Sous Windows:
+* Télécharger le zip du dossier github
+* Extraire le zip dans un dossier de votre choix
 * Installer python2.7 (bien ajouter dans l'installeur l'option pour ajouter Python à la variable PATH): https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tar.xz
 * Ouvrir une console de commande : appuyer sur la touche Windows puis taper cmd et enfin appuyer sur 'entrée'
 * Installer pygame: entrer dans la console de commande : `pip install pygame`.
 * Exécuter Dofuk.py en double cliquant dessus
 
 ### Sous Linux (Ubuntu):
+* Cloner le projet github ou télécharger le zip
 * Installer python2.7 : `sudo apt-get install python`
 * Installer tkinter : `sudo apt-get install python-tk`
 * Installer pygame : `pip install pygame`
