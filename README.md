@@ -15,16 +15,17 @@ Le programme:
 
 
 ## Installation
-### Option 1:
-Télécharger le dossier `dist` et lancer l'exécutable *Dofuk.exe*
-N'AYEZ PAS CONFIANCE EN N'IMPORTE QUEL EXE CONCERCNANT DOFUS, si vous n'avez pas confiance en moi (bravo c'est bien, même si dans ce cas précis vous ne risquez rien) utilisez l'option 2 pour voir les sources que vous allez exécuter.
+### Sous Windows:
+* Installer python2.7 (bien ajouter dans l'installeur l'option pour ajouter Python à la variable PATH): https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tar.xz
+* Ouvrir une console de commande : appuyer sur la touche Windows puis taper cmd et enfin appuyer sur 'entrée'
+* Installer pygame: entrer dans la console de commande : `pip install pygame`.
+* Exécuter Dofuk.py en double cliquant dessus
 
-### Option 2:
-* Installer python2.7, tkinter, pygame.
-* Copier ou déplacer les dossiers `dist/images` et `dist/sorts` dans le dossier parent.
-* Exécuter Dofuk.py avec l'interpréteur python 'python Dofuk.py' 
-(ou installer py2exe pour Python 2.7 puis lancez le avec la commande `python setup.py py2exe`)
-
+### Sous Linux (Ubuntu):
+* Installer python2.7 : `sudo apt-get install python`
+* Installer tkinter : `sudo apt-get install python-tk`
+* Installer pygame : `pip install pygame`
+* Executer Dofuk avec python : `python Dofuk.py`
 
 ## Précisions:
 Ce simulateur ne **remplace pas** Dofus©, il sert à visualiser ce que pourrait donner un stuff complet en jeu pour votre personnage ou bien à tester une autre classe. Le programme a donc peu de fonctionnalités avancées.
