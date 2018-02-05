@@ -426,7 +426,8 @@ class EtatTelefrag(Etat):
 
     def triggerAvantRetrait(self, personnage):
         if self.nomSort == "Momification":
-            self.lanceur.appliquerEtat(EtatBoostPuissance("Momification",0,2,100,self.lanceur),self.lanceur)
+            pass
+            #self.lanceur.appliquerEtat(EtatBoostPuissance("Momification",0,2,100,self.lanceur),self.lanceur)
 
 class Effet(object):
     def __init__(self,**kwargs):
@@ -659,7 +660,11 @@ class EffetTeleporteDebutTour(Effet):
         super(EffetTeleporteDebutTour, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebTour,joueurLanceur,"Renvoi",AjouteHistorique=True)
-        
+class EffetTeleporteDebutCombat(Effet):
+    def __init__(self, **kwargs):
+        super(EffetTeleporteDebutCombat, self).__init__(**kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebCombat,joueurLanceur,"Renvoi",AjouteHistorique=True)            
 class EffetTpSym(Effet):
     def __init__(self, **kwargs):
         super(EffetTpSym, self).__init__(**kwargs)
@@ -806,6 +811,7 @@ class Personnage(object):
         self.etats = []
         self.historiqueDeplacement = []
         self.posDebTour = None
+        self.posDebCombat = None
         self.invocateur = None
         self.team = int(team)
         if not(icone.startswith("images/")):
@@ -850,30 +856,30 @@ class Personnage(object):
         elif(classe==u"Xélor"):
             sorts.append(Sort(u"Ralentissement",2,1,6,[EffetDegats(8,9,"eau"),EffetRetPA(1),EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],4,2,0,1,"cercle",description=u"Occasionne des dommages Eau et retire 1 PA à la cible. Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté."))
             sorts.append(Sort(u"Souvenir",4,1,6,[EffetDegats(26,30,"terre"),EffetTeleportePosPrec(1)], 3,2,0,1,"ligne",description=u"Occasionne des dommages Terre et téléporte la cible à sa position précédente."))
-            sorts.append(Sort(u"Aiguille",4,1,8,[EffetDegats(25,29,"feu"),EffetRetPA(1),EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,1,"cercle", description=u"Occasionne des dommages Feu et retire 1 PA à la cible. Retire des PA supplémentaires aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté. Retire l'état Téléfrag."))
+            sorts.append(Sort(u"Aiguille",3,1,8,[EffetDegats(22,26,"feu"),EffetRetPA(1),EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,1,"cercle", description=u"Occasionne des dommages Feu et retire 1 PA à la cible. Retire des PA supplémentaires aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté. Retire l'état Téléfrag."))
             sorts.append(Sort(u"Rouage",3,1,7,[EffetDegats(12,14,"eau"),EffetEtatSelf(EtatBoostPA("Rouage",1,1,1))], 2,99,0,1,"cercle",chaine=True,description="Occasionne des dommages Eau. Le lanceur gagne 1 PA au tour suivant."))
             sorts.append(Sort(u"Téléportation",2,1,5,[EffetTpSym()], 1,1,3,0,"cercle",description=u"Téléporte le lanceur symétriquement par rapport à la cible. Le lanceur gagne 2 PA pour 1 tour à chaque fois qu’il génère un Téléfrag. Le temps de relance est supprimé quand un Téléfrag est généré ou consommé. Un Téléfrag est généré lorsqu'une entité prend la place d'une autre."))
             sorts.append(Sort(u"Retour Spontané",1,0,7,[EffetTeleportePosPrec(1)], 3,3,0,1,"cercle",description=u"Le lanceur revient à sa position précédente."))
             sorts.append(Sort(u"Flétrissement",3,1,6,[EffetDegats(26,29,"air"),EffetDegats(10,10,"air",etat_requis_cibles="Telefrag")], 3,2,0,1,"ligne",description=u"Occasionne des dommages Air en ligne. Occasionne des dommages supplémentaires aux ennemis dans l'état Téléfrag."))
-            sorts.append(Sort(u"Dessèchement",4,1,6,[EffetDegats(38,42,"air"),EffetEtat(EtatEffetDebutTour(u"Dessèchement", 1,1,EffetDegats(44,48,"air",zone=TypeZoneCercleSansCentre(2)),"Dessechement","lanceur"))], 2,1,0,0,"ligne",description=u"Occasionne des dommages Air. Au prochain tour du lanceur, la cible occasionne des dommages autour d'elle."))
+            sorts.append(Sort(u"Dessèchement",4,1,6,[EffetDegats(38,42,"air"),EffetEtat(EtatEffetDebutTour(u"Dessèchement", 1,1,EffetDegats(44,48,"air",cibles_possbiles="Ennemis",zone=TypeZoneCercleSansCentre(2)),"Dessechement","lanceur"))], 3,2,0,0,"ligne",description=u"Occasionne des dommages Air. Au prochain tour du lanceur, la cible occasionne des dommages autour d'elle."))
             sorts.append(Sort(u"Rembobinage",2,0,6,[EffetEtat(EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")], 1,1,3, 0, "ligne",description=u"À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour."))
             sorts.append(Sort(u"Renvoi",3,1,6,[EffetTeleporteDebutTour()], 1,1,2, 0, "ligne",description=u"Téléporte la cible ennemie à sa cellule de début de tour."))
             sorts.append(Sort(u"Rayon Obscur",5,1,6,[EffetDegats(37,41,"terre"),EffetDegats(37,41,"terre",cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne",description=u"Occasionne des dommages Terre en ligne. Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag. Retire l'état Téléfrag."))
-            sorts.append(Sort(u"Rayon Ténebreux",3,1,5,[EffetDegats(19,23,"terre"),EffetDegats(19,23,"terre",zone=TypeZoneCercleSansCentre(2),etat_requis="Telefrag")], 3,2,0,0,"ligne",description=u"Occasionne des dommages Terre. Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone autour d'elle."))
+            sorts.append(Sort(u"Rayon Ténebreux",3,1,5,[EffetDegats(19,23,"terre"),EffetDegats(19,23,"terre",zone=TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,2,0,1,"ligne",description=u"Occasionne des dommages Terre. Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone autour d'elle."))
             sorts.append(Sort(u"Complice",2,1,5,[EffetInvoque("Complice",cibles_possibles="",faire_au_vide=True),EffetTue(cibles_possibles=u"Cadran de Xélor|Complice",zone=TypeZoneCercleSansCentre(99))], 1,1,0,0,"cercle",chaine=True,description=u"Invoque un Complice statique qui ne possède aucun sort. Il est tué si un autre Complice est invoqué."))
             sorts.append(Sort(u"Cadran de Xélor",3,1,5,[EffetInvoque(u"Cadran de Xélor",cibles_possibles="",faire_au_vide=True),EffetTue(cibles_possibles=u"Cadran de Xélor|Complice",zone=TypeZoneCercleSansCentre(99))], 1,1,4,0,"cercle",chaine=True,description=u"Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag. Donne des PA aux alliés autour de lui et dans l'état Téléfrag."))
             sorts.append(Sort(u"Gelure",2,2,5,[EffetDegats(11,13,"air",cibles_possibles="Ennemis|Lanceur"), EffetTeleportePosPrec(1)], 3,2,0,1,"cercle",description=u"Occasionne des dommages Air aux ennemis. Téléporte la cible à sa position précédente."))
             sorts.append(Sort(u"Perturbation",2,1,4,[EffetDegats(9,11,"feu",cibles_possibles="Ennemis|Lanceur"), EffetTpSymSelf()], 3,2,0,0,"ligne", chaine=False,description=u"Occasionne des dommages Feu et téléporte la cible symétriquement par rapport au lanceur."))
-            sorts.append(Sort(u"Sablier de Xélor",2,1,7,[EffetDegats(15,17,"feu"),EffetRetPA(2),EffetDegats(15,17,"feu",zone=TypeZoneCercleSansCentre(2),etat_requis="Telefrag"),EffetRetPA(2,zone=TypeZoneCercleSansCentre(2),etat_requis="Telefrag")], 3,1,0,1,"ligne",description=u"Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue. Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone. Le retrait de PA ne peut pas être désenvoûté."))
-            sorts.append(Sort(u"Distorsion Temporelle",4,0,0,[EffetDegats(26,30,"air",zone=TypeZoneCarre(1),cibles_possibles="Ennemis"),EffetTeleportePosPrec(1,zone=TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")], 1,1,0,0,"cercle",description=u"Occasionne des dommages Air aux ennemis. Téléporte les cibles à leur position précédente."))
-            sorts.append(Sort(u"Vol du Temps",4,1,5,[EffetDegats(27,30,"eau"),EffetEtatSelf(EtatBoostPA("Vol du Temps",1,1,1))], 3,2,0,0,"cercle",chaine=True,description=u"Occasionne des dommages Eau à la cible. Le lanceur gagne 1 PA au début de son prochain tour."))
-            sorts.append(Sort(u"Pétrification",5,1,7,[EffetDegats(34,38,"eau"),EffetEtatSelf(EtatCoutPA("Petrification",0,2,"Petrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag")], 3,2,0,1,"ligne",description=u"Occasionne des dommages Eau et retire des PA. Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours."))
+            sorts.append(Sort(u"Sablier de Xélor",2,1,7,[EffetDegats(15,17,"feu"),EffetRetPA(2),EffetDegats(15,17,"feu",zone=TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),EffetRetPA(2,zone=TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,1,0,1,"ligne",description=u"Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue. Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone. Le retrait de PA ne peut pas être désenvoûté."))
+            sorts.append(Sort(u"Distorsion Temporelle",4,0,0,[EffetDegats(26,30,"air",zone=TypeZoneCarre(1),cibles_possibles="Ennemis"),EffetTeleportePosPrec(1,zone=TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")], 2,1,0,0,"cercle",description=u"Occasionne des dommages Air aux ennemis. Téléporte les cibles à leur position précédente."))
+            sorts.append(Sort(u"Vol du Temps",4,1,5,[EffetDegats(30,34,"eau"),EffetEtatSelf(EtatBoostPA("Vol du Temps",1,1,1))], 3,2,0,0,"cercle",chaine=True,description=u"Occasionne des dommages Eau à la cible. Le lanceur gagne 1 PA au début de son prochain tour."))
+            sorts.append(Sort(u"Pétrification",5,1,7,[EffetDegats(34,38,"eau"),EffetEtatSelf(EtatCoutPA("Petrification",0,2,u"Petrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag")], 3,2,0,1,"ligne",description=u"Occasionne des dommages Eau et retire des PA. Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours."))
             sorts.append(Sort(u"Flou",2,1,3,[EffetEtat(EtatBoostPA("Flou",0,1,-2),zone=TypeZoneCercle(3)),EffetEtat(EtatBoostPA("Flou",1,1,2),zone=TypeZoneCercle(3))], 1,1,3,0,"cercle",description=u"Retire des PA en zone le tour en cours. Augmente les PA en zone le tour suivant."))
-            sorts.append(Sort(u"Conservation",3,0,5,[EffetEtat(EtatModDegPer("Conservation",0,1,150),cibles_possibles="Allies|Lanceur"),EffetEtat(EtatModDegPer("Conservation",1,1,70),cibles_possibles="Allies|Lanceur")], 1,1,3,0,"cercle",description=u"Augmente les dommages subis par l'allié ciblé ou le lanceur de 50%% pour le tour en cours. Au tour suivant, la cible réduit les dommages subis de 30%%."))
-            sorts.append(Sort(u"Poussière Temporelle",4,0,6,[EffetDegats(34,37,"feu",cibles_possibles="Ennemis"), EffetDegats(34,37,"feu",zone=TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"), EffetTpSymCentre(zone=TypeZoneCercleSansCentre(2),etat_requis="Telefrag")], 2,2,0,1,"cercle",description=u"Occasionne des dommages Feu. Si la cible est dans l'état Téléfrag, les dommages sont occasionnés en zone et les entités à proximité sont téléportées symétriquement par rapport au centre de la zone d'effet."))
-            sorts.append(Sort(u"Suspension Temporelle",4,1,4,[EffetDegats(27,31,"feu"),EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne",description=u"Occasionne des dommages Feu sur les ennemis. Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état."))
+            sorts.append(Sort(u"Conservation",2,0,5,[EffetEtat(EtatModDegPer("Conservation",0,1,130),zone=TypeZoneCercle(2),cibles_possibles="Allies|Lanceur"),EffetEtat(EtatModDegPer("Conservation",1,1,70),zone=TypeZoneCercle(2),cibles_possibles="Allies|Lanceur")], 1,1,2,0,"cercle",description=u"Augmente les dommages subis par l'allié ciblé ou le lanceur de 50%% pour le tour en cours. Au tour suivant, la cible réduit les dommages subis de 30%%."))
+            sorts.append(Sort(u"Poussière Temporelle",4,0,6,[EffetDegats(34,37,"feu",cibles_possibles="Ennemis"), EffetDegats(34,37,"feu",zone=TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag"),EffetTpSymCentre(zone=TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")], 2,2,0,1,"cercle",description=u"Occasionne des dommages Feu. Si la cible est dans l'état Téléfrag, les dommages sont occasionnés en zone et les entités à proximité sont téléportées symétriquement par rapport au centre de la zone d'effet."))
+            sorts.append(Sort(u"Suspension Temporelle",3,1,4,[EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),EffetDegats(25,29,"feu")], 3,2,0,0,"ligne",description=u"Occasionne des dommages Feu sur les ennemis. Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état."))
             sorts.append(Sort(u"Raulebaque",2,0,0,[EffetTeleportePosPrec(1,zone=TypeZoneCercle(99))], 1,1,2, 0, "cercle",description=u"Replace tous les personnages à leurs positions précédentes."))
-            sorts.append(Sort(u"Instabilité Temporelle",3,0,7,[EffetGlyphe(activationInstabiliteTemporelle,2,u"Instabilité Temporelle",(255,255,0),zone=TypeZoneCercle(3),faire_au_vide=True)], 1,1,4,1,"cercle",description=u"Pose un glyphe qui renvoie les entités à leur position précédente. Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag."))
+            sorts.append(Sort(u"Instabilité Temporelle",3,0,7,[EffetGlyphe(activationInstabiliteTemporelle,2,u"Instabilité Temporelle",(255,255,0),zone=TypeZoneCercle(3),faire_au_vide=True)], 1,1,3,1,"cercle",description=u"Pose un glyphe qui renvoie les entités à leur position précédente. Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag."))
             sorts.append(Sort(u"Démotivation",3,1,5,[EffetDegats(23,26,"terre",cibles_possibles="Ennemis"),EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True)], 3,2,0,0,"diagonale",description=u"Occasionne des dommages Terre aux ennemis en diagonale. Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état."))
             sorts.append(Sort(u"Pendule",5,1,5,[EffetTpSym(),EffetDegatsPosLanceur(48,52,"air",zone=TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis"), EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")], 2,1,0,0,"cercle",chaine=True,description=u"Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination. Il revient ensuite à sa position précédente."))
             sorts.append(Sort(u"Paradoxe Temporel",3,0,0,[EffetEntiteLanceSort(u"Complice|Cadran de Xélor",activationParadoxeTemporel)], 1,1,2,0,"cercle",description=u"Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran). Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles. Fixe le temps de relance de Cadran de Xélor et de Complice à 1."))
@@ -885,9 +891,9 @@ class Personnage(object):
             sorts.append(Sort(u"Horloge",5,1,6,[EffetVolDeVie(36,39,"eau"),EffetEtatSelf(EtatBoostPA("Horloge",1,1,1)),EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne", chaine=True,description=u"Vole de vie dans l'élément Eau. Le lanceur gagne 1 PA au début de son prochain tour. Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état. Le retrait de PA ne peut pas être désenvoûté."))
             sorts.append(Sort(u"Clepsydre",4,1,3,[EffetDegats(30,34,"eau"),EffetEtatSelf(EtatBoostPA("Clepsydre",1,1,2),etat_requis="Telefrag",consomme_etat=True)], 2,2,0,0,"cercle", chaine=True,description=u"Occasionne des dommages Eau. Si la cible est dans l'état Téléfrag, le lanceur gagne 2 PA au prochain tour. Retire l'état Téléfrag."))
             sorts.append(Sort(u"Frappe de Xélor",3,1,3,[EffetDegats(23,27,"terre",cibles_possibles="Ennemis"), EffetTpSymSelf()], 3,2,0,0,"cercle",chaine=False,description=u"Occasionne des dommages Terre aux ennemis. Téléporte la cible symétriquement par rapport au lanceur du sort."))
-            sorts.append(Sort(u"Engrenage",4,1,5,[EffetDegats(38,42,"terre",zone=TypeZoneLignePerpendiculaire(1),cibles_possibles="Ennemis"), EffetTpSymCentre(zone=TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",chaine=False,description=u"Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet."))
+            sorts.append(Sort(u"Engrenage",3,1,5,[EffetDegats(31,35,"terre",zone=TypeZoneLignePerpendiculaire(1),cibles_possibles="Ennemis"), EffetTpSymCentre(zone=TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",chaine=False,description=u"Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet."))
             sorts.append(Sort(u"Momification",2,0,0,[EffetEtat(EtatBoostPM("Momification",0,1,2)),EffetEtat(EtatTelefrag("Telefrag",0,2,"Momification"),zone=TypeZoneCercle(99)),EffetEtat(EtatBoostDommage("Momie",0,1,-99999999))], 1,1,3,0,"cercle",description=u"Le lanceur ne peut plus occasionner de dommages avec ses sorts élémentaires et gagne 2 PM pendant 1 tour. Fixe l'état Téléfrag à tous les alliés et ennemis pendant 2 tours. Quand l'état Téléfrag est retiré, le lanceur gagne 100 Puissance pendant 2 tours."))
-            sorts.append(Sort(u"Glas",2,0,0,[], 1,1,3,0,"cercle",description=u"Occasionne des dommages Neutre aux ennemis autour de chaque entité dans l'état Téléfrag. Plus le lanceur a de vie, plus les dommages sont importants. Retire l'état Téléfrag."))
+            sorts.append(Sort(u"Glas",15,0,3,[EffetTeleporteDebutCombat(),EffetEtat(EtatBoostPerDommageSorts("Glas",1,1,-50)),EffetRetireEtat("Glas",zone=TypeZoneCercle(99),cibles_possibles="self")], 1,1,3,0,"ligne",description=u" Renvoie la cible à sa cellule de début de combat (en ignorant les états qui empêchent les déplacements) et divise ses dommages occasionnés par 2 pendant 1 tour. Le coût en PA est réduit en fonction du nombre de téléfrags générés depuis son dernier lancer."))
         elif(classe==u"Iop"):
             activationRassemblement= Sort(u"AttireAllies",0,0,0,[EffetAttireAllies(2,zone=TypeZoneCroix(3))],99,99,0,0,"cercle")
             activationFriction= Sort(u"Attire",0,0,0,[EffetAttire(1,zone=TypeZoneCroix(99))],99,99,0,0,"cercle")
@@ -1160,11 +1166,7 @@ class Personnage(object):
                     for sort in niveau.tourDe.sorts:
                         if sort.vue.isMouseOver(mouse_xy):
                             
-                            coutPA = sort.coutPA
-                            for etat in niveau.tourDe.etats:
-                                if etat.actif():
-                                    if etat.nom == "CoutPA" and sort.nom == etat.tabCarac[0]:
-                                        coutPA+=etat.tabCarac[1]
+                            coutPA = sort.getCoutPA(self)
                             if coutPA < 0:
                                 coutPA = 0
                             if (coutPA <= niveau.tourDe.PA):
@@ -1419,11 +1421,13 @@ u"Stratège Top" : PersonnageMur(u"Stratège Top",1385,0,0,0,0,0,0,0,0,0,0,0,0,0
                 joueur.posY = self.departT1[placeT1][1]
                 placeT1+=1
                 joueur.posDebTour = [joueur.posX, joueur.posY]
+                joueur.posDebCombat = [joueur.posX, joueur.posY]
             else:
                 joueur.posX = self.departT2[placeT2][0]
                 joueur.posY = self.departT2[placeT2][1]
                 placeT2+=1
                 joueur.posDebTour = [joueur.posX, joueur.posY]
+                joueur.posDebCombat = [joueur.posX, joueur.posY]
             self.structure[joueur.posY][joueur.posX].type="j"
 
     def rafraichirGlyphes(self, duJoueur):
@@ -1605,12 +1609,15 @@ u"Stratège Top" : PersonnageMur(u"Stratège Top",1385,0,0,0,0,0,0,0,0,0,0,0,0,0
             joueurBougeant.posX = posAtteinte[0]
             joueurBougeant.posY = posAtteinte[1]
 
-    def boostSynchrosApresTF(self,nomSort,reelLanceur):
+    def boostApresTF(self,nomSort,reelLanceur):
+        #BoostSynchro
         synchros = self.getJoueurs("Synchro")
         for synchro in synchros:
             if not synchro.aEtat(nomSort) and nomSort != "Rembobinage" and not synchro.aEtat("DejaBoost"):
                 synchro.appliquerEtat(Etat("Boost Synchro "+nomSort,0,-1, reelLanceur),reelLanceur)
                 synchro.appliquerEtat(Etat("DejaBoost",0,1,[nomSort], reelLanceur),reelLanceur)
+        #BoostGlas
+        reelLanceur.appliquerEtat(EtatCoutPA("Glas",0,-1,u"Glas",-1),reelLanceur)
 
     def exploserSynchro(self,synchro,reelLanceur):
         nbTF = 0
@@ -1633,23 +1640,22 @@ u"Stratège Top" : PersonnageMur(u"Stratège Top",1385,0,0,0,0,0,0,0,0,0,0,0,0,0
                                 sestApplique, cibles=self.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y, glyphe.sortMono.nom, cibleDansPorte.posX, cibleDansPorte.posY, glyphe.lanceur)
                                 ciblesTraitees += cibles
 
-    def deplacementTFVersCaseOccupee(self, joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF):
-        joueurSwap = self.effectuerTF(joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF)
+    def deplacementTFVersCaseOccupee(self, joueurASwap,joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF):
+        self.effectuerTF(joueurASwap,joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF)
         #Si le xelor est pas deja boostPA par ce sort, rembo ne peut pas boost PA
         if genereTF:
             if not reelLanceur.aEtat(nomSort) and nomSort != "Rembobinage":
                 reelLanceur.appliquerEtat(Etat("BoostPA",0,1,[2],reelLanceur),reelLanceur)
                 reelLanceur.appliquerEtat(Etat(nomSort,0,1,["Telefrag"],reelLanceur),reelLanceur)
-            self.boostSynchrosApresTF(nomSort,reelLanceur)
+            self.boostApresTF(nomSort,reelLanceur)
             if ("Synchro" == joueurBougeant.classe) and not reelLanceur.aEtat("Faille_temporelle"):
                 self.exploserSynchro(joueurBougeant,reelLanceur)
-            elif ("Synchro" == joueurSwap.classe) and not reelLanceur.aEtat("Faille_temporelle"):
-                self.exploserSynchro(joueurSwap,reelLanceur)
+            elif ("Synchro" == joueurASwap.classe) and not reelLanceur.aEtat("Faille_temporelle"):
+                self.exploserSynchro(joueurASwap,reelLanceur)
             self.glypheActiveTF(reelLanceur,nomSort)
-        return joueurSwap    
+ 
 
-    def effectuerTF(self, joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF):
-        joueurASwap = self.getJoueurSur(posAtteinte[0],posAtteinte[1])
+    def effectuerTF(self, joueurASwap,joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF):
         joueurASwap.bouge(joueurBougeant.posX, joueurBougeant.posY)
         if AjouteHistorique:
             joueurBougeant.bouge(posAtteinte[0], posAtteinte[1])
@@ -1661,7 +1667,6 @@ u"Stratège Top" : PersonnageMur(u"Stratège Top",1385,0,0,0,0,0,0,0,0,0,0,0,0,0
             joueurASwap.retirerEtats("Telefrag")
             joueurBougeant.appliquerEtat(Etat("Telefrag",0,2,[nomSort],reelLanceur),reelLanceur)
             joueurASwap.appliquerEtat(Etat("Telefrag",0,2,[nomSort],reelLanceur),reelLanceur)
-        return joueurASwap
 
     def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur, nomSort, AjouteHistorique=True, genereTF=True):
         if posAtteinte[1]<0 or posAtteinte[1]>=taille_carte or posAtteinte[0]<0 or posAtteinte[0]>=taille_carte:
@@ -1674,8 +1679,10 @@ u"Stratège Top" : PersonnageMur(u"Stratège Top",1385,0,0,0,0,0,0,0,0,0,0,0,0,0
                 reelLanceur = lanceur.invocateur
             else:
                 reelLanceur = lanceur
-            joueurASwap = self.deplacementTFVersCaseOccupee(joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF)
-            return joueurASwap
+            joueurSwap = joueurASwap = self.getJoueurSur(posAtteinte[0],posAtteinte[1])
+            if joueurASwap != joueurBougeant:
+                self.deplacementTFVersCaseOccupee(joueurASwap,joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF)
+                return joueurASwap
         else:
             print "Deplacement pas implemente"
         return None
