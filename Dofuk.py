@@ -1,26 +1,15 @@
 # -*- coding: utf-8 -*
-import platform
-os = platform.system()
-if "Windows" in os:
-    from Tkinter import Tk
-    from Tkinter import LabelFrame
-    from Tkinter import Label
-    from Tkinter import StringVar
-    from Tkinter import Entry
-    from Tkinter import Button
-    from ttk import Combobox
-    #from tkinter import messagebox
-    #from tkinter.filedialog import askopenfilename
-else:
-    from tkinter import Tk
-    from tkinter import LabelFrame
-    from tkinter import Label
-    from tkinter import StringVar
-    from tkinter import Entry
-    from tkinter import Button
-    from tkinter.ttk import Combobox
-    #from tkinter import messagebox
-    #from tkinter.filedialog import askopenfilename
+
+from Tkinter import Tk
+from Tkinter import LabelFrame
+from Tkinter import Label
+from Tkinter import StringVar
+from Tkinter import Entry
+from Tkinter import Button
+from ttk import Combobox
+#from tkinter import messagebox
+#from tkinter.filedialog import askopenfilename
+
 from constantes import *
 from zones import *
 from classes import *
