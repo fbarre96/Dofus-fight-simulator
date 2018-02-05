@@ -30,6 +30,7 @@ https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi
 * Cloner le projet github ou télécharger le zip
 * Installer python2.7 : `sudo apt-get install python`
 * Installer tkinter : `sudo apt-get install python-tk`
+* Installer pip python : `sudo apt-get install python-pip`
 * Installer pygame : `pip install pygame`
 * Executer Dofuk avec python : `python Dofuk.py`
 
