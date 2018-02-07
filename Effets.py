@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*
 import zones
 import random
+import Personnages
+
 class Effet(object):
     def __init__(self,**kwargs):
         self.etatRequisCibleDirect = kwargs.get('etat_requis',"").split("|")
@@ -311,7 +313,7 @@ class EffetInvoque(Effet):
         self.nomInvoque = str_nomInvoque
         super(EffetInvoque, self).__init__(**kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        invoc = Niveau.INVOCS[self.nomInvoque].deepcopy()
+        invoc = Personnages.INVOCS[self.nomInvoque].deepcopy()
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl

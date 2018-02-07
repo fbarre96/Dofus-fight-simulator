@@ -9,11 +9,12 @@ from Tkinter import Button
 from ttk import Combobox
 #from tkinter import messagebox
 #from tkinter.filedialog import askopenfilename
-
-from constantes import *
-from zones import *
-from classes import *
+import pygame
+import constantes
 from pygame.locals import *
+import Niveau
+import Personnages
+
 
 def BoucleDEvenement(niveau,mouse_xy,sortSelectionne):
     """@summary: Parours et dispatch les événements pygame
@@ -32,7 +33,7 @@ def BoucleDEvenement(niveau,mouse_xy,sortSelectionne):
         #Envoie de l'event au personnage en cours de jeu.
         sortSelectionne=niveau.tourDe.joue(event,niveau,mouse_xy,sortSelectionne)
     #Si le personnage actif n'est pas un joueur mais une IA, on n'envoie pas d'event.
-    if not type(niveau.tourDe) is Personnage:
+    if not type(niveau.tourDe) is Personnages.Personnage:
         sortSelectionne=niveau.tourDe.joue(None,niveau,mouse_xy,sortSelectionne)
     return continuer,sortSelectionne
 
@@ -45,14 +46,14 @@ def Commence_combat(joueur):
     
     myfont = pygame.font.SysFont("monospace", 15)
     #Création de la fenêtre
-    fenetre = pygame.display.set_mode((width_fenetre,height_fenetre), RESIZABLE)
+    fenetre = pygame.display.set_mode((constantes.width_fenetre,constantes.height_fenetre), RESIZABLE)
     #Variable qui continue la boucle si = 1, stoppe si = 0
     pygame.display.set_caption("Dofuk")
     continuer = 1
     #Initialisation de l'ennemi
-    monstre = PersonnageMur("Poutch",5000,0,0,0,0,0,0, 0,0,0,0 ,0,0,0,0,0,2, "Poutch.png")
+    monstre = Personnages.PersonnageMur("Poutch",5000,0,0,0,0,0,0, 0,0,0,0 ,0,0,0,0,0,2, "Poutch.png")
     #Initialisation du niveau
-    niveau = Niveau(fenetre, [joueur]+[monstre],myfont)
+    niveau = Niveau.Niveau(fenetre, [joueur]+[monstre],myfont)
     sortSelectionne = None
     #Lancement du premier tour de jeu
     niveau.tourDe.debutTour(niveau)
@@ -112,7 +113,7 @@ def LaunchSimu(evt, varClasse, varVie, varFor, varAgi, varCha, varInt,varPui,var
     @type: tkinter.VarStr
     """
     pygame.init()
-    joueur = Personnage(varClasse.get(),varVie.get(),varFor.get(),varAgi.get(),varCha.get(),varInt.get(),varPui.get(),varDo.get(), varDoFor.get(),varDoAgi.get(),varDoCha.get(),varDoInt.get(),varDoPou.get(),varPM.get(),varPA.get(),varPO.get(),varLvl.get(),1,varClasse.get()+".png")
+    joueur = Personnages.Personnage(varClasse.get(),varVie.get(),varFor.get(),varAgi.get(),varCha.get(),varInt.get(),varPui.get(),varDo.get(), varDoFor.get(),varDoAgi.get(),varDoCha.get(),varDoInt.get(),varDoPou.get(),varPM.get(),varPA.get(),varPO.get(),varLvl.get(),1,varClasse.get()+".png")
     Commence_combat(joueur)
 
 
