@@ -9,7 +9,6 @@ y_grille = 0
 #calculs de la largeur et hauteur de la grille de jeu
 width_grille = taille_carte*taille_sprite
 height_grille = taille_carte*taille_sprite
-
 #pixels de début de l'affichage de la grille des sorts disponibles
 x_sorts = 0
 y_sorts = y_grille + height_grille
@@ -29,11 +28,11 @@ image_prevision = "images/prevision.png"
 image_zone = "images/zone.png"
 
 def normaliser(chaine):
-"""@summary: enlève les accents d'une chaîne de caractère et la met en minuscule. Remplace également les espaces et apostrophes par un underscore.
+	"""@summary: enlève les accents d'une chaîne de caractère et la met en minuscule. Remplace également les espaces et apostrophes par un underscore.
 	@chaine: chaîne de caractère à normaliser
 	@type: string
 	@return: La chaîne de caractère une fois les remplacements effectués.
-"""
+	"""
 	chaine = chaine.lower()
 	chaine = chaine.replace(u" ",u"_")
 	chaine = chaine.replace(u"'",u"_")
