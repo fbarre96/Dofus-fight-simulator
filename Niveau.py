@@ -7,6 +7,8 @@ import Overlays
 import Effets
 import Etats
 import Sort
+from pygame.locals import *
+
 class Noeud:
     def __init__(self,x,y,cout=0,heur=0):
         self.x = x
