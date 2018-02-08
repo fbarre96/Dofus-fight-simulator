@@ -165,8 +165,10 @@ class EtatActiveSort(Etat):
         @type: int
         @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
         @type: int
+        
         @sort: le sort qui sera lancé au rafraîchissement de l'effet
         @type: Sort
+        
         @lanceur: le joueur ayant placé cet état
         @type: Joueur ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
@@ -193,6 +195,27 @@ class EtatActiveSort(Etat):
 
 class EtatRedistribuerPer(Etat):
     def __init__(self, nom, debDans,duree, pourcentage,cibles, tailleZone,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+        
+        @pourcentage: le pourcentage des gégâts qui sera redistribué
+        @type: int
+        @cibles: la liste des cibles qui peuvent être touchés par la redistribution
+        @type: string, les cibles séparées par des '|'
+        @tailleZone: le rayon du cercle de redistribution
+        @type: int
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.pourcentage = pourcentage
         self.tailleZone = tailleZone
         self.cibles = cibles
@@ -220,6 +243,23 @@ class EtatRedistribuerPer(Etat):
 
 class EtatBoostPA(Etat):
     def __init__(self, nom, debDans,duree,  boostPA,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostPA: le gain de PA
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostPA = boostPA
         super(EtatBoostPA, self).__init__(nom,  debDans,duree,lanceur,desc)
 
@@ -249,6 +289,23 @@ class EtatBoostPA(Etat):
 
 class EtatBoostPM(Etat):
     def __init__(self, nom, debDans,duree,  boostPM,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostPM: le gain de PM
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostPM = boostPM
         super(EtatBoostPM, self).__init__(nom,  debDans,duree,lanceur,desc)
 
@@ -279,6 +336,23 @@ class EtatBoostPM(Etat):
 
 class EtatBoostPO(Etat):
     def __init__(self, nom, debDans,duree,  boostPO,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostPO: le gain de PO
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostPO = boostPO
         super(EtatBoostPO, self).__init__(nom,  debDans,duree,lanceur,desc)
 
@@ -307,6 +381,23 @@ class EtatBoostPO(Etat):
 
 class EtatBoostVita(Etat):
     def __init__(self, nom, debDans,duree,  boostVita,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostPA: le gain de Vita
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostVita = boostVita
         super(EtatBoostVita, self).__init__(nom,debDans, duree, lanceur,desc)
 
@@ -345,6 +436,23 @@ class EtatBoostVita(Etat):
 
 class EtatBoostDoPou(Etat):
     def __init__(self, nom,  debDans, duree,boostDoPou,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostDoPou: le gain de do Pou
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostDoPou = boostDoPou
         super(EtatBoostDoPou, self).__init__(nom,  debDans,duree,lanceur,desc)
 
@@ -370,6 +478,23 @@ class EtatBoostDoPou(Etat):
 
 class EtatBoostDommage(Etat):
     def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostDommage: le gain de dommages élémentaires
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostDommage = boostDommage
         super(EtatBoostDommage, self).__init__(nom, debDans,duree, lanceur,desc)
 
@@ -394,6 +519,23 @@ class EtatBoostDommage(Etat):
         return dommages+self.boostDommage, baseDeg, caracs
 class EtatBoostPerDommageSorts(Etat):
     def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostDommage: le gain de dommage total pour tous les sorts en pourcentage
+        @type: int (pourcentage positif 100 = pas de changement 130 = boost de 30%)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostDommage = boostDommage
         super(EtatBoostPerDommageSorts, self).__init__(nom, debDans,duree, lanceur,desc)
 
@@ -414,8 +556,26 @@ class EtatBoostPerDommageSorts(Etat):
         if typeDeg != "doPou":
             return total+int(total*(self.boostDommage/100.0))
         return total
+
 class EtatBoostPuissance(Etat):
     def __init__(self, nom, debDans,duree,  boostPuissance,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostPuissance: le gain de puissance
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostPuissance = boostPuissance
         super(EtatBoostPuissance, self).__init__(nom,  debDans,duree,lanceur,desc)
 
@@ -441,6 +601,25 @@ class EtatBoostPuissance(Etat):
 
 class EtatBoostBaseDeg(Etat):
     def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @nomSort: le nom du sort dont les dégâts de base seront boostés
+        @type: string
+        @boostbaseDeg: le gain de dommage de base pour le sort concerné
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.boostbaseDeg = boostbaseDeg
         self.nomSort=nomSort
         super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc)
@@ -469,6 +648,23 @@ class EtatBoostBaseDeg(Etat):
 
 class EtatLanceSortSiSubit(Etat):
     def __init__(self, nom, debDans,duree,  sort,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @sort: le sort qui sera lancé lorsque des dégâts seront subits
+        @type: Sort
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.sort = sort
         super(EtatLanceSortSiSubit, self).__init__(nom, debDans,duree, lanceur,desc)
 
@@ -490,6 +686,27 @@ class EtatLanceSortSiSubit(Etat):
 
 class EtatEffetFinTour(Etat):
     def __init__(self, nom,  debDans,duree, effet, nomSort,quiLancera,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui sera lancé lorsque le joueur terminera son tour
+        @type: Effet
+        @nomSort: le nom de sort à l'origine de l'effet
+        @type: string
+        @quiLancera: Le Joueur qui lancera l'effet
+        @type: string ("lanceur" pour que le lanceur soit le poseur de l'état ou "cible" pour que ce soit celui qui possède l'état)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
@@ -514,6 +731,27 @@ class EtatEffetFinTour(Etat):
 
 class EtatEffetDebutTour(Etat):
     def __init__(self, nom,  debDans,duree, effet, nomSort,quiLancera,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui sera lancé lorsque le joueur terminera son tour
+        @type: Effet
+        @nomSort: le nom de sort à l'origine de l'effet
+        @type: string
+        @quiLancera: Le Joueur qui lancera l'effet
+        @type: string ("lanceur" pour que le lanceur soit le poseur de l'état ou "cible" pour que ce soit celui qui possède l'état)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
@@ -538,6 +776,20 @@ class EtatEffetDebutTour(Etat):
 
 class EtatRetourCaseDepart(Etat):
     def __init__(self, nom, debDans, duree, lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         super(EtatRetourCaseDepart, self).__init__(nom,  debDans,duree,lanceur,desc)
 
     def deepcopy(self):
@@ -556,6 +808,25 @@ class EtatRetourCaseDepart(Etat):
 
 class EtatCoutPA(Etat):
     def __init__(self, nom, debDans,duree,  nomSortAffecte,modCoutPA, lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @nomSortAffecte: le nom de sort dont le coût en PA sera modifié
+        @type: string
+        @modCoutPA: l'augmentation du coût en PA
+        @type: int
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.modCoutPA = modCoutPA
         self.nomSortAffecte = nomSortAffecte
         super(EtatCoutPA, self).__init__(nom, debDans,duree, lanceur,desc)
@@ -580,6 +851,23 @@ class EtatCoutPA(Etat):
 
 class EtatModDegPer(Etat):
     def __init__(self, nom, debDans, duree, pourcentage, lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @pourcentage: le pourcentage de modification des dégâts qui seront subis.
+        @type: int (pourcentage)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.pourcentage = pourcentage
         super(EtatModDegPer, self).__init__(nom, debDans,duree, lanceur,desc)
 
@@ -602,6 +890,25 @@ class EtatModDegPer(Etat):
         return total
 class EtatContre(Etat):
     def __init__(self, nom, debDans,duree, pourcentage, tailleZone,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @pourcentage: le pourcentage des dégâts subits au corps-à-corps x qui seront répartis
+        @type: int (pourcentage)
+        @tailleZone: la rayon du cercle-zone dans laquelle les dégâts subits seront réinfligés en partie
+        @type: int 
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.pourcentage = pourcentage
         self.tailleZone = tailleZone
         super(EtatContre, self).__init__(nom, debDans,duree, lanceur,desc)
@@ -631,6 +938,23 @@ class EtatContre(Etat):
 
 class EtatRepousserSiSubit(Etat):
     def __init__(self, nom, debDans,duree, nbCase,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @nbCase: le nombre de case de poussé
+        @type: int
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.nbCase = nbCase
         super(EtatRepousserSiSubit, self).__init__(nom, duree, debDans,lanceur,desc)
 
@@ -656,6 +980,27 @@ class EtatRepousserSiSubit(Etat):
 
 class EtatEffetSiSubit(Etat):
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,typeDeg="",lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui s'activera lors d'un dégât subit
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet 
+        @type: string ("lanceur" ou "cible")
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
@@ -687,6 +1032,27 @@ class EtatEffetSiSubit(Etat):
                 niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, attaquant.posX, attaquant.posY, attaquant)
 class EtatEffetSiPousse(Etat):
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet 
+        @type: string ("lanceur" ou "cible")
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
@@ -717,6 +1083,23 @@ class EtatEffetSiPousse(Etat):
         return doPou
 class EtatTelefrag(Etat):
     def __init__(self, nom,  debDans,duree, nomSort, lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @nomSort: le nom du sort qui à générer le téléfrag
+        @type: string
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Joueur ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
         self.nomSort = nomSort
         super(EtatTelefrag, self).__init__(nom,  debDans,duree,lanceur,desc)
 
