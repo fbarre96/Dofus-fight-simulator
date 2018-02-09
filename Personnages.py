@@ -335,13 +335,14 @@ class Personnage(object):
         for etat in self.etats:
             if etat.actif():
                 etat.triggerFinTour(self,niveau)
+        
+
+    def debutTour(self,niveau):
         for glyphe in niveau.glyphes:
             if glyphe.actif():
                 if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y,self.posX,self.posY, 0):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
-
-    def debutTour(self,niveau):     
         self.rafraichirEtats(niveau)
         niveau.rafraichirGlyphes(self)
         self.rafraichirHistoriqueDeplacement()
