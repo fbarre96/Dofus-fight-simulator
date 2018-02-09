@@ -194,6 +194,7 @@ class EtatActiveSort(Etat):
         personnage.lanceSort(self.sort,niveau,personnage.posX,personnage.posY)
 
 class EtatRedistribuerPer(Etat):
+    """@summary: Classe décrivant un état qui redistribue en partie les dégâts subits autour du personnage endommagé"""
     def __init__(self, nom, debDans,duree, pourcentage,cibles, tailleZone,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -242,6 +243,7 @@ class EtatRedistribuerPer(Etat):
         cibleAttaque.lanceSort(Sort("Redistribution",0,0,0,[EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle"), niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatBoostPA(Etat):
+    """@summary: Classe décrivant un état qui modifie le nombre de PA."""
     def __init__(self, nom, debDans,duree,  boostPA,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -288,6 +290,7 @@ class EtatBoostPA(Etat):
         print "PM : "+str(personnage.PM)
 
 class EtatBoostPM(Etat):
+    """@summary: Classe décrivant un état qui modifie le nombre de PM."""
     def __init__(self, nom, debDans,duree,  boostPM,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -335,6 +338,7 @@ class EtatBoostPM(Etat):
         print "PM : "+str(personnage.PM)
 
 class EtatBoostPO(Etat):
+    """@summary: Classe décrivant un état qui modifie le nombre de PO."""
     def __init__(self, nom, debDans,duree,  boostPO,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -380,6 +384,7 @@ class EtatBoostPO(Etat):
         print "Modification de PO:"+str(self.boostPO)
 
 class EtatBoostVita(Etat):
+    """@summary: Classe décrivant un état qui modifie les points de vie."""
     def __init__(self, nom, debDans,duree,  boostVita,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -435,6 +440,7 @@ class EtatBoostVita(Etat):
         print "Modification de Vitalite: -"+str(self.boostVita)
 
 class EtatBoostDoPou(Etat):
+    """@summary: Classe décrivant un état qui modifie les dommages de poussé."""
     def __init__(self, nom,  debDans, duree,boostDoPou,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -477,6 +483,7 @@ class EtatBoostDoPou(Etat):
         return doPou+self.boostDoPou
 
 class EtatBoostDommage(Etat):
+    """@summary: Classe décrivant un état qui modifie le nombre de dommage dans les stats du porteur."""
     def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -518,6 +525,7 @@ class EtatBoostDommage(Etat):
         @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
         return dommages+self.boostDommage, baseDeg, caracs
 class EtatBoostPerDommageSorts(Etat):
+    """@summary: Classe décrivant un état qui multiplie les dommages infligés par tous les sorts du porteur."""
     def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -558,6 +566,7 @@ class EtatBoostPerDommageSorts(Etat):
         return total
 
 class EtatBoostPuissance(Etat):
+    """@summary: Classe décrivant un état qui modifie la statistique puissance du porteur."""
     def __init__(self, nom, debDans,duree,  boostPuissance,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -600,6 +609,7 @@ class EtatBoostPuissance(Etat):
         return dommages, baseDeg, caracs+self.boostPuissance
 
 class EtatBoostBaseDeg(Etat):
+    """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur."""
     def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -647,6 +657,7 @@ class EtatBoostBaseDeg(Etat):
         return dommages, baseDeg, caracs
 
 class EtatLanceSortSiSubit(Etat):
+    """@summary: Classe décrivant un état qui fait active un sort si le porteur subit des dégâts."""
     def __init__(self, nom, debDans,duree,  sort,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -685,6 +696,7 @@ class EtatLanceSortSiSubit(Etat):
         cibleAttaque.lanceSort(self.sort, niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatEffetFinTour(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur termine son tour."""
     def __init__(self, nom,  debDans,duree, effet, nomSort,quiLancera,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -730,6 +742,7 @@ class EtatEffetFinTour(Etat):
             niveau.lancerEffet(self.effet,personnage.posX,personnage.posY,self.nomSort, personnage.posX, personnage.posY, personnage)
 
 class EtatEffetDebutTour(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur débute son tour."""
     def __init__(self, nom,  debDans,duree, effet, nomSort,quiLancera,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -775,6 +788,7 @@ class EtatEffetDebutTour(Etat):
             niveau.lancerEffet(self.effet,personnage.posX,personnage.posY,self.nomSort, personnage.posX, personnage.posY, personnage)
 
 class EtatRetourCaseDepart(Etat):
+    """@summary: Classe décrivant un état qui renvoie le porteur à sa case de début de tour lorsqu'il termine son tour."""
     def __init__(self, nom, debDans, duree, lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -807,6 +821,7 @@ class EtatRetourCaseDepart(Etat):
         niveau.gereDeplacementTF(personnage,personnage.posDebTour,personnage,self.nom,AjouteHistorique=True)
 
 class EtatCoutPA(Etat):
+    """@summary: Classe décrivant un état qui modifie le coût en PA d'un des sorts du porteur."""
     def __init__(self, nom, debDans,duree,  nomSortAffecte,modCoutPA, lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -850,6 +865,7 @@ class EtatCoutPA(Etat):
         return coutPAActuel
 
 class EtatModDegPer(Etat):
+    """@summary: Classe décrivant un état qui multiplie par un pourcentage les dégâts totaux que devrait subir le porteur."""
     def __init__(self, nom, debDans, duree, pourcentage, lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -889,6 +905,7 @@ class EtatModDegPer(Etat):
             return (total * self.pourcentage)/100
         return total
 class EtatContre(Etat):
+    """@summary: Classe décrivant un état qui renvoie une partie des dégâts subits au corps à corps."""
     def __init__(self, nom, debDans,duree, pourcentage, tailleZone,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -937,6 +954,7 @@ class EtatContre(Etat):
                 cibleAttaque.lanceSort(Sort("Contre",0,0,0,[EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle"), niveau, self.posX, self.posY)
 
 class EtatRepousserSiSubit(Etat):
+    """@summary: Classe décrivant un état qui repousse l'attaquant quand le porteur se fait attaquer."""
     def __init__(self, nom, debDans,duree, nbCase,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -979,6 +997,7 @@ class EtatRepousserSiSubit(Etat):
         niveau.pousser(self.nbCase,attaquant,cibleAttaque, True, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatEffetSiSubit(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,typeDeg="",lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -1031,6 +1050,7 @@ class EtatEffetSiSubit(Etat):
             elif self.quiLancera == "cible":
                 niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, attaquant.posX, attaquant.posY, attaquant)
 class EtatEffetSiPousse(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -1082,6 +1102,7 @@ class EtatEffetSiPousse(Etat):
             niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, cibleAttaque)
         return doPou
 class EtatTelefrag(Etat):
+    """@summary: Classe décrivant un état Téléfrag."""
     def __init__(self, nom,  debDans,duree, nomSort, lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
