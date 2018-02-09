@@ -43,7 +43,7 @@ class TypeZoneCercle(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone Cercle
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         return getDistancePoint(departZone,caseTestee) <= self.zonePO
@@ -62,7 +62,7 @@ class TypeZoneCercleSansCentre(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone Cercle sans centre
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         return getDistancePoint(departZone,caseTestee) <= self.zonePO and getDistancePoint(departZone,caseTestee) != 0
@@ -81,7 +81,7 @@ class TypeZoneCroix(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone croix
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #Si la case testée n'est pas en ligne, pas dans la zone
@@ -103,7 +103,7 @@ class TypeZoneCroixDiagonale(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone croix diagonale
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #Si la case testée n'est pas en diagonale, pas dans la zone
@@ -125,7 +125,7 @@ class TypeZoneAnneau(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone croix diagonale
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         return getDistancePoint(departZone,caseTestee) == self.zonePO
@@ -144,7 +144,7 @@ class TypeZoneLigne(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone, définit le sens de la ligne
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #calcul du sens de la ligne
@@ -184,7 +184,7 @@ class TypeZoneLigneJusque(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone, définit le sens de la ligne et le départ de la zone ici
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #calcul de la direction de la ligne
@@ -224,7 +224,7 @@ class TypeZoneLignePerpendiculaire(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone, définit le sens de la ligne perpendiculaire
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #La ligne perpendiculaire sera horizontale si le joueur lanceur et le depart de la zone sont en verticale
@@ -251,7 +251,7 @@ class TypeZoneCarre(TypeZone):
         @caseTestee: case dont on testera l'appartenance à la zone
         @type: tableau de 2 coordonnées entières
         @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone, inutile ici.
-        @type: Joueur
+        @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         return (getDistanceX(caseTestee,departZone) == self.zonePO or getDistanceY(caseTestee,departZone) == self.zonePO) and getDistanceX(caseTestee,departZone) <= self.zonePO and getDistanceY(caseTestee,departZone) <= self.zonePO

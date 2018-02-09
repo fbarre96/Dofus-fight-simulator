@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*
-
+import Sort
+import Effets
+import Zones
 class Etat(object):
     """@summary: Classe décrivant un état.
                  Cette classe est utile pour les états 'passifs' qui sont seulement là pour vérification de présense.
@@ -13,7 +15,7 @@ class Etat(object):
         @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
         @type: int
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -40,7 +42,7 @@ class Etat(object):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         pass
@@ -83,26 +85,26 @@ class Etat(object):
         @typeDeg:  Le type de dégâts qui va être subit
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         pass
     def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
                      Utile pour la réaction à une attaque.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
         @cibleAttaque: le joueur qui a subit les dégâts
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         pass
     def triggerDebutTour(self,personnage,niveau):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour commence.
                      Utile pour les états déclenchant un effet au début de tour par exemple.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
         @personnage: le joueur dont le tour débute
-        @type: Joueur
-        @niveau: Joueur grille de jeu
+        @type: Personnage
+        @niveau: Personnage grille de jeu
         @type: Niveau"""
         pass
     def triggerFinTour(self,personnage,niveau):
@@ -110,7 +112,7 @@ class Etat(object):
                      Utile pour les états déclenchant un effet en fin de tour par exemple.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
         @personnage: le joueur dont le tour débute
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
         pass
@@ -134,9 +136,9 @@ class Etat(object):
         @niveau: La grille de jeu
         @type: Niveau
         @pousseur: Le joueur qui à pousser
-        @type: Joueur
+        @type: Personnage
         @joueurCible: Le joueur qui s'est fait pousser
-        @type: Joueur
+        @type: Personnage
 
         @return: La nouvelle valeur de dommage de poussé"""
         return doPou
@@ -152,7 +154,7 @@ class Etat(object):
                      Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
                      Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: les options non prévisibles selon les états.
-        @type: Joueur"""
+        @type: Personnage"""
         pass
 
 class EtatActiveSort(Etat):
@@ -170,7 +172,7 @@ class EtatActiveSort(Etat):
         @type: Sort
         
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -187,7 +189,7 @@ class EtatActiveSort(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Le sort est lancé à ce moment.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         #print "Rafraichissement de active sort : "+personnage.classe+" lance "+self.sort.nom + " sur sa pose."
@@ -212,7 +214,7 @@ class EtatRedistribuerPer(Etat):
         @type: int
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -239,8 +241,8 @@ class EtatRedistribuerPer(Etat):
         @typeDeg:  Le type de dégâts qui va être subit
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
-        cibleAttaque.lanceSort(Sort("Redistribution",0,0,0,[EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle"), niveau, cibleAttaque.posX, cibleAttaque.posY)
+        @type: Personnage"""
+        cibleAttaque.lanceSort(Sort.Sort("Redistribution",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle"), niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatBoostPA(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de PA."""
@@ -257,7 +259,7 @@ class EtatBoostPA(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -274,7 +276,7 @@ class EtatBoostPA(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Les points d'actions sont reboostés à chaque rafraîchissement de l'état.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         self.triggerInstantane(joueurCaseEffet=personnage)
@@ -304,7 +306,7 @@ class EtatBoostPM(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -321,7 +323,7 @@ class EtatBoostPM(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Les points de mouvements sont reboostés à chaque rafraîchissement de l'état.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         self.triggerInstantane(joueurCaseEffet=personnage)
@@ -352,7 +354,7 @@ class EtatBoostPO(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -369,7 +371,7 @@ class EtatBoostPO(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Les points de porté sont reboostés à chaque rafraîchissement de l'état.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         self.triggerInstantane(joueurCaseEffet=personnage)
@@ -398,7 +400,7 @@ class EtatBoostVita(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -415,7 +417,7 @@ class EtatBoostVita(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Les points de vitas sont boostés dès le rafraîchessement de l'état.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         self.triggerInstantane(joueurCaseEffet=personnage)
@@ -435,7 +437,7 @@ class EtatBoostVita(Etat):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Retire la vitalité bonus lorsque l'état se termine
         @personnage: les options non prévisibles selon les états.
-        @type: Joueur"""
+        @type: Personnage"""
         personnage.vie -= self.boostVita
         print "Modification de Vitalite: -"+str(self.boostVita)
 
@@ -454,7 +456,7 @@ class EtatBoostDoPou(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -475,9 +477,9 @@ class EtatBoostDoPou(Etat):
         @niveau: La grille de jeu
         @type: Niveau
         @pousseur: Le joueur qui à pousser
-        @type: Joueur
+        @type: Personnage
         @joueurCible: Le joueur qui s'est fait pousser
-        @type: Joueur
+        @type: Personnage
 
         @return: La nouvelle valeur de dommage de poussé"""
         return doPou+self.boostDoPou
@@ -497,7 +499,7 @@ class EtatBoostDommage(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -539,7 +541,7 @@ class EtatBoostPerDommageSorts(Etat):
         @type: int (pourcentage positif 100 = pas de changement 130 = boost de 30%)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -580,7 +582,7 @@ class EtatBoostPuissance(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -625,7 +627,7 @@ class EtatBoostBaseDeg(Etat):
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -671,7 +673,7 @@ class EtatLanceSortSiSubit(Etat):
         @type: Sort
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -688,11 +690,11 @@ class EtatLanceSortSiSubit(Etat):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
                      Le personnage subissant les dégâts lance le sort donné.
         @cibleAttaque: le joueur qui a subit les dégâts
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         cibleAttaque.lanceSort(self.sort, niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatEffetFinTour(Etat):
@@ -710,11 +712,11 @@ class EtatEffetFinTour(Etat):
         @type: Effet
         @nomSort: le nom de sort à l'origine de l'effet
         @type: string
-        @quiLancera: Le Joueur qui lancera l'effet
+        @quiLancera: Le Personnage qui lancera l'effet
         @type: string ("lanceur" pour que le lanceur soit le poseur de l'état ou "cible" pour que ce soit celui qui possède l'état)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -733,7 +735,7 @@ class EtatEffetFinTour(Etat):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
                      Active un effet à la fin du tour du personnage ciblant la position du personnage qui finit son tour, le lanceur peut être lui-même ou le lanceur de l'effet.
         @personnage: le joueur dont le tour débute
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
         if self.quiLancera == "lanceur":
@@ -756,11 +758,11 @@ class EtatEffetDebutTour(Etat):
         @type: Effet
         @nomSort: le nom de sort à l'origine de l'effet
         @type: string
-        @quiLancera: Le Joueur qui lancera l'effet
+        @quiLancera: Le Personnage qui lancera l'effet
         @type: string ("lanceur" pour que le lanceur soit le poseur de l'état ou "cible" pour que ce soit celui qui possède l'état)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -779,8 +781,8 @@ class EtatEffetDebutTour(Etat):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour commence.
                      Active un effet au début du tour ciblant la case du personnage dont le tour débute avec comme lanceur le personnage dont le tour débute  ou le lanceur de l'effet.
         @personnage: le joueur dont le tour débute
-        @type: Joueur
-        @niveau: Joueur grille de jeu
+        @type: Personnage
+        @niveau: Personnage grille de jeu
         @type: Niveau"""
         if self.quiLancera == "lanceur":
             niveau.lancerEffet(self.effet,personnage.posX,personnage.posY,self.nomSort, personnage.posX, personnage.posY, self.lanceur)
@@ -799,7 +801,7 @@ class EtatRetourCaseDepart(Etat):
         @type: int
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -815,7 +817,7 @@ class EtatRetourCaseDepart(Etat):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
                      Le personnage retourne à sa case de début de tour lorsque son tour se termine
         @personnage: le joueur dont le tour débute
-        @type: Joueur
+        @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
         niveau.gereDeplacementTF(personnage,personnage.posDebTour,personnage,self.nom,AjouteHistorique=True)
@@ -837,7 +839,7 @@ class EtatCoutPA(Etat):
         @type: int
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -879,7 +881,7 @@ class EtatModDegPer(Etat):
         @type: int (pourcentage)
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -921,7 +923,7 @@ class EtatContre(Etat):
         @type: int 
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -947,11 +949,11 @@ class EtatContre(Etat):
         @typeDeg:  Le type de dégâts qui va être subit
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         if cibleAttaque.team != attaquant.team:
             distance = abs(attaquant.posX-cibleAttaque.posX)+abs(attaquant.posY-cibleAttaque.posY)
             if distance == 1:
-                cibleAttaque.lanceSort(Sort("Contre",0,0,0,[EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle"), niveau, self.posX, self.posY)
+                cibleAttaque.lanceSort(Sort.Sort("Contre",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle"), niveau, self.posX, self.posY)
 
 class EtatRepousserSiSubit(Etat):
     """@summary: Classe décrivant un état qui repousse l'attaquant quand le porteur se fait attaquer."""
@@ -968,7 +970,7 @@ class EtatRepousserSiSubit(Etat):
         @type: int
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -993,7 +995,7 @@ class EtatRepousserSiSubit(Etat):
         @typeDeg:  Le type de dégâts qui va être subit
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         niveau.pousser(self.nbCase,attaquant,cibleAttaque, True, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatEffetSiSubit(Etat):
@@ -1015,7 +1017,7 @@ class EtatEffetSiSubit(Etat):
         @type: string ("lanceur" ou "cible")
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -1043,7 +1045,7 @@ class EtatEffetSiSubit(Etat):
         @typeDeg:  Le type de dégâts qui va être subit
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Joueur"""
+        @type: Personnage"""
         if totalPerdu >0 and (self.typeDeg == typeDegats or self.typeDeg==""):
             if self.quiLancera == "lanceur":
                 niveau.lancerEffet(self.effet,attaquant.posX,attaquant.posY,self.nomSort, attaquant.posX, attaquant.posY, self.lanceur)
@@ -1068,7 +1070,7 @@ class EtatEffetSiPousse(Etat):
         @type: string ("lanceur" ou "cible")
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
@@ -1091,9 +1093,9 @@ class EtatEffetSiPousse(Etat):
         @niveau: La grille de jeu
         @type: Niveau
         @pousseur: Le joueur qui à pousser
-        @type: Joueur
+        @type: Personnage
         @joueurCible: Le joueur qui s'est fait pousser
-        @type: Joueur
+        @type: Personnage
 
         @return: La nouvelle valeur de dommage de poussé"""
         if self.quiLancera == "lanceur":
@@ -1116,7 +1118,7 @@ class EtatTelefrag(Etat):
         @type: string
 
         @lanceur: le joueur ayant placé cet état
-        @type: Joueur ou None
+        @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.

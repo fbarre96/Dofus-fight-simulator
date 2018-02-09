@@ -40,7 +40,7 @@ def BoucleDEvenement(niveau,mouse_xy,sortSelectionne):
 def Commence_combat(joueur):
     """@summary: Boucle principale de la simulation de combat.
     @joueur: Le joueur qui affrontera le poutch
-    @type: Joueur"""
+    @type: Personnage"""
 
     #Initialisation de la bibliothèque Pygame
     

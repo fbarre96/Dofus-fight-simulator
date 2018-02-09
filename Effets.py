@@ -3,6 +3,7 @@ import Zones
 import random
 import Personnages
 import Niveau
+import Etats
 
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -32,13 +33,13 @@ class Effet(object):
     def cibleValide(self, joueurLanceur, joueurCible,joueurCibleDirect, ciblesDejaTraitees):
         """@summary: Test si un joueur cible est un cible valide selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @joueurCible: Le joueur dans la zone d'effet testé
-        @type: Joueur
+        @type: Personnage
         @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
-        @type: Joueur ou None
+        @type: Personnage ou None
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
-        @type: tableau de Joueur
+        @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         #Test si la cible est dans les cibles possibles
@@ -102,9 +103,9 @@ class Effet(object):
         @niveau: la grille de simulation de combat.
         @type: Niveau
         @joueurCaseEffet: Le joueur sur se tenant sur une case de la zone d'effet traitée.
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: Le joueur ayant lancé l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: Les paramètres optionnels supplémentaires pour chaque effet.s
         @type: **kwargs"""
 
@@ -138,9 +139,9 @@ class EffetDegats(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @nomSort: le nom du sort auquel l'effet appartient
         @type: string
 
@@ -188,9 +189,9 @@ class EffetDegats(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""))
@@ -216,9 +217,9 @@ class EffetVolDeVie(EffetDegats):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
 
@@ -253,9 +254,9 @@ class EffetDegatsPosLanceur(EffetDegats):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, prov_x et prov_y et nom_sort doivent être mentionées
         @type: **kwargs"""
         joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
@@ -275,9 +276,9 @@ class EffetTue(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.tue(joueurCaseEffet)
@@ -299,9 +300,9 @@ class EffetRetPA(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PA"
@@ -323,9 +324,9 @@ class EffetRetPM(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM"
@@ -350,9 +351,9 @@ class EffetPropage(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
 
@@ -380,9 +381,9 @@ class EffetEtat(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet != None:
@@ -416,9 +417,9 @@ class EffetGlyphe(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
         nouvelleGlyphe = Niveau.Glyphe(self.nom, self.sort, self.duree, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
@@ -440,9 +441,9 @@ class EffetPousser(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
         if joueurCaseEffet != None:
@@ -465,9 +466,9 @@ class EffetRepousser(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.pousser(self.nbCase,joueurCaseEffet,joueurLanceur)
@@ -489,12 +490,15 @@ class EffetAttire(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        if not(joueurCaseEffet.posX == joueurLanceur.posX and joueurCaseEffet.posY == joueurLanceur.posY):
+        if joueurLanceur != None and joueurCaseEffet != None:
+            if (joueurCaseEffet.posX == joueurLanceur.posX and joueurCaseEffet.posY == joueurLanceur.posY):
+                return None
+        if joueurCaseEffet != None:
             niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur)
 
 class EffetAttireAttaquant(Effet):
@@ -514,9 +518,9 @@ class EffetAttireAttaquant(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.attire(self.nbCase,joueurLanceur,joueurCaseEffet)
@@ -538,9 +542,9 @@ class EffetAttireAllies(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet.team == joueurLanceur.team:
@@ -563,9 +567,9 @@ class EffetDureeEtats(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueurCaseEffet.changeDureeEffets(self.deXTours, niveau)
@@ -587,9 +591,9 @@ class EffetRetireEtat(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueurCaseEffet.retirerEtats(self.nomEtat)
@@ -611,9 +615,9 @@ class EffetTeleportePosPrec(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort doit être mentionée
         @type: **kwargs"""
         joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
@@ -635,9 +639,9 @@ class EffetTeleportePosPrecLanceur(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, prov_x et prov_y doivent être mentionées
         @type: **kwargs"""
         joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
@@ -657,9 +661,9 @@ class EffetTeleporteDebutTour(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebTour,joueurLanceur,"Renvoi",AjouteHistorique=True)
@@ -678,9 +682,9 @@ class EffetTeleporteDebutCombat(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebCombat,joueurLanceur,"Renvoi",AjouteHistorique=True)
@@ -699,9 +703,9 @@ class EffetTpSym(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, doit être mentionée
         @type: **kwargs"""
         distanceX = (joueurCaseEffet.posX-joueurLanceur.posX)
@@ -724,9 +728,9 @@ class EffetTpSymSelf(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, doit être mentionée
         @type: **kwargs"""
         distanceX = (joueurCaseEffet.posX-joueurLanceur.posX)
@@ -749,9 +753,9 @@ class EffetTpSymCentre(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, case_cible_x et case_cible_y doivent être mentionées
         @type: **kwargs"""
         distanceX = (joueurCaseEffet.posX-kwargs.get("case_cible_x"))
@@ -780,9 +784,9 @@ class EffetEtatSelf(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         etatCopier = self.etat.deepcopy()
@@ -808,9 +812,9 @@ class EffetEntiteLanceSort(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueursLanceurs = niveau.getJoueurs(self.nomEntites)
@@ -831,9 +835,9 @@ class EffetEchangePlace(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, les options cible_traitees et nom_sort doivent être mentionnées. L'option generer_TF peut être mentionnée.
         @type: **kwargs"""
         genereTF = kwargs.get("generer_TF",False)
@@ -855,9 +859,9 @@ class EffetTp(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
         niveau.structure[joueurLanceur.posY][joueurLanceur.posX].type = "v"
@@ -882,9 +886,9 @@ class EffetInvoque(Effet):
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Joueur
+        @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
-        @type: Joueur
+        @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
         invoc = Personnages.INVOCS[self.nomInvoque].deepcopy()

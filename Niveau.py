@@ -68,7 +68,7 @@ class Glyphe:
         @centre_y: la coordonnée y du centre de la zone de la glyphe.
         @type: int
         @lanceur: le joueur ayant posé la glyphe.
-        @type: Joueur
+        @type: Personnage
         @couleur: la coordonnée x du centre de la zone de la glyphe.
         @type: tuple (R,G,B)"""
         self.nomSort = nomSort
@@ -104,7 +104,7 @@ class Niveau:
             @fenetre: la fenêtre créé par pygame
             @type: fenêtre pygame
             @joueurs: tous les joueurs/mosntres qui doivent être placé sur la carte au début du combat.
-            @type: tableau de Joueur
+            @type: tableau de Personnage
             @font: décrit une police d'écriture pygame
             @type: Font de pygame"""
 
@@ -128,7 +128,7 @@ class Niveau:
         #Generer la carte
         self.generer()
         #Initialise tous les joueurs
-        self.initJoueurs()
+        self.initPersonnages()
 
     
 
@@ -269,7 +269,7 @@ class Niveau:
                 y+=30
                 x=constantes.x_sorts
     
-    def initJoueurs(self):
+    def initPersonnages(self):
         """@summary: Initialise les joueurs sur le niveau (positionnement)."""
         placeT1 = 0
         placeT2 = 0
@@ -292,17 +292,17 @@ class Niveau:
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
             self.structure[joueur.posY][joueur.posX].type="j"
 
-    def rafraichirGlyphes(self, duJoueur):
+    def rafraichirGlyphes(self, duPersonnage):
         """@summary: Rafraîchit la durée des glyphes et supprime celles qui ne sont plus actives.
                     Cette fonction est appelé au début de chaque tour.
-            @duJoueur: On rafraîchit uniquement les glyphes posés par ce joueur.
-            @type: Joueur"""
+            @duPersonnage: On rafraîchit uniquement les glyphes posés par ce joueur.
+            @type: Personnage"""
         i=0
         longueurTab = len(self.glyphes)
         #Parcours des glyphes
         while i < longueurTab:
             #On teste si la glyphe appartient à celui qui vient de débuter son tour
-            if self.glyphes[i].lanceur == duJoueur:
+            if self.glyphes[i].lanceur == duPersonnage:
                 #Si la glyphe était active, on réduit sa durée
                 if self.glyphes[i].actif():
                     self.glyphes[i].duree -= 1 # Réduction du temps restant
@@ -364,7 +364,7 @@ class Niveau:
         @case_y: La coordonnée y de la case dont on veut récupérer le joueur
         @type: int
 
-        @return: Joueur si la case est occupée, None sinon""" 
+        @return: Personnage si la case est occupée, None sinon""" 
         for i,joueur in enumerate(self.joueurs):
             if joueur.posX == case_x and joueur.posY == case_y:
                 return self.joueurs[i]
@@ -376,17 +376,17 @@ class Niveau:
         @type: string
 
         @return: Un tableau contenant les joueurs possédant l'état donné""" 
-        retourListeJoueurs = []
+        retourListePersonnages = []
         for joueur in self.joueurs:
             for etat in joueur.etats:
                 if etat.nom == nomEtatCherche:
-                    retourListeJoueurs.append(joueur)
-        return retourListeJoueurs
+                    retourListePersonnages.append(joueur)
+        return retourListePersonnages
 
     def invoque(self,invoc,case_x,case_y):
         """@summary: Invoque un nouveau joueur dans la partie
         @invoc: le joueur à invoquer
-        @type: Joueur
+        @type: Personnage
         @case_x: la coordonnée x de la case sur laquelle le joueur sera invoqué.
         @type: int
         @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
@@ -448,7 +448,7 @@ class Niveau:
     def __determinerSensPousser(self,joueurCible,depuisX,depuisY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
-        @type: Joueur
+        @type: Personnage
         @depuisX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
         @depuisY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
@@ -456,9 +456,10 @@ class Niveau:
 
         @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
         
-        #On ne peut pas pousser le pousseur
+        #Si le depuis est sur la case de la cible, on calcul la direction avec le tourDe
         if depuisY == joueurCible.posY and depuisX == joueurCible.posX:
-            return None,None
+            depuisY = self.tourDe.posY
+            depuisX = self.tourDe.posX
         #Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         if depuisY == None:
             depuisY = self.tourDe.posY-1
@@ -477,7 +478,7 @@ class Niveau:
     def __effectuerPousser(self,joueurCible,doDeg,posPouX,posPouY,D,pousseur):
         """@summary: Déplace la cible après les calculs de poussé.
         @joueurCible: le joueur qui va être poussé
-        @type: Joueur
+        @type: Personnage
         @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
         @type: booléen
         @posPouX: la coordonnée x sur laquelle le joueur poussé va arriver (voir la fonction __calculerArrivePousser)
@@ -487,7 +488,7 @@ class Niveau:
         @D: le nombre de cases que le joueur aurait dû parcourir mais qui ont été bloqué par un obstacle (voir la fonction __calculerArrivePousser)
         @type: int
         @pousseur: Le joueur qui pousse
-        @type: Joueurs""" 
+        @type: Personnages""" 
 
         #Déplacement du joueur
         self.structure[joueurCible.posY][joueurCible.posX].type = "v"
@@ -515,9 +516,9 @@ class Niveau:
         @nbCases: le nombre de case dont il faut pousser la cible
         @type: int
         @joueurCible: Le joueur qui se fait pousser
-        @type: Joueur
+        @type: Personnage
         @pousseur: Le joueur qui va pousser
-        @type: Joueur
+        @type: Personnage
         @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
         @type: booléen, True pas défaut
         @depuisX: la coordonnée x depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
@@ -532,7 +533,7 @@ class Niveau:
     def __calculerArrivePousser(self, joueurCible, nbCases, horizontal, positif):
         """@summary: Fonction à appeler pour pousser un joueur.
         @joueurCible: Le joueur qui se fait pousser
-        @type: Joueur
+        @type: Personnage
         @nbCases: le nombre de case dont il faut pousser la cible
         @type: int
         @horizontal: Indique si la poussé est horizontal ou verticales
@@ -576,9 +577,9 @@ class Niveau:
         @nbCases: le nombre de case dont il faut attirer la cible
         @type: int
         @joueurCible: Le joueur qui se fait attirer
-        @type: Joueur
+        @type: Personnage
         @attireur: Le joueur qui va attirer
-        @type: Joueur"""
+        @type: Personnage"""
 
         #Calcul du sens de l'attirence
         distanceX = abs(joueurCible.posX - attireur.posX)
@@ -601,7 +602,7 @@ class Niveau:
     def __deplacementTFVersCaseVide(self,joueurBougeant, posAtteinte,AjouteHistorique):
         """@summary: Déplacement pouvant généré un téléfrag vers une case vide.
         @joueurBougeant: le joueur qui se déplace vers une case vide
-        @type: Joueur
+        @type: Personnage
         @posAtteinte: La position que le joueur va atteindre
         @type: [int x, int y]
         @AjouteHistorique: indique si le déplacement compte dans l'historique. (Le passif du téléfrag n'a pas l'historique du déplacement par exemple)
@@ -620,7 +621,7 @@ class Niveau:
         @nomSort: le nom du sort à l'origine du Téléfrag
         @type: string
         @reelLanceur: Le joueur étant à l'origine du Téléfrag
-        @type: Joueur"""
+        @type: Personnage"""
 
         #BoostSynchro
         synchros = self.getJoueurs("Synchro")
@@ -634,9 +635,9 @@ class Niveau:
     def __exploserSynchro(self,synchro,reelLanceur):
         """@summary: Explose la synchro du xélor si elle est téléfragé
         @synchro: la synchro
-        @type: Joueur de classe synchro
+        @type: Personnage de classe synchro
         @reelLanceur: Le joueur étant à l'origine de la synchro (le niveau du xélor est prit en compte dans les dégâts)
-        @type: Joueur"""
+        @type: Personnage"""
 
         nbTF = 0 # Nombre de téléfrag qui boost la synchro
         for etat in synchro.etats:
@@ -649,7 +650,7 @@ class Niveau:
     def __glypheActiveTF(self,reelLanceur,nomSort):
         """@summary: Active les glyphes qui s'activent après un téléfrag (Instabilité_temporelle)
         @reelLanceur: Le joueur étant à l'origine du téléfrag
-        @type: Joueur
+        @type: Personnage
         @nomSort: le nom du sort qui est jeté
         @type: string"""
         for glyphe in self.glyphes:
@@ -667,13 +668,13 @@ class Niveau:
     def __deplacementTFVersCaseOccupee(self, joueurASwap,joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF):
         """@summary: Déplace le joueur en téléfrag vers une case avec un joueur.
         @joueurASwap: Le joueur qui occupe la case considéré comme occupé
-        @type: Joueur
+        @type: Personnage
         @joueurBougeant: Le joueur qui se déplace en téléfrag vers la case occupé
         @type: string
         @posAtteinte: Les coordonnées de la case d'arrivée
         @type: [int x, int y]
         @reelLanceur: Le joueur étant à l'origine du téléfrag
-        @type: Joueur
+        @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
         @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
@@ -705,13 +706,13 @@ class Niveau:
     def __effectuerTF(self, joueurASwap,joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF):
         """@summary: Echange les joueurs en téléfrag.
         @joueurASwap: Le joueur qui occupe la case considéré comme occupé
-        @type: Joueur
+        @type: Personnage
         @joueurBougeant: Le joueur qui se déplace en téléfrag vers la case occupé
         @type: string
         @posAtteinte: Les coordonnées de la case d'arrivée
         @type: [int x, int y]
         @reelLanceur: Le joueur étant à l'origine du téléfrag
-        @type: Joueur
+        @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
         @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
@@ -737,7 +738,7 @@ class Niveau:
         @posAtteinte: Les coordonnées de la case d'arrivée
         @type: [int x, int y]
         @lanceur: Le joueur étant à l'origine du téléfrag
-        @type: Joueur
+        @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
         @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
@@ -775,7 +776,7 @@ class Niveau:
         @effet: L'effet qu'il faut appliquer
         @type: Effet
         @joueurLanceur: Le joueur à l'origine de l'effet
-        @type: Joueur
+        @type: Personnage
         @case_cible_x: Coordonné x de la case ciblé
         @type: int
         @case_cible_y: Coordonné y de la case ciblé
@@ -783,7 +784,7 @@ class Niveau:
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
         @ciblesTraitees: La liste des cibles déjà traitées pour cet effet
-        @type: tableau de Joueur
+        @type: tableau de Personnage
         @prov_x: Coordonné x de la case d'origine de l'effet
         @type: int
         @prov_y: Coordonné y de la case d'origine de l'effet
@@ -802,9 +803,9 @@ class Niveau:
         @effet: L'effet qu'il faut appliquer
         @type: Effet
         @joueurLanceur: Le joueur à l'origine de l'effet
-        @type: Joueur
+        @type: Personnage
         @joueurCibleDirect: Le joueur qui s'est fait ciblé pour lancé le sort
-        @type: Joueur ou None si l'effet peut être fait au vide.
+        @type: Personnage ou None si l'effet peut être fait au vide.
         @case_cible_x: Coordonné x de la case ciblé
         @type: int
         @case_cible_y: Coordonné y de la case ciblé
@@ -812,7 +813,7 @@ class Niveau:
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
         @ciblesTraitees: La liste des cibles déjà traitées pour cet effet
-        @type: tableau de Joueur
+        @type: tableau de Personnage
         @prov_x: Coordonné x de la case d'origine de l'effet
         @type: int
         @prov_y: Coordonné y de la case d'origine de l'effet
@@ -860,7 +861,7 @@ class Niveau:
         @case_cible_y: Coordonné y de la case ciblé
         @type: int
         @lanceur: le lanceur de l'effet, None si le lanceur est sur prov_x;prov_y
-        @type: Joueur, ou None
+        @type: Personnage, ou None
 
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
@@ -905,7 +906,7 @@ class Niveau:
         @case_y: la coordonnée y de la case de départ de la recherche 
         @type: int
         @lanceur: le lanceur de la recherche
-        @type: Joueur
+        @type: Personnage
         @zone: la zone de recherche, optionel:si pas de zone donnée, cherche sur toutes la carte
         @type: Zone
         @etatRequisCibles: la liste des états requis sur les cibles, optionnel.
@@ -1087,7 +1088,7 @@ class Niveau:
         @case_cible_y: La coordonnée y à laquelle on veut accéder
         @type: int
         @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
-        @type: Joueur
+        @type: Personnage
 
         @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
 
