@@ -362,7 +362,7 @@ class EffetPropage(Effet):
         #Récupérations des joueurs respectant les critères du sort les plus proches, etat requis = pas temporaire
         joueursAppliquables = niveau.getJoueurslesPlusProches(joueurCaseEffet.posX,joueurCaseEffet.posY,joueurLanceur,self.zone,["!temporaire"],self.ciblesPossibles)
         if len(joueursAppliquables)>0:
-            joueurCaseEffet.lanceSort(self.sort,niveau, joueursAppliquables[0].posX, joueursAppliquables[0].posY,joueurLanceur)
+            self.sort.lance(joueurCaseEffet.posX,joueurCaseEffet.posY,niveau, joueursAppliquables[0].posX, joueursAppliquables[0].posY,joueurLanceur)
 
 class EffetEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -424,6 +424,40 @@ class EffetGlyphe(Effet):
         @type: **kwargs"""
         nouvelleGlyphe = Niveau.Glyphe(self.nom, self.sort, self.duree, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
         glypheID = niveau.poseGlyphe(nouvelleGlyphe)
+        
+class EffetPiege(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet pose un piège sur la grille de jeu."""
+    def __init__(self,zone_declenchement,sort_sort,str_nom, tuple_couleur, **kwargs):
+        """@summary: Initialise un effet posant un piège.
+        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @type: Zones.TypeZone
+        @sort_sort: le sort lancé sur la case centrale du piège
+        @type: Sort
+        @str_nom: le nom du piège
+        @type: string
+        @tuple_couleur: la couleur du piège
+        @type: tuple de couleur format RGB
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.zone_declenchement = zone_declenchement
+        self.sort = sort_sort
+        self.nom = str_nom
+        self.couleur = tuple_couleur
+        super(EffetPiege, self).__init__(**kwargs)
+
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @type: **kwargs"""
+        nouveauPiege = Niveau.Piege(self.nom, self.zone_declenchement,self.sort, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
+        piegeID = niveau.posePiege(nouveauPiege)
         
 class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -819,7 +853,7 @@ class EffetEntiteLanceSort(Effet):
         @type: **kwargs"""
         joueursLanceurs = niveau.getJoueurs(self.nomEntites)
         for joueur in joueursLanceurs:
-            joueur.lanceSort(self.sort,niveau, joueur.posX, joueur.posY)
+            self.sort.lance(joueur.posX,joueur.posY,niveau, joueur.posX, joueur.posY)
         
 class EffetEchangePlace(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -866,7 +900,7 @@ class EffetTp(Effet):
         @type: **kwargs"""
         niveau.structure[joueurLanceur.posY][joueurLanceur.posX].type = "v"
         niveau.structure[kwargs.get("case_cible_y")][kwargs.get("case_cible_x")].type = "j"
-        joueurLanceur.bouge(kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+        joueurLanceur.bouge(niveau,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
         
 
 class EffetInvoque(Effet):

@@ -71,3 +71,48 @@ class Sort:
         if joueurCible != None:
             self.compteLancerParTourParJoueur[joueurCible]+=1
         self.compteTourEntreDeux = 0
+
+    def lance(self, origine_x,origine_y,niveau, case_cible_x, case_cible_y, caraclanceur=None):
+        """@summary: Lance un sort
+        @origine_x: la pos x d'où est lancé le sort
+        @type: int
+        @origine_y: la pos y d'où est lancé le sort
+        @type: int
+        @niveau: La grille de jeu
+        @type: Niveau
+        @case_cible_x: La coordonnée x de la case cible du sort
+        @type: int
+        @case_cible_y: La coordonnée y de la case cible du sort
+        @type: int
+        @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
+        @type: Personnage (ou None pour prendre le lanceur)"""
+        
+        caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x,origine_y)
+        #Get toutes les cases dans la zone d'effet
+        joueurCible=niveau.getJoueurSur(case_cible_x,case_cible_y)
+        #Test si la case est bien dans la portée du sort
+        if self.APorte(caraclanceur.posX, caraclanceur.posY,case_cible_x,case_cible_y, caraclanceur.PO):
+            print caraclanceur.classe+" lance :"+self.nom
+            #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
+            res,explication,coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
+            if res == True:
+                #Lancer du sort
+                caraclanceur.PA -= coutPA
+                self.marquerLancer(joueurCible)
+                print caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)"
+                sestApplique = True
+                # Application des effets
+                for effet in self.effets:
+                    # Test si les effets sont dépendants les uns à la suite des autres
+                    if self.chaine == True:
+                        if sestApplique == True: # Si l'effet a été appliqué, on continue
+                            sestApplique = False
+                        else:                    # Sinon la chaîne d'effet est interrompue net.
+                            return None     
+                    sestApplique, cibles = niveau.lancerEffet(effet,caraclanceur.posX,caraclanceur.posY,self.nom, case_cible_x, case_cible_y,caraclanceur)          
+                    #Apres application d'un effet sur toutes les cibles:
+            else:
+                print explication
+        else:
+            print "Cible hors de porte"
+        niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables

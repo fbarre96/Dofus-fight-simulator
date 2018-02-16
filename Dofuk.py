@@ -259,7 +259,7 @@ def main():
     frameCaracs = LabelFrame(fenetre, text="Caracteristiques")
     # Sélection de classe
     labelClasse = Label(frameCaracs, text="Classe")
-    valeurClasse = (u"Xélor", u"Iop", u"Crâ")
+    valeurClasse = (u"Xélor", u"Iop", u"Crâ",u"Sram")
     varClasse = StringVar()
     listeClasse = Combobox(frameCaracs, textvariable = varClasse, \
         values = valeurClasse, state = 'readonly')

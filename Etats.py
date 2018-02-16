@@ -193,7 +193,7 @@ class EtatActiveSort(Etat):
         @niveau: La grille de jeu en cours
         @type: Niveau"""
         #print "Rafraichissement de active sort : "+personnage.classe+" lance "+self.sort.nom + " sur sa pose."
-        personnage.lanceSort(self.sort,niveau,personnage.posX,personnage.posY)
+        self.sort.lance(personnage.posX,personnage.posY,niveau,personnage.posX,personnage.posY)
 
 class EtatRedistribuerPer(Etat):
     """@summary: Classe décrivant un état qui redistribue en partie les dégâts subits autour du personnage endommagé"""
@@ -242,7 +242,8 @@ class EtatRedistribuerPer(Etat):
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        cibleAttaque.lanceSort(Sort.Sort("Redistribution",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle"), niveau, cibleAttaque.posX, cibleAttaque.posY)
+        s = Sort.Sort("Redistribution",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle")
+        s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatBoostPA(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de PA."""
@@ -695,7 +696,7 @@ class EtatLanceSortSiSubit(Etat):
         @type: Niveau
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        cibleAttaque.lanceSort(self.sort, niveau, cibleAttaque.posX, cibleAttaque.posY)
+        self.sort.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, cibleAttaque.posX, cibleAttaque.posY)
 
 class EtatEffetFinTour(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur termine son tour."""
@@ -953,7 +954,8 @@ class EtatContre(Etat):
         if cibleAttaque.team != attaquant.team:
             distance = abs(attaquant.posX-cibleAttaque.posX)+abs(attaquant.posY-cibleAttaque.posY)
             if distance == 1:
-                cibleAttaque.lanceSort(Sort.Sort("Contre",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle"), niveau, self.posX, self.posY)
+                s=Sort.Sort("Contre",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle")
+                s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, self.posX, self.posY)
 
 class EtatRepousserSiSubit(Etat):
     """@summary: Classe décrivant un état qui repousse l'attaquant quand le porteur se fait attaquer."""

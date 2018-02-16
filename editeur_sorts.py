@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
-from zones import *
-from classes import Personnage
-from classes import Effet
+import Zones
+import Personnages
+import Effets
 import re
 import sys, locale
 def TrouveClassesEffets():
@@ -9,7 +9,7 @@ def TrouveClassesEffets():
     findRegs = []
     found = False
     regEffet = r"class\s+Effet(\w+)"
-    with open("classes.py") as file:
+    with open("Effets.py") as file:
         for line in file:
             if found:
                 if "def __init__" in line:
@@ -28,7 +28,7 @@ def TrouveClassesEtats():
     findRegs = []
     found = False
     regEffet = r"class\s+Etat(\w+)"
-    with open("classes.py") as file:
+    with open("Etats.py") as file:
         for line in file:
             if found:
                 if "def __init__" in line:
@@ -44,7 +44,7 @@ def TrouveClassesEtats():
 def TrouveClassesZones():
     classesZones = []
     regEffet = r"class\s+TypeZone(\w+)"
-    with open("zones.py") as file:
+    with open("Zones.py") as file:
         for line in file:
             classesZones.extend(re.findall(regEffet, line))
     return classesZones

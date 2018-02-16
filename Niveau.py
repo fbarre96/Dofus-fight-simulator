@@ -83,6 +83,47 @@ class Glyphe:
         """@summary: Test si la glyphe est encore active
             @return: Retourne un booléen qui vaut vrai si la glyphe est encore active, faux sinon"""
         return self.duree > 0
+class Piege:
+    """@summary: Classe décrivant un piège dans le jeu Dofus.
+     Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
+    def __init__(self,nomSort, zone_declenchement,sortMono, centre_x, centre_y, lanceur, couleur):
+        """@summary: Initialise une glyphe.
+        @nomSort: le nom du sort à l'origine de la glyphe
+        @type: string
+        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @type: Zones.TypeZone
+        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
+        @type: Sort
+        @centre_x: la coordonnée x du centre de la zone de la glyphe.
+        @type: int
+        @centre_y: la coordonnée y du centre de la zone de la glyphe.
+        @type: int
+        @lanceur: le joueur ayant posé la glyphe.
+        @type: Personnage
+        @couleur: la coordonnée x du centre de la zone de la glyphe.
+        @type: tuple (R,G,B)"""
+        self.zone_declenchement = zone_declenchement
+        self.nomSort = nomSort
+        self.sortMono = sortMono
+        self.centre_x = centre_x
+        self.centre_y = centre_y
+        self.lanceur = lanceur
+        self.couleur = couleur
+
+    def aPorteDeclenchement(self,x,y):
+        return self.zone_declenchement.testCaseEstDedans([self.centre_x,self.centre_y],[x,y],None)
+
+    def explose(self,niveau):
+        i = 0
+        nbPieges = len(niveau.pieges)
+        while i < nbPieges:
+            if niveau.pieges[i] == self:
+                del niveau.pieges[i]
+                i-=1
+            i+=1
+            nbPieges = len(niveau.pieges)
+        self.sortMono.lance(self.centre_x, self.centre_y,niveau, self.centre_x, self.centre_y,self.lanceur)
+
 
 class Case:
     """@summary: Classe décrivant une case de la grille du niveau."""
@@ -123,6 +164,10 @@ class Niveau:
         self.tourDe = self.joueurs[self.tourIndex]
         #liste des glyphes
         self.glyphes=[]
+        #liste des pièges
+        self.pieges=[]
+        #File d'attente pour ordre explosion piège
+        self.fifoExploPiege = []
         self.fenetre = fenetre
         self.myfont = font
         #Generer la carte
@@ -150,7 +195,7 @@ class Niveau:
                 self.structure[joueur.posY][joueur.posX].type = "v"
                 for case in cases:
                     #Le joueur se déplace case par case et non pas en téléportation
-                    joueur.bouge(case[0],case[1])
+                    joueur.bouge(self,case[0],case[1])
                 self.structure[joueur.posY][joueur.posX].type = "j"
                 print "PA : "+str(joueur.PA)
                 print "PM : "+str(joueur.PM)
@@ -314,7 +359,15 @@ class Niveau:
             #On recalcule la taille du tableau
             longueurTab = len(self.glyphes)
             i+=1
-    
+
+    def declenchePieges(self, nouveauxPieges):
+        nb_Pieges=len(nouveauxPieges)
+        while nb_Pieges>0:
+            nouveauxPieges[0].explose(self)
+            del nouveauxPieges[0]
+            nb_Pieges=len(nouveauxPieges)
+
+
     def finTour(self):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
         #On annonce au joueur la fin de son tour
@@ -492,7 +545,7 @@ class Niveau:
 
         #Déplacement du joueur
         self.structure[joueurCible.posY][joueurCible.posX].type = "v"
-        joueurCible.bouge(posPouX,posPouY)
+        joueurCible.bouge(self,posPouX,posPouY)
         self.structure[joueurCible.posY][joueurCible.posX].type = "j"
         #Calcul des dégâts
         R = 6
@@ -609,12 +662,7 @@ class Niveau:
         @type: booléen"""
         self.structure[posAtteinte[1]][posAtteinte[0]].type = "j"
         self.structure[joueurBougeant.posY][joueurBougeant.posX].type = "v"
-        if AjouteHistorique:
-            #La fonction bouge ajoute automatiquement à l'historique
-            joueurBougeant.bouge(posAtteinte[0], posAtteinte[1])
-        else:
-            joueurBougeant.posX = posAtteinte[0]
-            joueurBougeant.posY = posAtteinte[1]
+        joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
 
     def __boostApresTF(self,nomSort,reelLanceur):
         """@summary: Tous les boost après un téléfrag sont généré ici
@@ -644,7 +692,8 @@ class Niveau:
             if etat.nom.startswith("Boost Synchro"):
                 nbTF+=1
         #Explosion
-        synchro.lanceSort(Sort.Sort("Fin_des_temps",0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")], 99,99,0,0,"cercle"),self,synchro.posX,synchro.posY)
+        fin_des_temps = Sort.Sort(u"Fin des temps",0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")], 99,99,0,0,"cercle")
+        fin_des_temps.lance(synchro.posX,synchro.posY,self,synchro.posX,synchro.posY)
         self.tue(synchro)
 
     def __glypheActiveTF(self,reelLanceur,nomSort):
@@ -719,9 +768,9 @@ class Niveau:
         @type: booléen
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen"""
-        joueurASwap.bouge(joueurBougeant.posX, joueurBougeant.posY)
+        joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY)
         if AjouteHistorique:
-            joueurBougeant.bouge(posAtteinte[0], posAtteinte[1])
+            joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1])
         else:
             joueurBougeant.posX = posAtteinte[0]
             joueurBougeant.posY = posAtteinte[1]
@@ -953,7 +1002,6 @@ class Niveau:
         team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
         prevision = pygame.image.load(constantes.image_prevision).convert()
         zone = pygame.image.load(constantes.image_zone).convert()
-        glyphe_ou_piege = pygame.image.load(constantes.image_team_1).convert()
         #On parcourt la liste du niveau
         num_ligne = 0
         tab_cases_previ = []
@@ -975,7 +1023,9 @@ class Niveau:
                         if glyphe.actif():
                             if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
                                 pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
-
+                    for piege in self.pieges:
+                        if piege.aPorteDeclenchement(num_case, num_ligne):
+                            pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     #Afficher previsualation portee du sort selectionne
                     if sortSelectionne != None:
                         #Previsu de la porte du sort, une case teste par tour de double boucle
@@ -1049,14 +1099,21 @@ class Niveau:
 
     def poseGlyphe(self,glyphe):
         """@summary: Méthode permettant de poser une glyphe
-        @glyphe: La glyphe à ajouté au niveau
+        @glyphe: La glyphe à ajouter au niveau
         @type: Glyphe
 
         @return: L'indice d'ajout de la glype"""
         self.glyphes.append(glyphe)
         return len(self.glyphes)-1
 
+    def posePiege(self,piege):
+        """@summary: Méthode permettant de poser un piège
+        @piege: Le piège à ajouter au niveau
+        @type: Glyphe
 
+        @return: L'indice d'ajout du piège"""
+        self.pieges.append(piege)
+        return len(self.pieges)-1
 
     def getVoisins(self,x,y):
         """@summary: Retourne les cases vides existantes adjacentes à une case donnée

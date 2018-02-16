@@ -146,6 +146,7 @@ class Personnage(object):
             retourParadoxe = Sort.Sort(u"Retour Paradoxe",0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],99,99,0,0,"cercle")
             activationInstabiliteTemporelle = Sort.Sort(u"Activation Instabilité Temporelle",0,0,3,[Effets.EffetTeleportePosPrec(1)], 99,99,0,0,"cercle")
             activationParadoxeTemporel = Sort.Sort(u"Paradoxe Temporel", 0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues=u"Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],99,99,0,0,"cercle")
+            activationDesynchro = Sort.Sort(u"Activation Désynchronisation",0,0,64,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))], 99,99,0,0,"cercle")
             sorts.append(Sort.Sort(u"Ralentissement",2,1,6,[Effets.EffetDegats(8,9,"eau"),Effets.EffetRetPA(1),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],4,2,0,1,"cercle",description=u"Occasionne des dommages Eau et retire 1 PA à la cible. Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté."))
             sorts.append(Sort.Sort(u"Souvenir",4,1,6,[Effets.EffetDegats(26,30,"terre"),Effets.EffetTeleportePosPrec(1)], 3,2,0,1,"ligne",description=u"Occasionne des dommages Terre et téléporte la cible à sa position précédente."))
             sorts.append(Sort.Sort(u"Aiguille",3,1,8,[Effets.EffetDegats(22,26,"feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,1,"cercle", description=u"Occasionne des dommages Feu et retire 1 PA à la cible. Retire des PA supplémentaires aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté. Retire l'état Téléfrag."))
@@ -177,6 +178,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Paradoxe Temporel",3,0,0,[Effets.EffetEntiteLanceSort(u"Complice|Cadran de Xélor",activationParadoxeTemporel)], 1,1,2,0,"cercle",description=u"Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran). Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles. Fixe le temps de relance de Cadran de Xélor et de Complice à 1."))
             sorts.append(Sort.Sort(u"Faille Temporelle",3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles=u"Cadran de Xélor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")], 1,1,3,0,"cercle",description=u"Le lanceur échange sa position avec celle du Complice (ou du Cadran). À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente. La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle."))
             sorts.append(Sort.Sort(u"Synchro",2,1,4,[Effets.EffetInvoque(u"Synchro",cibles_possibles="",faire_au_vide=True)], 1,1,3,0,"cercle",description=u"Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour. La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag. Elle n'est pas affectée par les effets de Rembobinage. À partir du tour suivant son lancer, son invocateur perd 1 PA."))
+            sorts.append(Sort.Sort(u"Désynchronisation",2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,u"Désynchronisation",(255,0,255),faire_au_vide=True)],2,2,0,1, "cercle", description=u"Pose un piège qui téléporte symétriquement les entités proches."))
             sorts.append(Sort.Sort(u"Contre",2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)], 1,1,5,0,"cercle", description=u"Renvoie une partie des dommages subis en mêlée à l'attaquant."))
             sorts.append(Sort.Sort(u"Bouclier Temporel",3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur",""))], 1,1,3,0,"cercle",description=u"Si la cible subit des dommages, son attaquant revient à sa position précédente."))
             sorts.append(Sort.Sort(u"Fuite",1,0,5,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))], 4,2,0,0,"cercle",description=u"Téléporte la cible sur sa position précédente au début du prochain tour du lanceur."))
@@ -291,19 +293,30 @@ class Personnage(object):
             sorts.append(fleche_fulminante)
             sorts.append(Sort.Sort(u"Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostDommage("Maitrise de l'arc",0,3,60))],1,1,5,1,"cercle",description=u"Augmente les dommages."))
             sorts.append(Sort.Sort(u"Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Sentinelle",1,1,-100))],1,1,3,0,"cercle",description=u"Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
+        elif classe==u"Sram":
+            activationPiegeSournois = Sort.Sort(u"Activation Piège sournois",0,0,64,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(1))], 99,99,0,0,"cercle")
+            activationPiegeRepulsif = Sort.Sort(u"Activation Piège répulsifs",0,0,64,[Effets.EffetRepousser(2,zone=Zones.TypeZoneCercle(1))], 99,99,0,0,"cercle")
+            sorts.append(Sort.Sort(u"Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,u"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
+            sorts.append(Sort.Sort(u"Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,u"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort(u"Cawotte",4,1,6,[Effets.EffetInvoque(u"Cawotte",cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description=u"Invoque une Cawotte")) 
         
         return sorts
 
-    def bouge(self, x,y):
+    def bouge(self, niveau, x,y, ajouteHistorique=True):
         """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
         @x: la position d'arrivée en x.
         @type: int
         @x: la position d'arrivée en y.
         @type: int"""
-        self.historiqueDeplacement.append([self.posX,self.posY,2])
+        if ajouteHistorique:
+            self.historiqueDeplacement.append([self.posX,self.posY,2])
         self.posX = x
         self.posY = y
+        piegesADeclenche = []
+        for piege in niveau.pieges:
+            if piege.aPorteDeclenchement(x,y) and piege not in piegesADeclenche:
+                piegesADeclenche.append(piege)
+        niveau.declenchePieges(piegesADeclenche)
 
 
     def rafraichirHistoriqueDeplacement(self):
@@ -488,49 +501,6 @@ class Personnage(object):
         for i in xrange(abs(n)):
             self.rafraichirEtats(niveau,False)
 
-    def lanceSort(self, sort,niveau, case_cible_x, case_cible_y, caraclanceur=None):
-        """@summary: Lance un sort
-        @sort: le sort à lancer
-        @type: Sort
-        @niveau: La grille de jeu
-        @type: Niveau
-        @case_cible_x: La coordonnée x de la case cible du sort
-        @type: int
-        @case_cible_y: La coordonnée y de la case cible du sort
-        @type: int
-        @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
-        @type: Personnage (ou None pour prendre le lanceur)"""
-        
-        caraclanceur = caraclanceur if caraclanceur != None else self
-        #Get toutes les cases dans la zone d'effet
-        joueurCible=niveau.getJoueurSur(case_cible_x,case_cible_y)
-        #Test si la case est bien dans la portée du sort
-        if sort.APorte(caraclanceur.posX, caraclanceur.posY,case_cible_x,case_cible_y, caraclanceur.PO):
-            print caraclanceur.classe+" lance :"+sort.nom
-            #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
-            res,explication,coutPA = sort.estLancable(niveau, caraclanceur, joueurCible)
-            if res == True:
-                #Lancer du sort
-                caraclanceur.PA -= coutPA
-                sort.marquerLancer(joueurCible)
-                print caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)"
-                sestApplique = True
-                # Application des effets
-                for effet in sort.effets:
-                    # Test si les effets sont dépendants les uns à la suite des autres
-                    if sort.chaine == True:
-                        if sestApplique == True: # Si l'effet a été appliqué, on continue
-                            sestApplique = False
-                        else:                    # Sinon la chaîne d'effet est interrompue net.
-                            return None     
-                    sestApplique, cibles = niveau.lancerEffet(effet,caraclanceur.posX,caraclanceur.posY,sort.nom, case_cible_x, case_cible_y,caraclanceur)          
-                    #Apres application d'un effet sur toutes les cibles:
-            else:
-                print explication
-        else:
-            print "Cible hors de porte"
-        niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
-
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un Personnage d'effectuer ses actions.
                      Dans la classe Personnage, c'est contrôle par utilisateur clavier/souris.
@@ -575,7 +545,7 @@ class Personnage(object):
                     if sortSelectionne != None:
                         case_cible_x = mouse_xy[0]/constantes.taille_sprite
                         case_cible_y = mouse_xy[1]/constantes.taille_sprite
-                        niveau.tourDe.lanceSort(sortSelectionne,niveau, case_cible_x,case_cible_y)
+                        sortSelectionne.lance(niveau.tourDe.posX,niveau.tourDe.posY,niveau, case_cible_x,case_cible_y)
                         sortSelectionne = None
                     #Aucun sort n'est selectionne: on pm
                     else:
@@ -652,7 +622,7 @@ class PersonnageSansPM(Personnage):
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
-        niveau.tourDe.lanceSort(self.sorts[0], niveau, self.posX, self.posY)
+        self.sorts[0].lance(niveau.tourDe.posX,niveau.tourDe.posY, niveau, self.posX, self.posY)
         niveau.finTour()
 # La liste des invocations disponibles.
 INVOCS = {
