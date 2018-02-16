@@ -46,37 +46,37 @@ class Effet(object):
         if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles):
             #Test si la cible est exclue
             if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues):
-                #print "DEBUG : Invalide : Cible Exclue"
+                print "DEBUG : Invalide : Cible Exclue"
                 return False
             #Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
-                #print "DEBUG : Invalide : Cible deja traitee"
+                print "DEBUG : Invalide : Cible deja traitee"
                 return False
             #Test si un état est requis sur la cible direct et qu'une cible direct existe
             if (joueurCibleDirect == None and len(self.etatRequisCibleDirect)!=0):
-                #print "DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct ("+str(self.etatRequisCibleDirect)+")"
+                print "DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct ("+str(self.etatRequisCibleDirect)+")"
                 return False
             #Test si une cible direct n'existe pas si l'effet doit être jouée
             if (joueurCibleDirect == None and not self.faireAuVide):
-                #print "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
+                print "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
                 return False
             #Test si la cible est une case vide et que l'effet ne nécessite pas d'êtat pour la cible
             if (joueurCible == None and len(self.etatRequisCibles)!=0):
-                #print "DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible"
+                print "DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible"
                 return False
             #Test si la cible n'est pas une case vide qu'il a bien les états requis
             if joueurCible != None:
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
-                    #print "DEBUG : Invalide :etatRequis pour cible non present"
+                    print "DEBUG : Invalide :etatRequis pour cible non present"
                     return False
             #Test si la cible firect n'est pas une case vide qu'il a bien les états requis
             if joueurCibleDirect != None:
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
-                    #print "DEBUG : Invalide :etatRequis pour cible direct non present"
+                    print "DEBUG : Invalide :etatRequis pour cible direct non present"
                     return False
             #La cible a passé tous les tests
             return True
-        #print u"DEBUG : Invalide : Cible "+joueurCible.classe +u" pas dans la liste des cibles possibles ("+unicode(self.ciblesPossibles)+u")"
+        print u"DEBUG : Invalide : Cible "+joueurCible.classe +u" pas dans la liste des cibles possibles ("+unicode(self.ciblesPossibles)+u")"
         return False
 
     def APorteZone(self, departZone_x,departZone_y, testDansZone_x,testDansZone_y, j_x, j_y):
@@ -516,6 +516,7 @@ class EffetAttire(Effet):
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
+
         self.nbCase = int_nbCase
         super(EffetAttire, self).__init__(**kwargs)
 
@@ -529,11 +530,14 @@ class EffetAttire(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        if joueurLanceur != None and joueurCaseEffet != None:
-            if (joueurCaseEffet.posX == joueurLanceur.posX and joueurCaseEffet.posY == joueurLanceur.posY):
-                return None
+
+        #Test attireur et attiré sur la même case
         if joueurCaseEffet != None:
-            niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur)
+            if (joueurCaseEffet.posX == kwargs.get("prov_x") and joueurCaseEffet.posY == kwargs.get("prov_y")):
+                    return None
+
+        if joueurCaseEffet != None:
+            niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur,kwargs.get("prov_x"), kwargs.get("prov_y"))
 
 class EffetAttireAttaquant(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

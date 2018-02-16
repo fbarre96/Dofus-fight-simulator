@@ -91,7 +91,7 @@ class Sort:
         #Get toutes les cases dans la zone d'effet
         joueurCible=niveau.getJoueurSur(case_cible_x,case_cible_y)
         #Test si la case est bien dans la portée du sort
-        if self.APorte(caraclanceur.posX, caraclanceur.posY,case_cible_x,case_cible_y, caraclanceur.PO):
+        if self.APorte(origine_x, origine_y,case_cible_x,case_cible_y, caraclanceur.PO):
             print caraclanceur.classe+" lance :"+self.nom
             #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
             res,explication,coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
@@ -103,13 +103,14 @@ class Sort:
                 sestApplique = True
                 # Application des effets
                 for effet in self.effets:
+
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine == True:
                         if sestApplique == True: # Si l'effet a été appliqué, on continue
                             sestApplique = False
                         else:                    # Sinon la chaîne d'effet est interrompue net.
                             return None     
-                    sestApplique, cibles = niveau.lancerEffet(effet,caraclanceur.posX,caraclanceur.posY,self.nom, case_cible_x, case_cible_y,caraclanceur)          
+                    sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur)          
                     #Apres application d'un effet sur toutes les cibles:
             else:
                 print explication

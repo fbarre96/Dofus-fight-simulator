@@ -294,8 +294,8 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostDommage("Maitrise de l'arc",0,3,60))],1,1,5,1,"cercle",description=u"Augmente les dommages."))
             sorts.append(Sort.Sort(u"Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Sentinelle",1,1,-100))],1,1,3,0,"cercle",description=u"Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
         elif classe==u"Sram":
-            activationPiegeSournois = Sort.Sort(u"Activation Piège sournois",0,0,64,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(1))], 99,99,0,0,"cercle")
-            activationPiegeRepulsif = Sort.Sort(u"Activation Piège répulsifs",0,0,64,[Effets.EffetRepousser(2,zone=Zones.TypeZoneCercle(1))], 99,99,0,0,"cercle")
+            activationPiegeSournois = Sort.Sort(u"Activation Piège sournois",0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)], 99,99,0,0,"cercle")
+            activationPiegeRepulsif = Sort.Sort(u"Activation Piège répulsifs",0,0,0,[Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)], 99,99,0,0,"cercle")
             sorts.append(Sort.Sort(u"Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,u"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort(u"Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,u"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort(u"Cawotte",4,1,6,[Effets.EffetInvoque(u"Cawotte",cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description=u"Invoque une Cawotte")) 

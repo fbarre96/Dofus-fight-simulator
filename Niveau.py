@@ -122,7 +122,7 @@ class Piege:
                 i-=1
             i+=1
             nbPieges = len(niveau.pieges)
-        self.sortMono.lance(self.centre_x, self.centre_y,niveau, self.centre_x, self.centre_y,self.lanceur)
+        self.sortMono.lance(self.centre_x, self.centre_y, niveau,self.centre_x, self.centre_y, self.lanceur)
 
 
 class Case:
@@ -367,7 +367,6 @@ class Niveau:
             del nouveauxPieges[0]
             nb_Pieges=len(nouveauxPieges)
 
-
     def finTour(self):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
         #On annonce au joueur la fin de son tour
@@ -498,7 +497,7 @@ class Niveau:
                     tab_cases_zone.append(case)
         return tab_cases_zone    
 
-    def __determinerSensPousser(self,joueurCible,depuisX,depuisY):
+    def __determinerSensPousser(self,cible,depuisX,depuisY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
@@ -510,7 +509,7 @@ class Niveau:
         @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
         
         #Si le depuis est sur la case de la cible, on calcul la direction avec le tourDe
-        if depuisY == joueurCible.posY and depuisX == joueurCible.posX:
+        if depuisY == cible[1] and depuisX == cible[0]:
             depuisY = self.tourDe.posY
             depuisX = self.tourDe.posX
         #Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
@@ -519,10 +518,10 @@ class Niveau:
         if depuisX == None:
             depuisX = self.tourDe.posX
         #Calcul de la direction de la poussée
-        horizontal = not (joueurCible.posX == depuisX)
-        if horizontal and joueurCible.posX > depuisX:
+        horizontal = not (cible[0] == depuisX)
+        if horizontal and cible[0] > depuisX:
             positif = 1
-        elif (not horizontal) and joueurCible.posY > depuisY:
+        elif (not horizontal) and cible[1]> depuisY:
             positif = 1
         else:
             positif = -1 
@@ -564,25 +563,6 @@ class Niveau:
                 print joueurCible.classe+" perd "+ str(total) + "PV (do pou)"
                 joueurCible.subit(pousseur,self,total,"doPou")
 
-    def pousser(self, nbCases, joueurCible,pousseur,doDeg=True,depuisX=None,depuisY=None):
-        """@summary: Fonction à appeler pour pousser un joueur.
-        @nbCases: le nombre de case dont il faut pousser la cible
-        @type: int
-        @joueurCible: Le joueur qui se fait pousser
-        @type: Personnage
-        @pousseur: Le joueur qui va pousser
-        @type: Personnage
-        @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
-        @type: booléen, True pas défaut
-        @depuisX: la coordonnée x depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
-        @type: int
-        @depuisY: la coordonnée y depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
-        @type: int"""
-        horizontal,positif = self.__determinerSensPousser(joueurCible,depuisX,depuisY)
-        if horizontal != None:
-            posPouX,posPouY,D = self.__calculerArrivePousser(joueurCible, nbCases, int(horizontal), positif)
-            self.__effectuerPousser(joueurCible,doDeg,posPouX,posPouY,D,pousseur)
-        
     def __calculerArrivePousser(self, joueurCible, nbCases, horizontal, positif):
         """@summary: Fonction à appeler pour pousser un joueur.
         @joueurCible: Le joueur qui se fait pousser
@@ -625,7 +605,28 @@ class Niveau:
                 _posPouY = posPouY
         return posPouX,posPouY,D
 
-    def attire(self, nbCases, joueurCible, attireur):
+    def pousser(self, nbCases, joueurCible,pousseur,doDeg=True,depuisX=None,depuisY=None):
+        """@summary: Fonction à appeler pour pousser un joueur.
+        @nbCases: le nombre de case dont il faut pousser la cible
+        @type: int
+        @joueurCible: Le joueur qui se fait pousser
+        @type: Personnage
+        @pousseur: Le joueur qui va pousser
+        @type: Personnage
+        @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
+        @type: booléen, True pas défaut
+        @depuisX: la coordonnée x depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
+        @type: int
+        @depuisY: la coordonnée y depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
+        @type: int"""
+        if joueurCible != None:
+            cible = [joueurCible.posX, joueurCible.posY]
+            horizontal,positif = self.__determinerSensPousser(cible,depuisX,depuisY)
+            if horizontal != None:
+                posPouX,posPouY,D = self.__calculerArrivePousser(joueurCible, nbCases, int(horizontal), positif)
+                self.__effectuerPousser(joueurCible,doDeg,posPouX,posPouY,D,pousseur)
+        
+    def attire(self, nbCases, joueurCible, attireur,depuisX=None,depuisY=None):
         """@summary: Fonction à appeler pour attirer un joueur.
         @nbCases: le nombre de case dont il faut attirer la cible
         @type: int
@@ -634,14 +635,17 @@ class Niveau:
         @attireur: Le joueur qui va attirer
         @type: Personnage"""
 
-        #Calcul du sens de l'attirence
-        distanceX = abs(joueurCible.posX - attireur.posX)
-        distanceY = abs(joueurCible.posY - attireur.posY)
+        #Calcul du sens de l'attirance
+        cible = [joueurCible.posX, joueurCible.posY]
+        attireX = depuisX if depuisX is not None else attireur.posX
+        attireY = depuisY if depuisY is not None else attireur.posY
+        distanceX = abs(joueurCible.posX - attireX)
+        distanceY = abs(joueurCible.posY - attireY)
         horizontal = distanceX > distanceY
         if horizontal:
-            positif = joueurCible.posX > attireur.posX
+            positif = cible[0] > attireX
         else:
-            positif = joueurCible.posY > attireur.posY
+            positif = cible[1] > attireY
         #Pour attirer, on peut pousser la cible vers non et ne pas compter les dégâts.
         if horizontal and positif:
             self.pousser(nbCases,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
@@ -879,6 +883,7 @@ class Niveau:
             joueurCaseEffet = self.getJoueurSur(case_x, case_y) # récupération du joueur sur la case
             #Test si un joeuur est sur la case
             if joueurCaseEffet != None:
+
                 #Si le joueur sur la case est une cible valide
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet,joueurCibleDirect,ciblesTraitees):
                     #On appliquer l'effet
@@ -889,6 +894,7 @@ class Niveau:
                     if effet.consommeEtat:
                         joueurCaseEffet.retirerEtats(effet.etatRequisCibleDirect)
                         joueurCaseEffet.retirerEtats(effet.etatRequisCibles)
+
             else:
                 if effet.faireAuVide:
                     effet.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
