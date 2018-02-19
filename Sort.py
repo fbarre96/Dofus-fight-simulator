@@ -103,7 +103,6 @@ class Sort:
                 sestApplique = True
                 # Application des effets
                 for effet in self.effets:
-
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine == True:
                         if sestApplique == True: # Si l'effet a été appliqué, on continue
@@ -116,4 +115,5 @@ class Sort:
                 print explication
         else:
             print "Cible hors de porte"
+        niveau.depileEffets()
         niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables

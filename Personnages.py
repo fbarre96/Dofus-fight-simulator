@@ -195,7 +195,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Tannée",4,1,7,[Effets.EffetDegats(30,34,"air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",description=u"Occasionne des dommages Air en zone et retire des PM."))
             sorts.append(Sort.Sort(u"Bond",5,1,6,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")], 1,1,2,0,"cercle",description=u"Téléporte sur la case ciblée. Augmente les dommages reçus par les ennemis situés sur les cases adjacentes."))
             sorts.append(Sort.Sort(u"Détermination",2,0,0,[Effets.EffetEtat(Etats.Etat("Indeplacable",0,1)),Effets.EffetEtat(Etats.EtatModDegPer("Determination",0,1,75))], 1,1,2,0,"cercle",description="Fixe l'état Indéplaçable et réduit 25%% des dommages subis pendant 1 tour. Ne peut pas être désenvoûté."))
-            sorts.append(Sort.Sort(u"Intimidation",2,1,2,[Effets.EffetDegats(11,13,"terre"),Effets.EffetRepousser(4)], 3,2,0,0,"ligne",description=u"Occasionne des dommages Neutre sur les ennemis et repousse la cible."))
+            sorts.append(Sort.Sort(u"Intimidation",2,1,2,[Effets.EffetDegats(11,13,"terre"),Effets.EffetPousser(4)], 3,2,0,0,"ligne",description=u"Occasionne des dommages Neutre sur les ennemis et repousse la cible."))
             sorts.append(Sort.Sort(u"Menace",3,0,3,[Effets.EffetDegats(26,28,"eau",cibles_exclues="Lanceur"),Effets.EffetAttire(2,cibles_exclues="Lanceur")], 3,2,0,0,"cercle",description=u"Occasionne des dommages Eau et attire la cible. Le lanceur gagne des points de bouclier."))
             sorts.append(Sort.Sort(u"Déferlement",3,0,5,[Effets.EffetDegats(28,32,"eau",cibles_exclues="Lanceur"),Effets.EffetAttireAttaquant(4,cibles_exclues="Lanceur")], 3,2,0,0,"ligne",description=u"Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible. Le lanceur gagne des points de bouclier."))
             sorts.append(Sort.Sort(u"Conquête",3,1,6,[Effets.EffetInvoque(u"Stratège Iop",cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))], 1,1,3,0,"ligne",description=u"Invoque un épouvantail qui redistribue à proximité (2 cases) 50%% des dommages qu'il subit."))
@@ -212,7 +212,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Couper",3,1,4,[Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3))],2,2,0,1,"ligne",description=u"Occasionne des dommages Feu et retire des PM."))
             sorts.append(Sort.Sort(u"Fracture",4,1,4,[Effets.EffetDegats(26,30,"air",zone=Zones.TypeZoneLigneJusque(0))],2,2,0,0,"ligne",description=u"Occasionne des dommages Air jusqu'à la cellule ciblée. Applique un malus d'Érosion."))
             sorts.append(Sort.Sort(u"Friction",2,0,5,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99)),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Friction",0,2,activationFriction))],1,1,3,0,"cercle",description=u"La cible se rapproche de l'attaquant si elle reçoit des dommages issus de sorts. Nécessite d'être aligné avec la cible."))
-            sorts.append(Sort.Sort(u"Coup pour coup",2,1,3,[Effets.EffetRepousser(2),Effets.EffetEtat(Etats.EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description=u"La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
+            sorts.append(Sort.Sort(u"Coup pour coup",2,1,3,[Effets.EffetPousser(2),Effets.EffetEtat(Etats.EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description=u"La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
             sorts.append(Sort.Sort(u"Duel",3,1,1,[],1,1,4,0,"cercle",description=u"Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invulnérable aux dommages à distance. Ne fonctionne que si lancé sur un ennemi."))
             sorts.append(Sort.Sort(u"Emprise",3,1,1,[],1,1,4,0,"cercle",description=u"Retire tous les PM de l'ennemi ciblé mais le rend invulnérable."))
             sorts.append(Sort.Sort(u"Épée du Jugement",4,1,5,[Effets.EffetDegats(20,28,"air"),Effets.EffetVolDeVie(10,12,"feu")],3,2,0,0,"cercle",description=u"Occasionne des dommages Air et vole de la vie dans l'élément Feu sans ligne de vue."))
@@ -243,7 +243,7 @@ class Personnage(object):
         elif classe==u"Crâ":
             sorts.append(Sort.Sort(u"Flèche Magique",3,1,12,[Effets.EffetDegats(19,21,"air"),Effets.EffetEtat(Etats.EtatBoostPO("Fleche Magique",1,1,-2)),Effets.EffetEtatSelf(Etats.EtatBoostPO("Fleche Magique",0,1,2))],3,2,0,1,"cercle",description=u"Occasionne des dommages Air et vole la portée de la cible."))
             sorts.append(Sort.Sort(u"Flèche de Concentration",3,3,8,[Effets.EffetDegats(22,26,"air",zone=Zones.TypeZoneCroix(3)),Effets.EffetAttireAttaquant(1,zone=Zones.TypeZoneCroix(3))],2,1,0,1,"cercle",description=u"Occasionne des dommages Air et attire vers la cible."))
-            sorts.append(Sort.Sort(u"Flèche de Recul",3,1,8,[Effets.EffetDegats(25,28,"air"),Effets.EffetRepousser(4)],2,1,0,0,"ligne",description=u"Occasionne des dommages Air aux ennemis et pousse la cible."))
+            sorts.append(Sort.Sort(u"Flèche de Recul",3,1,8,[Effets.EffetDegats(25,28,"air"),Effets.EffetPousser(4)],2,1,0,0,"ligne",description=u"Occasionne des dommages Air aux ennemis et pousse la cible."))
             sorts.append(Sort.Sort(u"Flèche Érosive",3,1,3,[Effets.EffetDegats(25,29,"terre")],3,2,0,1,"ligne",description=u"Occasionne des dommages Terre et applique un malus d'Érosion."))
             sorts.append(Sort.Sort(u"Flèche de Dispersion",3,1,12,[Effets.EffetPousser(2,zone=Zones.TypeZoneCroix(2),faire_au_vide=True)],1,1,2,1,"cercle",description=u"Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités."))
             sorts.append(Sort.Sort(u"Représailles",4,2,5,[Effets.EffetEtat(Etats.EtatBoostPM("Immobilise",1,1,-100)),Effets.EffetEtat(Etats.Etat("Pesanteur",1,1))],1,1,5,0,"ligne",description=u"Immobilise la cible."))
@@ -260,7 +260,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Tir Critique",2,0,6,[Effets.EffetEtat(Etats.Etat("Tir_critique",0,4))],1,1,5,1,"cercle",description=u"Augmente la probabilité de faire un coup critique."))
             sorts.append(Sort.Sort(u"Balise de Rappel",2,1,5,[Effets.EffetInvoque(u"Balise de rappel",cibles_possibles="",faire_au_vide=True)],1,1,2,0,"cercle",description=u"Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour)."))
             sorts.append(Sort.Sort(u"Flèche d'Immobilisation",2,1,6,[Effets.EffetDegats(10,11,"eau"),Effets.EffetEtat(Etats.EtatBoostPM("Fleche_d_immobilisation",1,1,-1)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Fleche_d_immobilisation",0,1,1))],4,2,0,1,"cercle",description=u"Occasionne des dommages Eau et vole des PM à la cible."))
-            sorts.append(Sort.Sort(u"Flèche Assaillante",3,2,6,[Effets.EffetDegats(33,37,"eau",cibles_possibles="Ennemis"),Effets.EffetRepousser(1,cibles_possibles="Ennemis"),Effets.EffetAttireAttaquant(1,cibles_possibles="Allies")],3,2,0,1,"ligne",description=u"Occasionne des dommages Eau sur les ennemis et le lanceur recule de 1 case. Sur un allié : rapproche le lanceur de 1 case."))
+            sorts.append(Sort.Sort(u"Flèche Assaillante",3,2,6,[Effets.EffetDegats(33,37,"eau",cibles_possibles="Ennemis"),Effets.EffetPousser(1,cibles_possibles="Ennemis"),Effets.EffetAttireAttaquant(1,cibles_possibles="Allies")],3,2,0,1,"ligne",description=u"Occasionne des dommages Eau sur les ennemis et le lanceur recule de 1 case. Sur un allié : rapproche le lanceur de 1 case."))
             sorts.append(Sort.Sort(u"Flèche Punitive",4,6,8,[Effets.EffetDegats(29,31,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_punitive",0,-1,u"Flèche Punitive",30))],1,1,2,1,"cercle",description=u"Occasionne des dommages Terre et augmente les dommages du sort tous les 2 tours."))
             sorts.append(Sort.Sort(u"Flèche du Jugement",3,5,7,[Effets.EffetDegats(39,45,"terre")],3,2,0,1,"cercle",description=u"Occasionne des dommages Terre. Plus le pourcentage de PM du personnage au lancement du sort est important, plus les dommages occasionnés sont importants."))
             sorts.append(Sort.Sort(u"Tir Puissant",3,0,6,[Effets.EffetEtat(Etats.EtatBoostPuissance("Tir_puissant",0,3,250))],1,1,6,1,"cercle",description=u"Augmente les dommages des sorts."))
@@ -271,7 +271,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Flèche Persecutrice",3,5,8,[Effets.EffetDegats(15,17,"feu"),Effets.EffetDegats(15,17,"air")],99,2,0,1,"ligne",description=u"Occasionne des dommages Air et Feu."))
             sorts.append(Sort.Sort(u"Flèche Tyrannique",4,2,7,[Effets.EffetEtat(Etats.EtatEffetSiPousse("Fleche_tyrannique_air",0,2, Effets.EffetDegats(12,12,"air"),"Fleche_tyrannique","lanceur")),Effets.EffetEtat(Etats.EtatEffetSiSubit("Fleche_tyrannique_feu",0,2, Effets.EffetDegats(12,12,"feu"),"Fleche_tyrannique","doPou","lanceur"))],99,1,0,1,"ligne",description=u"Occasionne des dommages Air si la cible est poussée. Occasionne des dommages Feu si la cible subit des dommages de poussée."))
             sorts.append(Sort.Sort(u"Flèche Destructrice",4,5,8,[Effets.EffetDegats(30,32,"terre"),Effets.EffetEtat(Etats.EtatBoostDommage(u"Flèche destructrice",1,1,-60))],99,2,0,1,"cercle",description=u"Occasionne des dommages Terre et réduit les dommages occasionnés par la cible."))
-            sorts.append(Sort.Sort(u"Tir de Barrage",4,4,8,[Effets.EffetDegats(29,33,"terre"),Effets.EffetRepousser(2)],3,2,0,1,"cercle",description=u"Occasionne des dommages Terre et repousse la cible."))
+            sorts.append(Sort.Sort(u"Tir de Barrage",4,4,8,[Effets.EffetDegats(29,33,"terre"),Effets.EffetPousser(2)],3,2,0,1,"cercle",description=u"Occasionne des dommages Terre et repousse la cible."))
             sorts.append(Sort.Sort(u"Flèche Absorbante",4,6,8,[Effets.EffetVolDeVie(29,31,"air")],3,2,0,1,"cercle",description=u"Vole de la vie dans l'élément Air."))
             sorts.append(Sort.Sort(u"Flèche Dévorante",3,1,6,[
                 Effets.EffetDegats(70,74,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Fleche_devorante_lancer_3",consomme_etat=True),
@@ -281,7 +281,7 @@ class Personnage(object):
                 Effets.EffetDegats(34,38,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Fleche_devorante_lancer_1",consomme_etat=True),
                 Effets.EffetEtat(Etats.Etat("Fleche_devorante_lancer_1",0,-1),etat_requis_cibles="!Fleche_devorante_lancer_2|!Fleche_devorante_lancer_3")
                 ],2,1,0,1,"cercle",chaine=False,description=u"Occasionne des dommages Air. Les dommages sont appliqués lorsque le sort est lancé sur une autre cible. Peut se cumuler 3 fois sur une même cible."))
-            sorts.append(Sort.Sort(u"Flèche cinglante",2,1,9,[Effets.EffetRepousser(2)],4,2,0,1,"ligne",description=u"Applique de l'Érosion aux ennemis et repousse de 2 cases."))
+            sorts.append(Sort.Sort(u"Flèche cinglante",2,1,9,[Effets.EffetPousser(2)],4,2,0,1,"ligne",description=u"Applique de l'Érosion aux ennemis et repousse de 2 cases."))
             sorts.append(Sort.Sort(u"Flèche de repli",1,2,7,[Effets.EffetPousser(1,zone=Zones.TypeZoneCercleSansCentre(5),cible_possibles="Lanceur")],4,2,0,1,"ligne",description=u"Le lanceur du sort recule de 2 cases."))
             sorts.append(Sort.Sort(u"Flèche ralentissante",4,1,8,[Effets.EffetRetPA(3,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(36,38,"eau",zone=Zones.TypeZoneCercle(2))],2,1,0,1,"ligne",description=u"Occasionne des dommages Eau et retire des PA en zone."))
             sorts.append(Sort.Sort(u"Flèche percutante",2,1,6,[Effets.EffetDegats(6,10,"eau"),Effets.EffetEtat(Etats.EtatEffetFinTour("Fleche_percutante_retardement", 1,1,Effets.EffetDegats(6,10,"eau",zone=Zones.TypeZoneCercleSansCentre(2)),"Fleche_percutante_retardement","lanceur")),Effets.EffetEtat(Etats.EtatEffetFinTour("Fleche_percutante_retardementPA", 1,1,Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2)),"Fleche_percutante_retardementPA","lanceur"))],2,1,0,1,"cercle",description=u"Occasionne des dommages Eau. À la fin de son tour, la cible occasionne des dommages Eau et retire des PA en cercle de taille 2 autour d'elle."))
@@ -294,8 +294,8 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostDommage("Maitrise de l'arc",0,3,60))],1,1,5,1,"cercle",description=u"Augmente les dommages."))
             sorts.append(Sort.Sort(u"Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Sentinelle",1,1,-100))],1,1,3,0,"cercle",description=u"Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
         elif classe==u"Sram":
-            activationPiegeSournois = Sort.Sort(u"Activation Piège sournois",0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)], 99,99,0,0,"cercle")
-            activationPiegeRepulsif = Sort.Sort(u"Activation Piège répulsifs",0,0,0,[Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)], 99,99,0,0,"cercle")
+            activationPiegeSournois = [Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepulsif =[Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             sorts.append(Sort.Sort(u"Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,u"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort(u"Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,u"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort(u"Cawotte",4,1,6,[Effets.EffetInvoque(u"Cawotte",cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description=u"Invoque une Cawotte")) 
@@ -308,17 +308,36 @@ class Personnage(object):
         @type: int
         @x: la position d'arrivée en y.
         @type: int"""
+        # test si la case d'arrivé est hors-map (compte comme un obstacle)
+        if x >= niveau.taille or x < 0 or y >= niveau.taille or y < 0:
+            return False,False
+        elif niveau.structure[x][y].type != "v":
+            return False,False
         if ajouteHistorique:
             self.historiqueDeplacement.append([self.posX,self.posY,2])
+        niveau.structure[self.posY][self.posX].type = "v"
+        niveau.structure[y][x].type = "j"
         self.posX = x
         self.posY = y
-        piegesADeclenche = []
-        for piege in niveau.pieges:
-            if piege.aPorteDeclenchement(x,y) and piege not in piegesADeclenche:
-                piegesADeclenche.append(piege)
-        niveau.declenchePieges(piegesADeclenche)
-
-
+        nbPieges = len(niveau.pieges)
+        i=0
+        piegeDeclenche = False
+        #Priorité au nouveau piège:
+        sauvegardeFile = niveau.fileEffets[:]
+        niveau.fileEffets = []
+        while i < nbPieges:
+            piege = niveau.pieges[i]
+            if piege.aPorteDeclenchement(x,y):
+                piegeDeclenche = True
+                for effet in piege.effets:
+                    niveau.pieges.remove(piege)
+                    i-=1
+                    sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
+            i+=1
+            nbPieges = len(niveau.pieges)
+        niveau.fileEffets = niveau.fileEffets + sauvegardeFile
+        niveau.depileEffets()
+        return True,piegeDeclenche
     def rafraichirHistoriqueDeplacement(self):
         """@summary: supprime les déplacements plus vieux que 2 tours"""
         i = 0

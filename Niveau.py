@@ -86,7 +86,7 @@ class Glyphe:
 class Piege:
     """@summary: Classe décrivant un piège dans le jeu Dofus.
      Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
-    def __init__(self,nomSort, zone_declenchement,sortMono, centre_x, centre_y, lanceur, couleur):
+    def __init__(self,nomSort, zone_declenchement,effets, centre_x, centre_y, lanceur, couleur):
         """@summary: Initialise une glyphe.
         @nomSort: le nom du sort à l'origine de la glyphe
         @type: string
@@ -104,7 +104,7 @@ class Piege:
         @type: tuple (R,G,B)"""
         self.zone_declenchement = zone_declenchement
         self.nomSort = nomSort
-        self.sortMono = sortMono
+        self.effets = effets
         self.centre_x = centre_x
         self.centre_y = centre_y
         self.lanceur = lanceur
@@ -112,18 +112,6 @@ class Piege:
 
     def aPorteDeclenchement(self,x,y):
         return self.zone_declenchement.testCaseEstDedans([self.centre_x,self.centre_y],[x,y],None)
-
-    def explose(self,niveau):
-        i = 0
-        nbPieges = len(niveau.pieges)
-        while i < nbPieges:
-            if niveau.pieges[i] == self:
-                del niveau.pieges[i]
-                i-=1
-            i+=1
-            nbPieges = len(niveau.pieges)
-        self.sortMono.lance(self.centre_x, self.centre_y, niveau,self.centre_x, self.centre_y, self.lanceur)
-
 
 class Case:
     """@summary: Classe décrivant une case de la grille du niveau."""
@@ -168,6 +156,9 @@ class Niveau:
         self.pieges=[]
         #File d'attente pour ordre explosion piège
         self.fifoExploPiege = []
+        #File d'attente Effets:
+        self.fileEffets = []
+        self.bloquerFile = False
         self.fenetre = fenetre
         self.myfont = font
         #Generer la carte
@@ -175,7 +166,21 @@ class Niveau:
         #Initialise tous les joueurs
         self.initPersonnages()
 
-    
+    def ajoutFileEffets(self,effet,joueurCaseEffet, joueurLanceur):
+        self.fileEffets.append([effet,joueurCaseEffet, joueurLanceur])
+
+    def depileEffets(self):
+        if not self.bloquerFile:
+            self.bloquerFile = True
+            nbEffets = len(self.fileEffets)
+            while 0 < nbEffets:
+                rec = self.fileEffets[0]
+                self.fileEffets.remove(self.fileEffets[0])
+                rec[0].activerEffet(self,rec[1],rec[2])
+                del rec
+                nbEffets = len(self.fileEffets)
+            self.bloquerFile = False
+
 
     def Deplacement(self, mouse_xy):
         """@summary: Le joueur dont c'est le tour a cliqué sur la carte sans sort sélectionné.
@@ -191,12 +196,12 @@ class Niveau:
             #Les cases à parcourir pour se rendre à la position souhaitée donnent un nombre de PM nécessaire.
             if len(cases)<=joueur.PM:
                 #On effectue le déplacement
-                joueur.PM -= len(cases)
-                self.structure[joueur.posY][joueur.posX].type = "v"
                 for case in cases:
                     #Le joueur se déplace case par case et non pas en téléportation
-                    joueur.bouge(self,case[0],case[1])
-                self.structure[joueur.posY][joueur.posX].type = "j"
+                    joueur.PM -= 1
+                    aBouge, piegeDeclenche = joueur.bouge(self,case[0],case[1])
+                    if piegeDeclenche:
+                        break
                 print "PA : "+str(joueur.PA)
                 print "PM : "+str(joueur.PM)
             else:
@@ -360,12 +365,6 @@ class Niveau:
             longueurTab = len(self.glyphes)
             i+=1
 
-    def declenchePieges(self, nouveauxPieges):
-        nb_Pieges=len(nouveauxPieges)
-        while nb_Pieges>0:
-            nouveauxPieges[0].explose(self)
-            del nouveauxPieges[0]
-            nb_Pieges=len(nouveauxPieges)
 
     def finTour(self):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
@@ -497,73 +496,7 @@ class Niveau:
                     tab_cases_zone.append(case)
         return tab_cases_zone    
 
-    def __determinerSensPousser(self,cible,depuisX,depuisY):
-        """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
-        @joueurCible: le joueur qui va être poussé
-        @type: Personnage
-        @depuisX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
-        @type: int
-        @depuisY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
-        @type: int
-
-        @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
-        
-        #Si le depuis est sur la case de la cible, on calcul la direction avec le tourDe
-        if depuisY == cible[1] and depuisX == cible[0]:
-            depuisY = self.tourDe.posY
-            depuisX = self.tourDe.posX
-        #Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
-        if depuisY == None:
-            depuisY = self.tourDe.posY-1
-        if depuisX == None:
-            depuisX = self.tourDe.posX
-        #Calcul de la direction de la poussée
-        horizontal = not (cible[0] == depuisX)
-        if horizontal and cible[0] > depuisX:
-            positif = 1
-        elif (not horizontal) and cible[1]> depuisY:
-            positif = 1
-        else:
-            positif = -1 
-        return horizontal,positif
-
-    def __effectuerPousser(self,joueurCible,doDeg,posPouX,posPouY,D,pousseur):
-        """@summary: Déplace la cible après les calculs de poussé.
-        @joueurCible: le joueur qui va être poussé
-        @type: Personnage
-        @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
-        @type: booléen
-        @posPouX: la coordonnée x sur laquelle le joueur poussé va arriver (voir la fonction __calculerArrivePousser)
-        @type: int
-        @posPouY: la coordonnée y sur laquelle le joueur poussé va arriver (voir la fonction __calculerArrivePousser)
-        @type: int
-        @D: le nombre de cases que le joueur aurait dû parcourir mais qui ont été bloqué par un obstacle (voir la fonction __calculerArrivePousser)
-        @type: int
-        @pousseur: Le joueur qui pousse
-        @type: Personnages""" 
-
-        #Déplacement du joueur
-        self.structure[joueurCible.posY][joueurCible.posX].type = "v"
-        joueurCible.bouge(self,posPouX,posPouY)
-        self.structure[joueurCible.posY][joueurCible.posX].type = "j"
-        #Calcul des dégâts
-        R = 6
-        if doDeg:
-            doPou = pousseur.doPou
-            # Intervention des états
-            for etat in pousseur.etats:
-                if etat.actif():
-                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
-            for etat in joueurCible.etats:
-                if etat.actif():
-                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
-            # Calcul des dégâts
-            total = (8+R*pousseur.lvl/50)*D+doPou
-            if total > 0:
-                print joueurCible.classe+" perd "+ str(total) + "PV (do pou)"
-                joueurCible.subit(pousseur,self,total,"doPou")
-
-    def __calculerArrivePousser(self, joueurCible, nbCases, horizontal, positif):
+    def __effectuerPousser(self, joueurCible, pousseur, nbCases, doDeg, horizontal, positif):
         """@summary: Fonction à appeler pour pousser un joueur.
         @joueurCible: Le joueur qui se fait pousser
         @type: Personnage
@@ -579,33 +512,37 @@ class Niveau:
                  ,D       -> int indiquant le nombre de case non déplacé pour cause d'obstacle"""
 
         D = 0     #Nombre de cases obstacles cognés
-        _posPouX = joueurCible.posX # position X validé pendant la poussé
-        _posPouY = joueurCible.posY # position Y validé pendant la poussé
         #calcul de poussé de nbCases
         for fait in xrange(nbCases):
             #Calcul de la case d'arrivée après une poussée de 1 case
-            posPouX = _posPouX # Variable temporaire pour tester l'arrivée X
-            posPouY = _posPouY # Variable temporaire pour tester l'arrivée Y
-            posPouX = posPouX + (1*positif*horizontal)
-            posPouY = posPouY + (1*positif*((horizontal+1)%2))
+            posPouX = joueurCible.posX + (1*positif*horizontal)
+            posPouY = joueurCible.posY + (1*positif*((horizontal+1)%2))
             # test si la case d'arrivé est hors-map (compte comme un obstacle)
-            if posPouX >= self.taille or posPouX < 0 or posPouY >= self.taille or posPouY < 0:
-                D+=1 # Un obstacle tapé
-                posPouY = _posPouY # La position n'est pas validé
-                posPouX = _posPouX
-            # test si la case d'arrivée n'est pas vide
-            #Cas séparé de l'autre car indexError si hors-map
-            elif self.structure[posPouY][posPouX].type != "v":
-                D+=1 # Un obstacle tapé
-                posPouY = _posPouY # La position n'est pas validé
-                posPouX = _posPouX
-            # Sinon la poussé
-            else:
-                _posPouX = posPouX # La position d'arrivé est bien sauvegardé
-                _posPouY = posPouY
+            aBouge,piegeDeclenche = joueurCible.bouge(self,posPouX,posPouY)
+            if not aBouge:
+                D+=1
+            if piegeDeclenche:
+                break
+        
+        #Calcul des dégâtss
+        R = 6
+        if doDeg:
+            doPou = pousseur.doPou
+            # Intervention des états
+            for etat in pousseur.etats:
+                if etat.actif():
+                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
+            for etat in joueurCible.etats:
+                if etat.actif():
+                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
+            # Calcul des dégâts
+            total = (8+R*pousseur.lvl/50)*D+doPou
+            if total > 0:
+                print joueurCible.classe+" perd "+ str(total) + "PV (do pou)"
+                joueurCible.subit(pousseur,self,total,"doPou")
         return posPouX,posPouY,D
 
-    def pousser(self, nbCases, joueurCible,pousseur,doDeg=True,depuisX=None,depuisY=None):
+    def pousser(self, effetPousser, joueurCible,pousseur,doDeg=True,depuisX=None,depuisY=None):
         """@summary: Fonction à appeler pour pousser un joueur.
         @nbCases: le nombre de case dont il faut pousser la cible
         @type: int
@@ -620,13 +557,10 @@ class Niveau:
         @depuisY: la coordonnée y depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
         @type: int"""
         if joueurCible != None:
-            cible = [joueurCible.posX, joueurCible.posY]
-            horizontal,positif = self.__determinerSensPousser(cible,depuisX,depuisY)
-            if horizontal != None:
-                posPouX,posPouY,D = self.__calculerArrivePousser(joueurCible, nbCases, int(horizontal), positif)
-                self.__effectuerPousser(joueurCible,doDeg,posPouX,posPouY,D,pousseur)
+            if effetPousser.horizontal != None:
+                self.__effectuerPousser(joueurCible, pousseur,effetPousser.nbCase, doDeg,int(effetPousser.horizontal), effetPousser.positif)
         
-    def attire(self, nbCases, joueurCible, attireur,depuisX=None,depuisY=None):
+    def attire(self, effetAttire, joueurCible, attireur,depuisX=None,depuisY=None):
         """@summary: Fonction à appeler pour attirer un joueur.
         @nbCases: le nombre de case dont il faut attirer la cible
         @type: int
@@ -634,27 +568,15 @@ class Niveau:
         @type: Personnage
         @attireur: Le joueur qui va attirer
         @type: Personnage"""
-
-        #Calcul du sens de l'attirance
-        cible = [joueurCible.posX, joueurCible.posY]
-        attireX = depuisX if depuisX is not None else attireur.posX
-        attireY = depuisY if depuisY is not None else attireur.posY
-        distanceX = abs(joueurCible.posX - attireX)
-        distanceY = abs(joueurCible.posY - attireY)
-        horizontal = distanceX > distanceY
-        if horizontal:
-            positif = cible[0] > attireX
-        else:
-            positif = cible[1] > attireY
         #Pour attirer, on peut pousser la cible vers non et ne pas compter les dégâts.
-        if horizontal and positif:
-            self.pousser(nbCases,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
-        elif horizontal:
-            self.pousser(nbCases,joueurCible,attireur,False,joueurCible.posX-1,joueurCible.posY)
-        elif not horizontal and positif:
-            self.pousser(nbCases,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY+1)
+        if effetAttire.horizontal and effetAttire.positif:
+            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
+        elif effetAttire.horizontal:
+            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX-1,joueurCible.posY)
+        elif not effetAttire.horizontal and effetAttire.positif:
+            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY+1)
         else:
-            self.pousser(nbCases,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
+            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
 
     def __deplacementTFVersCaseVide(self,joueurBougeant, posAtteinte,AjouteHistorique):
         """@summary: Déplacement pouvant généré un téléfrag vers une case vide.
@@ -845,7 +767,8 @@ class Niveau:
 
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
         if type(effet) == type(Effets.EffetGlyphe(None,None,None,None)):
-            effet.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+            effetALancer = effet.deepcopy()
+            effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
             return True
         return False
 
@@ -882,13 +805,14 @@ class Niveau:
             case_y = case_effet[1]
             joueurCaseEffet = self.getJoueurSur(case_x, case_y) # récupération du joueur sur la case
             #Test si un joeuur est sur la case
+            effetALancer = effet.deepcopy()
             if joueurCaseEffet != None:
 
                 #Si le joueur sur la case est une cible valide
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet,joueurCibleDirect,ciblesTraitees):
                     #On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
-                    effet.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+                    effetALancer.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
                     sestApplique = True
                     #Peu import le type, l'etat requis est retire s'il est consomme
                     if effet.consommeEtat:
@@ -897,7 +821,7 @@ class Niveau:
 
             else:
                 if effet.faireAuVide:
-                    effet.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+                    effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
                     sestApplique = True
         return sestApplique, ciblesTraitees
 
@@ -1020,6 +944,8 @@ class Niveau:
                 x = num_case * constantes.taille_sprite
                 y = num_ligne * constantes.taille_sprite
                 if sprite.type == 'v' or sprite.type == 'j':          #v = Vide, j = joueur
+                    if sprite.type == 'j':
+                        fenetre.blit(team1, (x,y))
                     if (num_case+(num_ligne*len(ligne)))%2 == 0:
                         fenetre.blit(vide1, (x,y))
                     else:
