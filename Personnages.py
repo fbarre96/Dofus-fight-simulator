@@ -146,7 +146,7 @@ class Personnage(object):
             retourParadoxe = Sort.Sort(u"Retour Paradoxe",0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],99,99,0,0,"cercle")
             activationInstabiliteTemporelle = Sort.Sort(u"Activation Instabilité Temporelle",0,0,3,[Effets.EffetTeleportePosPrec(1)], 99,99,0,0,"cercle")
             activationParadoxeTemporel = Sort.Sort(u"Paradoxe Temporel", 0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues=u"Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],99,99,0,0,"cercle")
-            activationDesynchro = Sort.Sort(u"Activation Désynchronisation",0,0,64,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))], 99,99,0,0,"cercle")
+            activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
             sorts.append(Sort.Sort(u"Ralentissement",2,1,6,[Effets.EffetDegats(8,9,"eau"),Effets.EffetRetPA(1),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],4,2,0,1,"cercle",description=u"Occasionne des dommages Eau et retire 1 PA à la cible. Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté."))
             sorts.append(Sort.Sort(u"Souvenir",4,1,6,[Effets.EffetDegats(26,30,"terre"),Effets.EffetTeleportePosPrec(1)], 3,2,0,1,"ligne",description=u"Occasionne des dommages Terre et téléporte la cible à sa position précédente."))
             sorts.append(Sort.Sort(u"Aiguille",3,1,8,[Effets.EffetDegats(22,26,"feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,1,"cercle", description=u"Occasionne des dommages Feu et retire 1 PA à la cible. Retire des PA supplémentaires aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté. Retire l'état Téléfrag."))
@@ -296,6 +296,7 @@ class Personnage(object):
         elif classe==u"Sram":
             activationPiegeSournois = [Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif =[Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            #sorts.append(Sort.Sort(u"Sournoiserie",3,1,5,[Effets.EffetDegats(20,22,"terre")],99,3,0,1, "cercle", description=u"Occasionne des dommages Terre."))
             sorts.append(Sort.Sort(u"Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,u"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort(u"Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,u"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description=u"Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort(u"Cawotte",4,1,6,[Effets.EffetInvoque(u"Cawotte",cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description=u"Invoque une Cawotte")) 
@@ -483,13 +484,16 @@ class Personnage(object):
                 if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y,self.posX,self.posY, 0):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
+        niveau.depileEffets()
         self.rafraichirEtats(niveau)
         niveau.rafraichirGlyphes(self)
         self.rafraichirHistoriqueDeplacement()
         for etat in self.etats:
             if etat.actif():
                 etat.triggerDebutTour(self,niveau)
+
         self.posDebTour = [self.posX, self.posY]
+
         niveau.afficherSorts()
         print "Debut de tour."
         print "PA : "+str(self.PA)

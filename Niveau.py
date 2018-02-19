@@ -586,8 +586,7 @@ class Niveau:
         @type: [int x, int y]
         @AjouteHistorique: indique si le déplacement compte dans l'historique. (Le passif du téléfrag n'a pas l'historique du déplacement par exemple)
         @type: booléen"""
-        self.structure[posAtteinte[1]][posAtteinte[0]].type = "j"
-        self.structure[joueurBougeant.posY][joueurBougeant.posX].type = "v"
+
         joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
 
     def __boostApresTF(self,nomSort,reelLanceur):
@@ -694,12 +693,8 @@ class Niveau:
         @type: booléen
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen"""
-        joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY)
-        if AjouteHistorique:
-            joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1])
-        else:
-            joueurBougeant.posX = posAtteinte[0]
-            joueurBougeant.posY = posAtteinte[1]
+        joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY,True)
+        joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
         if genereTF:
             joueurBougeant.retirerEtats("Telefrag")
             joueurASwap.retirerEtats("Telefrag")
@@ -944,8 +939,7 @@ class Niveau:
                 x = num_case * constantes.taille_sprite
                 y = num_ligne * constantes.taille_sprite
                 if sprite.type == 'v' or sprite.type == 'j':          #v = Vide, j = joueur
-                    if sprite.type == 'j':
-                        fenetre.blit(team1, (x,y))
+                    
                     if (num_case+(num_ligne*len(ligne)))%2 == 0:
                         fenetre.blit(vide1, (x,y))
                     else:
@@ -958,6 +952,9 @@ class Niveau:
                     for piege in self.pieges:
                         if piege.aPorteDeclenchement(num_case, num_ligne):
                             pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
+                    
+                    if sprite.type == 'j':
+                        fenetre.blit(team1, (x,y))
                     #Afficher previsualation portee du sort selectionne
                     if sortSelectionne != None:
                         #Previsu de la porte du sort, une case teste par tour de double boucle
