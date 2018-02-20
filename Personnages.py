@@ -312,7 +312,7 @@ class Personnage(object):
         # test si la case d'arrivé est hors-map (compte comme un obstacle)
         if x >= niveau.taille or x < 0 or y >= niveau.taille or y < 0:
             return False,False
-        elif niveau.structure[x][y].type != "v":
+        elif niveau.structure[y][x].type != "v":
             return False,False
         if ajouteHistorique:
             self.historiqueDeplacement.append([self.posX,self.posY,2])

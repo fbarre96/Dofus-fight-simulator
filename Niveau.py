@@ -953,8 +953,7 @@ class Niveau:
                         if piege.aPorteDeclenchement(num_case, num_ligne):
                             pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     
-                    if sprite.type == 'j':
-                        fenetre.blit(team1, (x,y))
+                    
                     #Afficher previsualation portee du sort selectionne
                     if sortSelectionne != None:
                         #Previsu de la porte du sort, une case teste par tour de double boucle
@@ -985,6 +984,8 @@ class Niveau:
                                             if effet.APorteZone(case_x,case_y,num_case,num_ligne, self.tourDe.posX, self.tourDe.posY):
                                                 tab_cases_previ.append([num_case,num_ligne])
 
+                if sprite.type == 'j':
+                        fenetre.blit(team1, (x,y))
                 num_case+=1
             num_ligne+=1
         
