@@ -1,17 +1,1 @@
-Sram
-750
-3000
-750
-0
-0
-0
-10
-0
-0
-0
-0
-0
-6
-14
-3
-180
+[{"Do Chance": "66", "Do Pou": "0", "Force": "0", "Esquive PA": "30", "Vie": "3345", "Retrait PM": "36", "Intelligence": "0", "Do Force": "0", "Classe": "X\u00e9lor", "Do Agilite": "0", "Puissance": "235", "Chance": "760", "PA": "11", "Dommages": "7", "Do Intelligence": "0", "Retrait PA": "116", "Level": "185", "Agilite": "0", "PO": "6", "Esquive PM": "0", "PM": "6"}, {"Do Chance": "19", "Do Pou": "100", "Force": "119", "Esquive PA": "39", "Vie": "3465", "Retrait PM": "41", "Intelligence": "810", "Do Force": "46", "Classe": "Cr\u00e2", "Do Agilite": "19", "Puissance": "185", "Chance": "0", "PA": "12", "Dommages": "0", "Do Intelligence": "71", "Retrait PA": "51", "Level": "185", "Agilite": "100", "PO": "6", "Esquive PM": "29", "PM": "6"}]

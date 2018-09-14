@@ -10,7 +10,7 @@ from pygame.locals import *
 
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
-    def __init__(self, classe, v,f,a,c,i,p,d,df,da,dc,di,dp,pm,pa,po,lvl,team=1,icone=""):
+    def __init__(self, classe, v,f,a,c,i,p,d,df,da,dc,di,dp,retPA,retPM,esqPA,esqPM,pm,pa,po,lvl,team=1,icone=""):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
@@ -66,6 +66,10 @@ class Personnage(object):
         self.PM = int(pm)
         self.PA = int(pa)
         self.PO = int(po)
+        self.retPA = int(retPA)
+        self.retPM = int(retPM)
+        self.esqPA = int(esqPA)
+        self.esqPM = int(esqPM)
         self._vie = self.vie
         self._fo = int(f)
         self._agi = int(a)
@@ -80,6 +84,10 @@ class Personnage(object):
         self._PM = int(pm)
         self._PA = int(pa)
         self._PO = int(po)
+        self._esqPA = int(esqPA)
+        self._esqPM = int(esqPM)
+        self._retPA = int(retPA)
+        self._retPM = int(retPM)
         self.lvl = int(lvl)
         self.classe = classe
         self.sorts = Personnage.ChargerSorts(self.classe) # la liste des sorts du personnage
@@ -166,7 +174,7 @@ class Personnage(object):
             sorts.append(Sort.Sort(u"Sablier de Xélor",2,1,7,[Effets.EffetDegats(15,17,"feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,1,0,1,"ligne",description=u"Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue. Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone. Le retrait de PA ne peut pas être désenvoûté."))
             sorts.append(Sort.Sort(u"Distorsion Temporelle",4,0,0,[Effets.EffetDegats(26,30,"air",zone=Zones.TypeZoneCarre(1),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")], 2,1,0,0,"cercle",description=u"Occasionne des dommages Air aux ennemis. Téléporte les cibles à leur position précédente."))
             sorts.append(Sort.Sort(u"Vol du Temps",4,1,5,[Effets.EffetDegats(30,34,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))], 3,2,0,0,"cercle",chaine=True,description=u"Occasionne des dommages Eau à la cible. Le lanceur gagne 1 PA au début de son prochain tour."))
-            sorts.append(Sort.Sort(u"Pétrification",5,1,7,[Effets.EffetDegats(34,38,"eau"),Effets.EffetEtatSelf(Etats.EtatCoutPA("Petrification",0,2,u"Petrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag")], 3,2,0,1,"ligne",description=u"Occasionne des dommages Eau et retire des PA. Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours."))
+            sorts.append(Sort.Sort(u"Pétrification",5,1,7,[Effets.EffetDegats(34,38,"eau"),Effets.EffetEtatSelf(Etats.EtatCoutPA(u"Pétrification",0,2,u"Pétrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag"), Effets.EffetRetPA(2)], 3,2,0,1,"ligne",description=u"Occasionne des dommages Eau et retire des PA. Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours."))
             sorts.append(Sort.Sort(u"Flou",2,1,3,[Effets.EffetEtat(Etats.EtatBoostPA("Flou",0,1,-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPA("Flou",1,1,2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)], 1,1,3,0,"cercle",description=u"Retire des PA en zone le tour en cours. Augmente les PA en zone le tour suivant."))
             sorts.append(Sort.Sort(u"Conservation",2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur")], 1,1,2,0,"cercle",description=u"Augmente les dommages subis par l'allié ciblé ou le lanceur de 50%% pour le tour en cours. Au tour suivant, la cible réduit les dommages subis de 30%%."))
             sorts.append(Sort.Sort(u"Poussière Temporelle",4,0,6,[Effets.EffetDegats(34,37,"feu",cibles_possibles="Ennemis"), Effets.EffetDegats(34,37,"feu",zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")], 2,2,0,1,"cercle",description=u"Occasionne des dommages Feu. Si la cible est dans l'état Téléfrag, les dommages sont occasionnés en zone et les entités à proximité sont téléportées symétriquement par rapport au centre de la zone d'effet."))
@@ -303,7 +311,7 @@ class Personnage(object):
         
         return sorts
 
-    def bouge(self, niveau, x,y, ajouteHistorique=True):
+    def bouge(self, niveau, x,y, ajouteHistorique=True,canSwap=False):
         """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
         @x: la position d'arrivée en x.
         @type: int
@@ -318,8 +326,10 @@ class Personnage(object):
             self.historiqueDeplacement.append([self.posX,self.posY,2])
         niveau.structure[self.posY][self.posX].type = "v"
         niveau.structure[y][x].type = "j"
+        print "Moved "+self.classe + " from "+str(self.posX)+";"+str(self.posY)+" to "+str(x)+";"+str(y)
         self.posX = x
         self.posY = y
+        
         nbPieges = len(niveau.pieges)
         i=0
         piegeDeclenche = False
@@ -339,6 +349,46 @@ class Personnage(object):
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
         niveau.depileEffets()
         return True,piegeDeclenche
+
+    def echangePosition(self, niveau, joueurCible, ajouteHistorique=True):
+        """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
+        @x: la position d'arrivée en x.
+        @type: int
+        @x: la position d'arrivée en y.
+        @type: int"""
+        # test si la case d'arrivé est hors-map (compte comme un obstacle)
+        if niveau.structure[joueurCible.posY][joueurCible.posX].type != "j":
+            print "DEBUG : THIS SHOULD NOT BE POSSIBLE"
+            return False,False
+        if ajouteHistorique:
+            self.historiqueDeplacement.append([self.posX,self.posY,2])
+        joueurCible.historiqueDeplacement.append([joueurCible.posX,joueurCible.posY,2])
+        x = self.posX
+        y = self.posY
+        self.posX = joueurCible.posX
+        self.posY = joueurCible.posY
+        joueurCible.posX = x
+        joueurCible.posY = y
+        nbPieges = len(niveau.pieges)
+        i=0
+        piegeDeclenche = False
+        #Priorité au nouveau piège:
+        sauvegardeFile = niveau.fileEffets[:]
+        niveau.fileEffets = []
+        while i < nbPieges:
+            piege = niveau.pieges[i]
+            if piege.aPorteDeclenchement(x,y):
+                piegeDeclenche = True
+                for effet in piege.effets:
+                    niveau.pieges.remove(piege)
+                    i-=1
+                    sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
+            i+=1
+            nbPieges = len(niveau.pieges)
+        niveau.fileEffets = niveau.fileEffets + sauvegardeFile
+        niveau.depileEffets()
+        return True,piegeDeclenche
+
     def rafraichirHistoriqueDeplacement(self):
         """@summary: supprime les déplacements plus vieux que 2 tours"""
         i = 0
@@ -540,7 +590,6 @@ class Personnage(object):
 
         #Clic souris
         if event.type == pygame.MOUSEBUTTONDOWN:
-
             clicGauche,clicMilieu,clicDroit = pygame.mouse.get_pressed()
             # Clic gauche
             if clicGauche:
@@ -604,7 +653,7 @@ class PersonnageMur(Personnage):
     def deepcopy(self):
         """@summary: Clone le personnageMur
         @return: le clone"""
-        cp = PersonnageMur(self.classe, self.vie, self.fo, self.agi, self.cha, self.int, self.pui,self.do,self.doFo,self.doAgi,self.doCha,self.doInt,self.doPou,self.PM,self.PA,self.PO,self.lvl,self.team,self.icone)
+        cp = PersonnageMur(self.classe, self.vie, self.fo, self.agi, self.cha, self.int, self.pui,self.do,self.doFo,self.doAgi,self.doCha,self.doInt,self.doPou,self.retPA, self.retPM, self.esqPA, self.esqPM, self.PM,self.PA,self.PO,self.lvl,self.team,self.icone)
         cp.sorts = Personnage.ChargerSorts(cp.classe)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
@@ -649,11 +698,11 @@ class PersonnageSansPM(Personnage):
         niveau.finTour()
 # La liste des invocations disponibles.
 INVOCS = {
-u"Cadran de Xélor" : PersonnageSansPM(u"Cadran de Xélor",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cadran_de_xelor.png"),
-u"Cawotte" : PersonnageMur(u"Cawotte",800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cawotte.png"),
-u"Synchro" : PersonnageMur(u"Synchro",1200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"synchro.png"),
-u"Complice" : PersonnageMur(u"Complice",650,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"complice.png"),
-u"Balise de Rappel" : PersonnageSansPM(u"Balise de Rappel",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_de_rappel.png"),
-u"Balise Tactique" : PersonnageMur(u"Balise Tactique",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_tactique.png"),
-u"Stratège Iop" : PersonnageMur(u"Stratège Iop",1385,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"conquete.png")
+u"Cadran de Xélor" : PersonnageSansPM(u"Cadran de Xélor",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cadran_de_xelor.png"),
+u"Cawotte" : PersonnageMur(u"Cawotte",800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cawotte.png"),
+u"Synchro" : PersonnageMur(u"Synchro",1200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"synchro.png"),
+u"Complice" : PersonnageMur(u"Complice",650,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"complice.png"),
+u"Balise de Rappel" : PersonnageSansPM(u"Balise de Rappel",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_de_rappel.png"),
+u"Balise Tactique" : PersonnageMur(u"Balise Tactique",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_tactique.png"),
+u"Stratège Iop" : PersonnageMur(u"Stratège Iop",1385,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"conquete.png")
 }

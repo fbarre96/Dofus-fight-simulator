@@ -211,7 +211,8 @@ class EffetDegats(Effet):
         niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
+        if joueurCaseEffet is not None:
+            self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
 
 class EffetVolDeVie(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -321,7 +322,8 @@ class EffetTue(Effet):
 
 class EffetRetPA(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet retire des PA esquivables normalement (pas implémenté l'esquive)."""
+    Cet effet retire des PA esquivables normalement (pas implémenté l'esquive).
+    https://www.dofus.com/fr/forum/1003-divers/2281673-formule-calcul-retrait-ou-esquives-pa-pm"""
     def __init__(self,int_retrait, **kwargs):
         """@summary: Initialise un effet de retrait de PA.
         @int_retrait: le nombre de PA qui vont être retiré au maximum
@@ -344,7 +346,17 @@ class EffetRetPA(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PA"
+        totalRet = 0
+        for i in xrange(self.retrait):
+            esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
+            basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
+            probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
+            rand = random.random()
+            print "Jet retrait : "+str(probaRet) +" and got "+str(rand)
+            if rand <= probaRet:
+                totalRet += 1
+        joueurCaseEffet.PA -= totalRet
+        print joueurCaseEffet.classe+" -"+ str(totalRet) + "PA"
         
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

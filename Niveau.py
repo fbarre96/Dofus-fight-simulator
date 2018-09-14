@@ -142,9 +142,9 @@ class Niveau:
         #le nombre de case sur un côté de la carte (carré)
         self.taille = constantes.taille_carte
         #Un tableau des cordonnées de départs possibles pour la team 1
-        self.departT1 = [[5,5]]
+        self.departT1 = [[3,3]]
         #Un tableau des cordonnées de départs possibles pour la team 2
-        self.departT2 = [[8,8]]
+        self.departT2 = [[12,12]]
         self.joueurs = joueurs
         #Le joueur qui commence est à la position 0 du tableau des joueurs
         self.tourIndex = 0
@@ -381,7 +381,8 @@ class Niveau:
         print perso.classe+" est mort!"
         #Parcours des joueurs
         i= 0 
-        while i < xrange(len(self.joueurs)):
+        tailleJoueurs = len(self.joueurs)
+        while i < tailleJoueurs:
             #Recherche du joueur à tuer
             if self.joueurs[i] == perso:
                 #On supprime son existence
@@ -390,6 +391,7 @@ class Niveau:
                 i-=1
                 break
             i+=1
+            tailleJoueurs = len(self.joueurs)
 
     def generer(self):
         """@summary: Méthode permettant de générer le niveau.
@@ -402,6 +404,10 @@ class Niveau:
                 x = j * constantes.taille_sprite
                 y = i * constantes.taille_sprite
                 #Toutes les cases sont initialisées à vide
+                #TODO MAP:
+                #if (i == 6 or i==7) and j in [3,4,5,6,7,8,9,10]:
+                #    ligne_niveau.append(Case("m", pygame.draw.rect(self.fenetre, (0,0,0), [x , y, constantes.taille_sprite, constantes.taille_sprite])))
+                #else:
                 ligne_niveau.append(Case("v", pygame.draw.rect(self.fenetre, (0,0,0), [x , y, constantes.taille_sprite, constantes.taille_sprite])))
             #On ajoute la ligne à la liste du niveau
             structure_niveau.append(ligne_niveau)
@@ -664,7 +670,7 @@ class Niveau:
 
             #Boost PA
             if not reelLanceur.aEtat(nomSort) and nomSort != "Rembobinage":
-                reelLanceur.appliquerEtat(Etats.Etat("BoostPA",0,1,[2],reelLanceur),reelLanceur)
+                reelLanceur.appliquerEtat(Etats.EtatBoostPA("BoostPATelefrag",0,1,2,reelLanceur),reelLanceur)
                 reelLanceur.appliquerEtat(Etats.Etat(nomSort,0,1,["Telefrag"],reelLanceur),reelLanceur)
             #Boost Glas, Synchro
             self.__boostApresTF(nomSort,reelLanceur)
@@ -693,8 +699,9 @@ class Niveau:
         @type: booléen
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen"""
-        joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY,True)
-        joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
+
+        #joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY,True)
+        joueurBougeant.echangePosition(self,joueurASwap,AjouteHistorique)
         if genereTF:
             joueurBougeant.retirerEtats("Telefrag")
             joueurASwap.retirerEtats("Telefrag")
