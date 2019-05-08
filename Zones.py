@@ -108,7 +108,7 @@ class TypeZoneCroixDiagonale(TypeZone):
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #Si la case testée n'est pas en diagonale, pas dans la zone
-        if getDistanceY(departZone,caseTestee) == getDistanceX(departZone,caseTestee):
+        if getDistanceY(departZone,caseTestee) != getDistanceX(departZone,caseTestee):
             return False
         return getDistancePoint(departZone,caseTestee) <= self.zonePO        
 
