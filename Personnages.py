@@ -39,7 +39,7 @@ class Personnage(object):
         self.int = int(caracsPrimaires.get("Intelligence",0))
         self.pui = int(caracsPrimaires.get("Puissance",0))
         self.cc = int(caracsPrimaires.get("Coups critiques",0)) #TODO
-        self.sagesse = int(caracsPrimaires.get("Sagesse",0))    #TODO
+        self.sagesse = int(caracsPrimaires.get("Sagesse",0))    # Aucune utilité dans le simulateur de combat
         self.caracsPrimaires = caracsPrimaires
 
         self.retPA = int(caracsSecondaires.get("Retrait PA",0))
@@ -51,7 +51,7 @@ class Personnage(object):
         self.fuite = int(caracsSecondaires.get("Fuite",0))      #TODO
         self.ini = int(caracsSecondaires.get("Initiative",0))    #TODO
         self.invocation = int(caracsSecondaires.get("Invocation",0))    #TODO
-        self.prospection = int(caracsSecondaires.get("Prospection",0))  #TODO
+        self.prospection = int(caracsSecondaires.get("Prospection",0))  # Aucune utilité dans le simulateur de combat
         self.caracsSecondaires = caracsSecondaires
 
         self.do = int(dommages.get("Dommages",0))
