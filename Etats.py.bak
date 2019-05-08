@@ -288,9 +288,9 @@ class EtatBoostPA(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         personnage.PA += self.boostPA
-        print("Modification de PA:"+str(self.boostPA))
-        print("PA : "+str(personnage.PA))
-        print("PM : "+str(personnage.PM))
+        print "Modification de PA:"+str(self.boostPA)
+        print "PA : "+str(personnage.PA)
+        print "PM : "+str(personnage.PM)
 
 class EtatBoostPM(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de PM."""
@@ -336,9 +336,9 @@ class EtatBoostPM(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         personnage.PM += self.boostPM
-        print("Modification de PM:"+str(self.boostPM))
-        print("PA : "+str(personnage.PA))
-        print("PM : "+str(personnage.PM))
+        print "Modification de PM:"+str(self.boostPM)
+        print "PA : "+str(personnage.PA)
+        print "PM : "+str(personnage.PM)
 
 class EtatBoostPO(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de PO."""
@@ -383,16 +383,8 @@ class EtatBoostPO(Etat):
         @kwargs: les options non prévisibles selon les états.
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
-        personnage.PO += self.boostPO
-        print("Modification de PO:"+str(self.boostPO))
-    
-    def triggerAvantRetrait(self,personnage):
-        """@summary: Un trigger appelé au moment ou un état va être retirés.
-                     Retire la vitalité bonus lorsque l'état se termine
-        @personnage: les options non prévisibles selon les états.
-        @type: Personnage"""
-        personnage.PO -= self.boostPO
-        print("Modification de PO: -"+str(self.boostPO))
+        personnage.PM += self.boostPO
+        print "Modification de PO:"+str(self.boostPO)
 
 class EtatBoostVita(Etat):
     """@summary: Classe décrivant un état qui modifie les points de vie."""
@@ -440,7 +432,7 @@ class EtatBoostVita(Etat):
         pourcentageBoost = self.boostVita
         self.boostVita = int(personnage._vie * (pourcentageBoost/100.0))
         personnage.vie += self.boostVita
-        print("Modification de Vitalite:"+str(self.boostVita))
+        print "Modification de Vitalite:"+str(self.boostVita)
 
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
@@ -448,7 +440,7 @@ class EtatBoostVita(Etat):
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
         personnage.vie -= self.boostVita
-        print("Modification de Vitalite: -"+str(self.boostVita))
+        print "Modification de Vitalite: -"+str(self.boostVita)
 
 class EtatBoostDoPou(Etat):
     """@summary: Classe décrivant un état qui modifie les dommages de poussé."""

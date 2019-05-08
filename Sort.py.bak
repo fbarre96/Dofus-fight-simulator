@@ -86,21 +86,20 @@ class Sort:
         @type: int
         @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
         @type: Personnage (ou None pour prendre le lanceur)"""
-        case_cible_x = int(case_cible_x)
-        case_cible_y = int(case_cible_y)
+        
         caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x,origine_y)
         #Get toutes les cases dans la zone d'effet
         joueurCible=niveau.getJoueurSur(case_cible_x,case_cible_y)
         #Test si la case est bien dans la portée du sort
         if self.APorte(origine_x, origine_y,case_cible_x,case_cible_y, caraclanceur.PO):
-            print(caraclanceur.classe+" lance :"+self.nom)
+            print caraclanceur.classe+" lance :"+self.nom
             #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
             res,explication,coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
             if res == True:
                 #Lancer du sort
                 caraclanceur.PA -= coutPA
                 self.marquerLancer(joueurCible)
-                print(caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
+                print caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)"
                 sestApplique = True
                 # Application des effets
                 for effet in self.effets:
@@ -113,8 +112,8 @@ class Sort:
                     sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur)          
                     #Apres application d'un effet sur toutes les cibles:
             else:
-                print(explication)
+                print explication
         else:
-            print("Cible hors de porte")
+            print "Cible hors de porte"
         niveau.depileEffets()
         niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables

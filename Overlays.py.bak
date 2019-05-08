@@ -86,9 +86,9 @@ class Overlay(object):
         titreTexte = getattr(self.myobject, self.titre.texte) # titre de l'overlay
         contenuTexte = getattr(self.myobject, self.contenu.texte) # contenu de l'overlay
         #Conversion en string si ce n'est pas déjà le cas.
-        if not type(titreTexte) is str and not type(titreTexte) is str:
+        if not type(titreTexte) is str and not type(titreTexte) is unicode:
             titreTexte = str(titreTexte)
-        if not type(contenuTexte) is str and not type(contenuTexte) is str:
+        if not type(contenuTexte) is str and not type(contenuTexte) is unicode:
             contenuTexte = str(contenuTexte)
         #Découpage du titre pour qu'il rendre dans l'overlay
         lignesTitre,heightTitre,widthTitre=self.__render(titreTexte,Overlay.fontTitre,maxWidth)

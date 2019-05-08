@@ -25,7 +25,7 @@ class TypeZone:
         pass
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
         """@summary: Fonction qui renvoie si une case donnée est dans la zone"""
-        print("zone inconnue")
+        print "zone inconnue"
         return False
     
 

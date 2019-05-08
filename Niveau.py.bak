@@ -8,7 +8,7 @@ import Effets
 import Etats
 import Sort
 from pygame.locals import *
-import operator
+
 class Noeud:
     """@summary: Classe servant à l'algorithme de recherche de chemin A*"""
     def __init__(self,x,y,cout=0,heur=0):
@@ -42,25 +42,6 @@ def compare2Noeuds(n1, n2):
     else:
         return -1
 
-def cmp_to_key(mycmp):
-    'Convert a cmp= function into a key= function'
-    class K(object):
-        def __init__(self, obj, *args):
-            self.obj = obj
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0  
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-    return K
-
 def ajoutTrie(liste,noeud):
         """@summary: Fonction ajoutant un noeud dans une liste triée.
         @liste: la liste de noeud trié
@@ -69,7 +50,7 @@ def ajoutTrie(liste,noeud):
         @type: Noeud"""
 
         liste.append(noeud)
-        liste.sort(key=cmp_to_key(compare2Noeuds))
+        liste.sort(cmp=compare2Noeuds)
 
 class Glyphe:
     """@summary: Classe décrivant une glyphe dans le jeu Dofus.
@@ -145,68 +126,6 @@ class Case:
         self.hitbox = hitbox
         self.effetsSur = []
 
-class PathFinding:
-    def __init__(self):
-        self.cached_case_x = None
-        self.cached_case_y = None
-        self.cached_dest_x = None
-        self.cached_dest_y = None
-        self.cached_result = None
-    def pathFinding(self, niveau, case_cible_x, case_cible_y, joueur):
-        """@summary: Implémentation de l'algorithme A*. recherche de chemin depuis la position du joueur vers la case_cible
-        @case_cible_x: La coordonnée x à laquelle on veut accéder
-        @type: int
-        @case_cible_y: La coordonnée y à laquelle on veut accéder
-        @type: int
-        @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
-        @type: Personnage
-
-        @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
-        if self.cached_dest_x == case_cible_x and self.cached_dest_y == case_cible_y and self.cached_case_x == joueur.posX and self.cached_case_y == joueur.posY:
-            return self.cached_result
-        self.cached_case_x = joueur.posX
-        self.cached_case_y = joueur.posY
-        self.cached_dest_x = case_cible_x
-        self.cached_dest_y = case_cible_y
-
-        # VOIR PSEUDO CODE WIKIPEDIA
-        listeFermee = []
-        listeOuverte = []
-        if niveau.structure[case_cible_y][case_cible_x].type != "v":
-            self.cached_result = None
-            return None
-        depart = Noeud(joueur.posX, joueur.posY)
-        ajoutTrie(listeOuverte,depart)
-        while len(listeOuverte) != 0:
-            u = listeOuverte[-1]
-            del listeOuverte[-1]
-            if u.x == case_cible_x and u.y == case_cible_y:
-                #reconstituerChemin(u,listeFermee)
-                tab = []
-                for case in listeFermee:
-                    tab.append([case.x,case.y])
-                if(len(tab)>0):
-                    if tab[0][0] == joueur.posX and tab[0][1] == joueur.posY:
-                        del tab[0]
-                tab.append([u.x,u.y])
-                self.cached_result = tab
-                return tab
-            voisins = niveau.getVoisins(u.x,u.y)
-            for v in voisins:
-                v_existe_cout_inf = False
-                for n in listeFermee+listeOuverte:
-                    if n.x == v.x and n.y == v.y and n.cout < v.cout:
-                        v_existe_cout_inf= True
-                        break
-                if not(v_existe_cout_inf):
-                    v.cout = u.cout+1
-                    v.heur = v.cout + (abs(v.x-case_cible_x)+abs(v.y-case_cible_y))
-                    ajoutTrie(listeOuverte,v)
-            listeFermee.append(u)
-        print("Aucun chemin trouvee")
-        self.cached_result = None
-        return None
-
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
     def __init__(self, fenetre, joueurs,font):
@@ -246,8 +165,6 @@ class Niveau:
         self.generer()
         #Initialise tous les joueurs
         self.initPersonnages()
-        # path finding class
-        self.pathfinder = PathFinding()
 
     def ajoutFileEffets(self,effet,joueurCaseEffet, joueurLanceur):
         self.fileEffets.append([effet,joueurCaseEffet, joueurLanceur])
@@ -270,10 +187,10 @@ class Niveau:
                       Un déplacement vers cette case est tenté
             @mouse_xy: la position de la souris sur la fenêtre pygame
             @type: tableau [int,int] cordonnées x,y de la souris."""
-        case_x = int(mouse_xy[0]/constantes.taille_sprite)
-        case_y = int(mouse_xy[1]/constantes.taille_sprite)
+        case_x = mouse_xy[0]/constantes.taille_sprite
+        case_y = mouse_xy[1]/constantes.taille_sprite
         joueur = self.tourDe
-        cases = self.pathfinder.pathFinding(self,case_x,case_y,joueur)
+        cases = self.pathFinding(case_x,case_y,joueur)
         #cases vaut None si aucun chemin n'a été trouvé par l'algorithme A*
         if cases != None:
             #Les cases à parcourir pour se rendre à la position souhaitée donnent un nombre de PM nécessaire.
@@ -285,12 +202,12 @@ class Niveau:
                     aBouge, piegeDeclenche = joueur.bouge(self,case[0],case[1])
                     if piegeDeclenche:
                         break
-                print("PA : "+str(joueur.PA))
-                print("PM : "+str(joueur.PM))
+                print "PA : "+str(joueur.PA)
+                print "PM : "+str(joueur.PM)
             else:
-                print("Deplacement  impossible ("+str(joueur.PM)+" PM restants).")
+                print "Deplacement  impossible ("+str(joueur.PM)+" PM restants)."
         else:
-            print("Deplacement impossible ("+str(joueur.PM)+" PM restants).")
+            print "Deplacement impossible ("+str(joueur.PM)+" PM restants)."
 
     @staticmethod
     def getCasesAXDistanceDe(case_x,case_y,distance):
@@ -328,7 +245,7 @@ class Niveau:
                 retour.append([departX-delta, departY+distance-delta])
 
         #Eloignement du centre de 1 en 1 jusqu'au rayon donné -1
-        for delta in range(1,distance):
+        for delta in xrange(1,distance):
             #On test si la colonne souhaitée à gauche du centre est dans la grille de jeu
             if departX-delta >=0:
                 #On test si la ligne souhaitée en haut à gauche du centre est dans la grille de jeu
@@ -461,7 +378,7 @@ class Niveau:
         
     def tue(self, perso):
         """@summary: Tue instantanément le joueur donné en paramètre."""
-        print(perso.classe+" est mort!")
+        print perso.classe+" est mort!"
         #Parcours des joueurs
         i= 0 
         tailleJoueurs = len(self.joueurs)
@@ -481,9 +398,9 @@ class Niveau:
         On crée une liste générale, contenant une liste par ligne à afficher""" 
 
         structure_niveau=[]
-        for i in range(self.taille):
+        for i in xrange(self.taille):
             ligne_niveau = []
-            for j in range(self.taille):
+            for j in xrange(self.taille):
                 x = j * constantes.taille_sprite
                 y = i * constantes.taille_sprite
                 #Toutes les cases sont initialisées à vide
@@ -531,11 +448,11 @@ class Niveau:
         @type: int
         @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
         @type: int""" 
-        print("Invocation "+invoc.classe)
+        print "Invocation "+invoc.classe
         self.structure[case_y][case_x].type = "j"
         invoc.posX = case_x
         invoc.posY = case_y
-        for i in range(len(self.joueurs)):
+        for i in xrange(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
                 break
@@ -555,7 +472,7 @@ class Niveau:
         x0 = case_x
         y0 = case_y
         # La taille de la zone n'indique pas forcément la distance la plus lointaine au centre, on parcourt donc toutes la carte en partant du centre
-        for tailleCercle in range(64):
+        for tailleCercle in xrange(64):
             casesAXDistance = Niveau.getCasesAXDistanceDe(case_x,case_y,tailleCercle)
             for case in casesAXDistance:
                 # Test si la case trouvée est à porté de l'effet.
@@ -578,7 +495,7 @@ class Niveau:
         @return: Tableau de coordonnées [int x,int y] cases sont triées par distances croissantes par rapport au centre du sort.""" 
         tab_cases_zone = []
         #La portée maximale * 2 (pour les sorts diagonales) donne la limite d'exploration des cases
-        for tailleCercle in range(sort.POMin,sort.POMax*2+1):
+        for tailleCercle in xrange(sort.POMin,sort.POMax*2+1):
             casesAXDistance = Niveau.getCasesAXDistanceDe(x0,y0,tailleCercle)
             for case in casesAXDistance:
                 if sort.APorte(x0,y0,case[0],case[1], poLanceur):
@@ -602,7 +519,7 @@ class Niveau:
 
         D = 0     #Nombre de cases obstacles cognés
         #calcul de poussé de nbCases
-        for fait in range(nbCases):
+        for fait in xrange(nbCases):
             #Calcul de la case d'arrivée après une poussée de 1 case
             posPouX = joueurCible.posX + (1*positif*horizontal)
             posPouY = joueurCible.posY + (1*positif*((horizontal+1)%2))
@@ -625,11 +542,9 @@ class Niveau:
                 if etat.actif():
                     doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
             # Calcul des dégâts
-            total = (8+R*pousseur.lvl/50)*D
-            total = int(total)
+            total = (8+R*pousseur.lvl/50)*D+doPou
             if total > 0:
-                total += doPou
-                print(joueurCible.classe+" perd "+ str(total) + "PV (do pou)")
+                print joueurCible.classe+" perd "+ str(total) + "PV (do pou)"
                 joueurCible.subit(pousseur,self,total,"doPou")
         return posPouX,posPouY,D
 
@@ -659,7 +574,6 @@ class Niveau:
         @type: Personnage
         @attireur: Le joueur qui va attirer
         @type: Personnage"""
-
         #Pour attirer, on peut pousser la cible vers non et ne pas compter les dégâts.
         if effetAttire.horizontal and effetAttire.positif:
             self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
@@ -695,7 +609,7 @@ class Niveau:
                 synchro.appliquerEtat(Etats.Etat("Boost Synchro "+nomSort,0,-1, reelLanceur),reelLanceur)
                 synchro.appliquerEtat(Etats.Etat("DejaBoost",0,1,[nomSort], reelLanceur),reelLanceur)
         #BoostGlas
-        reelLanceur.appliquerEtat(Etats.EtatCoutPA("Glas",0,-1,"Glas",-1),reelLanceur)
+        reelLanceur.appliquerEtat(Etats.EtatCoutPA("Glas",0,-1,u"Glas",-1),reelLanceur)
 
     def __exploserSynchro(self,synchro,reelLanceur):
         """@summary: Explose la synchro du xélor si elle est téléfragé
@@ -709,7 +623,7 @@ class Niveau:
             if etat.nom.startswith("Boost Synchro"):
                 nbTF+=1
         #Explosion
-        fin_des_temps = Sort.Sort("Fin des temps",0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")], 99,99,0,0,"cercle")
+        fin_des_temps = Sort.Sort(u"Fin des temps",0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")], 99,99,0,0,"cercle")
         fin_des_temps.lance(synchro.posX,synchro.posY,self,synchro.posX,synchro.posY)
         self.tue(synchro)
 
@@ -831,7 +745,7 @@ class Niveau:
                 self.__deplacementTFVersCaseOccupee(joueurASwap,joueurBougeant, posAtteinte, reelLanceur,nomSort, AjouteHistorique,genereTF)
                 return joueurASwap
         else:
-            print("Deplacement pas implemente")
+            print "Deplacement pas implemente"
         return None
 
     def __appliquerEffetSansBoucleSurZone(self,effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y):
@@ -991,7 +905,7 @@ class Niveau:
         joueurs_cases_zone = []
         x0 = case_x
         y0 = case_y
-        for tailleCercle in range(64):
+        for tailleCercle in xrange(64):
             casesAXDistance = self.getCasesAXDistanceDe(case_x,case_y,tailleCercle)
             #Pour chaque case à distance 0, puis 1, puis 2 etc...
             for case in casesAXDistance:
@@ -1054,8 +968,8 @@ class Niveau:
                             fenetre.blit(prevision, (x,y))
                         #Si la souris est sur la grille de jeu (et non pas dans les sorts)
                         if mouse_xy[1] < constantes.y_sorts:
-                            case_x = int(mouse_xy[0]/constantes.taille_sprite)
-                            case_y = int(mouse_xy[1]/constantes.taille_sprite)
+                            case_x = mouse_xy[0]/constantes.taille_sprite
+                            case_y = mouse_xy[1]/constantes.taille_sprite
                             #Si on cible une case dans la porte du sort il faut afficher la zone effet
                             if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY, case_x,case_y, self.tourDe.PO):
                                 joueurCibleDirect = self.getJoueurSur(case_x,case_y)
@@ -1089,10 +1003,10 @@ class Niveau:
         else:
             # si pas de sort sélectionné et souris sur la grille on prévisualise un déplacement.
             if mouse_xy[1] < constantes.y_sorts:
-                case_x = int(mouse_xy[0]/constantes.taille_sprite)
-                case_y = int(mouse_xy[1]/constantes.taille_sprite)
+                case_x = mouse_xy[0]/constantes.taille_sprite
+                case_y = mouse_xy[1]/constantes.taille_sprite
                 #Calcul du déplacement
-                tab_cases_previ = self.pathfinder.pathFinding(self,case_x,case_y,self.tourDe)
+                tab_cases_previ = self.pathFinding(case_x,case_y,self.tourDe)
                 if tab_cases_previ != None:
                     if len(tab_cases_previ) <= self.tourDe.PM:
                         for case in tab_cases_previ:
@@ -1161,4 +1075,48 @@ class Niveau:
                 voisins.append(Noeud(x,y+1))
         return voisins
 
-    
+    def pathFinding(self, case_cible_x, case_cible_y, joueur):
+        """@summary: Implémentation de l'algorithme A*. recherche de chemin depuis la position du joueur vers la case_cible
+        @case_cible_x: La coordonnée x à laquelle on veut accéder
+        @type: int
+        @case_cible_y: La coordonnée y à laquelle on veut accéder
+        @type: int
+        @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
+        @type: Personnage
+
+        @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
+
+        # VOIR PSEUDO CODE WIKIPEDIA
+        listeFermee = []
+        listeOuverte = []
+        if self.structure[case_cible_y][case_cible_x].type != "v":
+            return None
+        depart = Noeud(joueur.posX, joueur.posY)
+        ajoutTrie(listeOuverte,depart)
+        while len(listeOuverte) != 0:
+            u = listeOuverte[-1]
+            del listeOuverte[-1]
+            if u.x == case_cible_x and u.y == case_cible_y:
+                #reconstituerChemin(u,listeFermee)
+                tab = []
+                for case in listeFermee:
+                    tab.append([case.x,case.y])
+                if(len(tab)>0):
+                    if tab[0][0] == joueur.posX and tab[0][1] == joueur.posY:
+                        del tab[0]
+                tab.append([u.x,u.y])
+                return tab
+            voisins = self.getVoisins(u.x,u.y)
+            for v in voisins:
+                v_existe_cout_inf = False
+                for n in listeFermee+listeOuverte:
+                    if n.x == v.x and n.y == v.y and n.cout < v.cout:
+                        v_existe_cout_inf= True
+                        break
+                if not(v_existe_cout_inf):
+                    v.cout = u.cout+1
+                    v.heur = v.cout + (abs(v.x-case_cible_x)+abs(v.y-case_cible_y))
+                    ajoutTrie(listeOuverte,v)
+            listeFermee.append(u)
+        print "Aucun chemin trouvee"
+        return None

@@ -50,37 +50,37 @@ class Effet(object):
         if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles):
             #Test si la cible est exclue
             if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues):
-                print("DEBUG : Invalide : Cible Exclue")
+                print "DEBUG : Invalide : Cible Exclue"
                 return False
             #Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
-                print("DEBUG : Invalide : Cible deja traitee")
+                print "DEBUG : Invalide : Cible deja traitee"
                 return False
             #Test si un état est requis sur la cible direct et qu'une cible direct existe
             if (joueurCibleDirect == None and len(self.etatRequisCibleDirect)!=0):
-                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct ("+str(self.etatRequisCibleDirect)+")")
+                print "DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct ("+str(self.etatRequisCibleDirect)+")"
                 return False
             #Test si une cible direct n'existe pas si l'effet doit être jouée
             if (joueurCibleDirect == None and not self.faireAuVide):
-                print("DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
+                print "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
                 return False
             #Test si la cible est une case vide et que l'effet ne nécessite pas d'êtat pour la cible
             if (joueurCible == None and len(self.etatRequisCibles)!=0):
-                print("DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible")
+                print "DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible"
                 return False
             #Test si la cible n'est pas une case vide qu'il a bien les états requis
             if joueurCible != None:
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
-                    print("DEBUG : Invalide :etatRequis pour cible non present")
+                    print "DEBUG : Invalide :etatRequis pour cible non present"
                     return False
             #Test si la cible firect n'est pas une case vide qu'il a bien les états requis
             if joueurCibleDirect != None:
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
-                    print("DEBUG : Invalide :etatRequis pour cible direct non present")
+                    print "DEBUG : Invalide :etatRequis pour cible direct non present"
                     return False
             #La cible a passé tous les tests
             return True
-        print("DEBUG : Invalide : Cible "+joueurCible.classe +" pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
+        print u"DEBUG : Invalide : Cible "+joueurCible.classe +u" pas dans la liste des cibles possibles ("+unicode(self.ciblesPossibles)+u")"
         return False
 
     def APorteZone(self, departZone_x,departZone_y, testDansZone_x,testDansZone_y, j_x, j_y):
@@ -117,11 +117,11 @@ class Effet(object):
         niveau.ajoutFileEffets(self)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        print("Activation non définie")
+        print "Activation non définie"
 
     def afficher(self):
         """@summary: Affiche un effet dans la console (DEBUG)"""
-        print("Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat)+" ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues))
+        print "Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat)+" ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues)
 
 class EffetDegats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -171,7 +171,6 @@ class EffetDegats(Effet):
                 dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
         #appliquer les effets des etats sur les degats total du joueur cible
-        total = int(total)
         for etat in joueurLanceur.etats:
             if etat.actif():
                 total = etat.triggerApresCalculDegats(total,self.typeDegats)
@@ -194,7 +193,7 @@ class EffetDegats(Effet):
 
         @return: Le total de dégâts infligés"""
         
-        print(joueurCaseEffet.classe+" perd "+ str(self.total) + "PV")
+        print joueurCaseEffet.classe+" perd "+ str(self.total) + "PV"
         joueurCaseEffet.subit(joueurLanceur,niveau,self.total,self.typeDegats)
         return self.total
 
@@ -259,10 +258,8 @@ class EffetVolDeVie(EffetDegats):
             joueurLanceur.vie = joueurLanceur._vie
         self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
          #Soin
-         
         joueurLanceur.vie += (self.total/2)
-        joueurLanceur.vie = int(joueurLanceur.vie)
-        print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
+        print joueurLanceur.classe+" vol "+ str(self.total/2) + "PV"
 
 
 class EffetDegatsPosLanceur(EffetDegats):
@@ -350,16 +347,16 @@ class EffetRetPA(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         totalRet = 0
-        for i in range(self.retrait):
+        for i in xrange(self.retrait):
             esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
             basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
             probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
             rand = random.random()
-            print("Jet retrait : "+str(probaRet) +" and got "+str(rand))
+            print "Jet retrait : "+str(probaRet) +" and got "+str(rand)
             if rand <= probaRet:
                 totalRet += 1
         joueurCaseEffet.PA -= totalRet
-        print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
+        print joueurCaseEffet.classe+" -"+ str(totalRet) + "PA"
         
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -385,7 +382,7 @@ class EffetRetPM(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        print(joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM")
+        print joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM"
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -642,77 +639,35 @@ class EffetAttire(EffetPousser):
         if joueurCaseEffet != None:
             self.case_cible_x = kwargs.get("case_cible_x")
             self.case_cible_y = kwargs.get("case_cible_y")
-            if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-                super(EffetAttire, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-                self.positif *= -1 # changement de sens par rapport au sens de pousser
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
-        
-class EffetAttireVersCible(EffetPousser):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet attire un joueur vers la position du lanceur."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetAttireVersCible, self).__init__(int_nbCase,**kwargs)
-    def deepcopy(self):
-        return EffetAttireVersCible(self.nbCase,**self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.attire(self,joueurCaseEffet,joueurLanceur,self.case_cible_x, self.case_cible_y)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
-        @type: **kwargs"""
-
-        if joueurCaseEffet != None:
-            self.case_cible_x = kwargs.get("case_cible_x")
-            self.case_cible_y = kwargs.get("case_cible_y")
-            if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-                super(EffetAttireVersCible, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-                self.positif *= -1 # changement de sens par rapport au sens de pousser
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
-class EffetAttireAttaquant(EffetPousser):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet attire le joueur qui attaque vers la cible."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetAttireAttaquant, self).__init__(int_nbCase,**kwargs)
-    def deepcopy(self):
-        return EffetAttireAttaquant(self.nbCase,**self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        # Ancien code : niveau.attire(self.nbCase,joueurLanceur,joueurCaseEffet)
-        niveau.attire(self,joueurLanceur,joueurCaseEffet)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
-        @type: **kwargs"""
-        if joueurCaseEffet != None:
-            super(EffetAttireAttaquant, self).determinerSensPousser(niveau,[joueurLanceur.posX, joueurLanceur.posY],joueurCaseEffet.posX,joueurCaseEffet.posY)
+            super(EffetAttire, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
             self.positif *= -1 # changement de sens par rapport au sens de pousser
             niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
+class EffetAttireAttaquant(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet attire le joueur qui attaque vers la cible."""
+    def __init__(self,int_nbCase, **kwargs):
+        """@summary: Initialise un effet attirant le lanceur vers la cible
+        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
+        @type: int
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        self.nbCase = int_nbCase
+        super(EffetAttireAttaquant, self).__init__(**kwargs)
+    def deepcopy(self):
+        return EffetAttireAttaquant(self.nbCase,**self.kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        niveau.attire(self.nbCase,joueurLanceur,joueurCaseEffet)
 
 class EffetAttireAllies(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
