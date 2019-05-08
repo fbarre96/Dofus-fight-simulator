@@ -213,7 +213,6 @@ class EffetDegats(Effet):
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
         if joueurCaseEffet is not None:
-            print("str caseEffet "+str(joueurCaseEffet))
             self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
 
 class EffetVolDeVie(EffetDegats):
