@@ -10,88 +10,93 @@ from pygame.locals import *
 
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
-    def __init__(self, classe, v,f,a,c,i,p,d,df,da,dc,di,dp,retPA,retPM,esqPA,esqPM,pm,pa,po,lvl,team=1,icone=""):
+    def __init__(self, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone=""):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
-        @v: la vie du personnage
-        @type: int
-        @f: la force du personnage
-        @type: int
-        @a: l'agilité du personnage
-        @type: int
-        @c: la chance du personnage
-        @type: int
-        @i: l'intelligence du personnage
-        @type: int
-        @p: la puissance du personnage
-        @type: int
-        @d: les dommages du personnage
-        @type: int
-        @df: les dommages terre du personnage
-        @type: int
-        @da: les dommages air du personnage
-        @type: int
-        @dc: les dommages eau du personnage
-        @type: int
-        @di: les dommages feu du personnage
-        @type: int
-        @dp: les dommages de poussé du personnage
-        @type: int
-        @pm: les points de mouvements du personnage
-        @type: int
-        @pa: les points d'action du personnage
-        @type: int
-        @po: les points de portée du personnage
-        @type: int
-        @lvl: le niveau (level) du personnage
+        @lvl: le niveau du personnage
         @type: int
         @team: le numéro d'équipe du personnage
         @type: int
+        @caracsPrimaires: les caractéristiques primaires du perso (PA, PM, PO, vita, agi, chance, force, intel, pui, cc, sasa)
+        @type: dict
+        @caracsSecondaires: les caractéristiques secondaires du perso (RetPA, esquive pa, ret pm, esq pm, soins, tacle, fuite, ini, invocations, prospection)
+        @type: dict
+        @dommages: les dommages du perso (do, do cri, do neutre, do terre, do feu, do eau, do air, renvoi, maitrise d'arme, pièges (fixe), pièges(puissance), poussée, Sorts, Arme, Distance, Mêlée)
+        @type: dict
+        @dommages: les résistances du perso (ré neutre, re per neutre, ré terre, ré per terre, ré feu, ré per feu, ré eau, ré per eau, ré air, ré per air, ré cc fixe, ré pou fixe, ré distance, ré mêlée)
+        @type: dict
         @icone: le chemin de l'image pour afficher l'icône du personnage
         @type: string (nom de l'image. L'image doit faire moins de 30x30 pixels, se situer dans /image et porté le même nom que la classe une fois normalisé)
         """
-        self.vie = int(v)
-        self.fo = int(f)
-        self.agi = int(a)
-        self.cha = int(c)
-        self.int = int(i)
-        self.pui = int(p)
-        self.do = int(d)
-        self.doFo = int(df)
-        self.doAgi = int(da)
-        self.doCha = int(dc)
-        self.doInt = int(di)
-        self.doPou = int(dp)
-        self.PM = int(pm)
-        self.PA = int(pa)
-        self.PO = int(po)
-        self.retPA = int(retPA)
-        self.retPM = int(retPM)
-        self.esqPA = int(esqPA)
-        self.esqPM = int(esqPM)
+        self.PA = int(caracsPrimaires.get("PA",0))
+        self.PM = int(caracsPrimaires.get("PM",0))
+        self.PO = int(caracsPrimaires.get("PO",0))
+        self.vie = int(caracsPrimaires.get("Vitalite",1))
+        self.agi = int(caracsPrimaires.get("Agilite",0))
+        self.cha = int(caracsPrimaires.get("Chance",0))
+        self.fo = int(caracsPrimaires.get("Force",0))
+        self.int = int(caracsPrimaires.get("Intelligence",0))
+        self.pui = int(caracsPrimaires.get("Puissance",0))
+        self.cc = int(caracsPrimaires.get("Coups critiques",0))
+        self.sagesse = int(caracsPrimaires.get("Sagesse",0))
+        self.caracsPrimaires = caracsPrimaires
+
+        self.retPA = int(caracsSecondaires.get("Retrait PA",0))
+        self.esqPA = int(caracsSecondaires.get("Esquive PA",0))
+        self.retPM = int(caracsSecondaires.get("Retrait PM",0))
+        self.esqPM = int(caracsSecondaires.get("Esquive PM",0))
+        self.soins = int(caracsSecondaires.get("Soins",0))
+        self.tacle = int(caracsSecondaires.get("Tacle",0))
+        self.fuite = int(caracsSecondaires.get("Fuite",0))
+        self.invocation = int(caracsSecondaires.get("Invocation",0))
+        self.prospection = int(caracsSecondaires.get("Prospection",0))
+        self.caracsSecondaires = caracsSecondaires
+
+        self.do = int(dommages.get("Dommages",0))
+        self.doCri = int(dommages.get("Dommages critiques",0))
+        self.doNeutre = int(dommages.get("Neutre",0))
+        self.doTerre = int(dommages.get("Terre",0))
+        self.doFeu = int(dommages.get("Feu",0))
+        self.doEau = int(dommages.get("Eau",0))
+        self.doAir= int(dommages.get("Air",0))
+        self.doRenvoi= int(dommages.get("Renvoi",0))
+        self.doMaitriseArme= int(dommages.get("Maitrise d'arme",0))
+        self.doPieges= int(dommages.get("Pieges",0))
+        self.doPiegesPui= int(dommages.get("Pieges Puissance",0))
+        self.doPou =  int(dommages.get("Poussee",0))
+        self.doSorts =  int(dommages.get("Sorts",0))
+        self.doArmes =  int(dommages.get("Armes",0))
+        self.doDist =  int(dommages.get("Distance",0))
+        self.doMelee =  int(dommages.get("Melee",0))
+        self.dommages = dommages
+        
+        self.reNeutre = int(resistances.get("Neutre",0))
+        self.rePerNeutre = int(resistances.get("Neutre%",0))
+        self.reTerre = int(resistances.get("Terre",0))
+        self.rePerTerre= int(resistances.get("Terre%",0))
+        self.reFeu = int(resistances.get("Feu",0))
+        self.rePerFeu = int(resistances.get("Feu%",0))
+        self.reEau = int(resistances.get("Eau",0))
+        self.rePerEau = int(resistances.get("Eau%",0))
+        self.reAir = int(resistances.get("Air",0))
+        self.rePerAir = int(resistances.get("Air%",0))
+        self.reCc = int(resistances.get("Coups critiques",0))
+        self.rePou = int(resistances.get("Poussee",0))
+        self.reDist = int(resistances.get("Distance",0))
+        self.reMelee = int(resistances.get("Melee",0))
+        self.resistances = resistances
+
         self._vie = self.vie
-        self._fo = int(f)
-        self._agi = int(a)
-        self._cha = int(c)
-        self._int = int(i)
-        self._pui = int(p)
-        self._do = int(d)
-        self._doFo = int(df)
-        self._doAgi = int(da)
-        self._doCha = int(dc)
-        self._doInt = int(di)
-        self._PM = int(pm)
-        self._PA = int(pa)
-        self._PO = int(po)
-        self._esqPA = int(esqPA)
-        self._esqPM = int(esqPM)
-        self._retPA = int(retPA)
-        self._retPM = int(retPM)
+        self._PM = int(self.PM)
+        self._PA = int(self.PA)
+
         self.erosion = 0
         self.lvl = int(lvl)
         self.classe = classe
+
         self.sorts = Personnage.ChargerSorts(self.classe) # la liste des sorts du personnage
+        
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
         self.etats = []                                   # La liste des états affectant le personange
@@ -138,10 +143,10 @@ class Personnage(object):
 
         @return: tableau de Sort"""
         sorts = []
-        if(classe=="Stratège Iop"):
+        if(classe=="Stratege Iop"):
             sorts.append(Sort.Sort("Strategie_iop",0,0,0,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Stratégie Iop",0,-1, 50,"Ennemis|Allies",2))],99,99,0,0,"cercle"))
             return sorts
-        elif(classe=="Cadran de Xélor"):
+        elif(classe=="Cadran de Xelor"):
             sorts.append(Sort.Sort("Synchronisation",0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostPA("Synchronisation",0,2,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],99,99,0,0,"cercle"))
             return sorts
         elif(classe=="Synchro"):
@@ -151,7 +156,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Rappel",0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],99,99,0,0,"cercle"))
         elif classe == "Poutch":
             return sorts
-        elif(classe=="Xélor"):
+        elif(classe=="Xelor"):
             retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],99,99,0,0,"cercle")
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,3,[Effets.EffetTeleportePosPrec(1)], 99,99,0,0,"cercle")
             activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],99,99,0,0,"cercle")
@@ -249,7 +254,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Sentence",2,1,6,[Effets.EffetDegats(13,16,"feu"),Effets.EffetEtat(Etats.EtatEffetFinTour("Sentence", 1,1,Effets.EffetDegats(13,16,"feu",zone=Zones.TypeZoneCercle(2)),"Sentence","lanceur"))], 3,1,0,0,"ligne",description="Occasionne des dommages Feu. Occasionne des dommages Feu supplémentaires en zone à la fin du tour de la cible.")) 
             sorts.append(Sort.Sort("Colère de Iop",7,1,1,[Effets.EffetDegats(81,100,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colere_de_Iop", 3,1,"Colère de Iop",110))], 1,1,3,0,"ligne",description="Occasionne des dommages Terre. Augmente les dommages du sort au troisième tour après son lancer.")) 
             sorts.append(Sort.Sort("Fureur",3,1,1,[Effets.EffetDegats(28,32,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fureur", 1,2,"Fureur",40))], 1,1,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés à chaque lancer du sort, mais ce bonus est perdu si le sort n'est pas relancé."))
-        elif classe=="Crâ":
+        elif classe=="Cra":
             sorts.append(Sort.Sort("Flèche Magique",3,1,12,[Effets.EffetDegats(19,21,"air"),Effets.EffetEtat(Etats.EtatBoostPO("Fleche Magique",1,1,-2)),Effets.EffetEtatSelf(Etats.EtatBoostPO("Fleche Magique",0,1,2))],3,2,0,1,"cercle",description="Occasionne des dommages Air et vole la portée de la cible."))
             sorts.append(Sort.Sort("Flèche de Concentration",3,3,8,[Effets.EffetDegats(22,26,"air",zone=Zones.TypeZoneCroix(3),cibles_possibles="Ennemis" ),Effets.EffetAttireVersCible(2,zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")],2,1,0,1,"cercle",description="Occasionne des dommages Air et attire vers la cible."))
             sorts.append(Sort.Sort("Flèche de Recul",3,1,8,[Effets.EffetDegats(25,28,"air"),Effets.EffetRepousser(4)],2,1,0,0,"ligne",description="Occasionne des dommages Air aux ennemis et pousse la cible."))
@@ -419,14 +424,6 @@ class Personnage(object):
                 pos = self.historiqueDeplacement[-1]
                 del self.historiqueDeplacement[-1]
                 niveau.gereDeplacementTF(self,pos,lanceur,nomSort,AjouteHistorique=False)
-                
-
-    def deepcopy(self):
-        """@summary: clone le personnage
-        @return: le clone du personnage"""
-        cp = Personnage(self.classe, self.vie, self.fo, self.agi, self.cha, self.int, self.pui,self.do,self.doFo,self.doAgi,self.doCha,self.doInt,self.doPou,self.PM,self.PA,self.PO,self.lvl,self.team,self.icone)
-        cp.sorts = Personnage.ChargerSorts(cp.classe)
-        return cp
 
 
     def rafraichirEtats(self,niveau,debutTour=True):
@@ -675,7 +672,7 @@ class PersonnageMur(Personnage):
     def deepcopy(self):
         """@summary: Clone le personnageMur
         @return: le clone"""
-        cp = PersonnageMur(self.classe, self.vie, self.fo, self.agi, self.cha, self.int, self.pui,self.do,self.doFo,self.doAgi,self.doCha,self.doInt,self.doPou,self.retPA, self.retPM, self.esqPA, self.esqPM, self.PM,self.PA,self.PO,self.lvl,self.team,self.icone)
+        cp = PersonnageMur(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
         cp.sorts = Personnage.ChargerSorts(cp.classe)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
@@ -702,7 +699,7 @@ class PersonnageSansPM(Personnage):
     def deepcopy(self):
         """@summary: Clone le PersonnageSansPM
         @return: le clone"""
-        cp = PersonnageSansPM(self.classe, self.vie, self.fo, self.agi, self.cha, self.int, self.pui,self.do,self.doFo,self.doAgi,self.doCha,self.doInt,self.doPou,self.PM,self.PA,self.PO,self.lvl,self.team,self.icone)
+        cp = PersonnageSansPM(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
         cp.sorts = Personnage.ChargerSorts(cp.classe)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
@@ -720,11 +717,11 @@ class PersonnageSansPM(Personnage):
         niveau.finTour()
 # La liste des invocations disponibles.
 INVOCS = {
-"Cadran de Xélor" : PersonnageSansPM("Cadran de Xélor",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cadran_de_xelor.png"),
-"Cawotte" : PersonnageMur("Cawotte",800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"cawotte.png"),
-"Synchro" : PersonnageMur("Synchro",1200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"synchro.png"),
-"Complice" : PersonnageMur("Complice",650,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"complice.png"),
-"Balise de Rappel" : PersonnageSansPM("Balise de Rappel",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_de_rappel.png"),
-"Balise Tactique" : PersonnageMur("Balise Tactique",1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"balise_tactique.png"),
-"Stratège Iop" : PersonnageMur("Stratège Iop",1385,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"conquete.png")
+"Cadran de Xélor" : PersonnageSansPM("Cadran de Xelor",100,1,{"Vitalite":1000},{},{},{},"cadran_de_xelor.png"),
+"Cawotte" : PersonnageMur("Cawotte",0,1,{"Vitalite":800},{},{},{},"cawotte.png"),
+"Synchro" : PersonnageMur("Synchro",0,1,{"Vitalite":1200},{},{},{},"synchro.png"),
+"Complice" : PersonnageMur("Complice",0,1,{"Vitalite":650},{},{},{},"complice.png"),
+"Balise de Rappel" : PersonnageSansPM("Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
+"Balise Tactique" : PersonnageMur("Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
+"Stratège Iop" : PersonnageMur("Stratege Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
 }

@@ -153,16 +153,16 @@ class EffetDegats(Effet):
         dos = 0
         if self.typeDegats == "eau":
             carac+=joueurLanceur.cha
-            dos += joueurLanceur.doCha
+            dos += joueurLanceur.doEau
         elif self.typeDegats == "air":
             carac+=joueurLanceur.agi
-            dos += joueurLanceur.doAgi
+            dos += joueurLanceur.doAir
         elif self.typeDegats == "terre":
             carac+=joueurLanceur.fo
-            dos += joueurLanceur.doFo
+            dos += joueurLanceur.doTerre
         elif self.typeDegats == "feu":
             carac+=joueurLanceur.int
-            dos += joueurLanceur.doInt
+            dos += joueurLanceur.doFeu
         dos += joueurLanceur.do
         #Etats du lanceur
         total = 0
