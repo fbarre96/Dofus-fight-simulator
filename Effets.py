@@ -799,7 +799,8 @@ class EffetRetireEtat(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        joueurCaseEffet.retirerEtats(self.nomEtat)
+        if joueurCaseEffet != None:
+            joueurCaseEffet.retirerEtats(self.nomEtat)
 
 class EffetDevoilePiege(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

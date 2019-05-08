@@ -28,6 +28,7 @@ class TypeZone:
         print("zone inconnue")
         return False
     
+    
 
 class TypeZoneCercle(TypeZone):
     """@summary: Définit une zone d'action circulaire pour un effet. Hérite de TypeZone"""
