@@ -450,6 +450,60 @@ class EtatBoostVita(Etat):
         personnage.vie -= self.boostVita
         print("Modification de Vitalite: -"+str(self.boostVita))
 
+class EtatBoostErosion(Etat):
+    """@summary: Classe décrivant un état qui modifie l'érosion."""
+    def __init__(self, nom, debDans,duree,  boostErosion,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @boostErosion: le gain d'érosion en pourcentage. (10 pour 10% par exemple)
+        @type: int (négatif ou positif)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.boostErosion = boostErosion
+        super(EtatBoostErosion, self).__init__(nom,debDans, duree, lanceur,desc)
+
+    def deepcopy(self):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatBoostErosion(self.nom, self.debuteDans,self.duree,  self.boostErosion, self.lanceur,self.desc)
+
+    def triggerRafraichissement(self, personnage,niveau):
+        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
+                     Les points d'érosion sont boostés dès le rafraîchessement de l'état.
+        @personnage: Le personnage dont l'état est en train d'être rafraichit
+        @type: Personnage
+        @niveau: La grille de jeu en cours
+        @type: Niveau"""
+        self.triggerInstantane(joueurCaseEffet=personnage)
+
+    def triggerInstantane(self,**kwargs):
+        """@summary: Un trigger appelé au moment ou un état est appliqué.
+                     change l'érosion du joueur selon le boost d'érosion
+        @kwargs: les options non prévisibles selon les états.
+        @type: **kwargs"""
+        personnage = kwargs.get("joueurCaseEffet")
+        personnage.erosion += self.boostErosion
+        print("Modification d'érosion: "+str(self.boostErosion)+"%")
+
+    def triggerAvantRetrait(self,personnage):
+        """@summary: Un trigger appelé au moment ou un état va être retirés.
+                     Retire la vitalité bonus lorsque l'état se termine
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        personnage.erosion -= self.boostErosion
+        print("Modification d'érosion: -"+str(self.boostErosion)+"%")
+
 class EtatBoostDoPou(Etat):
     """@summary: Classe décrivant un état qui modifie les dommages de poussé."""
     def __init__(self, nom,  debDans, duree,boostDoPou,lanceur=None,desc=""):
