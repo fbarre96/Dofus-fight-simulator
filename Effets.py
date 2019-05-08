@@ -145,7 +145,7 @@ class EffetDegats(Effet):
     def deepcopy(self):
         return EffetDegats(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
 
-    def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort):
+    def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
         if joueurCaseEffet == None:
             return None
         baseDeg=random.randrange(self.minJet,self.maxJet+1)
@@ -171,6 +171,8 @@ class EffetDegats(Effet):
                 dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
         #appliquer les effets des etats sur les degats total du joueur cible
+        eloignement = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],[case_cible_x,case_cible_y])
+        total = total * (10-eloignement)/10
         total = int(total)
         for etat in joueurLanceur.etats:
             if etat.actif():
@@ -208,7 +210,7 @@ class EffetDegats(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""))
+            self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
             niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
@@ -247,7 +249,7 @@ class EffetVolDeVie(EffetDegats):
 
         #Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = super(EffetVolDeVie, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort"))
+            self.total = super(EffetVolDeVie, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
             niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
         
 
