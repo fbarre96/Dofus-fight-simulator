@@ -194,7 +194,6 @@ class EffetDegats(Effet):
 
         @return: Le total de dégâts infligés"""
         
-        print(joueurCaseEffet.classe+" perd "+ str(self.total) + "PV")
         joueurCaseEffet.subit(joueurLanceur,niveau,self.total,self.typeDegats)
         return self.total
 
@@ -208,11 +207,13 @@ class EffetDegats(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""))
-        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        if joueurCaseEffet is not None:
+            self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""))
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
         if joueurCaseEffet is not None:
+            print("str caseEffet "+str(joueurCaseEffet))
             self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
 
 class EffetVolDeVie(EffetDegats):
@@ -246,23 +247,24 @@ class EffetVolDeVie(EffetDegats):
         @type: **kwargs"""
 
         #Utilisation du parent EffetDegats
-        self.total = super(EffetVolDeVie, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort"))
-        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        if joueurCaseEffet is not None:
+            self.total = super(EffetVolDeVie, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort"))
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
         
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
         #Et enfin le vol de  vie
         
-       
-        #Le soin est majoré à la vie de début du combat
-        if joueurLanceur.vie > joueurLanceur._vie:
-            joueurLanceur.vie = joueurLanceur._vie
-        self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
-         #Soin
-         
-        joueurLanceur.vie += (self.total/2)
-        joueurLanceur.vie = int(joueurLanceur.vie)
-        print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
+        if joueurCaseEffet is not None:
+            #Le soin est majoré à la vie de début du combat
+            if joueurLanceur.vie > joueurLanceur._vie:
+                joueurLanceur.vie = joueurLanceur._vie
+            self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
+            #Soin
+            
+            joueurLanceur.vie += (self.total/2)
+            joueurLanceur.vie = int(joueurLanceur.vie)
+            print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
 
 
 class EffetDegatsPosLanceur(EffetDegats):
@@ -798,6 +800,33 @@ class EffetRetireEtat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueurCaseEffet.retirerEtats(self.nomEtat)
+
+class EffetDevoilePiege(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet dévoile les pièges invisibles."""
+    def __init__(self, **kwargs):
+        """@summary: Initialise un effet retirant l'invisiblité des pièges.
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        super(EffetDevoilePiege, self).__init__(**kwargs)
+    def deepcopy(self):
+        return EffetDevoilePiege(**self.kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        case_effet_x=kwargs.get("case_effet_x")
+        case_effet_y=kwargs.get("case_effet_y")
+        for piege in niveau.pieges:
+            if piege.aPorteDeclenchement(case_effet_x, case_effet_y):
+                piege.invisible = False
 
 class EffetTeleportePosPrec(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

@@ -127,6 +127,7 @@ class Piege:
         self.centre_x = centre_x
         self.centre_y = centre_y
         self.lanceur = lanceur
+        self.invisible = True
         self.couleur = couleur
 
     def aPorteDeclenchement(self,x,y):
@@ -900,7 +901,7 @@ class Niveau:
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet,joueurCibleDirect,ciblesTraitees):
                     #On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
-                    effetALancer.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+                    effetALancer.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y,case_effet_x=case_x,case_effet_y=case_y)
                     sestApplique = True
                     #Peu import le type, l'etat requis est retire s'il est consomme
                     if effet.consommeEtat:
@@ -909,7 +910,7 @@ class Niveau:
 
             else:
                 if effet.faireAuVide:
-                    effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+                    effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, case_effet_x=case_x,case_effet_y=case_y)
                     sestApplique = True
         return sestApplique, ciblesTraitees
 
@@ -1043,8 +1044,9 @@ class Niveau:
                             if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
                                 pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     for piege in self.pieges:
-                        if piege.aPorteDeclenchement(num_case, num_ligne):
-                            pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
+                        if piege.lanceur.team == self.tourDe.team or not piege.invisible:
+                            if piege.aPorteDeclenchement(num_case, num_ligne):
+                                pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     
                     
                     #Afficher previsualation portee du sort selectionne
@@ -1078,7 +1080,13 @@ class Niveau:
                                                 tab_cases_previ.append([num_case,num_ligne])
 
                 if sprite.type == 'j':
-                        fenetre.blit(team1, (x,y))
+                    joueurOnCase = self.getJoueurSur(x,y)
+                    if joueurOnCase != None:
+                        if joueurOnCase.aEtat("Invisible"):
+                            if joueurOnCase.team == self.tourDe.team:
+                                fenetre.blit(team1, (x,y))
+                        else:
+                            fenetre.blit(team1, (x,y))
                 num_case+=1
             num_ligne+=1
         
