@@ -355,7 +355,6 @@ class EffetRetPA(Effet):
             basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
             probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
             rand = random.random()
-            print("Jet retrait : "+str(probaRet) +" and got "+str(rand))
             if rand <= probaRet:
                 totalRet += 1
         joueurCaseEffet.PA -= totalRet

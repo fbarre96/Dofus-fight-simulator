@@ -259,7 +259,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Flèche Glacée",3,3,6,[Effets.EffetDegats(17,19,"feu"),Effets.EffetRetPA(2)],99,2,0,1,"cercle",description="Occasionne des dommages Feu et retire des PA."))
             sorts.append(Sort.Sort("Flèche Paralysante",5,2,6,[Effets.EffetDegats(39,42,"feu",zone=Zones.TypeZoneCroix(1)),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1))],1,1,0,0,"cercle",description="Occasionne des dommages Feu et retire des PA."))
             sorts.append(Sort.Sort("Flèche Enflammée",4,1,8,[Effets.EffetDegats(33,35,"feu",zone=Zones.TypeZoneLigne(5) ,faire_au_vide=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True)],2,2,0,1,"ligne",description="Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort."))
-            sorts.append(Sort.Sort("Flèche Repulsive",3,1,7,[Effets.EffetDegats(28,32,"feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetPousser(1,zone=Zones.TypeZoneLignePerpendiculaire(1))],2,2,0,0,"ligne",description="Occasionne des dommages Feu et repousse de 1 case."))
+            sorts.append(Sort.Sort("Flèche Repulsive",3,1,7,[Effets.EffetDegats(28,32,"feu",zone=Zones.TypeZoneLignePerpendiculaire(1),faire_au_vide=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLignePerpendiculaire(1),faire_au_vide=True)],2,2,0,0,"ligne",description="Occasionne des dommages Feu et repousse de 1 case."))
             sorts.append(Sort.Sort("Tir Éloigne",3,0,0,[Effets.EffetEtat(Etats.EtatBoostPO("Tir_eloigne",0,4,6),zone=Zones.TypeZoneCercle(3))],1,1,5,0,"cercle",description="Augmente la portée des cibles présentes dans la zone d'effet."))
             sorts.append(Sort.Sort("Acuité Absolue",4,0,0,[Effets.EffetEtat(Etats.Etat("Desactive_ligne_de_vue",0,1))],1,1,3,0,"cercle",description="Tous les sorts du Crâ peuvent être lancés au travers des obstacles."))
             sorts.append(Sort.Sort("Flèche d'Expiation",4,6,10,[Effets.EffetDegats(35,37,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_d_expiation",0,-1,"Flèche d'Expiation",36))],1,1,3,1,"cercle",description="Occasionne des dommages Eau, augmente les dommages du sort tous les 3 tours et empêche la cible d'utiliser des sorts de déplacement."))
@@ -655,6 +655,8 @@ class Personnage(object):
                     if joueurInfo != None:
                         for etat in joueurInfo.etats:
                             print(joueurInfo.classe+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
+                    if sortSelectionne != None:
+                        sortSelectionne = None
         #Touche clavier appuyée
         
             
