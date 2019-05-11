@@ -7,7 +7,7 @@ import constantes
 import Overlays
 import pygame
 from pygame.locals import *
-
+import json
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
     def __init__(self, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone=""):
@@ -49,43 +49,43 @@ class Personnage(object):
         self.soins = int(caracsSecondaires.get("Soins",0))      #TODO
         self.tacle = int(caracsSecondaires.get("Tacle",0))      #TODO
         self.fuite = int(caracsSecondaires.get("Fuite",0))      #TODO
-        self.ini = int(caracsSecondaires.get("Initiative",0))    #TODO
-        self.invocation = int(caracsSecondaires.get("Invocation",0))    #TODO
+        self.ini = int(caracsSecondaires.get("Initiative",0))    
+        self.invocationLimite = int(caracsSecondaires.get("Invocation",1))    
         self.prospection = int(caracsSecondaires.get("Prospection",0))  # Aucune utilité dans le simulateur de combat
         self.caracsSecondaires = caracsSecondaires
 
         self.do = int(dommages.get("Dommages",0))
         self.doCri = int(dommages.get("Dommages critiques",0))          #TODO
-        self.doNeutre = int(dommages.get("Neutre",0))                   #TODO
+        self.doNeutre = int(dommages.get("Neutre",0))                   
         self.doTerre = int(dommages.get("Terre",0))
         self.doFeu = int(dommages.get("Feu",0))
         self.doEau = int(dommages.get("Eau",0))
         self.doAir= int(dommages.get("Air",0))
-        self.doRenvoi= int(dommages.get("Renvoi",0))                    #TODO
+        self.doRenvoi= int(dommages.get("Renvoi",0))                    
         self.doMaitriseArme= int(dommages.get("Maitrise d'arme",0))     #TODO
-        self.doPieges= int(dommages.get("Pieges",0))                    #TODO
-        self.doPiegesPui= int(dommages.get("Pieges Puissance",0))       #TODO
+        self.doPieges= int(dommages.get("Pieges",0))                    
+        self.doPiegesPui= int(dommages.get("Pieges Puissance",0))       
         self.doPou =  int(dommages.get("Poussee",0))
-        self.doSorts =  int(dommages.get("Sorts",0))                    #TODO
-        self.doArmes =  int(dommages.get("Armes",0))                    #TODO
-        self.doDist =  int(dommages.get("Distance",0))                  #TODO
-        self.doMelee =  int(dommages.get("Melee",0))                    #TODO
+        self.doSorts =  int(dommages.get("Sorts",0))                    
+        self.doArmes =  int(dommages.get("Armes",0))                    
+        self.doDist =  int(dommages.get("Distance",0))                  
+        self.doMelee =  int(dommages.get("Melee",0))                    
         self.dommages = dommages
         
-        self.reNeutre = int(resistances.get("Neutre",0))                #TODO
-        self.rePerNeutre = int(resistances.get("Neutre%",0))            #TODO
-        self.reTerre = int(resistances.get("Terre",0))                  #TODO
-        self.rePerTerre= int(resistances.get("Terre%",0))               #TODO
-        self.reFeu = int(resistances.get("Feu",0))                      #TODO
-        self.rePerFeu = int(resistances.get("Feu%",0))                  #TODO
-        self.reEau = int(resistances.get("Eau",0))                      #TODO
-        self.rePerEau = int(resistances.get("Eau%",0))                  #TODO
-        self.reAir = int(resistances.get("Air",0))                      #TODO
-        self.rePerAir = int(resistances.get("Air%",0))                  #TODO
+        self.reNeutre = int(resistances.get("Neutre",0))                
+        self.rePerNeutre = int(resistances.get("Neutre%",0))            
+        self.reTerre = int(resistances.get("Terre",0))                  
+        self.rePerTerre= int(resistances.get("Terre%",0))               
+        self.reFeu = int(resistances.get("Feu",0))                      
+        self.rePerFeu = int(resistances.get("Feu%",0))                  
+        self.reEau = int(resistances.get("Eau",0))                      
+        self.rePerEau = int(resistances.get("Eau%",0))                  
+        self.reAir = int(resistances.get("Air",0))                      
+        self.rePerAir = int(resistances.get("Air%",0))                  
         self.reCc = int(resistances.get("Coups critiques",0))           #TODO
-        self.rePou = int(resistances.get("Poussee",0))                  #TODO
-        self.reDist = int(resistances.get("Distance",0))                #TODO
-        self.reMelee = int(resistances.get("Melee",0))                  #TODO
+        self.rePou = int(resistances.get("Poussee",0))                  
+        self.reDist = int(resistances.get("Distance",0))                
+        self.reMelee = int(resistances.get("Melee",0))                  
         self.resistances = resistances
 
         self._vie = self.vie
@@ -105,6 +105,7 @@ class Personnage(object):
         self.posDebTour = None
         self.posDebCombat = None
         self.invocateur = None
+        self.invocations = []
         self.team = int(team)
         if not(icone.startswith("images/")):
             self.icone = ("images/"+icone)
@@ -135,6 +136,7 @@ class Personnage(object):
                     #print "DEBUG : la cibleDirect n'a pas ou a l'etat requis :"+str(checkEtat)
                     return False
         return True
+
 
     @staticmethod
     def ChargerSorts(classe):
@@ -174,8 +176,8 @@ class Personnage(object):
             sorts.append(Sort.Sort("Renvoi",3,1,6,[Effets.EffetTeleporteDebutTour()], 1,1,2, 0, "ligne",description="Téléporte la cible ennemie à sa cellule de début de tour."))
             sorts.append(Sort.Sort("Rayon Obscur",5,1,6,[Effets.EffetDegats(37,41,"terre"),Effets.EffetDegats(37,41,"terre",cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne",description="Occasionne des dommages Terre en ligne. Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag. Retire l'état Téléfrag."))
             sorts.append(Sort.Sort("Rayon Ténebreux",3,1,5,[Effets.EffetDegats(19,23,"terre"),Effets.EffetDegats(19,23,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,2,0,1,"ligne",description="Occasionne des dommages Terre. Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone autour d'elle."))
-            sorts.append(Sort.Sort("Complice",2,1,5,[Effets.EffetInvoque("Complice",cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,0,0,"cercle",chaine=True,description="Invoque un Complice statique qui ne possède aucun sort. Il est tué si un autre Complice est invoqué."))
-            sorts.append(Sort.Sort("Cadran de Xélor",3,1,5,[Effets.EffetInvoque("Cadran de Xélor",cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,4,0,"cercle",chaine=True,description="Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag. Donne des PA aux alliés autour de lui et dans l'état Téléfrag."))
+            sorts.append(Sort.Sort("Complice",2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,0,0,"cercle",chaine=True,description="Invoque un Complice statique qui ne possède aucun sort. Il est tué si un autre Complice est invoqué."))
+            sorts.append(Sort.Sort("Cadran de Xélor",3,1,5,[Effets.EffetInvoque("Cadran de Xélor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,4,0,"cercle",chaine=True,description="Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag. Donne des PA aux alliés autour de lui et dans l'état Téléfrag."))
             sorts.append(Sort.Sort("Gelure",2,2,5,[Effets.EffetDegats(11,13,"air",cibles_possibles="Ennemis|Lanceur"), Effets.EffetTeleportePosPrec(1)], 3,2,0,1,"cercle",description="Occasionne des dommages Air aux ennemis. Téléporte la cible à sa position précédente."))
             sorts.append(Sort.Sort("Perturbation",2,1,4,[Effets.EffetDegats(9,11,"feu",cibles_possibles="Ennemis|Lanceur"), Effets.EffetTpSymSelf()], 3,2,0,0,"ligne", chaine=False,description="Occasionne des dommages Feu et téléporte la cible symétriquement par rapport au lanceur."))
             sorts.append(Sort.Sort("Sablier de Xélor",2,1,7,[Effets.EffetDegats(15,17,"feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,1,0,1,"ligne",description="Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue. Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone. Le retrait de PA ne peut pas être désenvoûté."))
@@ -192,7 +194,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Pendule",5,1,5,[Effets.EffetTpSym(),Effets.EffetDegatsPosLanceur(48,52,"air",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis"), Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")], 2,1,0,0,"cercle",chaine=True,description="Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination. Il revient ensuite à sa position précédente."))
             sorts.append(Sort.Sort("Paradoxe Temporel",3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)], 1,1,2,0,"cercle",description="Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran). Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles. Fixe le temps de relance de Cadran de Xélor et de Complice à 1."))
             sorts.append(Sort.Sort("Faille Temporelle",3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xélor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")], 1,1,3,0,"cercle",description="Le lanceur échange sa position avec celle du Complice (ou du Cadran). À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente. La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle."))
-            sorts.append(Sort.Sort("Synchro",2,1,4,[Effets.EffetInvoque("Synchro",cibles_possibles="",faire_au_vide=True)], 1,1,3,0,"cercle",description="Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour. La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag. Elle n'est pas affectée par les effets de Rembobinage. À partir du tour suivant son lancer, son invocateur perd 1 PA."))
+            sorts.append(Sort.Sort("Synchro",2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True)], 1,1,3,0,"cercle",description="Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour. La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag. Elle n'est pas affectée par les effets de Rembobinage. À partir du tour suivant son lancer, son invocateur perd 1 PA."))
             sorts.append(Sort.Sort("Désynchronisation",2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),faire_au_vide=True)],2,2,0,1, "cercle", description="Pose un piège qui téléporte symétriquement les entités proches."))
             sorts.append(Sort.Sort("Contre",2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)], 1,1,5,0,"cercle", description="Renvoie une partie des dommages subis en mêlée à l'attaquant."))
             sorts.append(Sort.Sort("Bouclier Temporel",3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur",""))], 1,1,3,0,"cercle",description="Si la cible subit des dommages, son attaquant revient à sa position précédente."))
@@ -210,10 +212,10 @@ class Personnage(object):
             sorts.append(Sort.Sort("Tannée",4,1,7,[Effets.EffetDegats(30,34,"air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",description="Occasionne des dommages Air en zone et retire des PM."))
             sorts.append(Sort.Sort("Bond",5,1,6,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")], 1,1,2,0,"cercle",description="Téléporte sur la case ciblée. Augmente les dommages reçus par les ennemis situés sur les cases adjacentes."))
             sorts.append(Sort.Sort("Détermination",2,0,0,[Effets.EffetEtat(Etats.Etat("Indeplacable",0,1)),Effets.EffetEtat(Etats.EtatModDegPer("Determination",0,1,75))], 1,1,2,0,"cercle",description="Fixe l'état Indéplaçable et réduit 25%% des dommages subis pendant 1 tour. Ne peut pas être désenvoûté."))
-            sorts.append(Sort.Sort("Intimidation",2,1,2,[Effets.EffetDegats(11,13,"terre"),Effets.EffetPousser(4)], 3,2,0,0,"ligne",description="Occasionne des dommages Neutre sur les ennemis et repousse la cible."))
+            sorts.append(Sort.Sort("Intimidation",2,1,2,[Effets.EffetDegats(11,13,"neutre"),Effets.EffetPousser(4)], 3,2,0,0,"ligne",description="Occasionne des dommages Neutre sur les ennemis et repousse la cible."))
             sorts.append(Sort.Sort("Menace",3,0,3,[Effets.EffetDegats(26,28,"eau",cibles_exclues="Lanceur"),Effets.EffetAttire(2,cibles_exclues="Lanceur")], 3,2,0,0,"cercle",description="Occasionne des dommages Eau et attire la cible. Le lanceur gagne des points de bouclier."))
             sorts.append(Sort.Sort("Déferlement",3,0,5,[Effets.EffetDegats(28,32,"eau",cibles_exclues="Lanceur"),Effets.EffetAttireAttaquant(4,cibles_exclues="Lanceur")], 3,2,0,0,"ligne",description="Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible. Le lanceur gagne des points de bouclier."))
-            sorts.append(Sort.Sort("Conquête",3,1,6,[Effets.EffetInvoque("Stratège Iop",cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))], 1,1,3,0,"ligne",description="Invoque un épouvantail qui redistribue à proximité (2 cases) 50%% des dommages qu'il subit."))
+            sorts.append(Sort.Sort("Conquête",3,1,6,[Effets.EffetInvoque("Stratège Iop",True,cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))], 1,1,3,0,"ligne",description="Invoque un épouvantail qui redistribue à proximité (2 cases) 50%% des dommages qu'il subit."))
             sorts.append(Sort.Sort("Epée Divine",3,0,0,[Effets.EffetDegats(21,23,"air",zone=Zones.TypeZoneCroix(3),cibles_possibles="Ennemis"), Effets.EffetEtat(Etats.EtatBoostDommage("Epee Divine",0,4,20),zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Lanceur")], 2,2,0,0,"cercle",chaine=False,description="Occasionne des dommages Air et augmente les dommages des alliés ciblés."))
             sorts.append(Sort.Sort("Fendoir",5,0,4,[Effets.EffetDegats(47,53,"eau",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")], 2,2,0,0,"cercle",description="Occasionne des dommages Eau en zone. Applique des points de bouclier pour chaque ennemi touché."))
             sorts.append(Sort.Sort("Épée Destructrice",4,1,5,[Effets.EffetDegats(32,36,"feu",zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",description="Occasionne des dommages Feu et réduit la probabilité que la cible occasionne des coups critiques."))
@@ -273,16 +275,16 @@ class Personnage(object):
             sorts.append(Sort.Sort("Oeil de Taupe",3,5,10,[Effets.EffetVolDeVie(16,18,"eau",zone=Zones.TypeZoneCercle(3), faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPO("Oeil_de_taupe",1,3,-3),zone=Zones.TypeZoneCercle(3)),Effets.EffetRetireEtat("Invisible",zone=Zones.TypeZoneCercle(3), faire_au_vide=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), faire_au_vide=True)],1,1,4,1,"cercle",chaine=False,description="Réduit la portée des personnages ciblés, vole de la vie dans l'élément Eau et repère les objets invisibles dans sa zone d'effet."))
             sorts.append(Sort.Sort("Flèche Écrasante",3,5,7,[Effets.EffetDegats(34,38,"feu",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtat(Etats.Etat("Pesanteur",1,1),zone=Zones.TypeZoneCroixDiagonale(1))],1,1,3,1,"cercle",description="Occasionne des dommages Feu et applique l'état Pesanteur."))
             sorts.append(Sort.Sort("Tir Critique",2,0,6,[Effets.EffetEtat(Etats.Etat("Tir_critique",0,4))],1,1,5,1,"cercle",description="Augmente la probabilité de faire un coup critique."))
-            sorts.append(Sort.Sort("Balise de Rappel",2,1,5,[Effets.EffetInvoque("Balise de rappel",cibles_possibles="",faire_au_vide=True)],1,1,2,0,"cercle",description="Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour)."))
+            sorts.append(Sort.Sort("Balise de Rappel",2,1,5,[Effets.EffetInvoque("Balise de rappel",True,cibles_possibles="",faire_au_vide=True)],1,1,2,0,"cercle",description="Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour)."))
             sorts.append(Sort.Sort("Flèche d'Immobilisation",2,1,6,[Effets.EffetDegats(10,11,"eau"),Effets.EffetEtat(Etats.EtatBoostPM("Fleche_d_immobilisation",1,1,-1)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Fleche_d_immobilisation",0,1,1))],4,2,0,1,"cercle",description="Occasionne des dommages Eau et vole des PM à la cible."))
             sorts.append(Sort.Sort("Flèche Assaillante",3,2,6,[Effets.EffetDegats(33,37,"eau",cibles_possibles="Ennemis"),Effets.EffetPousser(1,cibles_possibles="Ennemis"),Effets.EffetAttireAttaquant(1,cibles_possibles="Allies")],3,2,0,1,"ligne",description="Occasionne des dommages Eau sur les ennemis et le lanceur recule de 1 case. Sur un allié : rapproche le lanceur de 1 case."))
             sorts.append(Sort.Sort("Flèche Punitive",4,6,8,[Effets.EffetDegats(29,31,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_punitive",0,-1,"Flèche Punitive",30))],1,1,2,1,"cercle",description="Occasionne des dommages Terre et augmente les dommages du sort tous les 2 tours."))
             sorts.append(Sort.Sort("Flèche du Jugement",3,5,7,[Effets.EffetDegats(39,45,"terre")],3,2,0,1,"cercle",description="Occasionne des dommages Terre. Plus le pourcentage de PM du personnage au lancement du sort est important, plus les dommages occasionnés sont importants."))
             sorts.append(Sort.Sort("Tir Puissant",3,0,6,[Effets.EffetEtat(Etats.EtatBoostPuissance("Tir_puissant",0,3,250))],1,1,6,1,"cercle",description="Augmente les dommages des sorts."))
-            sorts.append(Sort.Sort("Balise Tactique",1,1,10,[Effets.EffetInvoque("Balise Tactique",cibles_possibles="", faire_au_vide=True)],1,1,2,1,"cercle",description="Invoque une Balise qui peut servir d'obstacle et de cible. La Balise subit 2 fois moins de dommages des alliés."))
+            sorts.append(Sort.Sort("Balise Tactique",1,1,10,[Effets.EffetInvoque("Balise Tactique",True, cibles_possibles="", faire_au_vide=True)],1,1,2,1,"cercle",description="Invoque une Balise qui peut servir d'obstacle et de cible. La Balise subit 2 fois moins de dommages des alliés."))
             sorts.append(Sort.Sort("Flèche Harcelante",3,1,7,[Effets.EffetDegats(13,15,"air")],1,1,2,1,"cercle",description="Occasionne des dommages Air sans ligne de vue."))
             sorts.append(Sort.Sort("Flèche Massacrante",4,4,8,[Effets.EffetDegats(34,38,"air"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_massacrante",1,1,"Flèche Massacrante",10))],3,2,0,1,"ligne",description="Occasionne des dommages Air. Les dommages du sort sont augmentés au tour suivant."))
-            sorts.append(Sort.Sort("Flèche Empoisonnée",3,1,10,[Effets.EffetRetPM(3),Effets.EffetEtat(Etats.EtatEffetDebutTour("Fleche_empoisonnee", 1,2,Effets.EffetDegats(17,18,"terre"),"Fleche_empoisonnee","lanceur"))],4,1,0,1,"cercle",description="Occasionne des dommages Neutre sur plusieurs tours et retire des PM."))
+            sorts.append(Sort.Sort("Flèche Empoisonnée",3,1,10,[Effets.EffetRetPM(3),Effets.EffetEtat(Etats.EtatEffetDebutTour("Fleche_empoisonnee", 1,2,Effets.EffetDegats(17,18,"neutre"),"Fleche_empoisonnee","lanceur"))],4,1,0,1,"cercle",description="Occasionne des dommages Neutre sur plusieurs tours et retire des PM."))
             sorts.append(Sort.Sort("Flèche Persecutrice",3,5,8,[Effets.EffetDegats(15,17,"feu"),Effets.EffetDegats(15,17,"air")],99,2,0,1,"ligne",description="Occasionne des dommages Air et Feu."))
             sorts.append(Sort.Sort("Flèche Tyrannique",4,2,7,[Effets.EffetEtat(Etats.EtatEffetSiPousse("Fleche_tyrannique_air",0,2, Effets.EffetDegats(12,12,"air"),"Fleche_tyrannique","lanceur")),Effets.EffetEtat(Etats.EtatEffetSiSubit("Fleche_tyrannique_feu",0,2, Effets.EffetDegats(12,12,"feu"),"Fleche_tyrannique","doPou","lanceur"))],99,1,0,1,"ligne",description="Occasionne des dommages Air si la cible est poussée. Occasionne des dommages Feu si la cible subit des dommages de poussée."))
             sorts.append(Sort.Sort("Flèche Destructrice",4,5,8,[Effets.EffetDegats(30,32,"terre"),Effets.EffetEtat(Etats.EtatBoostDommage("Flèche destructrice",1,1,-60))],99,2,0,1,"cercle",description="Occasionne des dommages Terre et réduit les dommages occasionnés par la cible."))
@@ -309,14 +311,14 @@ class Personnage(object):
             sorts.append(Sort.Sort("Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostDommage("Maitrise de l'arc",0,3,60))],1,1,5,1,"cercle",description="Augmente les dommages."))
             sorts.append(Sort.Sort("Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostPM("Sentinelle",1,1,-100))],1,1,3,0,"cercle",description="Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
         elif classe=="Sram":
-            activationPiegeSournois = [Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepulsif =[Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepulsif =[Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             #sorts.append(Sort.Sort(u"Sournoiserie",3,1,5,[Effets.EffetDegats(20,22,"terre")],99,3,0,1, "cercle", description=u"Occasionne des dommages Terre."))
             #TODO: ajout invisibilité et test avec oeil de taupe.
             sorts.append(Sort.Sort("Invisibilité",2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostPM("Invibilité_PM",0,4,1))],1,1,6,0, "cercle", description=u"Rend invisible."))
             sorts.append(Sort.Sort("Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description="Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
-        sorts.append(Sort.Sort("Cawotte",4,1,6,[Effets.EffetInvoque("Cawotte",cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description="Invoque une Cawotte")) 
+        sorts.append(Sort.Sort("Cawotte",4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description="Invoque une Cawotte")) 
         
         return sorts
 
@@ -348,10 +350,10 @@ class Personnage(object):
             piege = niveau.pieges[i]
             if piege.aPorteDeclenchement(x,y):
                 piegeDeclenche = True
-                for effet in piege.effets:
-                    niveau.pieges.remove(piege)
-                    i-=1
+                for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
+                i-=1
+                niveau.pieges.remove(piege)
             i+=1
             nbPieges = len(niveau.pieges)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile

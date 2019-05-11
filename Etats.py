@@ -127,7 +127,7 @@ class Etat(object):
 
         @return: Le nouveau coût en PA"""
         return coutPAActuel
-    def triggerCalculPousser(self,doPou,niveau,pousseur,joueurCible):
+    def triggerCalculPousser(self,doPou,rePou, niveau,pousseur,joueurCible):
         """@summary: Un trigger appelé pour tous les états du pousseur qui aura poussé sa cible contre un obstacle.
                      Utile pour les états modifiant la caractéristique nombre de dommage de poussées.
                      Cet état de base ne fait rien d'aute que retourner les dommages de poussés déjà passé en paramètre.(comportement par défaut hérité).
@@ -141,7 +141,7 @@ class Etat(object):
         @type: Personnage
 
         @return: La nouvelle valeur de dommage de poussé"""
-        return doPou
+        return doPou, rePou
     def triggerInstantane(self, **kwargs):
         """@summary: Un trigger appelé au moment ou un état est appliqué.
                      Utile pour les états qui ont un comportement immédiat.
@@ -532,7 +532,7 @@ class EtatBoostDoPou(Etat):
         @return: Le clone de l'état"""
         return EtatBoostDoPou(self.nom, self.debuteDans,self.duree,  self.boostDoPou, self.lanceur,self.desc)
 
-    def triggerCalculPousser(self,doPou,niveau, pousseur, joueurCible):
+    def triggerCalculPousser(self,doPou,rePou,niveau, pousseur, joueurCible):
         """@summary: Un trigger appelé pour tous les états du pousseur qui aura poussé sa cible contre un obstacle.
                      Boost les dommages de poussés (caractéristique do Pou) du joueur affecté.
         @doPou: La caractéristique dommage de poussée du pousseur + les états l'ayant déjà éventuellement modifiée.
@@ -545,7 +545,7 @@ class EtatBoostDoPou(Etat):
         @type: Personnage
 
         @return: La nouvelle valeur de dommage de poussé"""
-        return doPou+self.boostDoPou
+        return doPou+self.boostDoPou, rePou
 
 class EtatBoostDommage(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de dommage dans les stats du porteur."""
@@ -1016,8 +1016,9 @@ class EtatContre(Etat):
         if cibleAttaque.team != attaquant.team:
             distance = abs(attaquant.posX-cibleAttaque.posX)+abs(attaquant.posY-cibleAttaque.posY)
             if distance == 1:
-                s=Sort.Sort("Contre",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis")],99,99,0,0,"cercle")
-                s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, self.posX, self.posY)
+                retour = int(((self.pourcentage/100)*totalPerdu) + cibleAttaque.doRenvoi)
+                s=Sort.Sort("Contre",0,0,1,[Effets.EffetDegats(retour,retour,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis", bypassDmgCalc=True)],99,99,0,0,"cercle")
+                s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, attaquant.posX, attaquant.posY)
 
 class EtatRepousserSiSubit(Etat):
     """@summary: Classe décrivant un état qui repousse l'attaquant quand le porteur se fait attaquer."""
@@ -1149,7 +1150,7 @@ class EtatEffetSiPousse(Etat):
         @return: Le clone de l'état"""
         return EtatEffetSiPousse(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.lanceur,self.desc)
 
-    def triggerCalculPousser(self,doPou,niveau,pousseur,cibleAttaque):
+    def triggerCalculPousser(self,doPou,rePou,niveau,pousseur,cibleAttaque):
         """@summary: Un trigger appelé pour tous les états du pousseur qui aura poussé sa cible contre un obstacle.
                      Active un effet sur le lanceur ou la cible au choix si le joueur portant l'état est poussé
         @doPou: La caractéristique dommage de poussée du pousseur + les états l'ayant déjà éventuellement modifiée.
@@ -1166,7 +1167,7 @@ class EtatEffetSiPousse(Etat):
             niveau.lancerEffet(self.effet,self.lanceur.posX,cibleAttaque.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, self.lanceur)
         elif self.quiLancera == "cible":
             niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, cibleAttaque)
-        return doPou
+        return doPou,rePou
 class EtatTelefrag(Etat):
     """@summary: Classe décrivant un état Téléfrag."""
     def __init__(self, nom,  debDans,duree, nomSort, lanceur=None,desc=""):

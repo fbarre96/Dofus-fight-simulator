@@ -49,6 +49,16 @@ class Sort:
         return coutPA
 
     def estLancable(self, niveau, joueurLanceur,joueurCible):
+        res,msg,coutPA = self.sortEstLancable(niveau, joueurLanceur,joueurCible)
+        if res == False:
+            return res,msg,coutPA
+        for effet in self.effets:
+            res, msg =effet.estLancable(joueurLanceur,joueurCible)
+            if res == False:
+                return res, msg, coutPA
+        return True, msg, coutPA
+
+    def sortEstLancable(self, niveau, joueurLanceur,joueurCible):
         coutPA = self.getCoutPA(joueurLanceur)
         if self.compteTourEntreDeux >= self.nbTourEntreDeux:
             if self.compteLancerParTour < self.nbLancerParTour:

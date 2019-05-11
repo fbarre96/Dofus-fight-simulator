@@ -227,7 +227,7 @@ class Niveau:
         self.departT1 = [[3,3]]
         #Un tableau des cordonnées de départs possibles pour la team 2
         self.departT2 = [[12,12]]
-        self.joueurs = joueurs
+        self.joueurs = sorted(joueurs, key=lambda x: x.ini,reverse=True)
         #Le joueur qui commence est à la position 0 du tableau des joueurs
         self.tourIndex = 0
         #Le joueur dont c'est le tour
@@ -474,6 +474,13 @@ class Niveau:
             if self.joueurs[i] == perso:
                 #On supprime son existence
                 self.structure[perso.posY][perso.posX].type="v"
+                # Recherche de l'invocateur si c'est une invocation
+                if perso.invocateur is not None:
+                    # Supression de l'invoc dans la liste d'invoc du perso
+                    for j,invocation in enumerate(perso.invocateur.invocations):
+                        if invocation == perso:
+                            del perso.invocateur.invocations[j]
+                            break
                 del self.joueurs[i]
                 i-=1
                 break
@@ -661,20 +668,22 @@ class Niveau:
         R = 6
         if doDeg:
             doPou = pousseur.doPou
+            rePou = joueurCible.rePou
             # Intervention des états
             for etat in pousseur.etats:
                 if etat.actif():
-                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
+                    doPou,rePou = etat.triggerCalculPousser(doPou,rePou,self,pousseur,joueurCible)
             for etat in joueurCible.etats:
                 if etat.actif():
-                    doPou = etat.triggerCalculPousser(doPou,self,pousseur,joueurCible)
+                    doPou,rePou = etat.triggerCalculPousser(doPou,rePou,self,pousseur,joueurCible)
             # Calcul des dégâts
             total = (8+R*pousseur.lvl/50)*D
             total = int(total)
             if total > 0:
                 total += doPou
-                print(joueurCible.classe+" perd "+ str(total) + "PV (do pou)")
-                joueurCible.subit(pousseur,self,total,"doPou")
+                vaSubir = total - rePou
+                print(joueurCible.classe+" perd "+ str(vaSubir) + "PV (do pou)")
+                joueurCible.subit(pousseur,self,vaSubir,"doPou")
         return posPouX,posPouY,D
 
     def pousser(self, effetPousser, joueurCible,pousseur,doDeg=True,depuisX=None,depuisY=None):

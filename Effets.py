@@ -34,6 +34,19 @@ class Effet(object):
     def deepcopy(self):
         return Effet(**self.kwargs)
 
+    def estLancable(self, joueurLanceur, joueurCible):
+        """@summary: Test si un effet peut etre lance selon les options de l'effets.
+        @joueurLanceur: Le joueur lançant l'effet
+        @type: Personnage
+        @joueurCible: Le joueur dans la zone d'effet testé
+        @type: Personnage
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
+        @type: Personnage ou None
+        @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
+        @type: tableau de Personnage
+        @return: booléen indiquant vrai si la cible est valide, faux sinon"""
+        return True,""
+
     def cibleValide(self, joueurLanceur, joueurCible,joueurCibleDirect, ciblesDejaTraitees):
         """@summary: Test si un joueur cible est un cible valide selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
@@ -132,7 +145,7 @@ class EffetDegats(Effet):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -148,42 +161,89 @@ class EffetDegats(Effet):
     def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
         if joueurCaseEffet == None:
             return None
+        
         baseDeg=random.randrange(self.minJet,self.maxJet+1)
+        
         carac = joueurLanceur.pui
         dos = 0
+        resFixes = 0
+        rePer = 0
         if self.typeDegats == "eau":
-            carac+=joueurLanceur.cha
-            dos += joueurLanceur.doEau
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac+=joueurLanceur.cha
+                dos += joueurLanceur.doEau
+            resFixes += joueurCaseEffet.reEau
+            rePer = joueurCaseEffet.rePerEau
         elif self.typeDegats == "air":
-            carac+=joueurLanceur.agi
-            dos += joueurLanceur.doAir
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac+=joueurLanceur.agi
+                dos += joueurLanceur.doAir
+            resFixes += joueurCaseEffet.reAir
+            rePer = joueurCaseEffet.rePerAir
         elif self.typeDegats == "terre":
-            carac+=joueurLanceur.fo
-            dos += joueurLanceur.doTerre
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac+=joueurLanceur.fo
+                dos += joueurLanceur.doTerre
+            resFixes += joueurCaseEffet.reTerre
+            rePer = joueurCaseEffet.rePerTerre
         elif self.typeDegats == "feu":
-            carac+=joueurLanceur.int
-            dos += joueurLanceur.doFeu
-        dos += joueurLanceur.do
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac+=joueurLanceur.int
+                dos += joueurLanceur.doFeu
+            resFixes += joueurCaseEffet.reFeu
+            rePer = joueurCaseEffet.rePerFeu
+        elif self.typeDegats == "neutre":
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac += joueurLanceur.fo
+                dos += joueurLanceur.doNeutre
+            resFixes += joueurCaseEffet.reNeutre
+            rePer = joueurCaseEffet.rePerNeutre
+        if self.kwargs.get("piege",False) == True:
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                carac += joueurLanceur.doPiegesPui
+                dos += joueurLanceur.doPieges
+        if self.kwargs.get("bypassDmgCalc",False) == False:
+            if nomSort != "cac":
+                dos += joueurLanceur.doSorts
+            else:
+                dos += joueurLanceur.doArmes
+            dos += joueurLanceur.do
+        distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [joueurLanceur.posX, joueurLanceur.posY])
+        if distance == 1:
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                dos += joueurLanceur.doMelee
+            resFixes += joueurCaseEffet.reMelee
+        else:
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                dos += joueurLanceur.doDist
+            resFixes += joueurCaseEffet.reDist
+
         #Etats du lanceur
         total = 0
         for etat in joueurLanceur.etats:
             if etat.actif():
                 dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
+    
         #appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],[case_cible_x,case_cible_y])
         total = total * (10-eloignement)/10
         total = int(total)
+
+        
+        vaSubir = total - resFixes
+        vaSubir = (vaSubir) - int((rePer/100)*vaSubir)
         for etat in joueurLanceur.etats:
             if etat.actif():
-                total = etat.triggerApresCalculDegats(total,self.typeDegats)
+                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats)
 
         for etat in joueurCaseEffet.etats:
             if etat.actif():
-                total = etat.triggerApresCalculDegats(total,self.typeDegats)
-        if total < 0:
-            total = 0
-        return total
+                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats)
+        if vaSubir < 0:
+            vaSubir = 0
+        
+        return vaSubir
 
     def appliquerDegats(self,niveau,joueurCaseEffet, joueurLanceur):
         """@summary: calcul les dégâts à infligés et applique ces dégâts à la cible.
@@ -227,7 +287,7 @@ class EffetVolDeVie(EffetDegats):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -267,7 +327,6 @@ class EffetVolDeVie(EffetDegats):
             joueurLanceur.vie = int(joueurLanceur.vie)
             print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
 
-
 class EffetDegatsPosLanceur(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Hérite de EffetsDegats.
@@ -278,7 +337,7 @@ class EffetDegatsPosLanceur(EffetDegats):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -1128,17 +1187,18 @@ class EffetTp(Effet):
 class EffetInvoque(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet invoque un personnage"""
-    def __init__(self, str_nomInvoque, **kwargs):
+    def __init__(self, str_nomInvoque, compteCommeInvocation, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
         @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
         @type: string
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
+        self.compteCommeInvocation = compteCommeInvocation
         self.nomInvoque = str_nomInvoque
         super(EffetInvoque, self).__init__(**kwargs)
     def deepcopy(self):
-        return EffetInvoque(self.nomInvoque,**self.kwargs)
+        return EffetInvoque(self.nomInvoque, self.compteCommeInvocation,**self.kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
@@ -1149,8 +1209,27 @@ class EffetInvoque(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
+        
         invoc = Personnages.INVOCS[self.nomInvoque].deepcopy()
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
-        niveau.invoque(invoc,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+        if self.estLancable(invoc.invocateur, None):
+            joueurLanceur.invocations.append(invoc)
+            niveau.invoque(invoc,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+
+    def estLancable(self, joueurLanceur, joueurCible):
+        """@summary: Test si un effet peut etre lance selon les options de l'effets.
+        @joueurLanceur: Le joueur lançant l'effet
+        @type: Personnage
+        @joueurCible: Le joueur dans la zone d'effet testé
+        @type: Personnage
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
+        @type: Personnage ou None
+        @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
+        @type: tableau de Personnage
+        @return: booléen indiquant vrai si la cible est valide, faux sinon"""
+        if self.compteCommeInvocation:
+            if len(joueurLanceur.invocations) + 1 > joueurLanceur.invocationLimite:
+                return False, "Limite d'invocation atteinte"
+        return True,""
