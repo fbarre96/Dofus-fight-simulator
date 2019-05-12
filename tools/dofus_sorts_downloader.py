@@ -58,7 +58,8 @@ def random_headers():
 url = "https://www.dofus.com/fr/mmorpg/encyclopedie/classes/"
 url_sorts = "https://www.dofus.com/fr/mmorpg/encyclopedie/sorts/details?"
 url_classes = ["7-eniripsa","6-ecaflip","8-iop","9-cra","1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","5-xelor","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
-url_classes = ["1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","5-xelor","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
+url_classes = ["7-eniripsa","6-ecaflip","8-iop","9-cra","1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
+
 if len(sys.argv) > 1:
     classes = sys.argv[1:]
 else:
@@ -108,15 +109,16 @@ for classe in classes:
             div_sort = soup_sort.find("h2", {"class": "ak-spell-name"})
             nom_sort = div_sort.contents[0].strip()
             nom_variante = div_sort.find("a", {"class": "ak-ajaxloader"}).string.strip()
-            sorts[nom_sort] = dict()
+            
             img_div = soup_sort.find("div", {"class": "ak-spell-details-illu"})
             img_src = img_div.span.img.get("src")
             if level == levels[0]:
                 load_requests(img_src,"sorts_db/sorts_icones/"+normaliser(nom_sort.lower())+".png",random_headers())
-            sorts[nom_sort]["img"] = img_src
-            sorts[nom_sort]["id"] = idSpell
+                sorts[nom_sort] = dict()
+                sorts[nom_sort]["img"] = img_src
+                sorts[nom_sort]["id"] = idSpell
+                sorts[nom_sort]["nom_variante"] = str(nom_variante)
             sorts[nom_sort][str(level)] = dict()
-            sorts[nom_sort]["nom_variante"] = str(nom_variante)
             sorts_attr = div_sort.find("span", {"class": "ak-spell-po-pa"}).string.strip()
             PO_valeurs = sorts_attr.split("PO")[0].strip()
             PO_min_max = PO_valeurs.split("-")

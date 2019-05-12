@@ -49,53 +49,68 @@ def TrouveClassesZones():
 
 def CreateChargerSorts(classe):
     nomClasse = classe.lower()
-    text_func = "if classe==\""+str(nomClasse)+"\":\n"
+    text_func = ""
+    
     with open("sorts_db/sorts_"+nomClasse+".json","r") as f:
         classe_sorts = json.loads(f.read())
+        count = 0
         for nom_sort, sort_values in classe_sorts.items():
-            text_func+="\t"
-            text_func+="sorts.append(Sort.Sort("
-            text_func+="\""+nom_sort+"\","
-            text_func+=str(int(sort_values["level"]))+","
-            text_func+=str(int(sort_values["PA"]))+","
-            try:
-                text_func+=str(int(sort_values["PO_min"]))+","
-            except:
-                raise Exception("No PO_min pour "+str(nomClasse)+" "+nom_sort)
-            text_func+=str(int(sort_values["PO_max"]))+","
-            text_func+=getListeEffets(sort_values,"Effets")+"," # tab effet
-            text_func+=getListeEffets(sort_values,"EffetsCritiques") +"," # tab effet critique
-            nbTourEntreDeuxLancer = int(sort_values["Autres"].get("Nb. de tours entre deux lancers",0))
-            if nbTourEntreDeuxLancer == 0:
-                nbLancerParTour = int(sort_values["Autres"].get("Nb. de lancers par tour",99))
-                nbLancerParTourParJoueur = int(sort_values["Autres"].get("Nb. de lancers par tour par joueur",99))
-            else:
-                nbLancerParTour = 1
-                nbLancerParTourParJoueur = 1
-            text_func+=str(int(nbLancerParTour))+","
-            text_func+=str(int(nbLancerParTourParJoueur))+","
-            text_func+=str(int(nbTourEntreDeuxLancer))+","
-            poMod = 1 if sort_values["Autres"].get("Portée modifiable", "Oui") == "Oui" else 0
-            text_func+=str(int(poMod))+","
-            if "diagonale" in str(sort_values["desc"]).lower():
-                typeLancer = "diagonale"
-            else:
-                typeLancer = "ligne" if sort_values["Autres"].get("Lancer en ligne", "Non") == "Oui" else "cercle"
-            text_func+="\""+str(typeLancer)+"\","
-            text_func += "description=\""+str(sort_values["desc"])+"\""
-            otherInfos = ",chaine="+str("True")
-            text_func += ", "+str(otherInfos)
-            text_func+= "))\n"
+            text_func+="\nsorts.append(Personnage.getSortRightLvl(lvl,["
+            isVariante = (count%2 == 1)
+            count += 1
+            levels = range(1,4)
+            if isVariante:
+                levels = range(1,2)
+            for level in levels:
+                text_func+="\n\tSort.Sort(\""+nom_sort+"\","
+                text_func+=str(int(sort_values[str(level)]["level"]))+","
+                text_func+=str(int(sort_values[str(level)]["PA"]))+","
+                try:
+                    text_func+=str(int(sort_values[str(level)]["PO_min"]))+","
+                except:
+                    raise Exception("No PO_min pour "+str(nomClasse)+" "+nom_sort)
+                text_func+=str(int(sort_values[str(level)]["PO_max"]))+","
+                text_func+=getListeEffets(sort_values[str(level)],"Effets", sort_values["desc"])+"," # tab effet
+                text_func+=getListeEffets(sort_values[str(level)],"EffetsCritiques", sort_values["desc"]) +"," # tab effet critique
+                nbTourEntreDeuxLancer = int(sort_values[str(level)]["Autres"].get("Nb. de tours entre deux lancers",0))
+                if nbTourEntreDeuxLancer == 0:
+                    nbLancerParTour = int(sort_values[str(level)]["Autres"].get("Nb. de lancers par tour",99))
+                    nbLancerParTourParJoueur = int(sort_values[str(level)]["Autres"].get("Nb. de lancers par tour par joueur",99))
+                else:
+                    nbLancerParTour = 1
+                    nbLancerParTourParJoueur = 1
+                text_func+=str(int(sort_values[str(level)]["Autres"].get("Probabilité de coup critique","0%").split("%")[0]))+","
+                text_func+=str(int(nbLancerParTour))+","
+                text_func+=str(int(nbLancerParTourParJoueur))+","
+                text_func+=str(int(nbTourEntreDeuxLancer))+","
+                poMod = 1 if sort_values[str(level)]["Autres"].get("Portée modifiable", "Oui") == "Oui" else 0
+                text_func+=str(int(poMod))+","
+                if "diagonale" in str(sort_values["desc"]).lower():
+                    typeLancer = "diagonale"
+                else:
+                    typeLancer = "ligne" if sort_values[str(level)]["Autres"].get("Lancer en ligne", "Non") == "Oui" else "cercle"
+                text_func+="\""+str(typeLancer)+"\","
+                ldv = "True" if sort_values[str(level)]["Autres"].get("Ligne de vue", "Oui") == "Oui" else "False"
+                text_func += ldv+","
+                text_func += "description=\"\"\""+str(sort_values["desc"])+"\"\"\""
+                otherInfos = "chaine="+str("True")
+                text_func += ", "+str(otherInfos)
+                text_func+= ")"
+                if level != levels[-1]:
+                    text_func+=",\n"
+                else:
+                    text_func+="\n]))"
+            
     return text_func
 
-def getListeEffets(sort_values, tab):
+def getListeEffets(sort_values, tab, desc):
     ret_str = "["
     tab_effets = sort_values[tab]
     for effet in tab_effets:
         zone = sort_values["Autres"].get("Zone d'effet","")
         nomZone = ""
         if zone.strip()!="":
-            if "jusqu'à la cellule ciblée" in sort_values["desc"]:
+            if "jusqu'à la cellule ciblée" in desc:
                 zone = "ligne jusque de 0 cases"
             elif "Tout le monde" in zone:
                 nomZone="Cercle"
@@ -112,17 +127,21 @@ def getListeEffets(sort_values, tab):
         if "(dommages " in effet:
             effetsCaracs = effet.split(" ")
             degMin = effetsCaracs[0]
-            degMax = effetsCaracs[2]
-            degType = effetsCaracs[-1][:-1] # enleve la parenthese de fin d'effet de dommage
-            ret_str+="Effet.EffetDegats("+str(degMin)+","+str(degMax)+","+degType
+            if effetsCaracs[1] == "à":
+                degMax = effetsCaracs[2]
+                degType = effetsCaracs[-1][:-1] # enleve la parenthese de fin d'effet de dommage
+            else:
+                degMax = degMin
+                degType = effetsCaracs[-1][:-1] # enleve la parenthese de fin d'effet de dommage
+            ret_str+="Effets.EffetDegats("+str(degMin)+","+str(degMax)+",\""+degType+"\""
         elif "(vol " in effet:
             effetsCaracs = effet.split(" ")
             degMin = effetsCaracs[0]
             degMax = effetsCaracs[2]
             degType = effetsCaracs[-1][:-1] # enleve la parenthese de fin d'effet de dommage
-            ret_str+="Effet.EffetVolDeVie("+str(degMin)+","+str(degMax)+","+degType
+            ret_str+="Effets.EffetVolDeVie("+str(degMin)+","+str(degMax)+",\""+degType+"\""
         else:
-            ret_str+="Effet.TODO("+str(effet)
+            ret_str+="Effets.TODO("+str(effet)
         if nomZone != "":
             ret_str +=",zone=Zones."+nomZone
         # ret_str +=",faire_au_vide=False"
