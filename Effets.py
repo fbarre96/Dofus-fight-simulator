@@ -151,7 +151,7 @@ class EffetDegats(Effet):
         @type: **kwargs"""
         self.minJet = int_minJet
         self.maxJet = int_maxJet
-        self.typeDegats = str_typeDegats
+        self.typeDegats = str_typeDegats.lower()
         self.kwargs = kwargs
         super(EffetDegats, self).__init__(**kwargs)
 

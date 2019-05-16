@@ -748,7 +748,7 @@ class Niveau:
                 synchro.appliquerEtat(Etats.Etat("Boost Synchro "+nomSort,0,-1, reelLanceur),reelLanceur)
                 synchro.appliquerEtat(Etats.Etat("DejaBoost",0,1,[nomSort], reelLanceur),reelLanceur)
         #BoostGlas
-        reelLanceur.appliquerEtat(Etats.EtatCoutPA("Glas",0,-1,"Glas",-1),reelLanceur)
+        reelLanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Glas",0,-1,"Glas",4),reelLanceur)
 
     def __exploserSynchro(self,synchro,reelLanceur):
         """@summary: Explose la synchro du xélor si elle est téléfragé

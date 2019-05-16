@@ -255,4 +255,4 @@ class TypeZoneCarre(TypeZone):
         @type: Personnage
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
-        return (getDistanceX(caseTestee,departZone) == self.zonePO or getDistanceY(caseTestee,departZone) == self.zonePO) and getDistanceX(caseTestee,departZone) <= self.zonePO and getDistanceY(caseTestee,departZone) <= self.zonePO
+        return (getDistanceX(caseTestee,departZone) <= self.zonePO or getDistanceY(caseTestee,departZone) <= self.zonePO) and getDistanceX(caseTestee,departZone) <= self.zonePO and getDistanceY(caseTestee,departZone) <= self.zonePO

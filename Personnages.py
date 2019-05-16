@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*
-import Sort
-import Effets
-import Zones
-import Etats
+import Sort as Sort
+import Effets as Effets
+import Zones as Zones
+import Etats as Etats
 import constantes
 import Overlays
 import pygame
@@ -96,7 +96,7 @@ class Personnage(object):
         self.lvl = int(lvl)
         self.classe = classe
 
-        self.sorts = Personnage.ChargerSorts(self.classe) # la liste des sorts du personnage
+        self.sorts = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
         
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
@@ -136,10 +136,21 @@ class Personnage(object):
                     #print "DEBUG : la cibleDirect n'a pas ou a l'etat requis :"+str(checkEtat)
                     return False
         return True
-
+        
+    @staticmethod
+    def getSortRightLvl(lvl,tab_sorts):
+        closest_lvl_sort = None
+        for sort in tab_sorts[0:]:
+            if sort.lvl <= lvl:
+                if closest_lvl_sort is not None:
+                    if closest_lvl_sort.lvl < sort.lvl:
+                        closest_lvl_sort = sort
+                else:
+                    closest_lvl_sort = sort
+        return closest_lvl_sort
 
     @staticmethod
-    def ChargerSorts(classe):
+    def ChargerSorts(classe,lvl):
         """@summary: Méthode statique qui initialise les sorts du personnage selon sa classe.
         @classe: le nom de classe dont on souhaite récupérer les sorts
         @type: string
@@ -147,64 +158,327 @@ class Personnage(object):
         @return: tableau de Sort"""
         sorts = []
         if(classe=="Stratege Iop"):
-            sorts.append(Sort.Sort("Strategie_iop",0,0,0,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Stratégie Iop",0,-1, 50,"Ennemis|Allies",2))],99,99,0,0,"cercle"))
+            sorts.append(Sort.Sort("Strategie_iop",0,0,0,0,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Stratégie Iop",0,-1, 50,"Ennemis|Allies",2))],[],0,99,99,0,0,"cercle",False))
             return sorts
         elif(classe=="Cadran de Xelor"):
-            sorts.append(Sort.Sort("Synchronisation",0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostPA("Synchronisation",0,2,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],99,99,0,0,"cercle"))
+            sorts.append(Sort.Sort("Synchronisation",0,0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostPA("Synchronisation",0,2,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],[],0,99,99,0,0,"cercle",False))
             return sorts
         elif(classe=="Synchro"):
-            sorts.append(Sort.Sort("Début des Temps",0,0,0,[Effets.EffetEtat(Etats.EtatBoostPA("Synchro",1,1,-1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],99,99,0,0,"cercle"))
+            sorts.append(Sort.Sort("Début des Temps",0,0,0,0,[Effets.EffetEtat(Etats.EtatBoostPA("Synchro",1,1,-1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,99,99,0,0,"cercle",False))
             return sorts
         elif(classe=="Balise de Rappel"):
-            sorts.append(Sort.Sort("Rappel",0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],99,99,0,0,"cercle"))
+            sorts.append(Sort.Sort("Rappel",0,0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False))
         elif classe == "Poutch":
             return sorts
         elif(classe=="Xelor"):
-            retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],99,99,0,0,"cercle")
-            activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,3,[Effets.EffetTeleportePosPrec(1)], 99,99,0,0,"cercle")
-            activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],99,99,0,0,"cercle")
+            retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
+            activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
+            activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
-            sorts.append(Sort.Sort("Ralentissement",2,1,6,[Effets.EffetDegats(8,9,"eau"),Effets.EffetRetPA(1),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],4,2,0,1,"cercle",description="Occasionne des dommages Eau et retire 1 PA à la cible. Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté."))
-            sorts.append(Sort.Sort("Souvenir",4,1,6,[Effets.EffetDegats(26,30,"terre"),Effets.EffetTeleportePosPrec(1)], 3,2,0,1,"ligne",description="Occasionne des dommages Terre et téléporte la cible à sa position précédente."))
-            sorts.append(Sort.Sort("Aiguille",3,1,8,[Effets.EffetDegats(22,26,"feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,1,"cercle", description="Occasionne des dommages Feu et retire 1 PA à la cible. Retire des PA supplémentaires aux ennemis dans l'état Téléfrag. Le retrait de PA ne peut pas être désenvoûté. Retire l'état Téléfrag."))
-            sorts.append(Sort.Sort("Rouage",3,1,7,[Effets.EffetDegats(12,14,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Rouage",1,1,1))], 2,99,0,1,"cercle",chaine=True,description="Occasionne des dommages Eau. Le lanceur gagne 1 PA au tour suivant."))
-            sorts.append(Sort.Sort("Téléportation",2,1,5,[Effets.EffetTpSym()], 1,1,3,0,"cercle",description="Téléporte le lanceur symétriquement par rapport à la cible. Le lanceur gagne 2 PA pour 1 tour à chaque fois qu’il génère un Téléfrag. Le temps de relance est supprimé quand un Téléfrag est généré ou consommé. Un Téléfrag est généré lorsqu'une entité prend la place d'une autre."))
-            sorts.append(Sort.Sort("Retour Spontané",1,0,7,[Effets.EffetTeleportePosPrec(1)], 3,3,0,1,"cercle",description="La cible revient à sa position précédente."))
-            sorts.append(Sort.Sort("Flétrissement",3,1,6,[Effets.EffetDegats(26,29,"air"),Effets.EffetDegats(10,10,"air",etat_requis_cibles="Telefrag")], 3,2,0,1,"ligne",description="Occasionne des dommages Air en ligne. Occasionne des dommages supplémentaires aux ennemis dans l'état Téléfrag."))
-            sorts.append(Sort.Sort("Dessèchement",4,1,6,[Effets.EffetDegats(38,42,"air"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Dessèchement", 1,1,Effets.EffetDegats(44,48,"air",cibles_possbiles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Dessechement","lanceur"))], 3,2,0,0,"ligne",description="Occasionne des dommages Air. Au prochain tour du lanceur, la cible occasionne des dommages autour d'elle."))
-            sorts.append(Sort.Sort("Rembobinage",2,0,6,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")], 1,1,3, 0, "ligne",description="À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour."))
-            sorts.append(Sort.Sort("Renvoi",3,1,6,[Effets.EffetTeleporteDebutTour()], 1,1,2, 0, "ligne",description="Téléporte la cible ennemie à sa cellule de début de tour."))
-            sorts.append(Sort.Sort("Rayon Obscur",5,1,6,[Effets.EffetDegats(37,41,"terre"),Effets.EffetDegats(37,41,"terre",cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne",description="Occasionne des dommages Terre en ligne. Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag. Retire l'état Téléfrag."))
-            sorts.append(Sort.Sort("Rayon Ténebreux",3,1,5,[Effets.EffetDegats(19,23,"terre"),Effets.EffetDegats(19,23,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,2,0,1,"ligne",description="Occasionne des dommages Terre. Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone autour d'elle."))
-            sorts.append(Sort.Sort("Complice",2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,0,0,"cercle",chaine=True,description="Invoque un Complice statique qui ne possède aucun sort. Il est tué si un autre Complice est invoqué."))
-            sorts.append(Sort.Sort("Cadran de Xélor",3,1,5,[Effets.EffetInvoque("Cadran de Xélor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))], 1,1,4,0,"cercle",chaine=True,description="Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag. Donne des PA aux alliés autour de lui et dans l'état Téléfrag."))
-            sorts.append(Sort.Sort("Gelure",2,2,5,[Effets.EffetDegats(11,13,"air",cibles_possibles="Ennemis|Lanceur"), Effets.EffetTeleportePosPrec(1)], 3,2,0,1,"cercle",description="Occasionne des dommages Air aux ennemis. Téléporte la cible à sa position précédente."))
-            sorts.append(Sort.Sort("Perturbation",2,1,4,[Effets.EffetDegats(9,11,"feu",cibles_possibles="Ennemis|Lanceur"), Effets.EffetTpSymSelf()], 3,2,0,0,"ligne", chaine=False,description="Occasionne des dommages Feu et téléporte la cible symétriquement par rapport au lanceur."))
-            sorts.append(Sort.Sort("Sablier de Xélor",2,1,7,[Effets.EffetDegats(15,17,"feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")], 3,1,0,1,"ligne",description="Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue. Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone. Le retrait de PA ne peut pas être désenvoûté."))
-            sorts.append(Sort.Sort("Distorsion Temporelle",4,0,0,[Effets.EffetDegats(26,30,"air",zone=Zones.TypeZoneCarre(1),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")], 2,1,0,0,"cercle",description="Occasionne des dommages Air aux ennemis. Téléporte les cibles à leur position précédente."))
-            sorts.append(Sort.Sort("Vol du Temps",4,1,5,[Effets.EffetDegats(30,34,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))], 3,2,0,0,"cercle",chaine=True,description="Occasionne des dommages Eau à la cible. Le lanceur gagne 1 PA au début de son prochain tour."))
-            sorts.append(Sort.Sort("Pétrification",5,1,7,[Effets.EffetDegats(34,38,"eau"),Effets.EffetEtatSelf(Etats.EtatCoutPA("Pétrification",0,2,"Pétrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag"), Effets.EffetRetPA(2)], 3,2,0,1,"ligne",description="Occasionne des dommages Eau et retire des PA. Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours."))
-            sorts.append(Sort.Sort("Flou",2,1,3,[Effets.EffetEtat(Etats.EtatBoostPA("Flou",0,1,-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPA("Flou",1,1,2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)], 1,1,3,0,"cercle",description="Retire des PA en zone le tour en cours. Augmente les PA en zone le tour suivant."))
-            sorts.append(Sort.Sort("Conservation",2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur")], 1,1,2,0,"cercle",description="Augmente les dommages subis par l'allié ciblé ou le lanceur de 50%% pour le tour en cours. Au tour suivant, la cible réduit les dommages subis de 30%%."))
-            sorts.append(Sort.Sort("Poussière Temporelle",4,0,6,[Effets.EffetDegats(34,37,"feu",cibles_possibles="Ennemis"), Effets.EffetDegats(34,37,"feu",zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")], 2,2,0,1,"cercle",description="Occasionne des dommages Feu. Si la cible est dans l'état Téléfrag, les dommages sont occasionnés en zone et les entités à proximité sont téléportées symétriquement par rapport au centre de la zone d'effet."))
-            sorts.append(Sort.Sort("Suspension Temporelle",3,1,4,[Effets.EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,29,"feu")], 3,2,0,0,"ligne",description="Occasionne des dommages Feu sur les ennemis. Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état."))
-            sorts.append(Sort.Sort("Raulebaque",2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))], 1,1,2, 0, "cercle",description="Replace tous les personnages à leurs positions précédentes."))
-            sorts.append(Sort.Sort("Instabilité Temporelle",3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)], 1,1,3,1,"cercle",description="Pose un glyphe qui renvoie les entités à leur position précédente. Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag."))
-            sorts.append(Sort.Sort("Démotivation",3,1,5,[Effets.EffetDegats(23,26,"terre",cibles_possibles="Ennemis"),Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True)], 3,2,0,0,"diagonale",description="Occasionne des dommages Terre aux ennemis en diagonale. Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état."))
-            sorts.append(Sort.Sort("Pendule",5,1,5,[Effets.EffetTpSym(),Effets.EffetDegatsPosLanceur(48,52,"air",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis"), Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")], 2,1,0,0,"cercle",chaine=True,description="Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination. Il revient ensuite à sa position précédente."))
-            sorts.append(Sort.Sort("Paradoxe Temporel",3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)], 1,1,2,0,"cercle",description="Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran). Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles. Fixe le temps de relance de Cadran de Xélor et de Complice à 1."))
-            sorts.append(Sort.Sort("Faille Temporelle",3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xélor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")], 1,1,3,0,"cercle",description="Le lanceur échange sa position avec celle du Complice (ou du Cadran). À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente. La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle."))
-            sorts.append(Sort.Sort("Synchro",2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True)], 1,1,3,0,"cercle",description="Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour. La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag. Elle n'est pas affectée par les effets de Rembobinage. À partir du tour suivant son lancer, son invocateur perd 1 PA."))
-            sorts.append(Sort.Sort("Désynchronisation",2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),faire_au_vide=True)],2,2,0,1, "cercle", description="Pose un piège qui téléporte symétriquement les entités proches."))
-            sorts.append(Sort.Sort("Contre",2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)], 1,1,5,0,"cercle", description="Renvoie une partie des dommages subis en mêlée à l'attaquant."))
-            sorts.append(Sort.Sort("Bouclier Temporel",3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur",""))], 1,1,3,0,"cercle",description="Si la cible subit des dommages, son attaquant revient à sa position précédente."))
-            sorts.append(Sort.Sort("Fuite",1,0,5,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))], 4,2,0,0,"cercle",description="Téléporte la cible sur sa position précédente au début du prochain tour du lanceur."))
-            sorts.append(Sort.Sort("Horloge",5,1,6,[Effets.EffetVolDeVie(36,39,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)], 3,2,0,0,"ligne", chaine=True,description="Vole de vie dans l'élément Eau. Le lanceur gagne 1 PA au début de son prochain tour. Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état. Le retrait de PA ne peut pas être désenvoûté."))
-            sorts.append(Sort.Sort("Clepsydre",4,1,3,[Effets.EffetDegats(30,34,"eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Clepsydre",1,1,2),etat_requis="Telefrag",consomme_etat=True)], 2,2,0,0,"cercle", chaine=True,description="Occasionne des dommages Eau. Si la cible est dans l'état Téléfrag, le lanceur gagne 2 PA au prochain tour. Retire l'état Téléfrag."))
-            sorts.append(Sort.Sort("Frappe de Xélor",3,1,3,[Effets.EffetDegats(23,27,"terre",cibles_possibles="Ennemis"), Effets.EffetTpSymSelf()], 3,2,0,0,"cercle",chaine=False,description="Occasionne des dommages Terre aux ennemis. Téléporte la cible symétriquement par rapport au lanceur du sort."))
-            sorts.append(Sort.Sort("Engrenage",3,1,5,[Effets.EffetDegats(31,35,"terre",zone=Zones.TypeZoneLignePerpendiculaire(1),cibles_possibles="Ennemis"), Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",chaine=False,description="Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet."))
-            sorts.append(Sort.Sort("Momification",2,0,0,[Effets.EffetEtat(Etats.EtatBoostPM("Momification",0,1,2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,2,"Momification"),zone=Zones.TypeZoneCercle(99)),Effets.EffetEtat(Etats.EtatBoostDommage("Momie",0,1,-99999999))], 1,1,3,0,"cercle",description="Le lanceur ne peut plus occasionner de dommages avec ses sorts élémentaires et gagne 2 PM pendant 1 tour. Fixe l'état Téléfrag à tous les alliés et ennemis pendant 2 tours. Quand l'état Téléfrag est retiré, le lanceur gagne 100 Puissance pendant 2 tours."))
-            sorts.append(Sort.Sort("Glas",15,0,3,[Effets.EffetTeleporteDebutCombat(),Effets.EffetEtat(Etats.EtatBoostPerDommageSorts("Glas",1,1,-50)),Effets.EffetRetireEtat("Glas",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")], 1,1,3,0,"ligne",description=" Renvoie la cible à sa cellule de début de combat (en ignorant les états qui empêchent les déplacements) et divise ses dommages occasionnés par 2 pendant 1 tour. Le coût en PA est réduit en fonction du nombre de téléfrags générés depuis son dernier lancer."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Ralentissement",1,2,1,4,[Effets.EffetDegats(4,5,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(7,8,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
+            Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+                Sort.Sort("Ralentissement",25,2,1,5,[Effets.EffetDegats(6,7,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(9,10,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
+            Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+                Sort.Sort("Ralentissement",52,2,1,6,[Effets.EffetDegats(8,9,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(11,12,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
+            Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Souvenir",105,4,1,6,[Effets.EffetDegats(26,30,"Terre"),Effets.EffetTeleportePosPrec(1)],[Effets.EffetDegats(30,34,"Terre"),Effets.EffetTeleportePosPrec(1)],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Terre et téléporte la cible à sa position précédente.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Aiguille",1,3,1,4,[Effets.EffetDegats(14,18,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],[Effets.EffetDegats(20,20,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],15,3,2,0,1,"cercle",True,description="""Occasionne des dommages Feu et retire 1 PA à la cible.
+            Retire des PA supplémentaires aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.
+            Retire l'état Téléfrag.""", chaine=True),
+                Sort.Sort("Aiguille",30,3,1,6,[Effets.EffetDegats(18,22,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],[Effets.EffetDegats(24,24,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],15,3,2,0,1,"cercle",True,description="""Occasionne des dommages Feu et retire 1 PA à la cible.
+            Retire des PA supplémentaires aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.
+            Retire l'état Téléfrag.""", chaine=True),
+                Sort.Sort("Aiguille",60,3,1,8,[Effets.EffetDegats(22,26,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],[Effets.EffetDegats(28,28,"Feu"),Effets.EffetRetPA(1),Effets.EffetRetPA(2,etat_requis_cibles="Telefrag",consomme_etat=True)],15,3,2,0,1,"cercle",True,description="""Occasionne des dommages Feu et retire 1 PA à la cible.
+            Retire des PA supplémentaires aux ennemis dans l'état Téléfrag.
+            Le retrait de PA ne peut pas être désenvoûté.
+            Retire l'état Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Rouage",110,3,1,7,[Effets.EffetDegats(12,14,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Rouage",1,1,1))],[Effets.EffetDegats(15,17,"Eau"), Effets.EffetEtatSelf(Etats.EtatBoostPA("Rouage",1,1,1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau.
+            Le lanceur gagne 1 PA au tour suivant.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Téléportation",1,2,1,3,[Effets.EffetTpSym()],[],0,1,1,5,0,"cercle",False,description="""Téléporte le lanceur symétriquement par rapport à la cible.
+            Le lanceur gagne 2 PA pour 1 tour à chaque fois qu’il génère un Téléfrag.
+            Le temps de relance est supprimé quand un Téléfrag est généré ou consommé.
+            Un Téléfrag est généré lorsqu'une entité prend la place d'une autre.""", chaine=True),
+                Sort.Sort("Téléportation",20,2,1,4,[Effets.EffetTpSym()],[],0,1,1,4,0,"cercle",False,description="""Téléporte le lanceur symétriquement par rapport à la cible.
+            Le lanceur gagne 2 PA pour 1 tour à chaque fois qu’il génère un Téléfrag.
+            Le temps de relance est supprimé quand un Téléfrag est généré ou consommé.
+            Un Téléfrag est généré lorsqu'une entité prend la place d'une autre.""", chaine=True),
+                Sort.Sort("Téléportation",40,2,1,5,[Effets.EffetTpSym()],[],0,1,1,3,0,"cercle",False,description="""Téléporte le lanceur symétriquement par rapport à la cible.
+            Le lanceur gagne 2 PA pour 1 tour à chaque fois qu’il génère un Téléfrag.
+            Le temps de relance est supprimé quand un Téléfrag est généré ou consommé.
+            Un Téléfrag est généré lorsqu'une entité prend la place d'une autre.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Retour Spontané",101,1,7,7,[Effets.EffetTeleportePosPrec(1)],[],0,3,99,0,1,"cercle",False,description="""La cible revient à sa position précédente.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flétrissement",3,3,1,4,[Effets.EffetDegats(16,19,"Air"),Effets.EffetDegats(8,8,"air",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(21,24,"Air"),Effets.EffetDegats(8,8,"air",etat_requis_cibles="Telefrag")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Air en ligne.
+            Occasionne des dommages supplémentaires aux ennemis dans l'état Téléfrag.""", chaine=True),
+                Sort.Sort("Flétrissement",35,3,1,5,[Effets.EffetDegats(21,24,"Air"),Effets.EffetDegats(9,9,"air",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(26,29,"Air"),Effets.EffetDegats(9,9,"air",etat_requis_cibles="Telefrag")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Air en ligne.
+            Occasionne des dommages supplémentaires aux ennemis dans l'état Téléfrag.""", chaine=True),
+                Sort.Sort("Flétrissement",67,3,1,6,[Effets.EffetDegats(26,29,"Air"),Effets.EffetDegats(10,10,"air",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(31,34,"Air"),Effets.EffetDegats(10,10,"air",etat_requis_cibles="Telefrag")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Air en ligne.
+            Occasionne des dommages supplémentaires aux ennemis dans l'état Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Dessèchement",115,4,1,6,[Effets.EffetDegats(38,42,"Air"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Dessèchement", 1,1,Effets.EffetDegats(44,48,"air",cibles_possbiles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Dessechement","lanceur"))],[Effets.EffetDegats(44,48,"Air"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Dessèchement", 1,1,Effets.EffetDegats(44,48,"air",cibles_possbiles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Dessechement","lanceur"))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Air.
+            Occasionne des dommages Air supplémentaires aux ennemis autour de la cible au début du prochain tour du lanceur.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Rembobinage",6,2,2,2,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
+                Sort.Sort("Rembobinage",42,2,4,4,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
+                Sort.Sort("Rembobinage",74,2,6,6,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Renvoi",120,3,1,6,[Effets.EffetTeleporteDebutTour()],[],0,1,1,2,0,"ligne",True,description="""Téléporte la cible ennemie à sa cellule de début de tour.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Frappe de Xélor",9,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(15,19,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(21,25,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+            Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False),
+
+                Sort.Sort("Frappe de Xélor",47,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(19,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(25,29,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+            Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False),
+
+                Sort.Sort("Frappe de Xélor",87,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(23,27,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(29,33,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+            Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Engrenage",125,3,1,5,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetDegats(31,35,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetDegats(34,38,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1))],25,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Complice",13,2,1,3,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+            Il est tué si un autre Complice est invoqué.""", chaine=True),
+
+                Sort.Sort("Complice",54,2,1,4,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+            Il est tué si un autre Complice est invoqué.""", chaine=True),
+
+                Sort.Sort("Complice",94,2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+            Il est tué si un autre Complice est invoqué.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Cadran de Xélor",130,3,1,5,[Effets.EffetInvoque("Cadran de Xélor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,1,3,0,"cercle",True,description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
+            Donne des PA aux alliés autour de lui et dans l'état Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Gelure",17,2,2,4,[Effets.EffetDegats(5,7,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],[Effets.EffetDegats(11,11,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],5,3,2,0,1,"cercle",True,description="""Occasionne des dommages Air aux ennemis.
+            Téléporte la cible à sa position précédente.""", chaine=False),
+
+                Sort.Sort("Gelure",58,2,2,4,[Effets.EffetDegats(8,10,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],[Effets.EffetDegats(14,14,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],5,3,2,0,1,"cercle",True,description="""Occasionne des dommages Air aux ennemis.
+            Téléporte la cible à sa position précédente.""", chaine=False),
+
+                Sort.Sort("Gelure",102,2,2,5,[Effets.EffetDegats(11,13,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],[Effets.EffetDegats(17,17,"Air",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTeleportePosPrec(1)],5,3,2,0,1,"cercle",True,description="""Occasionne des dommages Air aux ennemis.
+            Téléporte la cible à sa position précédente.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Perturbation",135,2,1,4,[Effets.EffetDegats(9,11,"Feu",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTpSymSelf()],[Effets.EffetDegats(11,13,"Feu",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTpSymSelf()],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu et téléporte la cible symétriquement par rapport au lanceur.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Sablier de Xélor",22,2,1,6,[Effets.EffetDegats(9,11,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(9,11,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(13,15,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(13,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+            Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+
+                Sort.Sort("Sablier de Xélor",65,2,1,6,[Effets.EffetDegats(12,14,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(12,14,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(16,18,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(16,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+            Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+
+                Sort.Sort("Sablier de Xélor",108,2,1,7,[Effets.EffetDegats(15,17,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(19,21,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(19,21,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+            Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True)
+            ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Distorsion Temporelle",140,4,0,0,[Effets.EffetDegats(34,38,"Air",zone=Zones.TypeZoneCarre(1),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")],[Effets.EffetDegats(38,42,"Air",cibles_possibles="Ennemis", zone=Zones.TypeZoneCarre(1)),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCarre(1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur")],15,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air aux ennemis.
+            Téléporte les cibles à leur position précédente.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Vol du Temps",27,4,1,5,[Effets.EffetDegats(20,24,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+            Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True),
+
+                Sort.Sort("Vol du Temps",72,4,1,5,[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+            Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True),
+
+                Sort.Sort("Vol du Temps",118,4,1,5,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],[Effets.EffetDegats(35,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Vol du Temps",1,1,1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+            Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Pétrification",145,5,1,7,[Effets.EffetDegats(34,38,"Eau"),Effets.EffetEtatSelf(Etats.EtatCoutPA("Pétrification",0,2,"Pétrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag"), Effets.EffetRetPA(2)],[Effets.EffetDegats(38,42,"Eau"), Effets.EffetEtatSelf(Etats.EtatCoutPA("Pétrification",0,2,"Pétrification",-1),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag"), Effets.EffetRetPA(2)],25,3,2,0,1,"ligne",True,description="""Occasionne des dommages Eau et retire des PA.
+            Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostPA("Flou",0,1,-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPA("Flou",1,1,2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
+            Augmente les PA en zone le tour suivant.""", chaine=True),
+
+                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostPA("Flou",0,1,-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPA("Flou",1,1,2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+            Augmente les PA en zone le tour suivant.""", chaine=True),
+
+                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostPA("Flou",0,1,-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostPA("Flou",1,1,2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+            Augmente les PA en zone le tour suivant.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Conservation",150,2,5,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur")],[],0,1,1,2,0,"cercle",True,description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
+            Au tour suivant, les cibles réduisent les dommages subis de 30%.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Poussière Temporelle",38,4,4,4,[Effets.EffetDegats(22,25,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(22,25,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],[Effets.EffetDegats(26,29,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(26,29,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],25,2,99,0,1,"cercle",True,description="""Occasionne des dommages Feu.
+            Les entités dans l'état Téléfrag dans la zone d'effet subissent également des dommages Feu et sont téléportées symétriquement par rapport à la cellule ciblée.""", chaine=True),
+
+                Sort.Sort("Poussière Temporelle",90,4,5,5,[Effets.EffetDegats(28,31,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(28,31,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],[Effets.EffetDegats(32,35,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(32,35,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],25,2,99,0,1,"cercle",True,description="""Occasionne des dommages Feu.
+            Les entités dans l'état Téléfrag dans la zone d'effet subissent également des dommages Feu et sont téléportées symétriquement par rapport à la cellule ciblée.""", chaine=True),
+
+                Sort.Sort("Poussière Temporelle",132,4,6,6,[Effets.EffetDegats(34,37,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(34,37,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],[Effets.EffetDegats(38,41,"Feu",cibles_possibles="Ennemis",zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(38,41,"Feu",zone=Zones.TypeZoneCercle(3),etat_requis_cibles="Telefrag"),Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3),etat_requis_cibles="Telefrag")],25,2,99,0,1,"cercle",True,description="""Occasionne des dommages Feu.
+            Les entités dans l'état Téléfrag dans la zone d'effet subissent également des dommages Feu et sont téléportées symétriquement par rapport à la cellule ciblée.""", chaine=True)
+            ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Suspension Temporelle",155,3,1,6,[Effets.EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,29,"Feu")],[Effets.EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(29,33,"Feu")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+            Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Raulebaque",44,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,4,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
+
+                Sort.Sort("Raulebaque",97,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,3,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
+
+                Sort.Sort("Raulebaque",137,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,2,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Instabilité Temporelle",160,3,7,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
+            Les entités dans le glyphe sont dans l'état Intaclable.
+            Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Démotivation",50,3,1,3,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(17,20,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(22,25,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+            Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True),
+
+                Sort.Sort("Démotivation",103,3,1,4,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(20,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,28,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+            Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True),
+
+                Sort.Sort("Démotivation",143,3,1,5,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(23,26,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(28,31,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+            Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Pendule",165,4,1,5,[Effets.EffetTpSym(),Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")],[Effets.EffetTpSym(),Effets.EffetDegats(46,50,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")],5,2,1,0,0,"cercle",True,description="""Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination.
+            Il revient ensuite à sa position précédente.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Paradoxe Temporel",56,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,4,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+            Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
+            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True),
+
+                Sort.Sort("Paradoxe Temporel",112,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,3,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+            Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
+            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True),
+
+                Sort.Sort("Paradoxe Temporel",147,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,2,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+            Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
+            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xélor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
+            À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente.
+            La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True)],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+            La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
+            Elle n'est pas affectée par les effets de Rembobinage.
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
+
+                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True)],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+            La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
+            Elle n'est pas affectée par les effets de Rembobinage.
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
+
+                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True)],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+            La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
+            Elle n'est pas affectée par les effets de Rembobinage.
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Désynchronisation",175,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège qui téléporte symétriquement les entités proches.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Contre",69,2,2,2,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 30,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
+                Sort.Sort("Contre",122,2,4,4,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 40,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
+                Sort.Sort("Contre",162,2,6,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Bouclier Temporel",180,3,3,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur",""))],[],0,1,1,3,0,"cercle",True,description="""Si la cible subit des dommages, son attaquant et elle reviennent à leur position précédente.""", chaine=True)
+            ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Fuite",77,1,1,1,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,2,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
+
+                Sort.Sort("Fuite",128,1,3,3,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,3,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
+
+                Sort.Sort("Fuite",172,1,5,5,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,4,2,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True)
+            ]))
+
+            # sorts.append(Personnage.getSortRightLvl(lvl,[
+            #     Sort.Sort("Prémonition",185,2,1,5,[Effets.TODO(9954),Effets.TODO(Pose une rune de rang 1 (1 tour))],[],0,1,1,1,0,"cercle",False,description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
+            # ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Horloge",84,5,1,4,[Effets.EffetVolDeVie(28,31,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+            Le lanceur gagne 1 PA au début de son prochain tour.
+            Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+
+                Sort.Sort("Horloge",134,5,1,5,[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+            Le lanceur gagne 1 PA au début de son prochain tour.
+            Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
+
+                Sort.Sort("Horloge",178,5,1,6,[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(40,43,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+            Le lanceur gagne 1 PA au début de son prochain tour.
+            Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
+            Le retrait de PA ne peut pas être désenvoûté.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Clepsydre",190,4,1,3,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Clepsydre",1,1,2),etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(36,40,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Clepsydre",1,1,2),etat_requis="Telefrag",consomme_etat=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Eau.
+            Si la cible est dans l'état Téléfrag, le lanceur gagne 2 PA au prochain tour.
+            Retire l'état Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Rayon Obscur",92,5,1,4,[Effets.EffetDegats(54,62,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(27,31,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(68,76,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(34,38,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+            Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
+            Retire l'état Téléfrag.""", chaine=True),
+
+                Sort.Sort("Rayon Obscur",141,5,1,5,[Effets.EffetDegats(60,68,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(30,34,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(74,82,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(37,41,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+            Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
+            Retire l'état Téléfrag.""", chaine=True),
+
+                Sort.Sort("Rayon Obscur",187,5,1,6,[Effets.EffetDegats(66,74,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(33,37,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(80,88,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(40,44,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+            Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
+            Retire l'état Téléfrag.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Rayon Ténébreux",195,3,1,5,[Effets.EffetDegats(19,23,"Terre"),Effets.EffetDegats(19,23,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(23,27,"Terre"),Effets.EffetDegats(23,37,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,2,0,1,"cercle",True,description="""Occasionne des dommages Terre.
+            Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone aux ennemis autour d'elle.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Momification",100,2,0,0,[Effets.EffetEtat(Etats.EtatBoostPM("Momification",0,1,2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,5,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
+
+                Sort.Sort("Momification",147,2,0,0,[Effets.EffetEtat(Etats.EtatBoostPM("Momification",0,1,2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,4,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
+
+                Sort.Sort("Momification",197,2,0,0,[Effets.EffetEtat(Etats.EtatBoostPM("Momification",0,1,2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,3,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Glas",200,3,0,3,[Effets.EffetDegats(4,4,"Air",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Eau",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Terre",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Feu",zone=Zones.TypeZoneCarre(1)),Effets.EffetRetireEtat("Glas",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,2,0,"ligne",True,description="""Occasionne des dommages Air, Eau, Terre, Feu.
+            Les dommages sont augmentés pour chaque Téléfrag généré depuis son dernier lancer.
+            N'occasionne pas de dommages si aucun Téléfrag n'a été généré depuis son dernier lancer.""", chaine=True)
+            ]))
         elif(classe=="Iop"):
             activationRassemblement= Sort.Sort("AttireAllies",0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3))],99,99,0,0,"cercle")
             activationFriction= Sort.Sort("Attire",0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99))],99,99,0,0,"cercle")
@@ -318,8 +592,15 @@ class Personnage(object):
             sorts.append(Sort.Sort("Invisibilité",2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostPM("Invibilité_PM",0,4,1))],1,1,6,0, "cercle", description=u"Rend invisible."))
             sorts.append(Sort.Sort("Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description="Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
-        sorts.append(Sort.Sort("Cawotte",4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)], 1,1,6,0,"cercle",description="Invoque une Cawotte")) 
-        
+        sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
+        total_nb_sorts = len(sorts)
+        i = 0
+        while i < total_nb_sorts:
+            if sorts[i] is None:
+                sorts.remove(sorts[i])
+                total_nb_sorts-=1
+                i-=1
+            i+=1
         return sorts
 
     def bouge(self, niveau, x,y, ajouteHistorique=True,canSwap=False):
@@ -676,7 +957,7 @@ class PersonnageMur(Personnage):
         """@summary: Clone le personnageMur
         @return: le clone"""
         cp = PersonnageMur(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
-        cp.sorts = Personnage.ChargerSorts(cp.classe)
+        cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageMur d'effectuer ses actions.
@@ -703,7 +984,7 @@ class PersonnageSansPM(Personnage):
         """@summary: Clone le PersonnageSansPM
         @return: le clone"""
         cp = PersonnageSansPM(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
-        cp.sorts = Personnage.ChargerSorts(cp.classe)
+        cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageSansPM d'effectuer ses actions.

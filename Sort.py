@@ -2,14 +2,18 @@
 import constantes
 import Overlays
 class Sort:
-    def __init__(self,nom,coutPA,POMin,POMax, tableauEffets, nbLancerParTour, nbLancerParTourParJoueur, nbTourEntreDeux, POMod,typeLancer, **kwargs):
+    def __init__(self,nom,lvl,coutPA,POMin,POMax, tableauEffets, tableauEffetsCC, probaCC, nbLancerParTour, nbLancerParTourParJoueur, nbTourEntreDeux, POMod,typeLancer,ldv, **kwargs):
         self.nom = nom
+        self.lvl = lvl
         self.coutPA = coutPA
         self.POMin = POMin
         self.POMax = POMax
         self.effets = tableauEffets
+        self.effetsCC = tableauEffetsCC
         self.POMod = POMod
         self.typeLancer = typeLancer
+        self.probaCC = probaCC
+        self.ldv = ldv
         self.image = "sorts/"+constantes.normaliser(nom.lower())+".png"
         self.hitbox = None
         self.chaine = kwargs.get("chaine",True)
