@@ -480,11 +480,26 @@ class Personnage(object):
             N'occasionne pas de dommages si aucun Téléfrag n'a été généré depuis son dernier lancer.""", chaine=True)
             ]))
         elif(classe=="Iop"):
-            activationRassemblement= Sort.Sort("AttireAllies",0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3))],99,99,0,0,"cercle")
-            activationFriction= Sort.Sort("Attire",0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99))],99,99,0,0,"cercle")
-            sorts.append(Sort.Sort("Pression",3,1,3,[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10)), Effets.EffetDegats(21,25,"terre")], 99,3,0,0,"cercle",description="Occasionne des dommages Terre et applique un malus d'Érosion."))
-            sorts.append(Sort.Sort("Tannée",4,1,7,[Effets.EffetDegats(30,34,"air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",description="Occasionne des dommages Air en zone et retire des PM."))
-            sorts.append(Sort.Sort("Bond",5,1,6,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")], 1,1,2,0,"cercle",description="Téléporte sur la case ciblée. Augmente les dommages reçus par les ennemis situés sur les cases adjacentes."))
+            activationRassemblement= Sort.Sort("AttireAllies",0,0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3))],[],0,99,99,0,0,"cercle",False)
+            activationFriction= Sort.Sort("Attire",0,0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99))],[],0,99,99,0,0,"cercle",False)
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Pression",1,3,1,3,[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(14,18,"Terre")],[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
+                Sort.Sort("Pression",30,3,1,3,[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(24,28,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
+                Sort.Sort("Pression",60,3,1,3,[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(24,28,"Terre")],[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(29,33,"Terre")],5,99,3,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Tannée",110,4,1,7,[Effets.EffetDegats(30,34,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(36,40,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],5,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone et retire des PM.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Bond",1,5,1,5,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,2,0,"cercle",False,description="""Téléporte sur la case ciblée.
+            Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
+
+                Sort.Sort("Bond",20,5,1,5,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,1,0,"cercle",False,description="""Téléporte sur la case ciblée.
+            Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
+
+                Sort.Sort("Bond",40,5,1,6,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,99,0,0,"cercle",False,description="""Téléporte sur la case ciblée.
+            Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True)
+            ]))
             sorts.append(Sort.Sort("Détermination",2,0,0,[Effets.EffetEtat(Etats.Etat("Indeplacable",0,1)),Effets.EffetEtat(Etats.EtatModDegPer("Determination",0,1,75))], 1,1,2,0,"cercle",description="Fixe l'état Indéplaçable et réduit 25%% des dommages subis pendant 1 tour. Ne peut pas être désenvoûté."))
             sorts.append(Sort.Sort("Intimidation",2,1,2,[Effets.EffetDegats(11,13,"neutre"),Effets.EffetPousser(4)], 3,2,0,0,"ligne",description="Occasionne des dommages Neutre sur les ennemis et repousse la cible."))
             sorts.append(Sort.Sort("Menace",3,0,3,[Effets.EffetDegats(26,28,"eau",cibles_exclues="Lanceur"),Effets.EffetAttire(2,cibles_exclues="Lanceur")], 3,2,0,0,"cercle",description="Occasionne des dommages Eau et attire la cible. Le lanceur gagne des points de bouclier."))
