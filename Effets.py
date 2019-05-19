@@ -1179,8 +1179,6 @@ class EffetTp(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
-        niveau.structure[joueurLanceur.posY][joueurLanceur.posX].type = "v"
-        niveau.structure[kwargs.get("case_cible_y")][kwargs.get("case_cible_x")].type = "j"
         joueurLanceur.bouge(niveau,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
         
 

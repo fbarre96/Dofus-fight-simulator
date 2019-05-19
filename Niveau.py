@@ -1197,6 +1197,7 @@ class Niveau:
         else:
             for joueur in self.joueurs:
                 if joueur.vue.isMouseOver(mouse_xy):
+                    joueur.setOverlayText()
                     joueur.overlay.afficher(joueur.posX*constantes.taille_sprite,joueur.posY*constantes.taille_sprite)
 
     def poseGlyphe(self,glyphe):
