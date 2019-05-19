@@ -182,6 +182,7 @@ class Personnage(object):
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
             activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
+            activationRune = [Effets.EffetTp( generer_TF=True, faire_au_vide=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Ralentissement",1,2,1,4,[Effets.EffetDegats(4,5,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(7,8,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
             Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
@@ -425,16 +426,16 @@ class Personnage(object):
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Fuite",77,1,1,1,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,2,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
+                Sort.Sort("Fuite",77,1,0,1,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,2,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
 
-                Sort.Sort("Fuite",128,1,3,3,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,3,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
+                Sort.Sort("Fuite",128,1,0,3,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,3,1,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True),
 
-                Sort.Sort("Fuite",172,1,5,5,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,4,2,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True)
+                Sort.Sort("Fuite",172,1,0,5,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Fuite", 1,1,Effets.EffetTeleportePosPrec(1),"Fuite","cible"))],[],0,4,2,0,0,"cercle",False,description="""Téléporte la cible sur sa position précédente au début du prochain tour du lanceur.""", chaine=True)
             ]))
 
-            # sorts.append(Personnage.getSortRightLvl(lvl,[
-            #     Sort.Sort("Prémonition",185,2,1,5,[Effets.TODO(9954),Effets.TODO(Pose une rune de rang 1 (1 tour))],[],0,1,1,1,0,"cercle",False,description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
-            # ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Prémonition",185,2,1,5,[Effets.EffetRune(1, activationRune,"Prémonition",(164,78,163),faire_au_vide=True)],[],0,1,1,1,0,"cercle",False,description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
+            ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Horloge",84,5,1,4,[Effets.EffetVolDeVie(28,31,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostPA("Horloge",1,1,1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
@@ -904,6 +905,7 @@ class Personnage(object):
         niveau.depileEffets()
         self.rafraichirEtats(niveau)
         niveau.rafraichirGlyphes(self)
+        niveau.rafraichirRunes(self)
         self.rafraichirHistoriqueDeplacement()
         for etat in self.etats:
             if etat.actif():

@@ -133,6 +133,42 @@ class Piege:
     def aPorteDeclenchement(self,x,y):
         return self.zone_declenchement.testCaseEstDedans([self.centre_x,self.centre_y],[x,y],None)
 
+class Rune:
+    """@summary: Classe décrivant une rune dans le jeu Dofus.
+     Une rune est une zone au sol qui se déclenche à la fin de sa durée de vie."""
+    def __init__(self,nomRune, duree, effets, centre_x, centre_y, lanceur, couleur):
+        """@summary: Initialise une glyphe.
+        @nomSort: le nom du sort à l'origine de la glyphe
+        @type: string
+        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @type: Zones.TypeZone
+        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
+        @type: Sort
+        @centre_x: la coordonnée x du centre de la zone de la glyphe.
+        @type: int
+        @centre_y: la coordonnée y du centre de la zone de la glyphe.
+        @type: int
+        @lanceur: le joueur ayant posé la glyphe.
+        @type: Personnage
+        @couleur: la coordonnée x du centre de la zone de la glyphe.
+        @type: tuple (R,G,B)"""
+        self.duree = duree
+        self.nom = nomRune
+        self.effets = effets
+        self.centre_x = centre_x
+        self.centre_y = centre_y
+        self.lanceur = lanceur
+        self.invisible = False
+        self.couleur = couleur
+
+    def actif(self):
+        """@summary: Test si la rune est encore active
+            @return: Retourne un booléen qui vaut vrai si la rune est encore active, faux sinon"""
+        return self.duree > 0
+
+    def activation(self,niveau):
+        for effet in self.effets:
+            niveau.lancerEffet(effet,self.centre_x,self.centre_y,self.nom, self.centre_x, self.centre_y, self.lanceur)
 class Case:
     """@summary: Classe décrivant une case de la grille du niveau."""
     def __init__(self, typ, hitbox):
@@ -236,6 +272,8 @@ class Niveau:
         self.glyphes=[]
         #liste des pièges
         self.pieges=[]
+        #liste des runes
+        self.runes=[]
         #File d'attente pour ordre explosion piège
         self.fifoExploPiege = []
         #File d'attente Effets:
@@ -451,7 +489,30 @@ class Niveau:
             #On recalcule la taille du tableau
             longueurTab = len(self.glyphes)
             i+=1
-
+    
+    def rafraichirRunes(self, duPersonnage):
+        """@summary: Rafraîchit la durée des runes et supprime celles qui ne sont plus actives.
+                    Cette fonction est appelé au début de chaque tour.
+            @duPersonnage: On rafraîchit uniquement les runes posés par ce joueur.
+            @type: Personnage"""
+        i=0
+        longueurTab = len(self.runes)
+        #Parcours des runes
+        while i < longueurTab:
+            #On teste si la glyphe appartient à celui qui vient de débuter son tour
+            if self.runes[i].lanceur == duPersonnage:
+                #Si la rune était active, on réduit sa durée
+                if self.runes[i].actif():
+                    self.runes[i].duree -= 1 # Réduction du temps restant
+                    #Test si la glyphe est terminée
+                    if(self.runes[i].duree <= 0):
+                        #Si c'est le cas on l'active puis on la supprime
+                        self.runes[i].activation(self)
+                        del self.runes[i]
+                        i-=1
+            #On recalcule la taille du tableau
+            longueurTab = len(self.runes)
+            i+=1
 
     def finTour(self):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
@@ -1100,7 +1161,9 @@ class Niveau:
                         if piege.lanceur.team == self.tourDe.team or not piege.invisible:
                             if piege.aPorteDeclenchement(num_case, num_ligne):
                                 pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
-                    
+                    for rune in self.runes:
+                        if rune.centre_x == num_case and rune.centre_y == num_ligne:
+                            pygame.draw.rect(fenetre, rune.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     
                     #Afficher previsualation portee du sort selectionne
                     if sortSelectionne != None:
@@ -1212,11 +1275,20 @@ class Niveau:
     def posePiege(self,piege):
         """@summary: Méthode permettant de poser un piège
         @piege: Le piège à ajouter au niveau
-        @type: Glyphe
+        @type: Piege
 
         @return: L'indice d'ajout du piège"""
         self.pieges.append(piege)
         return len(self.pieges)-1
+    
+    def poseRune(self,rune):
+        """@summary: Méthode permettant de poser une rune
+        @rune: La rune à ajouter au niveau
+        @type: Rune
+
+        @return: L'indice d'ajout de la rune"""
+        self.runes.append(rune)
+        return len(self.runes)-1
 
     def getVoisins(self,x,y):
         """@summary: Retourne les cases vides existantes adjacentes à une case donnée
