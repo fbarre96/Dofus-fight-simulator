@@ -746,10 +746,10 @@ class EffetAttire(EffetPousser):
         if joueurCaseEffet != None:
             self.case_cible_x = kwargs.get("case_cible_x")
             self.case_cible_y = kwargs.get("case_cible_y")
-            if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-                super(EffetAttire, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-                self.positif *= -1 # changement de sens par rapport au sens de pousser
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            # Commenter pour iop sort menace : if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
+            super(EffetAttire, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
+            self.positif *= -1 # changement de sens par rapport au sens de pousser
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
         
 class EffetAttireVersCible(EffetPousser):

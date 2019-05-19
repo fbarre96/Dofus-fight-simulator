@@ -182,7 +182,7 @@ class Personnage(object):
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
             activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
-            activationRune = [Effets.EffetTp( generer_TF=True, faire_au_vide=True)]
+            activationRune = [Effets.EffetTp(generer_TF=True, faire_au_vide=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Ralentissement",1,2,1,4,[Effets.EffetDegats(4,5,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(7,8,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
             Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
@@ -533,8 +533,10 @@ class Personnage(object):
                 Sort.Sort("Déferlement",67,4,0,5,[Effets.EffetAttireAttaquant(4,cibles_exclues="Lanceur"),Effets.EffetDegats(38,42,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttireAttaquant(4,cibles_exclues="Lanceur"),Effets.EffetDegats(46,50,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
             Le lanceur gagne des points de bouclier.""", chaine=True)
             ]))
-            
-            # sorts.append(Sort.Sort("Déferlement",3,0,5,[Effets.EffetDegats(28,32,"eau",cibles_exclues="Lanceur"),], 3,2,0,0,"ligne",description="Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible. Le lanceur gagne des points de bouclier."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Menace",115,3,0,3,[Effets.EffetDegats(26,28,"Eau"),Effets.EffetAttire(2),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Menace",0,1,100))],[Effets.EffetDegats(31,33,"Eau"),Effets.EffetAttire(2),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Menace",0,1,100))],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau et attire la cible.
+            Le lanceur gagne des points de bouclier.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Epée Divine",3,0,0,[Effets.EffetDegats(21,23,"air",zone=Zones.TypeZoneCroix(3),cibles_possibles="Ennemis"), Effets.EffetEtat(Etats.EtatBoostDommage("Epee Divine",0,4,20),zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Lanceur")], 2,2,0,0,"cercle",chaine=False,description="Occasionne des dommages Air et augmente les dommages des alliés ciblés."))
             # sorts.append(Sort.Sort("Fendoir",5,0,4,[Effets.EffetDegats(47,53,"eau",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")], 2,2,0,0,"cercle",description="Occasionne des dommages Eau en zone. Applique des points de bouclier pour chaque ennemi touché."))
             # sorts.append(Sort.Sort("Épée Destructrice",4,1,5,[Effets.EffetDegats(32,36,"feu",zone=Zones.TypeZoneLignePerpendiculaire(1))], 2,2,0,0,"ligne",description="Occasionne des dommages Feu et réduit la probabilité que la cible occasionne des coups critiques."))

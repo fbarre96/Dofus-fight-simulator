@@ -1,8 +1,5 @@
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Menace",115,3,3,3,[Effets.EffetDegats(26,28,"Eau"),Effets.TODO(Attire de 2 case(s)),Effets.TODO(100% du niveau en bouclier (1 tour))],[Effets.EffetDegats(31,33,"Eau"),Effets.TODO(Attire de 2 case(s)),Effets.TODO(100% du niveau en bouclier (1 tour))],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau et attire la cible.
-Le lanceur gagne des points de bouclier.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("�p�e Divine",6,3,0,0,[Effets.EffetDegats(15,17,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(10 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],[Effets.EffetDegats(24,24,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(13 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et augmente les dommages des alli�s cibl�s.""", chaine=True),
 
