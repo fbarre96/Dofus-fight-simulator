@@ -14,7 +14,7 @@ class Sort:
         self.typeLancer = typeLancer
         self.probaCC = probaCC
         self.ldv = ldv
-        self.image = "sorts/"+constantes.normaliser(nom.lower())+".png"
+        self.image = "images/"+constantes.normaliser(nom.lower())+".jpg"
         self.hitbox = None
         self.chaine = kwargs.get("chaine",True)
         self.nbLancerParTour = nbLancerParTour

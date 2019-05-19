@@ -108,6 +108,7 @@ class Personnage(object):
         self.invocations = []
         self.overlayTexte = ""
         self.team = int(team)
+        
         if not(icone.startswith("images/")):
             self.icone = ("images/"+icone)
         else:
