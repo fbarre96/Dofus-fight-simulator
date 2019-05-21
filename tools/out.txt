@@ -1,13 +1,6 @@
 
 
 sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("�p�e Divine",6,3,0,0,[Effets.EffetDegats(15,17,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(10 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],[Effets.EffetDegats(24,24,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(13 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et augmente les dommages des alli�s cibl�s.""", chaine=True),
-
-	Sort.Sort("�p�e Divine",42,3,0,0,[Effets.EffetDegats(18,20,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(15 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],[Effets.EffetDegats(27,27,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(18 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et augmente les dommages des alli�s cibl�s.""", chaine=True),
-
-	Sort.Sort("�p�e Divine",74,3,0,0,[Effets.EffetDegats(21,23,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(20 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],[Effets.EffetDegats(30,30,"Air",zone=Zones.TypeZoneCroix(3)),Effets.TODO(23 Dommages (4 tours),zone=Zones.TypeZoneCroix(3))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et augmente les dommages des alli�s cibl�s.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Fendoir",120,5,4,4,[Effets.TODO(Fendoir,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(47,53,"Eau",zone=Zones.TypeZoneCroix(1)),Effets.TODO(100% du niveau en bouclier (1 tour),zone=Zones.TypeZoneCroix(1))],[Effets.TODO(Fendoir,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(52,58,"Eau",zone=Zones.TypeZoneCroix(1)),Effets.TODO(100% du niveau en bouclier (1 tour),zone=Zones.TypeZoneCroix(1))],25,2,99,0,0,"cercle",True,description="""Occasionne des dommages Eau en zone.
 Applique des points de bouclier pour chaque ennemi touch�.""", chaine=True)
 ]))
