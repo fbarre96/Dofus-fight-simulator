@@ -641,22 +641,26 @@ class EffetPousser(Effet):
 
     def deepcopy(self):
         return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
-    def determinerSensPousser(self,niveau,cible,depuisX,depuisY):
+    def determinerSensPousser(self,niveau,cible,sourceX,sourceY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
-        @depuisX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
-        @depuisY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
 
         @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
-        
+
         #Calcul de la direction de la poussée
-        self.horizontal = not (cible[0] == depuisX)
-        if self.horizontal and cible[0] > depuisX:
+        cible_posX = cible[0]
+        cible_posY = cible[1]
+        dist_lignes = abs(cible_posY - sourceY)
+        dist_colognes = abs(cible_posX - sourceX)
+        self.horizontal = (dist_colognes > dist_lignes)
+        if self.horizontal and cible_posX > sourceX:
             self.positif = 1
-        elif (not self.horizontal) and cible[1]> depuisY:
+        elif (not self.horizontal) and cible_posY> sourceY:
             self.positif = 1
         else:
             self.positif = -1 
@@ -684,7 +688,7 @@ class EffetPousser(Effet):
         niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.pousser(self, self.joueurAPousser,True, self.case_from_x, self.case_from_y)
+        niveau.pousser(self, self.joueurAPousser,joueurLanceur,True, self.case_from_x, self.case_from_y)
         
 class EffetAttire(EffetPousser):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -730,10 +734,17 @@ class EffetAttire(EffetPousser):
             self.joueurAAttirer = joueurLanceur
         elif self.cible == "JoueurCaseEffet":
             self.joueurAAttirer = joueurCaseEffet
-            
-        super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
-        self.positif *= -1 # changement de sens par rapport au sens de pousser
-        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        if self.joueurAAttirer != None:
+            super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
+            self.positif *= -1 # changement de sens par rapport au sens de pousser
+            self.nbCase = self.determinerAttiranceMax() # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        
+    def determinerAttiranceMax(self):
+        if self.horizontal:
+            return abs(self.joueurAAttirer.posX - self.case_from_x)
+        else:
+            return abs(self.joueurAAttirer.posY - self.case_from_y)
 
 class EffetDureeEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

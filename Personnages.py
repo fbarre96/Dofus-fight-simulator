@@ -524,13 +524,13 @@ class Personnage(object):
                 Sort.Sort("Conquête",105,3,1,6,[Effets.EffetInvoque("Stratège Iop",True,cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Déferlement",3,4,0,5,[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(24,28,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(32,36,"Eau",cibles_exclues="Lanceur"), Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
+                Sort.Sort("Déferlement",3,4,0,5,[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(24,28,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(32,36,"Eau",cibles_exclues="Lanceur"), Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
             Le lanceur gagne des points de bouclier.""", chaine=True),
 
-                Sort.Sort("Déferlement",35,4,0,5,[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(31,35,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(39,43,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
+                Sort.Sort("Déferlement",35,4,0,5,[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(31,35,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(39,43,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
             Le lanceur gagne des points de bouclier.""", chaine=True),
 
-                Sort.Sort("Déferlement",67,4,0,5,[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(38,42,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,cibles_exclues="Lanceur"),Effets.EffetDegats(46,50,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
+                Sort.Sort("Déferlement",67,4,0,5,[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(38,42,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(46,50,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
             Le lanceur gagne des points de bouclier.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1033,10 +1033,6 @@ class Personnage(object):
                             print(joueurInfo.classe+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
                     if sortSelectionne != None:
                         sortSelectionne = None
-        #Touche clavier appuyée
-        
-            
-
         return sortSelectionne
 
 class PersonnageMur(Personnage):

@@ -529,9 +529,12 @@ class Niveau:
         print(perso.classe+" est mort!")
         #Parcours des joueurs
         i= 0 
+        persosJoueursRestants = []
         tailleJoueurs = len(self.joueurs)
         while i < tailleJoueurs:
             #Recherche du joueur à tuer
+            if isinstance(self.joueurs[i], Personnages.Personnage):
+                persosJoueursRestants.append(self.joueurs[i])
             if self.joueurs[i] == perso:
                 #On supprime son existence
                 self.structure[perso.posY][perso.posX].type="v"
@@ -547,6 +550,10 @@ class Niveau:
                 break
             i+=1
             tailleJoueurs = len(self.joueurs)
+        if len(persosJoueursRestants) == 1:
+            print("Gagnant : "+str(persosJoueursRestants[0].classe))
+        elif len(persosJoueursRestants) == 0:
+            print("Tous mort ! Egalité.")
 
     def generer(self):
         """@summary: Méthode permettant de générer le niveau.
