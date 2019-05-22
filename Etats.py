@@ -87,7 +87,7 @@ class Etat(object):
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
         pass
-    def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant):
+    def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant, totalPerdu):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
                      Utile pour la réaction à une attaque.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
@@ -96,7 +96,9 @@ class Etat(object):
         @niveau: La grille de jeu
         @type: Niveau
         @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Personnage"""
+        @type: Personnage
+        @totalPerdu: Le total de degats subits par le perso
+        @type: int"""
         pass
     def triggerDebutTour(self,personnage,niveau):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour commence.
@@ -229,7 +231,7 @@ class EtatRedistribuerPer(Etat):
         @return: Le clone de l'état"""
         return EtatRedistribuerPer(self.nom, self.debuteDans,self.duree,  self.pourcentage, self.cibles, self.tailleZone, self.lanceur,self.desc)
 
-    def triggerAvantSubirDegats(self,cibleAttaque,niveau,totalPerdu,typeDegats,attaquant):
+    def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant,totalPerdu):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages vont être subits.
                      Redistribue une partie des dégâts qui vont être subit dans la zone définit.
         @cibleAttaque: le joueur qui va subir les dégâts
@@ -238,13 +240,12 @@ class EtatRedistribuerPer(Etat):
         @type: Niveau
         @totalPerdu: Le total de vie que le joueur va subir.
         @type: int
-        @typeDeg:  Le type de dégâts qui va être subit
-        @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        s = Sort.Sort("Redistribution",0,0,0,[Effets.EffetDegats(totalPerdu,totalPerdu,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles=self.cibles,cibles_exclues="Lanceur")],99,99,0,0,"cercle")
-        s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, cibleAttaque.posX, cibleAttaque.posY)
-
+        totalPerdu = int(totalPerdu*(self.pourcentage/100.0))
+        effetRedistribution = Effets.EffetDegats(totalPerdu,totalPerdu,"renvoie",zone=Zones.TypeZoneCercle(self.tailleZone),bypassDmgCalc=True,cibles_possibles=self.cibles,cibles_exclues="Lanceur")
+        niveau.lancerEffet(effetRedistribution,cibleAttaque.posX,cibleAttaque.posY,"Redistribution", cibleAttaque.posX,cibleAttaque.posY)
+        
 class EtatBoostPA(Etat):
     """@summary: Classe décrivant un état qui modifie le nombre de PA."""
     def __init__(self, nom, debDans,duree,  boostPA,lanceur=None,desc=""):
@@ -804,7 +805,7 @@ class EtatLanceSortSiSubit(Etat):
         @return: Le clone de l'état"""
         return EtatLanceSortSiSubit(self.nom, self.debuteDans,self.duree,  self.sort, self.lanceur,self.desc)
 
-    def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant):
+    def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant,totalPerdu):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
                      Le personnage subissant les dégâts lance le sort donné.
         @cibleAttaque: le joueur qui a subit les dégâts

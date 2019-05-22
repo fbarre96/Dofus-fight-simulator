@@ -1053,7 +1053,8 @@ class Niveau:
 
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
-
+        if nomSort == "Redistribution":
+            print(str(effet)+" / "+str(prov_x)+";"+str(prov_y)+" / "+str(case_cible_x)+";"+str(case_cible_y)+ " / "+str(lanceur))
         if lanceur == None:
             joueurLanceur = self.getJoueurSur(prov_x,prov_y)
         else:

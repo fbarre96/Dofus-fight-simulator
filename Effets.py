@@ -163,8 +163,8 @@ class EffetDegats(Effet):
             return None
         
         baseDeg=random.randrange(self.minJet,self.maxJet+1)
-        
-        carac = joueurLanceur.pui
+        print("Will do damage "+str(baseDeg)+ " to "+str(joueurCaseEffet.classe))
+        carac = 0
         dos = 0
         resFixes = 0
         rePer = 0
@@ -208,15 +208,17 @@ class EffetDegats(Effet):
             else:
                 dos += joueurLanceur.doArmes
             dos += joueurLanceur.do
+            carac += joueurLanceur.pui
+        
         distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [joueurLanceur.posX, joueurLanceur.posY])
         if distance == 1:
             if self.kwargs.get("bypassDmgCalc",False) == False:
                 dos += joueurLanceur.doMelee
-            resFixes += joueurCaseEffet.reMelee
+                resFixes += joueurCaseEffet.reMelee
         else:
             if self.kwargs.get("bypassDmgCalc",False) == False:
                 dos += joueurLanceur.doDist
-            resFixes += joueurCaseEffet.reDist
+                resFixes += joueurCaseEffet.reDist
 
         #Etats du lanceur
         total = 0
