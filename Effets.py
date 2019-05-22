@@ -685,6 +685,8 @@ class EffetPousser(Effet):
             self.case_from_x = joueurLanceur.posX
             self.case_from_y = joueurLanceur.posY
         if self.cible == "JoueurCaseEffet":
+            if joueurCaseEffet is None:
+                return
             self.joueurAPousser = niveau.getJoueurSur(joueurCaseEffet.posX, joueurCaseEffet.posY)
         self.determinerSensPousser(niveau,[self.joueurAPousser.posX, self.joueurAPousser.posY],self.case_from_x,self.case_from_y)
         niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
@@ -730,11 +732,15 @@ class EffetAttire(EffetPousser):
             self.case_from_x = joueurLanceur.posX
             self.case_from_y = joueurLanceur.posY
         elif self.source == "JoueurCaseEffet":
+            if joueurCaseEffet is None:
+                return
             self.case_from_x = joueurCaseEffet.posX
             self.case_from_y = joueurCaseEffet.posY
         if self.cible == "Lanceur":
             self.joueurAAttirer = joueurLanceur
         elif self.cible == "JoueurCaseEffet":
+            if joueurCaseEffet is None:
+                return
             self.joueurAAttirer = joueurCaseEffet
         if self.joueurAAttirer != None:
             if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:

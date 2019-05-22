@@ -1,13 +1,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Souffle",17,2,2,4,[Effets.TODO(Repousse de 1 case(s),zone=Zones.TypeZoneCroix(1))],[],0,1,1,2,0,"cercle",False,description="""Repousse les alli�s et les ennemis situ�s autour de la cellule cibl�e.""", chaine=True),
 
-	Sort.Sort("Souffle",58,2,2,6,[Effets.TODO(Repousse de 1 case(s),zone=Zones.TypeZoneCroix(1))],[],0,1,1,2,0,"cercle",False,description="""Repousse les alli�s et les ennemis situ�s autour de la cellule cibl�e.""", chaine=True),
-
-	Sort.Sort("Souffle",102,2,2,8,[Effets.TODO(Repousse de 1 case(s),zone=Zones.TypeZoneCroix(1))],[],0,1,1,2,0,"cercle",False,description="""Repousse les alli�s et les ennemis situ�s autour de la cellule cibl�e.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Violence",135,2,0,0,[Effets.TODO(Violence,zone=Zones.TypeZoneCercle(2)),Effets.TODO(50 Dommages Pouss�e (1 tour),zone=Zones.TypeZoneCercle(2)),Effets.TODO(25 Tacle (1 tour),zone=Zones.TypeZoneCercle(2)),Effets.TODO(Attire de 1 case(s),zone=Zones.TypeZoneCercle(2))],[],0,1,99,0,0,"cercle",False,description="""Attire les entit�s � proximit� et augmente les dommages de pouss�e et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
 ]))

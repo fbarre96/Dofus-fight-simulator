@@ -569,7 +569,13 @@ class Personnage(object):
                 Sort.Sort("Rassemblement",130,2,1,6,[Effets.EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")],[],0,1,1,2,0,"cercle",True,description="""Rapproche les ennemis de la cible.
             Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Rassemblement",2,1,6,[,Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")], 1,1,2,0,"cercle",description="La cible attire ses alliés à proximité (2 cases) lorsqu'elle est attaquée."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Souffle",17,2,2,4,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+
+                Sort.Sort("Souffle",58,2,2,6,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+
+                Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Souffle",2,2,8,[Effets.EffetPousser(1,zone=Zones.TypeZoneCercleSansCentre(1),faire_au_vide=True)],1,1,2,0,"cercle",description="Repousse les alliés et les ennemis situés autour de la cellule ciblée."))
             # sorts.append(Sort.Sort("Violence",2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Ennemis"),Effets.EffetEtat(Etats.EtatBoostDoPou("Violence",0,1,50))],1,1,0,0,"cercle",description="Attire les entités à proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet."))
             # sorts.append(Sort.Sort("Concentration",2,1,1,[Effets.EffetDegats(20,24,"terre")],4,3,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés contre les Invocations."))
