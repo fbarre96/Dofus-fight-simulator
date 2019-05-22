@@ -737,11 +737,12 @@ class EffetAttire(EffetPousser):
         elif self.cible == "JoueurCaseEffet":
             self.joueurAAttirer = joueurCaseEffet
         if self.joueurAAttirer != None:
-            super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
-            self.positif *= -1 # changement de sens par rapport au sens de pousser
-            caseMax = self.determinerAttiranceMax() # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
-            self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:
+                super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
+                self.positif *= -1 # changement de sens par rapport au sens de pousser
+                caseMax = self.determinerAttiranceMax() # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
+                self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
+                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
         
     def determinerAttiranceMax(self):
         if self.horizontal:

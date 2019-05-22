@@ -488,7 +488,7 @@ class Personnage(object):
             N'occasionne pas de dommages si aucun Téléfrag n'a été généré depuis son dernier lancer.""", chaine=True)
             ]))
         elif(classe=="Iop"):
-            #activationRassemblement= Sort.Sort("AttireAllies",0,0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3))],[],0,99,99,0,0,"cercle",False)
+            activationRassemblement = Sort.Sort("Déclenche Rassemblement",0,0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3), cibles_possibles="Allies")],[],0,99,99,0,0,"cercle",False)
             #activationFriction= Sort.Sort("Attire",0,0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99))],[],0,99,99,0,0,"cercle",False)
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Pression",1,3,1,3,[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(14,18,"Terre")],[Effets.EffetEtat(Etats.EtatBoostErosion("Pression",0,2,10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
@@ -565,7 +565,11 @@ class Personnage(object):
 
                 Sort.Sort("Massacre",94,2,1,7,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Massacre",0,2,50,"Allies",1))],[],0,1,1,3,0,"cercle",True,description="""Lorsque la cible ennemie reçoit des dommages de sorts, elle occasionne 50% de ces dommages aux ennemis au contact.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Rassemblement",2,1,6,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3),cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")], 1,1,2,0,"cercle",description="La cible attire ses alliés à proximité (2 cases) lorsqu'elle est attaquée."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Rassemblement",130,2,1,6,[Effets.EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")],[],0,1,1,2,0,"cercle",True,description="""Rapproche les ennemis de la cible.
+            Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
+            ]))
+            # sorts.append(Sort.Sort("Rassemblement",2,1,6,[,Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")], 1,1,2,0,"cercle",description="La cible attire ses alliés à proximité (2 cases) lorsqu'elle est attaquée."))
             # sorts.append(Sort.Sort("Souffle",2,2,8,[Effets.EffetPousser(1,zone=Zones.TypeZoneCercleSansCentre(1),faire_au_vide=True)],1,1,2,0,"cercle",description="Repousse les alliés et les ennemis situés autour de la cellule ciblée."))
             # sorts.append(Sort.Sort("Violence",2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Ennemis"),Effets.EffetEtat(Etats.EtatBoostDoPou("Violence",0,1,50))],1,1,0,0,"cercle",description="Attire les entités à proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet."))
             # sorts.append(Sort.Sort("Concentration",2,1,1,[Effets.EffetDegats(20,24,"terre")],4,3,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés contre les Invocations."))
