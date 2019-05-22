@@ -1,17 +1,6 @@
 
 
 sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Fendoir",120,5,4,4,[Effets.TODO(Fendoir,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(47,53,"Eau",zone=Zones.TypeZoneCroix(1)),Effets.TODO(100% du niveau en bouclier (1 tour),zone=Zones.TypeZoneCroix(1))],[Effets.TODO(Fendoir,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(52,58,"Eau",zone=Zones.TypeZoneCroix(1)),Effets.TODO(100% du niveau en bouclier (1 tour),zone=Zones.TypeZoneCroix(1))],25,2,99,0,0,"cercle",True,description="""Occasionne des dommages Eau en zone.
-Applique des points de bouclier pour chaque ennemi touch�.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("�p�e Destructrice",9,4,1,5,[Effets.EffetDegats(24,28,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=True),
-
-	Sort.Sort("�p�e Destructrice",47,4,1,5,[Effets.EffetDegats(28,32,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=True),
-
-	Sort.Sort("�p�e Destructrice",87,4,1,5,[Effets.EffetDegats(32,36,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(38,42,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(�p�e Destructrice,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneLignePerpendiculaire(1))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Anneau Destructeur",125,3,2,2,[Effets.EffetDegats(26,30,"Air",zone=Zones.TypeZoneAnneau(3)),Effets.TODO(Attire de 1 case(s),zone=Zones.TypeZoneAnneau(3))],[Effets.EffetDegats(30,34,"Air",zone=Zones.TypeZoneAnneau(3)),Effets.TODO(Attire de 1 case(s),zone=Zones.TypeZoneAnneau(3))],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Air en anneau et attire les cibles.""", chaine=True)
 ]))
 sorts.append(Personnage.getSortRightLvl(lvl,[

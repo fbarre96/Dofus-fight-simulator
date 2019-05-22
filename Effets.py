@@ -623,19 +623,24 @@ class EffetRune(Effet):
 class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pousse un joueur à l'opposé une position donnée."""
-    def __init__(self,int_nbCase, **kwargs):
+    def __init__(self,int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet poussant un joueur à l'opposé d'une position donnée
         @int_nbCase: le nombre de case dont le joueur cible va être poussé.
         @type: int
+        @source: une string indiquant la provenance de la poussée (Lanceur|)
+        @type: str
+        @cible: une string indiquant la direction de la poussée (Lanceur|)
+        @type: str
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         self.nbCase = int_nbCase
-
-
+        self.source = source
+        self.cible = cible
         super(EffetPousser, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetPousser(self.nbCase,**self.kwargs)
+        return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
     def determinerSensPousser(self,niveau,cible,depuisX,depuisY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
@@ -647,15 +652,6 @@ class EffetPousser(Effet):
 
         @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
         
-        #Si le depuis est sur la case de la cible, on calcul la direction avec le tourDe
-        if depuisY == cible[1] and depuisX == cible[0]:
-            depuisY = niveau.tourDe.posY
-            depuisX = niveau.tourDe.posX
-        #Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
-        if depuisY == None:
-            depuisY = niveau.tourDe.posY-1
-        if depuisX == None:
-            depuisX = niveau.tourDe.posX
         #Calcul de la direction de la poussée
         self.horizontal = not (cible[0] == depuisX)
         if self.horizontal and cible[0] > depuisX:
@@ -676,63 +672,41 @@ class EffetPousser(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
-        if joueurCaseEffet != None:
-            self.case_cible_x = kwargs.get("case_cible_x")
-            self.case_cible_y = kwargs.get("case_cible_y")
-            if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-                self.determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        if self.source == "CaseCible":
+            self.case_from_x = kwargs.get("case_cible_x")
+            self.case_from_y = kwargs.get("case_cible_y")
+        elif self.source == "Lanceur":
+            self.case_from_x = joueurLanceur.posX
+            self.case_from_y = joueurLanceur.posY
+        if self.cible == "JoueurCaseEffet":
+            self.joueurAPousser = niveau.getJoueurSur(joueurCaseEffet.posX, joueurCaseEffet.posY)
+        self.determinerSensPousser(niveau,[self.joueurAPousser.posX, self.joueurAPousser.posY],self.case_from_x,self.case_from_y)
+        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.pousser(self,joueurCaseEffet,joueurLanceur,True, self.case_cible_x, self.case_cible_y)
-
-class EffetRepousser(EffetPousser):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet repousse un joueur loin de la position du lanceur."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetRepousser, self).__init__(int_nbCase,**kwargs)
-    def deepcopy(self):
-        return EffetRepousser(self.nbCase,**self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.pousser(self,joueurCaseEffet,joueurLanceur,True, self.case_cible_x, self.case_cible_y)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
-        @type: **kwargs"""
-        if joueurCaseEffet != None:
-            self.case_cible_x = kwargs.get("case_cible_x")
-            self.case_cible_y = kwargs.get("case_cible_y")
-            self.determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
+        niveau.pousser(self, self.joueurAPousser,True, self.case_from_x, self.case_from_y)
         
 class EffetAttire(EffetPousser):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet attire un joueur vers la position du lanceur."""
-    def __init__(self,int_nbCase, **kwargs):
+    def __init__(self,int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
         @int_nbCase: le nombre de case dont le joueur cible va être attiré.
         @type: int
+        @depuis: string qui définit la provenance de l'attirance
+        @type: str
+        @vers: string qui définit la direction de l'attirance
+        @type: str
         @kwargs: Options de l'effets
         @type: **kwargs"""
+        self.source = source
+        self.cible = cible
         self.kwargs = kwargs
-        super(EffetAttire, self).__init__(int_nbCase,**kwargs)
+        super(EffetAttire, self).__init__(int_nbCase,source,cible,**kwargs)
     def deepcopy(self):
-        return EffetAttire(self.nbCase,**self.kwargs)
+        return EffetAttire(self.nbCase,self.source, self.cible, **self.kwargs)
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.attire(self,joueurCaseEffet,joueurLanceur,self.case_cible_x, self.case_cible_y)
+        niveau.attire(self,self.joueurAAttirer,joueurLanceur,self.case_from_x, self.case_from_y)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
@@ -743,108 +717,24 @@ class EffetAttire(EffetPousser):
         @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
-        if joueurCaseEffet != None:
-            self.case_cible_x = kwargs.get("case_cible_x")
-            self.case_cible_y = kwargs.get("case_cible_y")
-            # Commenter pour iop sort menace : if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-            super(EffetAttire, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-            self.positif *= -1 # changement de sens par rapport au sens de pousser
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        if self.source == "CaseCible":
+            self.case_from_x = kwargs.get("case_cible_x")
+            self.case_from_y = kwargs.get("case_cible_y")
+        elif self.source == "Lanceur":
+            self.case_from_x = joueurLanceur.posX
+            self.case_from_y = joueurLanceur.posY
+        elif self.source == "JoueurCaseEffet":
+            self.case_from_x = joueurCaseEffet.posX
+            self.case_from_y = joueurCaseEffet.posY
+        if self.cible == "Lanceur":
+            self.joueurAAttirer = joueurLanceur
+        elif self.cible == "JoueurCaseEffet":
+            self.joueurAAttirer = joueurCaseEffet
+            
+        super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
+        self.positif *= -1 # changement de sens par rapport au sens de pousser
+        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
-        
-class EffetAttireVersCible(EffetPousser):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet attire un joueur vers la position du lanceur."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetAttireVersCible, self).__init__(int_nbCase,**kwargs)
-    def deepcopy(self):
-        return EffetAttireVersCible(self.nbCase,**self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.attire(self,joueurCaseEffet,joueurLanceur,self.case_cible_x, self.case_cible_y)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
-        @type: **kwargs"""
-
-        if joueurCaseEffet != None:
-            self.case_cible_x = kwargs.get("case_cible_x")
-            self.case_cible_y = kwargs.get("case_cible_y")
-            if not(self.case_cible_x == joueurCaseEffet.posX and self.case_cible_y == joueurCaseEffet.posY):
-                super(EffetAttireVersCible, self).determinerSensPousser(niveau,[joueurCaseEffet.posX, joueurCaseEffet.posY],self.case_cible_x,self.case_cible_y)
-                self.positif *= -1 # changement de sens par rapport au sens de pousser
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
-class EffetAttireAttaquant(EffetPousser):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet attire le joueur qui attaque vers la cible."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetAttireAttaquant, self).__init__(int_nbCase,**kwargs)
-    def deepcopy(self):
-        return EffetAttireAttaquant(self.nbCase,**self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        # Ancien code : niveau.attire(self.nbCase,joueurLanceur,joueurCaseEffet)
-        niveau.attire(self,joueurLanceur,joueurCaseEffet)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
-        @type: **kwargs"""
-        if joueurCaseEffet != None:
-            super(EffetAttireAttaquant, self).determinerSensPousser(niveau,[joueurLanceur.posX, joueurLanceur.posY],joueurCaseEffet.posX,joueurCaseEffet.posY)
-            self.positif *= -1 # changement de sens par rapport au sens de pousser
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
-
-class EffetAttireAllies(Effet):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet attire le joueur cible vers l'attaquant s'ils sont dans la même équipe."""
-    def __init__(self,int_nbCase, **kwargs):
-        """@summary: Initialise un effet attirant attire le joueur cible vers l'attaquant s'ils sont dans la même équipe
-        @int_nbCase: le nombre de case dont le joueur cible va être attiré.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        self.nbCase = int_nbCase
-        super(EffetAttireAllies, self).__init__(**kwargs)
-    def deepcopy(self):
-        return EffetAttireAllies(self.nbCase,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires
-        @type: **kwargs"""
-        if joueurCaseEffet.team == joueurLanceur.team:
-            niveau.attire(self.nbCase,joueurCaseEffet,joueurLanceur)
-        
 class EffetDureeEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet change la durée des états de la cible."""
