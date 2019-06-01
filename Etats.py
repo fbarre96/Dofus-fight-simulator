@@ -246,9 +246,10 @@ class EtatRedistribuerPer(Etat):
         effetRedistribution = Effets.EffetDegats(totalPerdu,totalPerdu,"renvoie",zone=Zones.TypeZoneCercle(self.tailleZone),bypassDmgCalc=True,cibles_possibles=self.cibles,cibles_exclues="Lanceur")
         niveau.lancerEffet(effetRedistribution,cibleAttaque.posX,cibleAttaque.posY,"Redistribution", cibleAttaque.posX,cibleAttaque.posY)
         
-class EtatBoostPA(Etat):
-    """@summary: Classe décrivant un état qui modifie le nombre de PA."""
-    def __init__(self, nom, debDans,duree,  boostPA,lanceur=None,desc=""):
+
+class EtatBoostCaracFixe(Etat):
+    """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique."""
+    def __init__(self, nom, debDans,duree, nomAttributCarac, boostCarac,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -256,8 +257,9 @@ class EtatBoostPA(Etat):
         @type: int
         @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
         @type: int
-
-        @boostPA: le gain de PA
+        @nomAttributCarac: Le nom de l'attribut a boost
+        @type: string qui doit être dans les attribut de la classe Personnage
+        @boostCarac: le gain de Caractéristique a appliqué
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
@@ -266,108 +268,14 @@ class EtatBoostPA(Etat):
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.boostPA = boostPA
-        super(EtatBoostPA, self).__init__(nom,  debDans,duree,lanceur,desc)
+        self.nomAttributCarac = nomAttributCarac
+        self.boostCarac = boostCarac
+        super(EtatBoostCaracFixe, self).__init__(nom,  debDans,duree,lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatBoostPA(self.nom, self.debuteDans,self.duree,  self.boostPA, self.lanceur,self.desc)
-
-    def triggerRafraichissement(self, personnage,niveau):
-        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
-                     Les points d'actions sont reboostés à chaque rafraîchissement de l'état.
-        @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Personnage
-        @niveau: La grille de jeu en cours
-        @type: Niveau"""
-        self.triggerInstantane(joueurCaseEffet=personnage)
-    def triggerInstantane(self,**kwargs):
-        """@summary: Un trigger appelé au moment ou un état est appliqué.
-                     change les PA du joueur selon le boost PA
-        @kwargs: les options non prévisibles selon les états.
-        @type: **kwargs"""
-        personnage = kwargs.get("joueurCaseEffet")
-        personnage.PA += self.boostPA
-        print("Modification de PA:"+str(self.boostPA))
-        print("PA : "+str(personnage.PA))
-        print("PM : "+str(personnage.PM))
-
-class EtatBoostPM(Etat):
-    """@summary: Classe décrivant un état qui modifie le nombre de PM."""
-    def __init__(self, nom, debDans,duree,  boostPM,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostPM: le gain de PM
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostPM = boostPM
-        super(EtatBoostPM, self).__init__(nom,  debDans,duree,lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostPM(self.nom, self.debuteDans, self.duree, self.boostPM, self.lanceur,self.desc)
-
-    def triggerRafraichissement(self, personnage,niveau):
-        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
-                     Les points de mouvements sont reboostés à chaque rafraîchissement de l'état.
-        @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Personnage
-        @niveau: La grille de jeu en cours
-        @type: Niveau"""
-        self.triggerInstantane(joueurCaseEffet=personnage)
-
-    def triggerInstantane(self,**kwargs):
-        """@summary: Un trigger appelé au moment ou un état est appliqué.
-                     change les PM du joueur selon le boost PM
-        @kwargs: les options non prévisibles selon les états.
-        @type: **kwargs"""
-        personnage = kwargs.get("joueurCaseEffet")
-        personnage.PM += self.boostPM
-        print("Modification de PM:"+str(self.boostPM))
-        print("PA : "+str(personnage.PA))
-        print("PM : "+str(personnage.PM))
-
-class EtatBoostPO(Etat):
-    """@summary: Classe décrivant un état qui modifie le nombre de PO."""
-    def __init__(self, nom, debDans,duree,  boostPO,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostPO: le gain de PO
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostPO = boostPO
-        super(EtatBoostPO, self).__init__(nom,  debDans,duree,lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostPO(self.nom, self.debuteDans, self.duree, self.boostPO, self.lanceur,self.desc)
+        return EtatBoostCaracFixe(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCarac, self.lanceur,self.desc)
 
     def triggerRafraichissement(self, personnage,niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
@@ -380,24 +288,27 @@ class EtatBoostPO(Etat):
 
     def triggerInstantane(self,**kwargs):
         """@summary: Un trigger appelé au moment ou un état est appliqué.
-                     change les PO du joueur selon le boost PO
+                     change la carac du joueur selon le boost carac et le nom de l'attribut a boost
         @kwargs: les options non prévisibles selon les états.
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
-        personnage.PO += self.boostPO
-        print("Modification de PO:"+str(self.boostPO))
+        caracValue = getattr(personnage,self.nomAttributCarac)
+        setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
+        print("Modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) )
     
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Retire la vitalité bonus lorsque l'état se termine
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
-        personnage.PO -= self.boostPO
-        print("Modification de PO: -"+str(self.boostPO))
+        caracValue = getattr(personnage,self.nomAttributCarac)
+        setattr(personnage,self.nomAttributCarac,caracValue - self.boostCarac)
+        print("Fin de modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) )
 
-class EtatBoostVita(Etat):
-    """@summary: Classe décrivant un état qui modifie les points de vie."""
-    def __init__(self, nom, debDans,duree,  boostVita,lanceur=None,desc=""):
+
+class EtatBoostCaracPer(Etat):
+    """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique selon un pourcentage."""
+    def __init__(self, nom, debDans,duree, nomAttributCarac, boostCaracPer,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -405,8 +316,9 @@ class EtatBoostVita(Etat):
         @type: int
         @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
         @type: int
-
-        @boostPA: le gain de Vita
+        @nomAttributCarac: Le nom de l'attribut a boost
+        @type: string qui doit être dans les attribut de la classe Personnage
+        @boostCaracPer: le gain de Caractéristique a appliqué
         @type: int (négatif ou positif)
 
         @lanceur: le joueur ayant placé cet état
@@ -415,17 +327,18 @@ class EtatBoostVita(Etat):
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.boostVita = boostVita
-        super(EtatBoostVita, self).__init__(nom,debDans, duree, lanceur,desc)
+        self.nomAttributCarac = nomAttributCarac
+        self.boostCaracPer = boostCaracPer
+        super(EtatBoostCaracPer, self).__init__(nom,  debDans,duree,lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatBoostVita(self.nom, self.debuteDans,self.duree,  self.boostVita, self.lanceur,self.desc)
+        return EtatBoostCaracPer(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCaracPer, self.lanceur,self.desc)
 
     def triggerRafraichissement(self, personnage,niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
-                     Les points de vitas sont boostés dès le rafraîchessement de l'état.
+                     Les points de porté sont reboostés à chaque rafraîchissement de l'état.
         @personnage: Le personnage dont l'état est en train d'être rafraichit
         @type: Personnage
         @niveau: La grille de jeu en cours
@@ -434,23 +347,23 @@ class EtatBoostVita(Etat):
 
     def triggerInstantane(self,**kwargs):
         """@summary: Un trigger appelé au moment ou un état est appliqué.
-                     change la Vita du joueur selon le boost Vita
+                     change la carac du joueur selon le boost carac et le nom de l'attribut a boost
         @kwargs: les options non prévisibles selon les états.
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
-        pourcentageBoost = self.boostVita
-        self.boostVita = int(personnage._vie * (pourcentageBoost/100.0))
-        personnage.vie += self.boostVita
-        print("Modification de Vitalite:"+str(self.boostVita))
-
+        caracValue = getattr(personnage,self.nomAttributCarac)
+        pourcentageBoost = self.boostCaracPer
+        self.boostCarac = int(caracValue * (pourcentageBoost/100.0))
+        setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
+        print("Modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Retire la vitalité bonus lorsque l'état se termine
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
-        personnage.vie -= self.boostVita
-        print("Modification de Vitalite: -"+str(self.boostVita))
-
+        caracValue = getattr(personnage,self.nomAttributCarac)
+        setattr(personnage,self.nomAttributCarac,caracValue - self.boostCarac)
+        print("Fin de modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")
 
 class EtatBouclierPerLvl(Etat):
     """@summary: Classe décrivant un état qui modifie les points de bouclier par niveau."""
@@ -506,228 +419,7 @@ class EtatBouclierPerLvl(Etat):
         @type: Personnage"""
         print("Modification de bouclier: -"+str(self.boostBouclier))
 
-class EtatBoostErosion(Etat):
-    """@summary: Classe décrivant un état qui modifie l'érosion."""
-    def __init__(self, nom, debDans,duree,  boostErosion,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
 
-        @boostErosion: le gain d'érosion en pourcentage. (10 pour 10% par exemple)
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostErosion = boostErosion
-        super(EtatBoostErosion, self).__init__(nom,debDans, duree, lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostErosion(self.nom, self.debuteDans,self.duree,  self.boostErosion, self.lanceur,self.desc)
-
-    def triggerRafraichissement(self, personnage,niveau):
-        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
-                     Les points d'érosion sont boostés dès le rafraîchessement de l'état.
-        @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Personnage
-        @niveau: La grille de jeu en cours
-        @type: Niveau"""
-        self.triggerInstantane(joueurCaseEffet=personnage)
-
-    def triggerInstantane(self,**kwargs):
-        """@summary: Un trigger appelé au moment ou un état est appliqué.
-                     change l'érosion du joueur selon le boost d'érosion
-        @kwargs: les options non prévisibles selon les états.
-        @type: **kwargs"""
-        personnage = kwargs.get("joueurCaseEffet")
-        personnage.erosion += self.boostErosion
-        print("Modification d'érosion: "+str(self.boostErosion)+"%")
-
-    def triggerAvantRetrait(self,personnage):
-        """@summary: Un trigger appelé au moment ou un état va être retirés.
-                     Retire la vitalité bonus lorsque l'état se termine
-        @personnage: les options non prévisibles selon les états.
-        @type: Personnage"""
-        personnage.erosion -= self.boostErosion
-        print("Modification d'érosion: -"+str(self.boostErosion)+"%")
-
-class EtatBoostDoPou(Etat):
-    """@summary: Classe décrivant un état qui modifie les dommages de poussé."""
-    def __init__(self, nom,  debDans, duree,boostDoPou,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostDoPou: le gain de do Pou
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostDoPou = boostDoPou
-        super(EtatBoostDoPou, self).__init__(nom,  debDans,duree,lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostDoPou(self.nom, self.debuteDans,self.duree,  self.boostDoPou, self.lanceur,self.desc)
-
-    def triggerCalculPousser(self,doPou,rePou,niveau, pousseur, joueurCible):
-        """@summary: Un trigger appelé pour tous les états du pousseur qui aura poussé sa cible contre un obstacle.
-                     Boost les dommages de poussés (caractéristique do Pou) du joueur affecté.
-        @doPou: La caractéristique dommage de poussée du pousseur + les états l'ayant déjà éventuellement modifiée.
-        @type: int
-        @niveau: La grille de jeu
-        @type: Niveau
-        @pousseur: Le joueur qui à pousser
-        @type: Personnage
-        @joueurCible: Le joueur qui s'est fait pousser
-        @type: Personnage
-
-        @return: La nouvelle valeur de dommage de poussé"""
-        return doPou+self.boostDoPou, rePou
-
-class EtatBoostDommage(Etat):
-    """@summary: Classe décrivant un état qui modifie le nombre de dommage dans les stats du porteur."""
-    def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostDommage: le gain de dommages élémentaires
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostDommage = boostDommage
-        super(EtatBoostDommage, self).__init__(nom, debDans,duree, lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostDommage(self.nom,  self.debuteDans,self.duree, self.boostDommage, self.lanceur,self.desc)
-
-    def triggerAvantCalculDegats(self,dommages, baseDeg, caracs,nomSort):
-        """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
-                     Les dommages du joueurs sont boostés par l'état
-        @dommages: La somme des dommages bonus qui ont été calculé jusque là (panoplie et autres états)
-        @type: int
-        @baseDeg: Le dégât de base aléatoire qui a été calculé jusque là (jet aléatoire plus autres états)
-        @type: int
-        @caracs: La somme de point de caractéristiques calculé jusque là (panoplie et autres états)
-        @type: int
-        @nomSort: Le sort qui est provoque les dégâts. (utile pour les états modifiant les dégâts de base d'un seul sort)
-        @type: string
-
-        @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
-        return dommages+self.boostDommage, baseDeg, caracs
-class EtatBoostPerDommageSorts(Etat):
-    """@summary: Classe décrivant un état qui multiplie les dommages infligés par tous les sorts du porteur."""
-    def __init__(self, nom, debDans, duree, boostDommage,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostDommage: le gain de dommage total pour tous les sorts en pourcentage
-        @type: int (pourcentage positif 100 = pas de changement 130 = boost de 30%)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostDommage = boostDommage
-        super(EtatBoostPerDommageSorts, self).__init__(nom, debDans,duree, lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostPerDommageSorts(self.nom,  self.debuteDans,self.duree, self.boostDommage, self.lanceur,self.desc)
-
-    def triggerApresCalculDegats(self, total,typeDeg):
-        """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages ont terminé d'être calculé.
-                     Multiplie les dégâts par un pourcentage de boost si les dommages sont des dommages de sort (pas de poussé)
-        @total: Le total de dégâts qui va être infligé.
-        @type: int
-        @typeDeg: Le type de dégâts qui va être infligé
-        @type: string
-
-        @return: la nouvelle valeur du total de dégâts."""
-        if typeDeg != "doPou":
-            return total+int(total*(self.boostDommage/100.0))
-        return total
-
-class EtatBoostPuissance(Etat):
-    """@summary: Classe décrivant un état qui modifie la statistique puissance du porteur."""
-    def __init__(self, nom, debDans,duree,  boostPuissance,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @boostPuissance: le gain de puissance
-        @type: int (négatif ou positif)
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.boostPuissance = boostPuissance
-        super(EtatBoostPuissance, self).__init__(nom,  debDans,duree,lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatBoostPuissance(self.nom,  self.debuteDans, self.duree,self.boostPuissance, self.lanceur,self.desc)
-
-    def triggerAvantCalculDegats(self,dommages, baseDeg, caracs,nomSort):
-        """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
-             Les points de caractéristiques du joueurs sont boostés par l'état
-        @dommages: La somme des dommages bonus qui ont été calculé jusque là (panoplie et autres états)
-        @type: int
-        @baseDeg: Le dégât de base aléatoire qui a été calculé jusque là (jet aléatoire plus autres états)
-        @type: int
-        @caracs: La somme de point de caractéristiques calculé jusque là (panoplie et autres états)
-        @type: int
-        @nomSort: Le sort qui est provoque les dégâts. (utile pour les états modifiant les dégâts de base d'un seul sort)
-        @type: string
-
-        @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
-        return dommages, baseDeg, caracs+self.boostPuissance
 
 class EtatBoostBaseDeg(Etat):
     """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur."""
@@ -1025,6 +717,7 @@ class EtatModDegPer(Etat):
         if typeDeg != "doPou":
             return (total * self.pourcentage)/100
         return total
+
 class EtatContre(Etat):
     """@summary: Classe décrivant un état qui renvoie une partie des dégâts subits au corps à corps."""
     def __init__(self, nom, debDans,duree, pourcentage, tailleZone,lanceur=None,desc=""):
