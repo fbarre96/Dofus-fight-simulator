@@ -731,7 +731,7 @@ class EtatModDegPer(Etat):
 
         @return: la nouvelle valeur du total de dégâts."""
         if typeDeg != "doPou":
-            return (total * self.pourcentage)/100
+            return int((total * self.pourcentage)/100)
         return total
 
 class EtatContre(Etat):

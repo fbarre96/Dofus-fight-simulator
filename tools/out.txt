@@ -8,19 +8,8 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Duel",38,3,1,1,[Effets.TODO(Duel),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Pesanteur' (2 tours)),Effets.TODO(�tat 'Pesanteur' (1 tour)),Effets.TODO(-100 PM (2 tours)),Effets.TODO(-100 PM (1 tour))],[],0,1,1,6,0,"cercle",False,description="""Retire leurs PM � la cible et au lanceur, leur applique l'�tat Pesanteur et les rend invuln�rable aux dommages � distance.
-Ne fonctionne que si lanc� sur un ennemi.""", chaine=True),
 
-	Sort.Sort("Duel",90,3,1,1,[Effets.TODO(Duel),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Pesanteur' (2 tours)),Effets.TODO(�tat 'Pesanteur' (1 tour)),Effets.TODO(-100 PM (2 tours)),Effets.TODO(-100 PM (1 tour))],[],0,1,1,5,0,"cercle",False,description="""Retire leurs PM � la cible et au lanceur, leur applique l'�tat Pesanteur et les rend invuln�rable aux dommages � distance.
-Ne fonctionne que si lanc� sur un ennemi.""", chaine=True),
 
-	Sort.Sort("Duel",132,3,1,1,[Effets.TODO(Duel),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Pesanteur' (2 tours)),Effets.TODO(�tat 'Pesanteur' (1 tour)),Effets.TODO(-100 PM (2 tours)),Effets.TODO(-100 PM (1 tour))],[],0,1,1,4,0,"cercle",False,description="""Retire leurs PM � la cible et au lanceur, leur applique l'�tat Pesanteur et les rend invuln�rable aux dommages � distance.
-Ne fonctionne que si lanc� sur un ennemi.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Emprise",155,3,1,1,[Effets.TODO(�tat 'Invuln�rable' (1 tour)),Effets.TODO(-100 PM (1 tour))],[],0,1,1,4,0,"cercle",False,description="""Retire tous les PM de l'ennemi cibl� mais le rend invuln�rable.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("�p�e du Jugement",44,4,1,4,[Effets.EffetDegats(13,15,"Air"),Effets.EffetDegats(13,15,"Feu")],[Effets.EffetDegats(17,19,"Air"),Effets.EffetDegats(17,19,"Feu")],5,2,1,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True),
 
