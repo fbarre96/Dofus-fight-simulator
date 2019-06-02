@@ -774,49 +774,6 @@ class EtatContre(Etat):
                 s=Sort.Sort("Contre",0,0,1,[Effets.EffetDegats(retour,retour,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis", bypassDmgCalc=True)],99,99,0,0,"cercle")
                 s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, attaquant.posX, attaquant.posY)
 
-class EtatRepousserSiSubit(Etat):
-    """@summary: Classe décrivant un état qui repousse l'attaquant quand le porteur se fait attaquer."""
-    def __init__(self, nom, debDans,duree, nbCase,lanceur=None,desc=""):
-        """@summary: Initialise l'état.
-        @nom: le nom de l'état, servira également d'identifiant
-        @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
-        @type: int
-        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
-        @type: int
-
-        @nbCase: le nombre de case de poussé
-        @type: int
-
-        @lanceur: le joueur ayant placé cet état
-        @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
-        @desc: la description de ce que fait l'états pour affichage.
-        @type: string"""
-        self.nbCase = nbCase
-        super(EtatRepousserSiSubit, self).__init__(nom, duree, debDans,lanceur,desc)
-
-    def deepcopy(self):
-        """@summary: Duplique un état (clone)
-        @return: Le clone de l'état"""
-        return EtatRepousserSiSubit(self.nom, self.debuteDans,self.duree,  self.nbCase,self.lanceur,self.desc)
-
-    def triggerAvantSubirDegats(self,cibleAttaque,niveau,totalPerdu,typeDegats,attaquant):
-        """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages vont être subits.
-                     Repousse l'attaquant qui va infliger des dégâts.
-        @cibleAttaque: le joueur qui va subir les dégâts
-        @type: joueur
-        @niveau: La grille de jeu
-        @type: Niveau
-        @totalPerdu: Le total de vie que le joueur va subir.
-        @type: int
-        @typeDeg:  Le type de dégâts qui va être subit
-        @type: string
-        @attaquant:  Le joueur à l'origine de l'attaque
-        @type: Personnage"""
-        niveau.pousser(self.nbCase,attaquant,cibleAttaque, True, cibleAttaque.posX, cibleAttaque.posY)
-
 class EtatEffetSiSubit(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,typeDeg="",lanceur=None,desc=""):

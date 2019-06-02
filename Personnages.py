@@ -487,6 +487,7 @@ class Personnage(object):
         elif(classe=="Iop"):
             activationRassemblement = Sort.Sort("Déclenche Rassemblement",0,0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3), cibles_possibles="Allies")],[],0,99,99,0,0,"cercle",False)
             activationFriction = Sort.Sort("Frikt",0,0,0,0,[Effets.EffetAttire(1,"Lanceur","JoueurCaseEffet", zone=Zones.TypeZoneCroix(99), etat_requis_cibles="Frikt")],[],0,99,99,0,0,"cercle",False)
+            activationCoupPourCoup = Sort.Sort("Déclenche Coup pour Coup",0,0,0,0,[Effets.EffetPousser(2, zone=Zones.TypeZoneCroix(99), etat_requis_cibles="Coup pour coup")],[],0,99,99,0,0,"cercle",False)
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Pression",1,3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(14,18,"Terre")],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
                 Sort.Sort("Pression",30,3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(24,28,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
@@ -614,7 +615,10 @@ class Personnage(object):
             La cible se rapproche ensuite de l'attaquant si elle reçoit des dommages issus de sorts pendant 2 tours.
             Nécessite d'être aligné avec la cible.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Coup pour coup",2,1,3,[Effets.EffetPousser(2),Effets.EffetEtat(Etats.EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description="La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Coup pour coup",150,2,1,3,[Effets.EffetEtatSelf(Etats.EtatLanceSortSiSubit("Rend coup pour coup",0,2,activationCoupPourCoup,"Porteur")),Effets.EffetEtat(Etats.Etat("Coup pour coup",0,2)),Effets.EffetPousser(2)],[],0,1,1,3,0,"cercle",True,description="""Repousse un ennemi.
+            La cible est ensuite repoussée de 2 cases à chaque fois qu'elle attaque le lanceur pendant 2 tours.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Duel",3,1,1,[],1,1,4,0,"cercle",description="Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invulnérable aux dommages à distance. Ne fonctionne que si lancé sur un ennemi."))
             # sorts.append(Sort.Sort("Emprise",3,1,1,[],1,1,4,0,"cercle",description="Retire tous les PM de l'ennemi ciblé mais le rend invulnérable."))
             # sorts.append(Sort.Sort("Épée du Jugement",4,1,5,[Effets.EffetDegats(20,28,"air"),Effets.EffetVolDeVie(10,12,"feu")],3,2,0,0,"cercle",description="Occasionne des dommages Air et vole de la vie dans l'élément Feu sans ligne de vue."))

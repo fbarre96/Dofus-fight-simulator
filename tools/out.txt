@@ -7,10 +7,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Coup pour coup",150,2,1,3,[Effets.TODO(�tat 'Coup pour Coup' (2 tours)),Effets.TODO(Coup pour Coup),Effets.TODO(Repousse de 2 case(s))],[],0,1,1,3,0,"cercle",True,description="""Repousse un ennemi.
-La cible est ensuite repouss�e de 2 cases � chaque fois qu'elle attaque le lanceur pendant 2 tours.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Duel",38,3,1,1,[Effets.TODO(Duel),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Invuln�rabilit� � Distance' (1 tour)),Effets.TODO(�tat 'Pesanteur' (2 tours)),Effets.TODO(�tat 'Pesanteur' (1 tour)),Effets.TODO(-100 PM (2 tours)),Effets.TODO(-100 PM (1 tour))],[],0,1,1,6,0,"cercle",False,description="""Retire leurs PM � la cible et au lanceur, leur applique l'�tat Pesanteur et les rend invuln�rable aux dommages � distance.
 Ne fonctionne que si lanc� sur un ennemi.""", chaine=True),
