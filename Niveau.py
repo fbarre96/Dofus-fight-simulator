@@ -862,7 +862,7 @@ class Niveau:
             if etat.nom.startswith("Boost Synchro"):
                 nbTF+=1
         #Explosion
-        fin_des_temps = Sort.Sort("Fin des temps",0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")], 99,99,0,0,"cercle")
+        fin_des_temps = Sort.Sort("Fin des temps",0,0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
         fin_des_temps.lance(synchro.posX,synchro.posY,self,synchro.posX,synchro.posY)
         self.tue(synchro)
 
