@@ -329,6 +329,44 @@ class EffetVolDeVie(EffetDegats):
             joueurLanceur.vie = int(joueurLanceur.vie)
             print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
 
+class EffetDegatsSelonPMUtilises(EffetDegats):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Hérite de EffetsDegats.
+    Cet effet inflige des dégâts à une cible divisés selon le ratio PM."""
+    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+        """@summary: Initialise un effet de vol de vie.
+        @int_minJet: le jet minimum possible de dégâts de base de l'effet
+        @type: int
+        @int_maxJet: le jet maximum possible de dégâts de base de l'effet
+        @type: int
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
+        @type: int
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        super(EffetDegatsSelonPMUtilises, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
+    def deepcopy(self):
+        return EffetDegatsSelonPMUtilises(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+
+        #Utilisation du parent EffetDegats
+        if joueurCaseEffet is not None:
+            self.total = super(EffetDegatsSelonPMUtilises, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            ratioPM = abs(float(joueurLanceur.PM) / float(joueurLanceur._PM))
+            ratioPM = max(ratioPM,0)
+            self.total = int(ratioPM * self.total)
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+
 class EffetDegatsPosLanceur(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Hérite de EffetsDegats.

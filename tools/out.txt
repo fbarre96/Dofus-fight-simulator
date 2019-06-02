@@ -12,51 +12,14 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Puissance",50,3,2,2,[Effets.TODO(100 Puissance (2 tours))],[Effets.TODO(120 Puissance (2 tours))],15,1,1,3,0,"cercle",True,description="""Augmente la Puissance de la cible.""", chaine=True),
 
-	Sort.Sort("Puissance",103,3,4,4,[Effets.TODO(200 Puissance (2 tours))],[Effets.TODO(240 Puissance (2 tours))],15,1,1,3,0,"cercle",True,description="""Augmente la Puissance de la cible.""", chaine=True),
 
-	Sort.Sort("Puissance",143,3,6,6,[Effets.TODO(300 Puissance (2 tours))],[Effets.TODO(350 Puissance (2 tours))],15,1,1,3,0,"cercle",True,description="""Augmente la Puissance de la cible.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Vertu",165,3,0,0,[Effets.TODO(500% du niveau en bouclier (2 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(-150 Puissance (2 tours),zone=Zones.TypeZoneCroix(1))],[],0,1,1,3,0,"cercle",False,description="""Applique un bouclier zone mais r�duit la Puissance du lanceur.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Pr�cipitation",56,2,2,2,[Effets.TODO(5 PA (1 tour)),Effets.TODO(�tat 'Pr�cipit�' (1 tour)),Effets.TODO(-3 PA (1 tour))],[],0,1,1,4,0,"cercle",True,description="""Augmente les PA de la cible pour le tour en cours mais lui retire des PA le tour suivant.
-Interdit l'utilisation des armes et du sort Col�re de Iop.""", chaine=True),
 
-	Sort.Sort("Pr�cipitation",112,2,4,4,[Effets.TODO(5 PA (1 tour)),Effets.TODO(�tat 'Pr�cipit�' (1 tour)),Effets.TODO(-3 PA (1 tour))],[],0,1,1,3,0,"cercle",True,description="""Augmente les PA de la cible pour le tour en cours mais lui retire des PA le tour suivant.
-Interdit l'utilisation des armes et du sort Col�re de Iop.""", chaine=True),
 
-	Sort.Sort("Pr�cipitation",147,2,6,6,[Effets.TODO(5 PA (1 tour)),Effets.TODO(�tat 'Pr�cipit�' (1 tour)),Effets.TODO(-3 PA (1 tour))],[],0,1,1,2,0,"cercle",True,description="""Augmente les PA de la cible pour le tour en cours mais lui retire des PA le tour suivant.
-Interdit l'utilisation des armes et du sort Col�re de Iop.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Agitation",170,2,5,5,[Effets.TODO(2 PM (1 tour)),Effets.TODO(�tat 'Intaclable' (1 tour))],[],0,1,1,2,0,"cercle",True,description="""Augmente les PM et rend Intaclable pour le tour en cours.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Temp�te de Puissance",62,3,3,4,[Effets.EffetDegats(24,28,"Feu")],[Effets.EffetDegats(29,33,"Feu")],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu.""", chaine=True),
 
-	Sort.Sort("Temp�te de Puissance",116,3,3,4,[Effets.EffetDegats(29,33,"Feu")],[Effets.EffetDegats(34,38,"Feu")],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu.""", chaine=True),
 
-	Sort.Sort("Temp�te de Puissance",153,3,3,5,[Effets.EffetDegats(34,38,"Feu")],[Effets.EffetDegats(41,45,"Feu")],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Tumulte",175,4,2,5,[Effets.TODO(Tumulte,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(19,21,"Feu",zone=Zones.TypeZoneCroix(1)),Effets.TODO(Augmente les d�g�ts de base du sort Tumulte de 30,zone=Zones.TypeZoneCroix(1))],[Effets.TODO(Tumulte,zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(23,25,"Feu",zone=Zones.TypeZoneCroix(1)),Effets.TODO(Augmente les d�g�ts de base du sort Tumulte de 30,zone=Zones.TypeZoneCroix(1))],5,1,1,1,0,"cercle",True,description="""Occasionne des dommages Feu en zone.
-Plus le nombre de cibles ennemies est important, plus les dommages sont importants.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("�p�e C�leste",69,4,3,3,[Effets.EffetDegats(28,32,"Air",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(34,38,"Air",zone=Zones.TypeZoneCercle(2))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.""", chaine=True),
 
-	Sort.Sort("�p�e C�leste",122,4,3,3,[Effets.EffetDegats(32,36,"Air",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.""", chaine=True),
 
-	Sort.Sort("�p�e C�leste",162,4,4,4,[Effets.EffetDegats(36,40,"Air",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(42,46,"Air",zone=Zones.TypeZoneCercle(2))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Z�nith",180,5,1,3,[Effets.EffetDegats(86,94,"Air",zone=Zones.TypeZoneLigne(4))],[Effets.EffetDegats(104,112,"Air",zone=Zones.TypeZoneLigne(4))],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
-Moins le lanceur a utilis� de PM pendant son tour de jeu, plus les dommages occasionn�s sont importants.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Vitalit�",77,3,2,2,[Effets.TODO(16% Vitalit� (4 tours))],[Effets.TODO(18% Vitalit� (4 tours))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalit� de la cible en pourcentage.
 Le bonus de Vitalit� est divis� par 2 sur les cibles autres que le lanceur.""", chaine=True),
