@@ -413,16 +413,17 @@ class EffetRetPA(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        totalRet = 0
-        for i in range(self.retrait):
-            esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
-            basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
-            probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
-            rand = random.random()
-            if rand <= probaRet:
-                totalRet += 1
-        joueurCaseEffet.PA -= totalRet
-        print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
+        if joueurCaseEffet is not None:
+            totalRet = 0
+            for i in range(self.retrait):
+                esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
+                basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
+                probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
+                rand = random.random()
+                if rand <= probaRet:
+                    totalRet += 1
+            joueurCaseEffet.PA -= totalRet
+            print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
         
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -448,7 +449,17 @@ class EffetRetPM(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        print(joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM")
+        if joueurCaseEffet is not None:
+            totalRet = 0
+            for i in range(self.retrait):
+                esqPm = joueurCaseEffet.esqPM if joueurCaseEffet.esqPM != 0 else 1
+                basePm = joueurCaseEffet._PM if joueurCaseEffet._PM != 0 else 1
+                probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * (float(joueurCaseEffet.PM)/float(basePm))
+                rand = random.random()
+                if rand <= probaRet:
+                    totalRet += 1
+            joueurCaseEffet.PM -= totalRet
+            print(joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM")
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
