@@ -227,7 +227,7 @@ class Personnage(object):
             Un Téléfrag est généré lorsqu'une entité prend la place d'une autre.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Retour Spontané",101,1,7,7,[Effets.EffetTeleportePosPrec(1)],[],0,3,99,0,1,"cercle",False,description="""La cible revient à sa position précédente.""", chaine=True)
+                Sort.Sort("Retour Spontané",101,1,0,7,[Effets.EffetTeleportePosPrec(1)],[],0,3,99,0,1,"cercle",False,description="""La cible revient à sa position précédente.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Flétrissement",3,3,1,4,[Effets.EffetDegats(16,19,"Air"),Effets.EffetDegats(8,8,"air",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(21,24,"Air"),Effets.EffetDegats(8,8,"air",etat_requis_cibles="Telefrag")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Air en ligne.
