@@ -60,9 +60,9 @@ class Effet(object):
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         #Test si la cible est dans les cibles possibles
-        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles):
+        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles):
             #Test si la cible est exclue
-            if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues):
+            if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues):
                 print(" : Invalide : Cible Exclue")
                 return False
             #Test si la cible est déjà traitée

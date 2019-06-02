@@ -576,7 +576,16 @@ class Personnage(object):
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Violence",135,2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entit�s � proximit� et augmente les dommages de pouss�e et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Violence",2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Ennemis"),Effets.EffetEtat(Etats.EtatBoostDoPou("Violence",0,1,50))],1,1,0,0,"cercle",description="Attire les entités à proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Concentration",22,2,1,1,[Effets.EffetDegats(20,24,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(12,16,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(25,29,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(17,21,"Terre",cibles_exclues="Invoc")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
+            Les dommages sont augment�s contre les Invocations.""", chaine=False),
+
+                Sort.Sort("Concentration",65,2,1,1,[Effets.EffetDegats(24,28,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(16,20,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(29,33,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(21,25,"Terre",cibles_exclues="Invoc")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
+            Les dommages sont augment�s contre les Invocations.""", chaine=False),
+
+                Sort.Sort("Concentration",108,2,1,1,[Effets.EffetDegats(30,34,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(20,24,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(36,40,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(26,30,"Terre",cibles_exclues="Invoc")],5,4,3,0,0,"ligne",True,description="""Occasionne des dommages Terre.
+            Les dommages sont augment�s contre les Invocations.""", chaine=False)
+            ]))
             # sorts.append(Sort.Sort("Concentration",2,1,1,[Effets.EffetDegats(20,24,"terre")],4,3,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés contre les Invocations."))
             # sorts.append(Sort.Sort("Accumulation",3,0,4,[Effets.EffetDegats(28,32,"terre",cibles_possibles="Ennemis"),Effets.EffetRetireEtat("Accumulation",zone=Zones.TypeZoneCercle(99),cible_possibles="Iop"),Effets.EffetEtat(Etats.EtatBoostBaseDeg("Accumulation",0,3,"Accumulation",20),cibles_possibles="Lanceur")],2,2,0,0,"ligne",chaine=False,description="Occasionne des dommages Terre. Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers."))
             # sorts.append(Sort.Sort("Couper",3,1,4,[Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3))],2,2,0,1,"ligne",description="Occasionne des dommages Feu et retire des PM."))
