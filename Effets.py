@@ -652,21 +652,22 @@ class EffetPousser(Effet):
         @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
 
-        @return: horizontal (booléen vrai si la poussé se fait vers la gauche ou la droite), positif (1 si la poussé est vers le bas -1 si vers le haut).""" 
+        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0). Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut. (1,-1) anti-diagonal vers le bas. 
+        """ 
 
         #Calcul de la direction de la poussée
         cible_posX = cible[0]
         cible_posY = cible[1]
         dist_lignes = abs(cible_posY - sourceY)
         dist_colognes = abs(cible_posX - sourceX)
-        self.horizontal = (dist_colognes > dist_lignes)
-        if self.horizontal and cible_posX > sourceX:
-            self.positif = 1
-        elif (not self.horizontal) and cible_posY> sourceY:
-            self.positif = 1
-        else:
-            self.positif = -1 
-        return self.horizontal,self.positif
+        self.coordonnees = [0,0]
+        self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
+        self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
+        if self.coordonnees[0] == 1 and cible_posX < sourceX:
+            self.coordonnees[0] = -1
+        if self.coordonnees[1] == 1 and cible_posY < sourceY:
+            self.coordonnees[1] = -1
+        return self.coordonnees[1]
 
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -745,13 +746,14 @@ class EffetAttire(EffetPousser):
         if self.joueurAAttirer != None:
             if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:
                 super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
-                self.positif *= -1 # changement de sens par rapport au sens de pousser
+                self.coordonnees[0] *= -1 # changement de sens par rapport au sens de pousser
+                self.coordonnees[1] *= -1
                 caseMax = self.determinerAttiranceMax() # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
                 self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
                 niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
         
     def determinerAttiranceMax(self):
-        if self.horizontal:
+        if self.coordonnees[0] != 0:
             return abs(self.joueurAAttirer.posX - self.case_from_x)
         else:
             return abs(self.joueurAAttirer.posY - self.case_from_y)

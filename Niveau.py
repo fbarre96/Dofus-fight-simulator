@@ -704,16 +704,14 @@ class Niveau:
                         tab_cases_zone.append(case)
         return tab_cases_zone    
 
-    def __effectuerPousser(self, joueurCible, pousseur, nbCases, doDeg, horizontal, positif):
+    def __effectuerPousser(self, joueurCible, pousseur, nbCases, doDeg, coordonnes):
         """@summary: Fonction à appeler pour pousser un joueur.
         @joueurCible: Le joueur qui se fait pousser
         @type: Personnage
         @nbCases: le nombre de case dont il faut pousser la cible
         @type: int
-        @horizontal: Indique si la poussé est horizontal ou verticales
-        @type: booléen
-        @positif: 1 si la poussé est vers la droite ou le bas, -1 si vers la gauche ou le hauts
-        @type: int
+        @coordonnes: Indique le point de direction de pousse
+        @type: tuple
 
         @return: posPouX  -> int indiquant la coordonnée x d'arrivé après poussé
                  ,posPouY -> int indiquant la coordonnée y d'arrivé après poussé
@@ -723,8 +721,8 @@ class Niveau:
         #calcul de poussé de nbCases
         for fait in range(nbCases):
             #Calcul de la case d'arrivée après une poussée de 1 case
-            posPouX = joueurCible.posX + (1*positif*horizontal)
-            posPouY = joueurCible.posY + (1*positif*((horizontal+1)%2))
+            posPouX = joueurCible.posX + coordonnes[0]
+            posPouY = joueurCible.posY + coordonnes[1]
             # test si la case d'arrivé est hors-map (compte comme un obstacle)
             aBouge,piegeDeclenche = joueurCible.bouge(self,posPouX,posPouY)
             if not aBouge:
@@ -769,8 +767,8 @@ class Niveau:
         @depuisY: la coordonnée y depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
         @type: int"""
         if joueurCible != None:
-            if effetPousser.horizontal != None:
-                self.__effectuerPousser(joueurCible, pousseur,effetPousser.nbCase, doDeg,int(effetPousser.horizontal), effetPousser.positif)
+            if effetPousser.coordonnees != None:
+                self.__effectuerPousser(joueurCible, pousseur,effetPousser.nbCase, doDeg, effetPousser.coordonnees)
         
     def attire(self, effetAttire, joueurCible, attireur,depuisX=None,depuisY=None):
         """@summary: Fonction à appeler pour attirer un joueur.
@@ -782,14 +780,15 @@ class Niveau:
         @type: Personnage"""
 
         #Pour attirer, on peut pousser la cible vers non et ne pas compter les dégâts.
-        if effetAttire.horizontal and effetAttire.positif:
-            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
-        elif effetAttire.horizontal:
-            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX-1,joueurCible.posY)
-        elif not effetAttire.horizontal and effetAttire.positif:
-            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY+1)
-        else:
-            self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
+        # if effetAttire.horizontal and effetAttire.positif:
+        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
+        # elif effetAttire.horizontal:
+        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX-1,joueurCible.posY)
+        # elif not effetAttire.horizontal and effetAttire.positif:
+        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY+1)
+        # else:
+        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
+        self.pousser(effetAttire,joueurCible,attireur,False,effetAttire.case_from_x,effetAttire.case_from_y)
 
     def __deplacementTFVersCaseVide(self,joueurBougeant, posAtteinte,AjouteHistorique):
         """@summary: Déplacement pouvant généré un téléfrag vers une case vide.
