@@ -467,6 +467,38 @@ class Niveau:
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
             self.structure[joueur.posY][joueur.posX].type="j"
 
+    def rafraichirEtats(self,personnageARafraichir,debutTour=True):
+        """@summary: met à jour les états du personnage. (diminution de durée restante),  
+                active le trigger triggerRafraichissement si un état débute et active triggerAvantRetrait si un état termine
+        @personnage: le personnage dont on trouver les etats et les rafraichirs
+        @type: Personnage
+        @debutTour: Indique si le rafraichissement est dû au début de tour ou à un effet autre.
+        @type: booléen."""
+        for personnage in self.joueurs:
+            i = 0
+            nbEtats = len(personnage.etats)
+            while i < nbEtats:
+                #Baisse de la durée de vie si l'état était actif
+                if personnage.etats[i].lanceur == personnageARafraichir:
+                    if personnage.etats[i].actif():
+                        personnage.etats[i].duree -= 1
+                    #Si c'est un début de tour, le temps avant de début de l'état est diminué
+                    if debutTour:
+                        personnage.etats[i].debuteDans -= 1
+                    #Si c'est finalement le tour de début de l'état et si l'état est actif, on active le trigger d'état de rafraichissement
+                    if personnage.etats[i].debuteDans == 0: 
+                        if personnage.etats[i].actif():
+                            personnage.etats[i].triggerRafraichissement(personnage,self)
+                    #Si c'est le tour de sortie de l'état on active le trigger d'état d'avant retrait
+                    if personnage.etats[i].duree == 0:
+                        #Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
+                        print(personnage.classe+" sort de l'etat "+personnage.etats[i].nom)
+                        personnage.etats[i].triggerAvantRetrait(personnage)
+                        del personnage.etats[i]
+                        i-=1
+                        nbEtats = len(personnage.etats)
+                i+=1
+
     def rafraichirGlyphes(self, duPersonnage):
         """@summary: Rafraîchit la durée des glyphes et supprime celles qui ne sont plus actives.
                     Cette fonction est appelé au début de chaque tour.

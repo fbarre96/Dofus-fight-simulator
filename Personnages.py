@@ -168,7 +168,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Strategie_iop",0,0,0,0,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Stratégie Iop",0,-1, 50,"Ennemis|Allies",2))],[],0,99,99,0,0,"cercle",False))
             return sorts
         elif(classe=="Cadran de Xelor"):
-            sorts.append(Sort.Sort("Synchronisation",0,0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Synchronisation",0,2,"_PA",2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],[],0,99,99,0,0,"cercle",False))
+            sorts.append(Sort.Sort("Synchronisation",0,0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Synchronisation",0,2,"PA",2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],[],0,99,99,0,0,"cercle",False))
             return sorts
         elif(classe=="Balise de Rappel"):
             sorts.append(Sort.Sort("Rappel",0,0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False))
@@ -209,7 +209,7 @@ class Personnage(object):
             Retire l'état Téléfrag.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Rouage",110,3,1,7,[Effets.EffetDegats(12,14,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Rouage",0,1,"_PA",1))],[Effets.EffetDegats(15,17,"Eau"), Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Rouage",0,1,"_PA",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau.
+                Sort.Sort("Rouage",110,3,1,7,[Effets.EffetDegats(12,14,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Rouage",1,1,"PA",1))],[Effets.EffetDegats(15,17,"Eau"), Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Rouage",1,1,"PA",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau.
             Le lanceur gagne 1 PA au tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -308,13 +308,13 @@ class Personnage(object):
             Téléporte les cibles à leur position précédente.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Vol du Temps",27,4,1,5,[Effets.EffetDegats(20,24,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+                Sort.Sort("Vol du Temps",27,4,1,5,[Effets.EffetDegats(20,24,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
             Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True),
 
-                Sort.Sort("Vol du Temps",72,4,1,5,[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+                Sort.Sort("Vol du Temps",72,4,1,5,[Effets.EffetDegats(25,29,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
             Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True),
 
-                Sort.Sort("Vol du Temps",118,4,1,5,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],[Effets.EffetDegats(35,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",0,1,"_PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
+                Sort.Sort("Vol du Temps",118,4,1,5,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],[Effets.EffetDegats(35,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Vol du Temps",1,1,"PA",1))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau à la cible.
             Le lanceur gagne 1 PA au début de son prochain tour.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -322,13 +322,13 @@ class Personnage(object):
             Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"_PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"_PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"_PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -395,17 +395,17 @@ class Personnage(object):
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",0,-1,"_PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
 
-                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",0,-1,"_PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
 
-                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",0,-1,"_PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True)
@@ -435,23 +435,23 @@ class Personnage(object):
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Horloge",84,5,1,4,[Effets.EffetVolDeVie(28,31,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+                Sort.Sort("Horloge",84,5,1,4,[Effets.EffetVolDeVie(28,31,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(2,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
             Le lanceur gagne 1 PA au début de son prochain tour.
             Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
 
-                Sort.Sort("Horloge",134,5,1,5,[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+                Sort.Sort("Horloge",134,5,1,5,[Effets.EffetVolDeVie(32,35,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(3,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
             Le lanceur gagne 1 PA au début de son prochain tour.
             Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
 
-                Sort.Sort("Horloge",178,5,1,6,[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(40,43,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",0,1,"_PA",1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
+                Sort.Sort("Horloge",178,5,1,6,[Effets.EffetVolDeVie(36,39,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetVolDeVie(40,43,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Horloge",1,1,"PA",1)),Effets.EffetRetPA(4,cibles_possibles="Ennemis",etat_requis="Telefrag",consomme_etat=True)],25,3,2,0,0,"ligne",True,description="""Vole de vie dans l'élément Eau.
             Le lanceur gagne 1 PA au début de son prochain tour.
             Retire des PA aux ennemis dans l'état Téléfrag et leur retire l'état.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Clepsydre",190,4,1,3,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Clepsydre",0,1,"_PA",2),etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(36,40,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Clepsydre",0,1,"_PA",2),etat_requis="Telefrag",consomme_etat=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Eau.
+                Sort.Sort("Clepsydre",190,4,1,3,[Effets.EffetDegats(30,34,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Clepsydre",1,1,"PA",2),etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(36,40,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Clepsydre",1,1,"PA",2),etat_requis="Telefrag",consomme_etat=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Eau.
             Si la cible est dans l'état Téléfrag, le lanceur gagne 2 PA au prochain tour.
             Retire l'état Téléfrag.""", chaine=True)
             ]))
@@ -619,7 +619,16 @@ class Personnage(object):
                 Sort.Sort("Coup pour coup",150,2,1,3,[Effets.EffetEtatSelf(Etats.EtatLanceSortSiSubit("Rend coup pour coup",0,2,activationCoupPourCoup,"Porteur")),Effets.EffetEtat(Etats.Etat("Coup pour coup",0,2)),Effets.EffetPousser(2)],[],0,1,1,3,0,"cercle",True,description="""Repousse un ennemi.
             La cible est ensuite repoussée de 2 cases à chaque fois qu'elle attaque le lanceur pendant 2 tours.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Duel",3,1,1,[],1,1,4,0,"cercle",description="Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invulnérable aux dommages à distance. Ne fonctionne que si lancé sur un ennemi."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Duel",38,3,1,1,[],[],0,1,1,6,0,"cercle",False,description="""Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invuln�rable aux dommages � distance.
+            Ne fonctionne que si lancé sur un ennemi.""", chaine=True),
+
+                Sort.Sort("Duel",90,3,1,1,[],[],0,1,1,5,0,"cercle",False,description="""Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invuln�rable aux dommages � distance.
+            Ne fonctionne que si lancé sur un ennemi.""", chaine=True),
+
+                Sort.Sort("Duel",132,3,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Duel: Invulnérabilité à distance",0,1,"reDist",999999), cible_possible="Ennemis"), Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Duel: Invulnérabilité à distance",0,1,"reDist",999999), cible_possible="Ennemis"), Effets.EffetEtat(Etats.Etat("Pesanteur",0,1), cible_possible="Ennemis"), Effets.EffetEtatSelf(Etats.Etat("Pesanteur",0,2), cible_possible="Ennemis"), Effets.EffetEtat(Etats.EtatBoostCaracFixe("Duel: Immobilisation",0,1,"PM",-100), cible_possible="Ennemis"), Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Duel: Immobilisation",0,2,"PM",-100), cible_possible="Ennemis")],[],0,1,1,4,0,"cercle",False,description="""Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invuln�rable aux dommages � distance.
+            Ne fonctionne que si lancé sur un ennemi.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Emprise",3,1,1,[],1,1,4,0,"cercle",description="Retire tous les PM de l'ennemi ciblé mais le rend invulnérable."))
             # sorts.append(Sort.Sort("Épée du Jugement",4,1,5,[Effets.EffetDegats(20,28,"air"),Effets.EffetVolDeVie(10,12,"feu")],3,2,0,0,"cercle",description="Occasionne des dommages Air et vole de la vie dans l'élément Feu sans ligne de vue."))
             # sorts.append(Sort.Sort("Condamnation",3,1,6,[
@@ -632,8 +641,8 @@ class Personnage(object):
             #     ],3,2,0,0,"cercle",chaine=False,description="Occasionne des dommages Air et Feu. Les dommages sont appliqués lorsque le sort est lancé sur une autre cible. Peut se cumuler 2 fois sur une même cible."))
             # sorts.append(Sort.Sort("Puissance",3,0,6,[Effets.EffetEtat(Etats.EtatBoostPuissance("Puissance",0,2,300))],1,1,3,0,"cercle",description="Augmente la Puissance de la cible."))
             # sorts.append(Sort.Sort("Vertu",3,0,0,[Effets.EffetEtat(Etats.EtatBoostPuissance("Vertu",0,2,-150),zone=Zones.TypeZoneCercle(1))],1,1,3,0,"cercle",description="Applique un bouclier zone mais réduit la Puissance du lanceur."))
-            # sorts.append(Sort.Sort("Précipitation",2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Precipite",0,1,"_PA",5)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Sortie de Precipitation",1,1,"_PA",-3))],1,1,2,0,"cercle",description="Augmente les PA de la cible pour le tour en cours mais lui retire des PA le tour suivant. Interdit l'utilisation des armes et du sort Colère de Iop."))
-            # sorts.append(Sort.Sort("Agitation",2,0,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Agitation",0,1,"_PM",2)),Effets.EffetEtat(Etats.Etat("Intaclable",1,1))],2,2,0,0,"cercle",description="Augmente les PM et la Fuite pour le tours en cours."))
+            # sorts.append(Sort.Sort("Précipitation",2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Precipite",0,1,"PA",5)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Sortie de Precipitation",1,1,"PA",-3))],1,1,2,0,"cercle",description="Augmente les PA de la cible pour le tour en cours mais lui retire des PA le tour suivant. Interdit l'utilisation des armes et du sort Colère de Iop."))
+            # sorts.append(Sort.Sort("Agitation",2,0,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Agitation",0,1,"PM",2)),Effets.EffetEtat(Etats.Etat("Intaclable",1,1))],2,2,0,0,"cercle",description="Augmente les PM et la Fuite pour le tours en cours."))
             # sorts.append(Sort.Sort("Tempête de Puissance",3,3,5,[Effets.EffetDegats(34,38,"feu")],3,2,0,0,"cercle",description="Occasionne des dommages Feu."))
             # sorts.append(Sort.Sort("Tumulte",4,2,5,[Effets.EffetDegats(19,21,"feu",zone=Zones.TypeZoneCroix(1))],1,1,1,0,"cercle",description="Occasionne des dommages Feu en zone. Plus le nombre de cibles est important, plus les dommages sont importants.*"))
             # sorts.append(Sort.Sort("Épée Céleste",4,0,4,[Effets.EffetDegats(36,40,"air",zone=Zones.TypeZoneCercle(2))],2,2,0,0,"ligne",description="Occasionne des dommages Air en zone."))
@@ -652,7 +661,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Flèche de Recul",3,1,8,[Effets.EffetDegats(25,28,"air"),Effets.EffetRepousser(4)],2,1,0,0,"ligne",description="Occasionne des dommages Air aux ennemis et pousse la cible."))
             sorts.append(Sort.Sort("Flèche Érosive",3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche Erosive",0,2,"erosion",10)), Effets.EffetDegats(25,29,"terre")],3,2,0,1,"ligne",description="Occasionne des dommages Terre et applique un malus d'Érosion."))
             sorts.append(Sort.Sort("Flèche de Dispersion",3,1,12,[Effets.EffetPousser(2,zone=Zones.TypeZoneCroix(2),faire_au_vide=True)],1,1,2,1,"cercle",description="Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités."))
-            sorts.append(Sort.Sort("Représailles",4,2,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Immobilise",0,1,"_PM",-100)),Effets.EffetEtat(Etats.Etat("Pesanteur",1,1))],1,1,5,0,"ligne",description="Immobilise la cible."))
+            sorts.append(Sort.Sort("Représailles",4,2,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Immobilise",0,1,"PM",-100)),Effets.EffetEtat(Etats.Etat("Pesanteur",1,1))],1,1,5,0,"ligne",description="Immobilise la cible."))
             sorts.append(Sort.Sort("Flèche Glacée",3,3,6,[Effets.EffetDegats(17,19,"feu"),Effets.EffetRetPA(2)],99,2,0,1,"cercle",description="Occasionne des dommages Feu et retire des PA."))
             sorts.append(Sort.Sort("Flèche Paralysante",5,2,6,[Effets.EffetDegats(39,42,"feu",zone=Zones.TypeZoneCroix(1)),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1))],1,1,0,0,"cercle",description="Occasionne des dommages Feu et retire des PA."))
             sorts.append(Sort.Sort("Flèche Enflammée",4,1,8,[Effets.EffetDegats(33,35,"feu",zone=Zones.TypeZoneLigne(5) ,faire_au_vide=True),Effets.EffetRepousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True)],2,2,0,1,"ligne",description="Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort."))
@@ -665,7 +674,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Flèche Écrasante",3,5,7,[Effets.EffetDegats(34,38,"feu",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtat(Etats.Etat("Pesanteur",1,1),zone=Zones.TypeZoneCroixDiagonale(1))],1,1,3,1,"cercle",description="Occasionne des dommages Feu et applique l'état Pesanteur."))
             sorts.append(Sort.Sort("Tir Critique",2,0,6,[Effets.EffetEtat(Etats.Etat("Tir_critique",0,4))],1,1,5,1,"cercle",description="Augmente la probabilité de faire un coup critique."))
             sorts.append(Sort.Sort("Balise de Rappel",2,1,5,[Effets.EffetInvoque("Balise de rappel",True,cibles_possibles="",faire_au_vide=True)],1,1,2,0,"cercle",description="Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour)."))
-            sorts.append(Sort.Sort("Flèche d'Immobilisation",2,1,6,[Effets.EffetDegats(10,11,"eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche_d_immobilisation",1,1,"_PM",-1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fleche_d_immobilisation",0,1,"_PM",1))],4,2,0,1,"cercle",description="Occasionne des dommages Eau et vole des PM à la cible."))
+            sorts.append(Sort.Sort("Flèche d'Immobilisation",2,1,6,[Effets.EffetDegats(10,11,"eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche_d_immobilisation",1,1,"PM",-1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fleche_d_immobilisation",0,1,"PM",1))],4,2,0,1,"cercle",description="Occasionne des dommages Eau et vole des PM à la cible."))
             sorts.append(Sort.Sort("Flèche Assaillante",3,2,6,[Effets.EffetDegats(33,37,"eau",cibles_possibles="Ennemis"),Effets.EffetPousser(1,cibles_possibles="Ennemis"),Effets.EffetAttireAttaquant(1,cibles_possibles="Allies")],3,2,0,1,"ligne",description="Occasionne des dommages Eau sur les ennemis et le lanceur recule de 1 case. Sur un allié : rapproche le lanceur de 1 case."))
             sorts.append(Sort.Sort("Flèche Punitive",4,6,8,[Effets.EffetDegats(29,31,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_punitive",0,-1,"Flèche Punitive",30))],1,1,2,1,"cercle",description="Occasionne des dommages Terre et augmente les dommages du sort tous les 2 tours."))
             sorts.append(Sort.Sort("Flèche du Jugement",3,5,7,[Effets.EffetDegats(39,45,"terre")],3,2,0,1,"cercle",description="Occasionne des dommages Terre. Plus le pourcentage de PM du personnage au lancement du sort est important, plus les dommages occasionnés sont importants."))
@@ -698,13 +707,13 @@ class Personnage(object):
             fleche_fulminante_rebond.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
             sorts.append(fleche_fulminante)
             sorts.append(Sort.Sort("Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",60))],1,1,5,1,"cercle",description="Augmente les dommages."))
-            sorts.append(Sort.Sort("Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"_PM",-100))],1,1,3,0,"cercle",description="Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
+            sorts.append(Sort.Sort("Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100))],1,1,3,0,"cercle",description="Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif =[Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             #sorts.append(Sort.Sort(u"Sournoiserie",3,1,5,[Effets.EffetDegats(20,22,"terre")],99,3,0,1, "cercle", description=u"Occasionne des dommages Terre."))
             #TODO: ajout invisibilité et test avec oeil de taupe.
-            sorts.append(Sort.Sort("Invisibilité",2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"_PM",1))],1,1,6,0, "cercle", description=u"Rend invisible."))
+            sorts.append(Sort.Sort("Invisibilité",2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],1,1,6,0, "cercle", description=u"Rend invisible."))
             sorts.append(Sort.Sort("Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description="Occasionne des dommages Feu et attire."))
             sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
@@ -825,35 +834,7 @@ class Personnage(object):
                 niveau.gereDeplacementTF(self,pos,lanceur,nomSort,AjouteHistorique=False)
 
 
-    def rafraichirEtats(self,niveau,debutTour=True):
-        """@summary: met à jour les états du personnage. (diminution de durée restante),  
-                active le trigger triggerRafraichissement si un état débute et active triggerAvantRetrait si un état termine
-        @niveau: la grille de jeu
-        @type: Niveau
-        @debutTour: Indique si le rafraichissement est dû au début de tour ou à un effet autre.
-        @type: booléen."""
-        i = 0
-        nbEtats = len(self.etats)
-        while i < nbEtats:
-            #Baisse de la durée de vie si l'état était actif
-            if self.etats[i].actif():
-                  self.etats[i].duree -= 1
-            #Si c'est un début de tour, le temps avant de début de l'état est diminué
-            if debutTour:
-                self.etats[i].debuteDans -= 1
-            #Si c'est finalement le tour de début de l'état et si l'état est actif, on active le trigger d'état de rafraichissement
-            if self.etats[i].debuteDans == 0: 
-                if self.etats[i].actif():
-                    self.etats[i].triggerRafraichissement(self,niveau)
-            #Si c'est le tour de sortie de l'état on active le trigger d'état d'avant retrait
-            if self.etats[i].duree == 0:
-                #Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
-                print(self.classe+" sort de l'etat "+self.etats[i].nom)
-                self.etats[i].triggerAvantRetrait(self)
-                del self.etats[i]
-                i-=1
-                nbEtats = len(self.etats)
-            i+=1
+    
 
     def aEtat(self,nomEtatCherche):
         """@summary: Indique si un personnage possède l'état donné
@@ -971,7 +952,7 @@ class Personnage(object):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
         niveau.depileEffets()
-        self.rafraichirEtats(niveau)
+        niveau.rafraichirEtats(self)
         niveau.rafraichirGlyphes(self)
         niveau.rafraichirRunes(self)
         self.rafraichirHistoriqueDeplacement()
@@ -1009,7 +990,7 @@ class Personnage(object):
         @niveau: La grille de jeu
         @type: Niveau"""
         for i in range(abs(n)):
-            self.rafraichirEtats(niveau,False)
+            niveau.rafraichirEtats(self,False)
 
     def selectionSort(self,sort,niveau):
         sortSelectionne = None

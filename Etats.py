@@ -305,6 +305,17 @@ class EtatBoostCaracFixe(Etat):
         setattr(personnage,self.nomAttributCarac,caracValue - self.boostCarac)
         print("Fin de modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) )
 
+    def triggerFinTour(self,personnage,niveau):
+        """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
+                     Active un effet à la fin du tour du personnage ciblant la position du personnage qui finit son tour, le lanceur peut être lui-même ou le lanceur de l'effet.
+        @personnage: le joueur dont le tour débute
+        @type: Personnage
+        @niveau: La grille de jeu
+        @type: Niveau"""
+        if self.nomAttributCarac in ["PA","PM"]:
+            caracValue = getattr(personnage,self.nomAttributCarac)
+            setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
+
 
 class EtatBoostCaracPer(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique selon un pourcentage."""
