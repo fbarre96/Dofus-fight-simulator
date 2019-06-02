@@ -705,14 +705,49 @@ class Personnage(object):
                 Sort.Sort("Vitalité",172,3,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",20))],[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",22))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalité de la cible en pourcentage.
             Le bonus de Vitalité est divisé par 2 sur les cibles autres que le lanceur.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Vitalité",3,0,6,[Effets.EffetEtat(Etats.EtatBoostVita("Vitalite",0,4,20))],1,1,2,0,"cercle",description="Augmente temporairement les PV de la cible en pourcentage. Le bonus de PV est plus faible sur les alliés que sur le lanceur."))
-            # sorts.append(Sort.Sort("Endurance",4,0,1,[Effets.EffetDegats(34,38,"eau",cibles_exclues="Lanceur")],3,2,0,0,"cercle",description="Occasionne des dommages Eau. Applique des points de bouclier au lanceur."))
-            # sorts.append(Sort.Sort("Épée de Iop",4,1,6,[Effets.EffetDegats(37,41,"terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],2,2,0,0,"ligne",description="Occasionne des dommages Terre en croix.")) 
-            # sorts.append(Sort.Sort("Pugilat",2,1,4,[Effets.EffetDegats(9,11,"terre",zone=Zones.TypeZoneCercle(2),cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",20))],4,1,0,0,"cercle",description="Occasionne des dommages Terre en zone. Les dommages sont augmentés pendant 1 tour après chaque lancer.")) 
-            # sorts.append(Sort.Sort("Épée du Destin",4,1,1,[Effets.EffetDegats(38,42,"feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Epee_du_destin", 2,1,"Épée du Destin",30))], 1,1,2,0,"ligne",description="Occasionne des dommages Feu. Les dommages sont augmentés à partir du second lancer.")) 
-            # sorts.append(Sort.Sort("Sentence",2,1,6,[Effets.EffetDegats(13,16,"feu"),Effets.EffetEtat(Etats.EtatEffetFinTour("Sentence", 1,1,Effets.EffetDegats(13,16,"feu",zone=Zones.TypeZoneCercle(2)),"Sentence","lanceur"))], 3,1,0,0,"ligne",description="Occasionne des dommages Feu. Occasionne des dommages Feu supplémentaires en zone à la fin du tour de la cible.")) 
-            # sorts.append(Sort.Sort("Colère de Iop",7,1,1,[Effets.EffetDegats(81,100,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colere_de_Iop", 3,1,"Colère de Iop",110))], 1,1,3,0,"ligne",description="Occasionne des dommages Terre. Augmente les dommages du sort au troisième tour après son lancer.")) 
-            # sorts.append(Sort.Sort("Fureur",3,1,1,[Effets.EffetDegats(28,32,"terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fureur", 1,2,"Fureur",40))], 1,1,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés à chaque lancer du sort, mais ce bonus est perdu si le sort n'est pas relancé."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Endurance",185,3,1,1,[Effets.EffetDegats(34,38,"Eau"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Endurance",0,1,150))],[Effets.EffetDegats(39,43,"Eau"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Endurance",0,1,150))],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
+            Applique des points de bouclier au lanceur.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Épée de Iop",84,4,1,5,[Effets.EffetDegats(27,31,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+
+                Sort.Sort("Épée de Iop",134,4,1,5,[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+
+                Sort.Sort("Épée de Iop",178,4,1,6,[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(42,46,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Pugilat",190,2,1,6,[Effets.EffetDegats(9,11,"Terre",zone=Zones.TypeZoneCercle(2),cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",15))],[Effets.EffetDegats(11,13,"Terre",cibles_exclues="Lanceur",zone=Zones.TypeZoneCercle(2)), Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",18))],5,4,1,0,0,"cercle",True,description="""Occasionne des dommages Terre en zone.
+            Les dommages sont augmentés pendant 1 tour après chaque lancer.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Épée du destin",92,4,1,1,[Effets.EffetDegats(28,32,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",30))],[Effets.EffetDegats(33,37,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",35))],25,1,1,2,0,"ligne",True,description="""Occasionne des dommages Feu.
+            Les dommages sont augmentés à partir du second lancer.""", chaine=True),
+
+                Sort.Sort("Épée du destin",141,4,1,1,[Effets.EffetDegats(33,37,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",35))],[Effets.EffetDegats(38,42,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",40))],25,1,1,2,0,"ligne",True,description="""Occasionne des dommages Feu.
+            Les dommages sont augmentés à partir du second lancer.""", chaine=True),
+
+                Sort.Sort("Épée du destin",187,4,1,1,[Effets.EffetDegats(38,42,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",40))],[Effets.EffetDegats(43,47,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Épée du destin", 2,1,"Épée du destin",45))],25,1,1,2,0,"ligne",True,description="""Occasionne des dommages Feu.
+            Les dommages sont augmentés à partir du second lancer.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Sentence",195,2,1,6,[Effets.EffetDegats(13,16,"Feu"),Effets.EffetEtat(Etats.EtatEffetFinTour("Sentence", 0,1,Effets.EffetDegats(13,16,"feu",zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),"Sentence","lanceur"))],[Effets.EffetDegats(15,18,"Feu"),Effets.EffetEtat(Etats.EtatEffetFinTour("Sentence", 1,1,Effets.EffetDegats(15,18,"feu",zone=Zones.TypeZoneCercle(2)),"Sentence","lanceur"))],25,3,1,0,1,"cercle",True,description="""Occasionne des dommages Feu.
+            Occasionne des dommages Feu supplémentaires aux ennemis à proximité de la cible (2 cases ou moins) à la fin de son tour.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Colère de Iop",100,7,1,1,[Effets.EffetDegats(61,80,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",90))],[Effets.EffetDegats(71,90,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",100))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
+            Augmente les dommages du sort au troisième tour après son lancer.""", chaine=True),
+
+                Sort.Sort("Colère de Iop",149,7,1,1,[Effets.EffetDegats(71,90,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",100))],[Effets.EffetDegats(81,100,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",110))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
+            Augmente les dommages du sort au troisième tour après son lancer.""", chaine=True),
+
+                Sort.Sort("Colère de Iop",197,7,1,1,[Effets.EffetDegats(81,100,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",110))],[Effets.EffetDegats(91,110,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Colère de Iop", 3,1,"Colère de Iop",120))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
+            Augmente les dommages du sort au troisième tour après son lancer.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Fureur",200,3,1,1,[Effets.EffetDegats(28,32,"Terre"), Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fureur", 0,2,"Fureur",30))],[Effets.EffetDegats(34,38,"Terre"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fureur", 0,2,"Fureur",36))],5,1,99,0,0,"cercle",False,description="""Occasionne des dommages Terre.
+            Les dommages sont augmentés à chaque lancer du sort, mais ce bonus est perdu si le sort n'est pas relancé.""", chaine=True)
+            ]))
         elif classe=="Cra":
             sorts.append(Sort.Sort("Flèche Magique",3,1,12,[Effets.EffetDegats(19,21,"air"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche Magique",1,1,"PO",-2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fleche Magique",0,1,"PO",2))],3,2,0,1,"cercle",description="Occasionne des dommages Air et vole la portée de la cible."))
             sorts.append(Sort.Sort("Flèche de Concentration",3,3,8,[Effets.EffetDegats(22,26,"air",zone=Zones.TypeZoneCroix(3),cibles_possibles="Ennemis" ),Effets.EffetAttireVersCible(2,zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")],2,1,0,1,"cercle",description="Occasionne des dommages Air et attire vers la cible."))
@@ -1120,7 +1155,10 @@ class Personnage(object):
                     joueurInfo = niveau.getJoueurSur(case_x, case_y)
                     if joueurInfo != None:
                         for etat in joueurInfo.etats:
-                            print(joueurInfo.classe+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
+                            if etat.actif():
+                                print(joueurInfo.classe+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
+                            elif etat.debuteDans > 0:
+                                print(joueurInfo.classe+" sera dans l'etat "+etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")    
                     if sortSelectionne != None:
                         sortSelectionne = None
         return sortSelectionne
