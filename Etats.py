@@ -366,7 +366,10 @@ class EtatBoostCaracPer(Etat):
         pourcentageBoost = self.boostCaracPer
         self.boostCarac = int(caracValue * (pourcentageBoost/100.0))
         setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
+        if self.nomAttributCarac == "vie":
+            personnage._vie += self.boostCarac
         print("Modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")
+    
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Retire la vitalité bonus lorsque l'état se termine
@@ -374,6 +377,8 @@ class EtatBoostCaracPer(Etat):
         @type: Personnage"""
         caracValue = getattr(personnage,self.nomAttributCarac)
         setattr(personnage,self.nomAttributCarac,caracValue - self.boostCarac)
+        if self.nomAttributCarac == "vie":
+            personnage._vie -= self.boostCarac
         print("Fin de modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")
 
 class EtatBouclierPerLvl(Etat):

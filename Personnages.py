@@ -695,6 +695,16 @@ class Personnage(object):
                 Sort.Sort("Zénith",180,5,1,3,[Effets.EffetDegatsSelonPMUtilises(86,94,"Air",zone=Zones.TypeZoneLigne(4), faire_au_vide=True)],[Effets.EffetDegatsSelonPMUtilises(104,112,"Air",zone=Zones.TypeZoneLigne(4), faire_au_vide=True)],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
             Moins le lanceur a utilisé de PM pendant son tour de jeu, plus les dommages occasionnés sont importants.""", chaine=True)
             ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Vitalité",77,3,0,2,[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",16))],[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",18))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalité de la cible en pourcentage.
+            Le bonus de Vitalité est divisé par 2 sur les cibles autres que le lanceur.""", chaine=True),
+
+                Sort.Sort("Vitalité",128,3,0,4,[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",18))],[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",20))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalité de la cible en pourcentage.
+            Le bonus de Vitalité est divisé par 2 sur les cibles autres que le lanceur.""", chaine=True),
+
+                Sort.Sort("Vitalité",172,3,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",20))],[Effets.EffetEtat(Etats.EtatBoostCaracPer("Vitalite",0,4,"vie",22))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalité de la cible en pourcentage.
+            Le bonus de Vitalité est divisé par 2 sur les cibles autres que le lanceur.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Vitalité",3,0,6,[Effets.EffetEtat(Etats.EtatBoostVita("Vitalite",0,4,20))],1,1,2,0,"cercle",description="Augmente temporairement les PV de la cible en pourcentage. Le bonus de PV est plus faible sur les alliés que sur le lanceur."))
             # sorts.append(Sort.Sort("Endurance",4,0,1,[Effets.EffetDegats(34,38,"eau",cibles_exclues="Lanceur")],3,2,0,0,"cercle",description="Occasionne des dommages Eau. Applique des points de bouclier au lanceur."))
             # sorts.append(Sort.Sort("Épée de Iop",4,1,6,[Effets.EffetDegats(37,41,"terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],2,2,0,0,"ligne",description="Occasionne des dommages Terre en croix.")) 

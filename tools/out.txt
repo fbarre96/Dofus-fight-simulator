@@ -20,16 +20,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Vitalit�",77,3,2,2,[Effets.TODO(16% Vitalit� (4 tours))],[Effets.TODO(18% Vitalit� (4 tours))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalit� de la cible en pourcentage.
-Le bonus de Vitalit� est divis� par 2 sur les cibles autres que le lanceur.""", chaine=True),
 
-	Sort.Sort("Vitalit�",128,3,4,4,[Effets.TODO(18% Vitalit� (4 tours))],[Effets.TODO(20% Vitalit� (4 tours))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalit� de la cible en pourcentage.
-Le bonus de Vitalit� est divis� par 2 sur les cibles autres que le lanceur.""", chaine=True),
-
-	Sort.Sort("Vitalit�",172,3,6,6,[Effets.TODO(20% Vitalit� (4 tours))],[Effets.TODO(22% Vitalit� (4 tours))],25,1,1,2,0,"cercle",True,description="""Augmente temporairement la Vitalit� de la cible en pourcentage.
-Le bonus de Vitalit� est divis� par 2 sur les cibles autres que le lanceur.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Endurance",185,3,1,1,[Effets.EffetDegats(34,38,"Eau"),Effets.TODO(150% du niveau en bouclier (1 tour))],[Effets.EffetDegats(39,43,"Eau"),Effets.TODO(150% du niveau en bouclier (1 tour))],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
 Applique des points de bouclier au lanceur.""", chaine=True)
