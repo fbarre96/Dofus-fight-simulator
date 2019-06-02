@@ -1,15 +1,3 @@
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Col�re de Iop",100,7,1,1,[Effets.EffetDegats(61,80,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 90 (1 tour))],[Effets.EffetDegats(71,90,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 100 (1 tour))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
-Augmente les dommages du sort au troisi�me tour apr�s son lancer.""", chaine=True),
 
-	Sort.Sort("Col�re de Iop",149,7,1,1,[Effets.EffetDegats(71,90,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 100 (1 tour))],[Effets.EffetDegats(81,100,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 110 (1 tour))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
-Augmente les dommages du sort au troisi�me tour apr�s son lancer.""", chaine=True),
 
-	Sort.Sort("Col�re de Iop",197,7,1,1,[Effets.EffetDegats(81,100,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 110 (1 tour))],[Effets.EffetDegats(91,110,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Col�re de Iop de 120 (1 tour))],25,1,1,3,0,"cercle",True,description="""Occasionne des dommages Terre.
-Augmente les dommages du sort au troisi�me tour apr�s son lancer.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Fureur",200,3,1,1,[Effets.TODO(Fureur),Effets.TODO(Fureur),Effets.EffetDegats(28,32,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Fureur de 30 (2 tours)),Effets.TODO(�tat 'Fureur Iop' (2 tours))],[Effets.TODO(Fureur),Effets.TODO(Fureur),Effets.EffetDegats(34,38,"Terre"),Effets.TODO(Augmente les d�g�ts de base du sort Fureur de 36 (2 tours)),Effets.TODO(�tat 'Fureur Iop' (2 tours))],5,1,99,0,0,"cercle",False,description="""Occasionne des dommages Terre.
-Les dommages sont augment�s � chaque lancer du sort, mais ce bonus est perdu si le sort n'est pas relanc�.""", chaine=True)
-]))

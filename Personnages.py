@@ -177,7 +177,7 @@ class Personnage(object):
         elif(classe=="Xelor"):
             retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
-            activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xélor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
+            activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
             activationRune = [Effets.EffetTp(generer_TF=True, faire_au_vide=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -250,30 +250,30 @@ class Personnage(object):
                 Sort.Sort("Renvoi",120,3,1,6,[Effets.EffetTeleporteDebutTour()],[],0,1,1,2,0,"ligne",True,description="""Téléporte la cible ennemie à sa cellule de début de tour.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Frappe de Xélor",9,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(15,19,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(21,25,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+                Sort.Sort("Frappe de Xelor",9,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(15,19,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(21,25,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
             Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False),
 
-                Sort.Sort("Frappe de Xélor",47,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(19,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(25,29,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+                Sort.Sort("Frappe de Xelor",47,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(19,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(25,29,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
             Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False),
 
-                Sort.Sort("Frappe de Xélor",87,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(23,27,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(29,33,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
+                Sort.Sort("Frappe de Xelor",87,3,1,3,[Effets.EffetTpSymSelf(),Effets.EffetDegats(23,27,"Terre",cibles_possibles="Ennemis")],[Effets.EffetTpSymSelf(),Effets.EffetDegats(29,33,"Terre",cibles_possibles="Ennemis")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre aux ennemis.
             Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Engrenage",125,3,1,5,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetDegats(31,35,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetDegats(34,38,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1))],25,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Complice",13,2,1,3,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",13,2,1,3,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-                Sort.Sort("Complice",54,2,1,4,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",54,2,1,4,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-                Sort.Sort("Complice",94,2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",94,2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Cadran de Xélor",130,3,1,5,[Effets.EffetInvoque("Cadran de Xélor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xélor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,1,3,0,"cercle",True,description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
+                Sort.Sort("Cadran de Xelor",130,3,1,5,[Effets.EffetInvoque("Cadran de Xelor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,1,3,0,"cercle",True,description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
             Donne des PA aux alliés autour de lui et dans l'état Téléfrag.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -290,15 +290,15 @@ class Personnage(object):
                 Sort.Sort("Perturbation",135,2,1,4,[Effets.EffetDegats(9,11,"Feu",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTpSymSelf()],[Effets.EffetDegats(11,13,"Feu",cibles_possibles="Ennemis|Lanceur"),Effets.EffetTpSymSelf()],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu et téléporte la cible symétriquement par rapport au lanceur.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Sablier de Xélor",22,2,1,6,[Effets.EffetDegats(9,11,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(9,11,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(13,15,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(13,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+                Sort.Sort("Sablier de Xelor",22,2,1,6,[Effets.EffetDegats(9,11,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(9,11,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(13,15,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(13,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
             Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
 
-                Sort.Sort("Sablier de Xélor",65,2,1,6,[Effets.EffetDegats(12,14,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(12,14,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(16,18,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(16,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+                Sort.Sort("Sablier de Xelor",65,2,1,6,[Effets.EffetDegats(12,14,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(12,14,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(16,18,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(16,15,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
             Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True),
 
-                Sort.Sort("Sablier de Xélor",108,2,1,7,[Effets.EffetDegats(15,17,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(19,21,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(19,21,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
+                Sort.Sort("Sablier de Xelor",108,2,1,7,[Effets.EffetDegats(15,17,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(15,17,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(19,21,"Feu"),Effets.EffetRetPA(2),Effets.EffetDegats(19,21,"feu",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag"),Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,1,0,1,"ligne",False,description="""Occasionne des dommages Feu et retire des PA à la cible en ligne et sans ligne de vue.
             Si la cible est dans l'état Téléfrag, l'effet du sort se joue en zone.
             Le retrait de PA ne peut pas être désenvoûté.""", chaine=True)
             ]))
@@ -377,20 +377,20 @@ class Personnage(object):
             Il revient ensuite à sa position précédente.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Paradoxe Temporel",56,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,4,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+                Sort.Sort("Paradoxe Temporel",56,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xelor",activationParadoxeTemporel)],[],0,1,1,4,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
             Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
-            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True),
+            Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True),
 
-                Sort.Sort("Paradoxe Temporel",112,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,3,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+                Sort.Sort("Paradoxe Temporel",112,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xelor",activationParadoxeTemporel)],[],0,1,1,3,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
             Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
-            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True),
+            Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True),
 
-                Sort.Sort("Paradoxe Temporel",147,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xélor",activationParadoxeTemporel)],[],0,1,1,2,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
+                Sort.Sort("Paradoxe Temporel",147,3,0,0,[Effets.EffetEntiteLanceSort("Complice|Cadran de Xelor",activationParadoxeTemporel)],[],0,1,1,2,0,"cercle",False,description="""Téléporte symétriquement par rapport au Complice (ou au Cadran) les alliés et ennemis (dans une zone de 4 cases autour du Cadran).
             Au début du tour du Complice (ou du Cadran) : téléporte à nouveau symétriquement les mêmes cibles.
-            Fixe le temps de relance de Cadran de Xélor et de Complice à 1.""", chaine=True)
+            Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xélor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
+                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xelor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
             À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente.
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
@@ -519,7 +519,7 @@ class Personnage(object):
                 Sort.Sort("Intimidation",52,2,1,2,[Effets.EffetDegats(11,13,"Neutre"),Effets.EffetPousser(3)],[Effets.EffetDegats(13,15,"Neutre"),Effets.EffetPousser(3)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Neutre sur les ennemis et repousse la cible.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Conquête",105,3,1,6,[Effets.EffetInvoque("Stratège Iop",True,cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
+                Sort.Sort("Conquête",105,3,1,6,[Effets.EffetInvoque("Stratege Iop",True,cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Déferlement",3,4,0,5,[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(24,28,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(32,36,"Eau",cibles_exclues="Lanceur"), Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
@@ -1164,7 +1164,7 @@ class Personnage(object):
         return sortSelectionne
 
 class PersonnageMur(Personnage):
-    """@summary: Classe décrivant un montre de type MUR immobile (cawotte, cadran de xélor...). hérite de Personnage"""
+    """@summary: Classe décrivant un montre de type MUR immobile (cawotte, cadran de Xelor...). hérite de Personnage"""
     def __init__(self, *args):
         """@summary: Initialise un personnage Mur, même initialisation que Personange
         @args: les arguments donnés, doivent être les mêmes que Personnage
@@ -1191,7 +1191,7 @@ class PersonnageMur(Personnage):
         niveau.finTour()
 
 class PersonnageSansPM(Personnage):
-    """@summary: Classe décrivant un personange pouvant faire des actions mais sans chercher à se déplacer (Stratège iop). hérite de Personnage"""
+    """@summary: Classe décrivant un personange pouvant faire des actions mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
     def __init__(self, *args):
         """@summary: Initialise un personnage sans PM, même initialisation que Personange
         @args: les arguments donnés, doivent être les mêmes que Personnage
@@ -1218,11 +1218,11 @@ class PersonnageSansPM(Personnage):
         niveau.finTour()
 # La liste des invocations disponibles.
 INVOCS = {
-"Cadran de Xélor" : PersonnageSansPM("Cadran de Xelor",100,1,{"Vitalite":1000},{},{},{},"cadran_de_xelor.png"),
+"Cadran de Xelor" : PersonnageSansPM("Cadran de Xelor",100,1,{"Vitalite":1000},{},{},{},"cadran_de_xelor.png"),
 "Cawotte" : PersonnageMur("Cawotte",0,1,{"Vitalite":800},{},{},{},"cawotte.png"),
 "Synchro" : PersonnageMur("Synchro",0,1,{"Vitalite":1200},{},{},{},"synchro.png"),
 "Complice" : PersonnageMur("Complice",0,1,{"Vitalite":650},{},{},{},"complice.png"),
 "Balise de Rappel" : PersonnageSansPM("Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
 "Balise Tactique" : PersonnageMur("Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
-"Stratège Iop" : PersonnageMur("Stratege Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
+"Stratege Iop" : PersonnageMur("Stratege Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
 }

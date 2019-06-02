@@ -63,7 +63,7 @@ class Effet(object):
         if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles):
             #Test si la cible est exclue
             if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues):
-                print(" : Invalide : Cible Exclue")
+                print("DEBUG : Invalide : Cible Exclue")
                 return False
             #Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
@@ -1115,7 +1115,7 @@ class EffetEntiteLanceSort(Effet):
         self.sort = sort_sort
         super(EffetEntiteLanceSort, self).__init__(**kwargs)
     def deepcopy(self):
-        return EffetEtatSelf(self.etat,**self.kwargs)
+        return EffetEntiteLanceSort(self.nomEntites, self.sort,**self.kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
