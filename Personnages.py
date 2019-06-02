@@ -630,12 +630,28 @@ class Personnage(object):
             Ne fonctionne que si lancé sur un ennemi.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Emprise",155,3,1,1,[Effets.EffetEtat(Etats.EtatModDegPer("Emprise: Invulnérable",0,1, 0)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Emprise",0,1,"PM",-100))],[],0,1,1,4,0,"cercle",False,description="""Retire tous les PM de l'ennemi cibl� mais le rend invuln�rable.""", chaine=True)
+                Sort.Sort("Emprise",155,3,1,1,[Effets.EffetEtat(Etats.EtatModDegPer("Emprise: Invulnérable",0,1, 0)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Emprise",0,1,"PM",-100))],[],0,1,1,4,0,"cercle",False,description="""Retire tous les PM de l'ennemi cible mais le rend invulnérable.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Épée du Jugement",4,1,5,[Effets.EffetDegats(20,28,"air"),Effets.EffetVolDeVie(10,12,"feu")],3,2,0,0,"cercle",description="Occasionne des dommages Air et vole de la vie dans l'élément Feu sans ligne de vue."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Épée du Jugement",44,4,1,4,[Effets.EffetDegats(13,15,"Air"),Effets.EffetDegats(13,15,"Feu")],[Effets.EffetDegats(17,19,"Air"),Effets.EffetDegats(17,19,"Feu")],5,2,1,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True),
+
+                Sort.Sort("Épée du Jugement",97,4,1,4,[Effets.EffetDegats(16,18,"Air"),Effets.EffetDegats(16,18,"Feu")],[Effets.EffetDegats(20,22,"Air"),Effets.EffetDegats(20,22,"Feu")],5,2,1,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True),
+
+                Sort.Sort("Épée du Jugement",137,4,1,5,[Effets.EffetDegats(19,21,"Air"),Effets.EffetDegats(19,21,"Feu")],[Effets.EffetDegats(23,25,"Air"),Effets.EffetDegats(23,25,"Feu")],5,3,2,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Condamnation",160,3,1,6,[
+                    Effets.EffetDegats(41,45,"feu",zone=Zones.TypeZoneCercleSansCentre(99),etat_requis_cibles="Condamnation 2",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Condamnation 2",0,-1),etat_requis_cibles="Condamnation 1",consomme_etat=True),
+                    Effets.EffetDegats(25,29,"feu",zone=Zones.TypeZoneCercleSansCentre(99),etat_requis_cibles="Condamnation 1",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Condamnation 1",0,-1),etat_requis_cibles="!Condamnation 2"),
+                    Effets.EffetDegats(25,29,"air")
+            ],[],0,3,2,0,0,"cercle",True,description="""Occasionne des dommages Air.
+            Occasionne des dommages Feu sur la cible initiale lorsque le sort est lanc� sur une autre cible.
+            Les dommages Feu sont augment�s si le sort est utilis� une deuxi�me fois sur la cible initiale.""", chaine=False)
+            ]))
             # sorts.append(Sort.Sort("Condamnation",3,1,6,[
             #     Effets.EffetDegats(33,37,"feu",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Condamnation_lancer_2",consomme_etat=False),
-            #     Effets.EffetDegats(33,37,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Condamnation_lancer_2",consomme_etat=True),
             #     Effets.EffetEtat(Etats.Etat("Condamnation_lancer_2",0,-1),etat_requis_cibles="Condamnation_lancer_1",consomme_etat=True),
             #     Effets.EffetDegats(23,27,"feu",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Condamnation_lancer_1",consomme_etat=False),
             #     Effets.EffetDegats(23,27,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Condamnation_lancer_1",consomme_etat=True),

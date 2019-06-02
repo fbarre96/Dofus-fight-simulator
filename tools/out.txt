@@ -10,18 +10,8 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("�p�e du Jugement",44,4,1,4,[Effets.EffetDegats(13,15,"Air"),Effets.EffetDegats(13,15,"Feu")],[Effets.EffetDegats(17,19,"Air"),Effets.EffetDegats(17,19,"Feu")],5,2,1,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True),
 
-	Sort.Sort("�p�e du Jugement",97,4,1,4,[Effets.EffetDegats(16,18,"Air"),Effets.EffetDegats(16,18,"Feu")],[Effets.EffetDegats(20,22,"Air"),Effets.EffetDegats(20,22,"Feu")],5,2,1,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True),
 
-	Sort.Sort("�p�e du Jugement",137,4,1,5,[Effets.EffetDegats(19,21,"Air"),Effets.EffetDegats(19,21,"Feu")],[Effets.EffetDegats(23,25,"Air"),Effets.EffetDegats(23,25,"Feu")],5,3,2,0,0,"cercle",False,description="""Occasionne des dommages Air et Feu sans ligne de vue.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Condamnation",160,3,1,6,[Effets.TODO(Enl�ve les effets du sort Condamnation,zone=Zones.TypeZoneCercle(63)),Effets.TODO(Enl�ve les effets du sort Condamnation,zone=Zones.TypeZoneCercle(63)),Effets.EffetDegats(25,29,"Feu",zone=Zones.TypeZoneCercle(63)),Effets.EffetDegats(25,29,"Air",zone=Zones.TypeZoneCercle(63)),Effets.TODO(�tat 'Condamnation 1' (infini),zone=Zones.TypeZoneCercle(63)),Effets.EffetDegats(41,45,"Feu",zone=Zones.TypeZoneCercle(63)),Effets.TODO(�tat 'Condamnation 2' (infini),zone=Zones.TypeZoneCercle(63))],[],0,3,2,0,0,"cercle",True,description="""Occasionne des dommages Air.
-Occasionne des dommages Feu sur la cible initiale lorsque le sort est lanc� sur une autre cible.
-Les dommages Feu sont augment�s si le sort est utilis� une deuxi�me fois sur la cible initiale.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Puissance",50,3,2,2,[Effets.TODO(100 Puissance (2 tours))],[Effets.TODO(120 Puissance (2 tours))],15,1,1,3,0,"cercle",True,description="""Augmente la Puissance de la cible.""", chaine=True),
 
