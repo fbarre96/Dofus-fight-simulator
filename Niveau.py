@@ -909,7 +909,7 @@ class Niveau:
 
             #Boost PA
             if not reelLanceur.aEtat(nomSort) and nomSort != "Rembobinage":
-                reelLanceur.appliquerEtat(Etats.EtatBoostPA("BoostPATelefrag",0,1,2,reelLanceur),reelLanceur)
+                reelLanceur.appliquerEtat(Etats.EtatBoostCaracFixe("BoostPATelefrag",0,1,"PA",2,reelLanceur),reelLanceur)
                 reelLanceur.appliquerEtat(Etats.Etat(nomSort,0,1,["Telefrag"],reelLanceur),reelLanceur)
             #Boost Glas, Synchro
             self.__boostApresTF(nomSort,reelLanceur)
