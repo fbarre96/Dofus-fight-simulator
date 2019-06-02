@@ -471,7 +471,7 @@ class EtatBoostBaseDeg(Etat):
 
 class EtatLanceSortSiSubit(Etat):
     """@summary: Classe décrivant un état qui fait active un sort si le porteur subit des dégâts."""
-    def __init__(self, nom, debDans,duree,  sort,lanceur=None,desc=""):
+    def __init__(self, nom, debDans,duree,  sort, lanceurDuSort,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -482,7 +482,8 @@ class EtatLanceSortSiSubit(Etat):
 
         @sort: le sort qui sera lancé lorsque des dégâts seront subits
         @type: Sort
-
+        @lanceurDuSort: Le lanceur du sort parmis Porteur,Attaquant
+        @type: str
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
@@ -490,12 +491,13 @@ class EtatLanceSortSiSubit(Etat):
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.sort = sort
+        self.lanceurDuSort = lanceurDuSort
         super(EtatLanceSortSiSubit, self).__init__(nom, debDans,duree, lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatLanceSortSiSubit(self.nom, self.debuteDans,self.duree,  self.sort, self.lanceur,self.desc)
+        return EtatLanceSortSiSubit(self.nom, self.debuteDans,self.duree,  self.sort,self.lanceurDuSort, self.lanceur,self.desc)
 
     def triggerApresSubirDegats(self,cibleAttaque,niveau,attaquant,totalPerdu):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
@@ -506,7 +508,10 @@ class EtatLanceSortSiSubit(Etat):
         @type: Niveau
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        self.sort.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, cibleAttaque.posX, cibleAttaque.posY)
+        if self.lanceurDuSort == "Porteur":
+            self.sort.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, cibleAttaque.posX, cibleAttaque.posY)
+        elif self.lanceurDuSort == "Attaquant":
+            self.sort.lance(attaquant.posX, attaquant.posY, niveau, attaquant.posX, attaquant.posY)
 
 class EtatEffetFinTour(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur termine son tour."""

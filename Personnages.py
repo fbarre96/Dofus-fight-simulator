@@ -486,7 +486,7 @@ class Personnage(object):
             ]))
         elif(classe=="Iop"):
             activationRassemblement = Sort.Sort("Déclenche Rassemblement",0,0,0,0,[Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(3), cibles_possibles="Allies")],[],0,99,99,0,0,"cercle",False)
-            #activationFriction= Sort.Sort("Attire",0,0,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99))],[],0,99,99,0,0,"cercle",False)
+            activationFriction = Sort.Sort("Frikt",0,0,0,0,[Effets.EffetAttire(1,"Lanceur","JoueurCaseEffet", zone=Zones.TypeZoneCroix(99), etat_requis_cibles="Frikt")],[],0,99,99,0,0,"cercle",False)
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Pression",1,3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(14,18,"Terre")],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
                 Sort.Sort("Pression",30,3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(19,23,"Terre")],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Pression",0,2,"erosion",10),cibles_possibles="Ennemis"),Effets.EffetDegats(24,28,"Terre")],5,99,2,0,0,"cercle",True,description="""Occasionne des dommages Terre et applique un malus d'érosion.""", chaine=True),
@@ -508,7 +508,7 @@ class Personnage(object):
             
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Détermination",101,2,0,0,[Effets.EffetEtat(Etats.Etat("Indeplacable",0,1)),Effets.EffetEtat(Etats.EtatModDegPer("Determination",0,1,75))],[],0,1,1,2,0,"cercle",False,description="""Fixe l'êtat Indéplaçable et réduit 25% des dommages subis pendant 1 tour.
-            Ne peut pas étre désenvoûté.""", chaine=True)
+            Ne peut pas être désenvoûté.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Intimidation",1,2,1,2,[Effets.EffetDegats(7,9,"Neutre"),Effets.EffetPousser(2)],[Effets.EffetDegats(9,11,"Neutre"),Effets.EffetPousser(2)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Neutre sur les ennemis et repousse la cible.""", chaine=True),
@@ -563,15 +563,15 @@ class Personnage(object):
                 Sort.Sort("Massacre",94,2,1,7,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Massacre",0,2,50,"Allies",1))],[],0,1,1,3,0,"cercle",True,description="""Lorsque la cible ennemie reçoit des dommages de sorts, elle occasionne 50% de ces dommages aux ennemis au contact.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Rassemblement",130,2,1,6,[Effets.EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement),cible_possibles="Ennemis")],[],0,1,1,2,0,"cercle",True,description="""Rapproche les ennemis de la cible.
+                Sort.Sort("Rassemblement",130,2,1,6,[Effets.EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Rassemblement",0,1,activationRassemblement, "Porteur"),cible_possibles="Ennemis")],[],0,1,1,2,0,"cercle",True,description="""Rapproche les ennemis de la cible.
             Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Souffle",17,2,2,4,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+                Sort.Sort("Souffle",17,2,2,4,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Souffle",58,2,2,6,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+                Sort.Sort("Souffle",58,2,2,6,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
+                Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Violence",135,2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entités é proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
@@ -597,8 +597,23 @@ class Personnage(object):
 
                 Sort.Sort("Couper",118,3,1,4,[Effets.EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],[Effets.EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Fracture",4,1,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0)), Effets.EffetDegats(26,30,"air",zone=Zones.TypeZoneLigneJusque(0))],2,2,0,0,"ligne",description="Occasionne des dommages Air jusqu'à la cellule ciblée. Applique un malus d'Érosion."))
-            # sorts.append(Sort.Sort("Friction",2,0,5,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99)),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Friction",0,2,activationFriction))],1,1,3,0,"cercle",description="La cible se rapproche de l'attaquant si elle reçoit des dommages issus de sorts. Nécessite d'être aligné avec la cible."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Fracture",145,4,1,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True),Effets.EffetDegats(34,38,"Air", zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True),Effets.EffetDegats(39,43,"Air", zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True)],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'é la cellule ciblée.
+            Applique un malus d'érosion.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Friction",32,2,0,4,[Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Frikt",0,2,activationFriction,"Attaquant")),Effets.EffetAttire(1)],[],0,1,1,5,0,"cercle",False,description="""Attire la cible d'une case.
+            La cible se rapproche ensuite de l'attaquant si elle reçoit des dommages issus de sorts pendant 2 tours.
+            Nécessite d'être aligné avec la cible.""", chaine=True),
+
+                Sort.Sort("Friction",81,2,0,4,[Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Frikt",0,2,activationFriction,"Attaquant")),Effets.EffetAttire(1)],[],0,1,1,4,0,"cercle",False,description="""Attire la cible d'une case.
+            La cible se rapproche ensuite de l'attaquant si elle reçoit des dommages issus de sorts pendant 2 tours.
+            Nécessite d'être aligné avec la cible.""", chaine=True),
+
+                Sort.Sort("Friction",124,2,0,5,[Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Frikt",0,2,activationFriction,"Attaquant")),Effets.EffetAttire(1)],[],0,1,1,3,0,"cercle",False,description="""Attire la cible d'une case.
+            La cible se rapproche ensuite de l'attaquant si elle reçoit des dommages issus de sorts pendant 2 tours.
+            Nécessite d'être aligné avec la cible.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Coup pour coup",2,1,3,[Effets.EffetPousser(2),Effets.EffetEtat(Etats.EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description="La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
             # sorts.append(Sort.Sort("Duel",3,1,1,[],1,1,4,0,"cercle",description="Retire leurs PM à la cible et au lanceur, leur applique l'état Pesanteur et les rend invulnérable aux dommages à distance. Ne fonctionne que si lancé sur un ennemi."))
             # sorts.append(Sort.Sort("Emprise",3,1,1,[],1,1,4,0,"cercle",description="Retire tous les PM de l'ennemi ciblé mais le rend invulnérable."))

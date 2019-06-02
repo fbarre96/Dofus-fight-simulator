@@ -5,23 +5,8 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Fracture",145,4,1,4,[Effets.TODO(13% �rosion (2 tours)),Effets.EffetDegats(34,38,"Air")],[Effets.TODO(13% �rosion (2 tours)),Effets.EffetDegats(39,43,"Air")],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'� la cellule cibl�e.
-Applique un malus d'�rosion.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Friction",32,2,4,4,[Effets.TODO(Frikt),Effets.TODO(Attire de 1 case(s))],[],0,1,1,5,0,"cercle",False,description="""Attire la cible d'une case.
-La cible se rapproche ensuite de l'attaquant si elle re�oit des dommages issus de sorts pendant 2 tours.
-N�cessite d'�tre align� avec la cible.""", chaine=True),
 
-	Sort.Sort("Friction",81,2,4,4,[Effets.TODO(Frikt),Effets.TODO(Attire de 1 case(s))],[],0,1,1,4,0,"cercle",False,description="""Attire la cible d'une case.
-La cible se rapproche ensuite de l'attaquant si elle re�oit des dommages issus de sorts pendant 2 tours.
-N�cessite d'�tre align� avec la cible.""", chaine=True),
 
-	Sort.Sort("Friction",124,2,5,5,[Effets.TODO(Frikt),Effets.TODO(Attire de 1 case(s))],[],0,1,1,3,0,"cercle",False,description="""Attire la cible d'une case.
-La cible se rapproche ensuite de l'attaquant si elle re�oit des dommages issus de sorts pendant 2 tours.
-N�cessite d'�tre align� avec la cible.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Coup pour coup",150,2,1,3,[Effets.TODO(�tat 'Coup pour Coup' (2 tours)),Effets.TODO(Coup pour Coup),Effets.TODO(Repousse de 2 case(s))],[],0,1,1,3,0,"cercle",True,description="""Repousse un ennemi.
 La cible est ensuite repouss�e de 2 cases � chaque fois qu'elle attaque le lanceur pendant 2 tours.""", chaine=True)

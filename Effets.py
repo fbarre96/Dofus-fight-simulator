@@ -459,7 +459,7 @@ class EffetRetPM(Effet):
                 if rand <= probaRet:
                     totalRet += 1
             joueurCaseEffet.PM -= totalRet
-            print(joueurCaseEffet.classe+" -"+ str(self.retrait) + "PM")
+            print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PM")
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -672,6 +672,8 @@ class EffetPousser(Effet):
         dist_lignes = abs(cible_posY - sourceY)
         dist_colognes = abs(cible_posX - sourceX)
         self.coordonnees = [0,0]
+        if dist_lignes == 0 and dist_colognes == 0:
+            return 
         self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
         self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
         if self.coordonnees[0] == 1 and cible_posX < sourceX:
@@ -713,9 +715,9 @@ class EffetAttire(EffetPousser):
         """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
         @int_nbCase: le nombre de case dont le joueur cible va être attiré.
         @type: int
-        @depuis: string qui définit la provenance de l'attirance
+        @source: string qui définit la provenance de l'attirance parmi CaseCible, Lanceur, JoueurCaseEffet
         @type: str
-        @vers: string qui définit la direction de l'attirance
+        @cible: string qui définit la cible de l'attirance parmi Lanceur, JoueurCaseEffet
         @type: str
         @kwargs: Options de l'effets
         @type: **kwargs"""

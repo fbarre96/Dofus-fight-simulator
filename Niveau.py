@@ -768,7 +768,8 @@ class Niveau:
         @type: int"""
         if joueurCible != None:
             if effetPousser.coordonnees != None:
-                self.__effectuerPousser(joueurCible, pousseur,effetPousser.nbCase, doDeg, effetPousser.coordonnees)
+                if not(effetPousser.coordonnees[0] == 0 and effetPousser.coordonnees[1] == 0):
+                    self.__effectuerPousser(joueurCible, pousseur,effetPousser.nbCase, doDeg, effetPousser.coordonnees)
         
     def attire(self, effetAttire, joueurCible, attireur,depuisX=None,depuisY=None):
         """@summary: Fonction à appeler pour attirer un joueur.
