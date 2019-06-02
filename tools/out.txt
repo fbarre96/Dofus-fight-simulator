@@ -2,30 +2,9 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Violence",135,2,0,0,[Effets.TODO(Violence,zone=Zones.TypeZoneCercle(2)),Effets.TODO(50 Dommages Pouss�e (1 tour),zone=Zones.TypeZoneCercle(2)),Effets.TODO(25 Tacle (1 tour),zone=Zones.TypeZoneCercle(2)),Effets.TODO(Attire de 1 case(s),zone=Zones.TypeZoneCercle(2))],[],0,1,99,0,0,"cercle",False,description="""Attire les entit�s � proximit� et augmente les dommages de pouss�e et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Concentration",22,2,1,1,[Effets.EffetDegats(12,16,"Terre"),Effets.EffetDegats(20,24,"Terre")],[Effets.EffetDegats(17,21,"Terre"),Effets.EffetDegats(25,29,"Terre")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-Les dommages sont augment�s contre les Invocations.""", chaine=True),
 
-	Sort.Sort("Concentration",65,2,1,1,[Effets.EffetDegats(16,20,"Terre"),Effets.EffetDegats(24,28,"Terre")],[Effets.EffetDegats(21,25,"Terre"),Effets.EffetDegats(29,33,"Terre")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-Les dommages sont augment�s contre les Invocations.""", chaine=True),
 
-	Sort.Sort("Concentration",108,2,1,1,[Effets.EffetDegats(20,24,"Terre"),Effets.EffetDegats(30,34,"Terre")],[Effets.EffetDegats(26,30,"Terre"),Effets.EffetDegats(36,40,"Terre")],5,4,3,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-Les dommages sont augment�s contre les Invocations.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Accumulation",140,3,4,4,[Effets.TODO(Accumulation),Effets.EffetDegats(22,26,"Terre"),Effets.TODO(Accumulation),Effets.TODO(Augmente les d�g�ts de base du sort Accumulation de 20 (3 tours))],[Effets.TODO(Accumulation),Effets.EffetDegats(27,31,"Terre"),Effets.TODO(Accumulation),Effets.TODO(Augmente les d�g�ts de base du sort Accumulation de 24 (3 tours))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-Si le sort est lanc� sur soi, le sort n'occasionne pas de dommages et ils sont augment�s pour les prochains lancers.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Couper",27,3,1,3,[Effets.EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-2 PM (1 tour),zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-2 PM (1 tour),zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
 
-	Sort.Sort("Couper",72,3,1,3,[Effets.EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-2 PM (1 tour),zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-2 PM (1 tour),zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
-
-	Sort.Sort("Couper",118,3,1,4,[Effets.EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-3 PM (1 tour),zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.TODO(-3 PM (1 tour),zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Fracture",145,4,1,4,[Effets.TODO(13% �rosion (2 tours)),Effets.EffetDegats(34,38,"Air")],[Effets.TODO(13% �rosion (2 tours)),Effets.EffetDegats(39,43,"Air")],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'� la cellule cibl�e.
 Applique un malus d'�rosion.""", chaine=True)

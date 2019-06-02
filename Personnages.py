@@ -574,21 +574,29 @@ class Personnage(object):
                 Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,source="CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Violence",135,2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entit�s � proximit� et augmente les dommages de pouss�e et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
+                Sort.Sort("Violence",135,2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entités é proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Concentration",22,2,1,1,[Effets.EffetDegats(20,24,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(12,16,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(25,29,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(17,21,"Terre",cibles_exclues="Invoc")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-            Les dommages sont augment�s contre les Invocations.""", chaine=False),
+            Les dommages sont augmentés contre les Invocations.""", chaine=False),
 
                 Sort.Sort("Concentration",65,2,1,1,[Effets.EffetDegats(24,28,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(16,20,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(29,33,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(21,25,"Terre",cibles_exclues="Invoc")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-            Les dommages sont augment�s contre les Invocations.""", chaine=False),
+            Les dommages sont augmentés contre les Invocations.""", chaine=False),
 
                 Sort.Sort("Concentration",108,2,1,1,[Effets.EffetDegats(30,34,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(20,24,"Terre",cibles_exclues="Invoc")],[Effets.EffetDegats(36,40,"Terre",cibles_possibles="Invoc"),Effets.EffetDegats(26,30,"Terre",cibles_exclues="Invoc")],5,4,3,0,0,"ligne",True,description="""Occasionne des dommages Terre.
-            Les dommages sont augment�s contre les Invocations.""", chaine=False)
+            Les dommages sont augmentés contre les Invocations.""", chaine=False)
             ]))
-            # sorts.append(Sort.Sort("Concentration",2,1,1,[Effets.EffetDegats(20,24,"terre")],4,3,0,0,"ligne",description="Occasionne des dommages Terre. Les dommages sont augmentés contre les Invocations."))
-            # sorts.append(Sort.Sort("Accumulation",3,0,4,[Effets.EffetDegats(28,32,"terre",cibles_possibles="Ennemis"),Effets.EffetRetireEtat("Accumulation",zone=Zones.TypeZoneCercle(99),cible_possibles="Iop"),Effets.EffetEtat(Etats.EtatBoostBaseDeg("Accumulation",0,3,"Accumulation",20),cibles_possibles="Lanceur")],2,2,0,0,"ligne",chaine=False,description="Occasionne des dommages Terre. Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers."))
-            # sorts.append(Sort.Sort("Couper",3,1,4,[Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3))],2,2,0,1,"ligne",description="Occasionne des dommages Feu et retire des PM."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Accumulation",140,3,0,4,[Effets.EffetDegats(22,26,"Terre",cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatBoostBaseDeg("Accumulation",0,3,"Accumulation",20),cibles_possibles="Lanceur")],[Effets.EffetDegats(27,31,"Terre",cibles_possibles="Ennemis"),Effets.EffetEtat(Etats.EtatBoostBaseDeg("Accumulation",0,3,"Accumulation",24),cibles_possibles="Lanceur")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre.
+            Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Couper",27,3,1,3,[Effets.EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+
+                Sort.Sort("Couper",72,3,1,3,[Effets.EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+
+                Sort.Sort("Couper",118,3,1,4,[Effets.EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3))],[Effets.EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3))],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
+            ]))
             # sorts.append(Sort.Sort("Fracture",4,1,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0)), Effets.EffetDegats(26,30,"air",zone=Zones.TypeZoneLigneJusque(0))],2,2,0,0,"ligne",description="Occasionne des dommages Air jusqu'à la cellule ciblée. Applique un malus d'Érosion."))
             # sorts.append(Sort.Sort("Friction",2,0,5,[Effets.EffetAttire(1,zone=Zones.TypeZoneCroix(99)),Effets.EffetEtat(Etats.EtatLanceSortSiSubit("Friction",0,2,activationFriction))],1,1,3,0,"cercle",description="La cible se rapproche de l'attaquant si elle reçoit des dommages issus de sorts. Nécessite d'être aligné avec la cible."))
             # sorts.append(Sort.Sort("Coup pour coup",2,1,3,[Effets.EffetPousser(2),Effets.EffetEtat(Etats.EtatRepousserSiSubit("Coup_pour_coup",0,2,2))],1,1,3,0,"cercle",description="La cible est repoussée de 2 cases à chaque fois qu'elle attaque le lanceur."))
