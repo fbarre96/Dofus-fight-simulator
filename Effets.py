@@ -1079,14 +1079,15 @@ class EffetTpSymCentre(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, case_cible_x et case_cible_y doivent être mentionées
         @type: **kwargs"""
-        distanceX = (joueurCaseEffet.posX-kwargs.get("case_cible_x"))
-        distanceY = (joueurCaseEffet.posY-kwargs.get("case_cible_y"))
-        arriveeX = kwargs.get("case_cible_x")-distanceX
-        arriveeY = kwargs.get("case_cible_y")-distanceY
-        joueurTF = niveau.gereDeplacementTF(joueurCaseEffet,[arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
-        #Evite de retéléporter les cibles s'étant déplacé après un téléfrags
-        if joueurTF != None:
-            kwargs.get("cibles_traitees").append(joueurTF)
+        if joueurCaseEffet is not None:
+            distanceX = (joueurCaseEffet.posX-kwargs.get("case_cible_x"))
+            distanceY = (joueurCaseEffet.posY-kwargs.get("case_cible_y"))
+            arriveeX = kwargs.get("case_cible_x")-distanceX
+            arriveeY = kwargs.get("case_cible_y")-distanceY
+            joueurTF = niveau.gereDeplacementTF(joueurCaseEffet,[arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+            #Evite de retéléporter les cibles s'étant déplacé après un téléfrags
+            if joueurTF != None:
+                kwargs.get("cibles_traitees").append(joueurTF)
         
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
