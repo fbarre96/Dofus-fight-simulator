@@ -330,8 +330,8 @@ class Niveau:
                         print("Un obstacle bloque ce chemin.")
                         break
                     PAPerdus, PMPerdus = self.calculTacle(joueur)
-                    if joueur.PM - PMPerdus > 0 and joueur.PA - PAPerdus >= 0:
-                        if PMPerdus > 1:
+                    if joueur.PM - PMPerdus >= 1 and joueur.PA - PAPerdus >= 0:
+                        if PMPerdus > 0:
                             print("Taclé, le joueur perd "+str(PMPerdus)+" PM et "+str(PAPerdus)+" PA")
                         joueur.PM -= PMPerdus + 1 
                         joueur.PA -= PAPerdus
@@ -1299,18 +1299,14 @@ class Niveau:
                         if len(tab_cases_previ) <= self.tourDe.PM:
                             pa_tacle,pm_tacle = self.calculTacle(self.tourDe)
                             cumulTacle = [0, 0]
-                            restePM = self.tourDe.PM
-                            restePA = self.tourDe.PA
-                            for case in tab_cases_previ:
+                            for i,case in enumerate(tab_cases_previ):
                                 if pm_tacle > 0 or pa_tacle > 0:
                                     cumulTacle[0] += pm_tacle
                                     cumulTacle[1] += pa_tacle
-                                if cumulTacle[0] <= restePM and cumulTacle[1] <= restePA:
-                                    restePM -= 1 + pm_tacle
-                                    restePA -= pa_tacle
-                                    fenetre.blit(prevision, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
-                                else:
+                                if cumulTacle[0] + i+1 > self.tourDe.PM or cumulTacle[1] > self.tourDe.PA:
                                     fenetre.blit(prevision_tacle, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
+                                else:
+                                    fenetre.blit(prevision, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
                                 if cumulTacle[0] != 0 or cumulTacle[1] != 0:
                                     self.tourDe.vue = Overlays.VueForOverlay(self.fenetre, case_x*constantes.taille_sprite,case_y*constantes.taille_sprite, 30, 30,self.tourDe)
                                     self.tourDe.setOverlayTextGenerique("-"+str(cumulTacle[0])+"PM\n-"+str(cumulTacle[1])+"PA")
