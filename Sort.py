@@ -134,10 +134,9 @@ class Sort:
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine == True:
                         if sestApplique == True: # Si l'effet a été appliqué, on continue
-                            sestApplique = False
-                        else:                    # Sinon la chaîne d'effet est interrompue net.
-                            return None     
-                    sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur)          
+                            sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur) 
+                    else:
+                        sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur) 
                     #Apres application d'un effet sur toutes les cibles:
             else:
                 print(explication)

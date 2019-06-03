@@ -1077,6 +1077,8 @@ class Niveau:
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
 
         sestApplique = False
+        
+
         #Pour chaque case dans la zone
         for case_effet in zoneEffet:
             case_x = case_effet[0]
@@ -1101,6 +1103,7 @@ class Niveau:
                 if effet.faireAuVide:
                     effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, case_effet_x=case_x,case_effet_y=case_y)
                     sestApplique = True
+        
         return sestApplique, ciblesTraitees
 
     def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None):
@@ -1134,7 +1137,6 @@ class Niveau:
         if type(effet) is Effets.EffetDegatsPosLanceur or type(effet) is Effets.EffetTeleportePosPrecLanceur:
             case_cible_x = joueurLanceur.posX
             case_cible_y = joueurLanceur.posY
-
         zoneEffet = self.getZoneEffet(effet, case_cible_x,case_cible_y)
         #Effet non boucles
         sestApplique = self.__appliquerEffetSansBoucleSurZone(effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y)
