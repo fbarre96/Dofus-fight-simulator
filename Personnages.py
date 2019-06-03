@@ -116,11 +116,16 @@ class Personnage(object):
         self.icone=constantes.normaliser(self.icone)
         # Overlay affichange le nom de classe et sa vie restante
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText("classe",(210,105,30)), Overlays.ColoredText("overlayTexte",(224,238,238)),(56,56,56))
+    
     def setOverlayText(self):
         self.overlayTexte = str(self.vie) +" PV"
         boubou = self.getBoucliers()
         if boubou > 0:
             self.overlayTexte += " "+str(boubou)+" PB"
+    
+    def setOverlayTextGenerique(self, text):
+        self.overlayTexte = text
+
 
     def aEtatsRequis(self,etatsRequis):
         """@summary: Indique si le personnage possède les états donnés en paramètres.

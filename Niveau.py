@@ -341,23 +341,29 @@ class Niveau:
         else:
             print("Deplacement impossible ("+str(joueur.PM)+" PM restants).")
 
-    def calculTacle(self, joueur):
+    def calculTacle(self, fuyard, posX=None,posY=None):
+        if posX == None:
+            posX = fuyard.posX
+            posY = fuyard.posY
         tacleurs = []
-        tacleurs.append(self.getJoueurSur(joueur.posX, joueur.posY+1))
-        tacleurs.append(self.getJoueurSur(joueur.posX, joueur.posY-1))
-        tacleurs.append(self.getJoueurSur(joueur.posX+1, joueur.posY))
-        tacleurs.append(self.getJoueurSur(joueur.posX-1, joueur.posY))
-        fuite = joueur.fuite
+        tacleurs.append(self.getJoueurSur(posX, posY+1))
+        tacleurs.append(self.getJoueurSur(posX, posY-1))
+        tacleurs.append(self.getJoueurSur(posX+1, posY))
+        tacleurs.append(self.getJoueurSur(posX-1, posY))
+        try: # Quand la posX et posY donné est collé au fuyard, il est pris dans les tacleurs
+            tacleurs.remove(fuyard)
+        except:
+            pass
         ratio = 1
         for tacleur in tacleurs:
             if tacleur is not None:
                 tacle = tacleur.tacle
-                ratio *= float(fuite + 2) / float(2*(tacle +2))
+                ratio *= float(fuyard.fuite + 2) / float(2*(tacle +2))
         ratio = min(ratio,1)
         ratio = max(ratio,0)
-        pmApresTacle = int(round(joueur.PM * ratio))
-        paApresTacle = int(round(joueur.PA * ratio))
-        return max(0,int(joueur.PA - paApresTacle)), max(0,int(joueur.PM - pmApresTacle))
+        pmApresTacle = int(round(fuyard.PM * ratio))
+        paApresTacle = int(round(fuyard.PA * ratio))
+        return max(0,int(fuyard.PA - paApresTacle)), max(0,int(fuyard.PM - pmApresTacle))
 
     @staticmethod
     def getCasesAXDistanceDe(case_x,case_y,distance):
@@ -1200,6 +1206,7 @@ class Niveau:
         team1 = pygame.image.load(constantes.image_team_1).convert_alpha()
         team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
         prevision = pygame.image.load(constantes.image_prevision).convert()
+        prevision_tacle = pygame.image.load(constantes.image_prevision_tacle).convert()
         zone = pygame.image.load(constantes.image_zone).convert()
         #On parcourt la liste du niveau
         num_ligne = 0
@@ -1286,8 +1293,25 @@ class Niveau:
                     tab_cases_previ = self.pathfinder.pathFinding(self,case_x,case_y,self.tourDe)
                     if tab_cases_previ != None:
                         if len(tab_cases_previ) <= self.tourDe.PM:
+                            pa_tacle,pm_tacle = self.calculTacle(self.tourDe)
+                            cumulTacle = [0, 0]
+                            restePM = self.tourDe.PM
+                            restePA = self.tourDe.PA
                             for case in tab_cases_previ:
-                                fenetre.blit(prevision, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
+                                if pm_tacle > 0 or pa_tacle > 0:
+                                    cumulTacle[0] += pm_tacle
+                                    cumulTacle[1] += pa_tacle
+                                if cumulTacle[0] <= restePM and cumulTacle[1] <= restePA:
+                                    restePM -= 1 + pm_tacle
+                                    restePA -= pa_tacle
+                                    fenetre.blit(prevision, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
+                                else:
+                                    fenetre.blit(prevision_tacle, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
+                                if cumulTacle[0] != 0 or cumulTacle[1] != 0:
+                                    self.tourDe.vue = Overlays.VueForOverlay(self.fenetre, case_x*constantes.taille_sprite,case_y*constantes.taille_sprite, 30, 30,self.tourDe)
+                                    self.tourDe.setOverlayTextGenerique("-"+str(cumulTacle[0])+"PM\n-"+str(cumulTacle[1])+"PA")
+                                    self.tourDe.overlay.afficher(self.tourDe.posX*constantes.taille_sprite,self.tourDe.posY*constantes.taille_sprite)
+                                pa_tacle, pm_tacle = self.calculTacle(self.tourDe,case[0],case[1])
                 else:
                     tab_cases_previ = self.getZoneDeplacementJoueur(joueurPointe)
                     if tab_cases_previ != None:

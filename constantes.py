@@ -25,6 +25,7 @@ image_vide_2 = "images/vide2.png"
 image_team_1 = "images/T1.png"
 image_team_2 = "images/T2.png"
 image_prevision = "images/prevision.png"
+image_prevision_tacle = "images/prevision_tacle.png"
 image_zone = "images/zone.png"
 
 def normaliser(chaine):
