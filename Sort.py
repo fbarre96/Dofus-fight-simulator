@@ -118,7 +118,10 @@ class Sort:
                 print(caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
                 randomVal = round(random.random(),2)
-                isCC = (randomVal*100 <= chanceCC)
+                if self.probaCC == 0:
+                    isCC = False
+                else:
+                    isCC = (randomVal*100 <= chanceCC)
                 if isCC:
                     print("Coup Critique !")
                     effetsSort = self.effetsCC
