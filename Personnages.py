@@ -329,13 +329,13 @@ class Personnage(object):
             Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
