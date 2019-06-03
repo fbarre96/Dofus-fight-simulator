@@ -463,17 +463,17 @@ class Personnage(object):
             Retire l'état Téléfrag.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Rayon Obscur",92,5,1,4,[Effets.EffetDegats(54,62,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(27,31,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(68,76,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(34,38,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+                Sort.Sort("Rayon Obscur",92,5,1,4,[Effets.EffetDegats(27,31,"Terre",etat_requis="!Telefrag"), Effets.EffetDegats(54,62,"Terre",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(34,38,"Terre",etat_requis="!Telefrag"),Effets.EffetDegats(68,76,"Terre",etat_requis="Telefrag",consomme_etat=True)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
             Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
-            Retire l'état Téléfrag.""", chaine=True),
+            Retire l'état Téléfrag.""", chaine=False),
 
-                Sort.Sort("Rayon Obscur",141,5,1,5,[Effets.EffetDegats(60,68,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(30,34,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(74,82,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(37,41,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+                Sort.Sort("Rayon Obscur",141,5,1,5,[Effets.EffetDegats(30,34,"Terre",etat_requis="!Telefrag"), Effets.EffetDegats(60,68,"Terre",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(37,41,"Terre",etat_requis="!Telefrag"),Effets.EffetDegats(74,82,"Terre",etat_requis="Telefrag",consomme_etat=True)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
             Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
-            Retire l'état Téléfrag.""", chaine=True),
+            Retire l'état Téléfrag.""", chaine=False),
 
-                Sort.Sort("Rayon Obscur",187,5,1,6,[Effets.EffetDegats(66,74,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(33,37,"Terre",etat_requis="!Telefrag")],[Effets.EffetDegats(80,88,"Terre",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(40,44,"Terre",etat_requis="!Telefrag")],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
+                Sort.Sort("Rayon Obscur",187,5,1,6,[Effets.EffetDegats(33,37,"Terre",etat_requis="!Telefrag"), Effets.EffetDegats(66,74,"Terre",etat_requis="Telefrag",consomme_etat=True)],[Effets.EffetDegats(40,44,"Terre",etat_requis="!Telefrag"),Effets.EffetDegats(80,88,"Terre",etat_requis="Telefrag",consomme_etat=True)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Terre en ligne.
             Les dommages de base du sort sont doublés contre les ennemis dans l'état Téléfrag.
-            Retire l'état Téléfrag.""", chaine=True)
+            Retire l'état Téléfrag.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Rayon Ténébreux",195,3,1,5,[Effets.EffetDegats(19,23,"Terre"),Effets.EffetDegats(19,23,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],[Effets.EffetDegats(23,27,"Terre"),Effets.EffetDegats(23,37,"terre",zone=Zones.TypeZoneCercleSansCentre(2),cibles_possibles="Ennemis",etat_requis="Telefrag")],5,3,2,0,1,"cercle",True,description="""Occasionne des dommages Terre.
