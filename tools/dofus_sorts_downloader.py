@@ -58,7 +58,7 @@ def random_headers():
 url = "https://www.dofus.com/fr/mmorpg/encyclopedie/classes/"
 url_sorts = "https://www.dofus.com/fr/mmorpg/encyclopedie/sorts/details?"
 url_classes = ["7-eniripsa","6-ecaflip","8-iop","9-cra","1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","5-xelor","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
-url_classes = ["7-eniripsa","6-ecaflip","8-iop","9-cra","1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
+url_classes = ["7-eniripsa","6-ecaflip","8-iop","1-feca","11-sacrieur","10-sadida","2-osamodas","3-enutrof","4-sram","5-xelor","12-pandawa","13-roublard","14-zobal","15-steamer","16-eliotrope","17-huppermage","18-ouginak"]
 
 if len(sys.argv) > 1:
     classes = sys.argv[1:]
@@ -122,9 +122,9 @@ for classe in classes:
             sorts_attr = div_sort.find("span", {"class": "ak-spell-po-pa"}).string.strip()
             PO_valeurs = sorts_attr.split("PO")[0].strip()
             PO_min_max = PO_valeurs.split("-")
-            if len(PO_min_max) == 1 :# PO min et max sont égaux
-                po_min = str(PO_min_max[0].strip())
-                po_max = po_min
+            if len(PO_min_max) == 1 :# PO min 0 et po indique est PO  max
+                po_max = str(PO_min_max[0].strip())
+                po_min = 0
             elif len(PO_min_max) == 2:
                 po_min = str(PO_min_max[0].strip())
                 po_max = str(PO_min_max[1].strip())

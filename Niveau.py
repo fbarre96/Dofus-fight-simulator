@@ -323,16 +323,41 @@ class Niveau:
                     if self.structure[case[1]][case[0]].type != "v":
                         print("Un obstacle bloque ce chemin.")
                         break
-                    joueur.PM -= 1
-                    aBouge, piegeDeclenche = joueur.bouge(self,case[0],case[1])
-                    if piegeDeclenche:
-                        break
+                    PAPerdus, PMPerdus = self.calculTacle(joueur)
+                    if joueur.PM - PMPerdus > 0 and joueur.PA - PAPerdus >= 0:
+                        if PMPerdus > 1:
+                            print("Taclé, le joueur perd "+str(PMPerdus)+" PM et "+str(PAPerdus)+" PA")
+                        joueur.PM -= PMPerdus + 1 
+                        joueur.PA -= PAPerdus
+                        aBouge, piegeDeclenche = joueur.bouge(self,case[0],case[1])
+                        if piegeDeclenche:
+                            break
+                    else:
+                        print("Le joueur est complétement taclé !")
                 print("PA : "+str(joueur.PA))
                 print("PM : "+str(joueur.PM))
             else:
                 print("Deplacement  impossible ("+str(joueur.PM)+" PM restants).")
         else:
             print("Deplacement impossible ("+str(joueur.PM)+" PM restants).")
+
+    def calculTacle(self, joueur):
+        tacleurs = []
+        tacleurs.append(self.getJoueurSur(joueur.posX, joueur.posY+1))
+        tacleurs.append(self.getJoueurSur(joueur.posX, joueur.posY-1))
+        tacleurs.append(self.getJoueurSur(joueur.posX+1, joueur.posY))
+        tacleurs.append(self.getJoueurSur(joueur.posX-1, joueur.posY))
+        fuite = joueur.fuite
+        ratio = 1
+        for tacleur in tacleurs:
+            if tacleur is not None:
+                tacle = tacleur.tacle
+                ratio *= float(fuite + 2) / float(2*(tacle +2))
+        ratio = min(ratio,1)
+        ratio = max(ratio,0)
+        pmApresTacle = int(round(joueur.PM * ratio))
+        paApresTacle = int(round(joueur.PA * ratio))
+        return max(0,int(joueur.PA - paApresTacle)), max(0,int(joueur.PM - pmApresTacle))
 
     @staticmethod
     def getCasesAXDistanceDe(case_x,case_y,distance):
