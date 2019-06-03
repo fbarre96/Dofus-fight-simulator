@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*
 import constantes
 import Overlays
+import random
 class Sort:
     def __init__(self,nom,lvl,coutPA,POMin,POMax, tableauEffets, tableauEffetsCC, probaCC, nbLancerParTour, nbLancerParTourParJoueur, nbTourEntreDeux, POMod,typeLancer,ldv, **kwargs):
         self.nom = nom
@@ -115,9 +116,18 @@ class Sort:
                 caraclanceur.PA -= coutPA
                 self.marquerLancer(joueurCible)
                 print(caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
+                chanceCC = caraclanceur.cc + self.probaCC
+                randomVal = round(random.random(),2)
+                isCC = (randomVal*100 <= chanceCC)
+                if isCC:
+                    print("Coup Critique !")
+                    effetsSort = self.effetsCC
+                else:
+                    effetsSort = self.effets
                 sestApplique = True
                 # Application des effets
-                for effet in self.effets:
+                for effet in effetsSort:
+                    effet.setCritique(isCC)
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine == True:
                         if sestApplique == True: # Si l'effet a été appliqué, on continue

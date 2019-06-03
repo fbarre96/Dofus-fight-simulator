@@ -31,6 +31,12 @@ class Effet(object):
         self.typeZone = kwargs.get('zone',Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
 
+    def setCritique(self,val):
+        self.kwargs["isCC"] = val
+
+    def isCC(self):
+        return self.kwargs.get("isCC",False)
+
     def deepcopy(self):
         return Effet(**self.kwargs)
 
@@ -156,14 +162,13 @@ class EffetDegats(Effet):
         super(EffetDegats, self).__init__(**kwargs)
 
     def deepcopy(self):
-        return EffetDegats(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+        cpy = EffetDegats(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+        return cpy
 
     def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
         if joueurCaseEffet == None:
             return None
         
-        baseDeg=random.randrange(self.minJet,self.maxJet+1)
-        print("Will do damage "+str(baseDeg)+ " to "+str(joueurCaseEffet.classe))
         carac = 0
         dos = 0
         resFixes = 0
@@ -202,6 +207,10 @@ class EffetDegats(Effet):
             if self.kwargs.get("bypassDmgCalc",False) == False:
                 carac += joueurLanceur.doPiegesPui
                 dos += joueurLanceur.doPieges
+        if self.isCC():
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                dos += joueurLanceur.doCri
+            resFixes += joueurCaseEffet.reCc
         if self.kwargs.get("bypassDmgCalc",False) == False:
             if nomSort != "cac":
                 dos += joueurLanceur.doSorts
@@ -220,6 +229,7 @@ class EffetDegats(Effet):
                 dos += joueurLanceur.doDist
                 resFixes += joueurCaseEffet.reDist
 
+        baseDeg=random.randrange(self.minJet,self.maxJet+1)
         #Etats du lanceur
         total = 0
         for etat in joueurLanceur.etats:

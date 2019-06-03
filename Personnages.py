@@ -38,7 +38,7 @@ class Personnage(object):
         self.fo = int(caracsPrimaires.get("Force",0))
         self.int = int(caracsPrimaires.get("Intelligence",0))
         self.pui = int(caracsPrimaires.get("Puissance",0))
-        self.cc = int(caracsPrimaires.get("Coups critiques",0)) #TODO
+        self.cc = int(caracsPrimaires.get("Coups Critiques",0))
         self.sagesse = int(caracsPrimaires.get("Sagesse",0))    # Aucune utilité dans le simulateur de combat
         self.caracsPrimaires = caracsPrimaires
 
@@ -55,7 +55,7 @@ class Personnage(object):
         self.caracsSecondaires = caracsSecondaires
 
         self.do = int(dommages.get("Dommages",0))
-        self.doCri = int(dommages.get("Dommages critiques",0))          #TODO
+        self.doCri = int(dommages.get("Dommages critiques",0))
         self.doNeutre = int(dommages.get("Neutre",0))                   
         self.doTerre = int(dommages.get("Terre",0))
         self.doFeu = int(dommages.get("Feu",0))
@@ -82,7 +82,7 @@ class Personnage(object):
         self.rePerEau = int(resistances.get("Eau%",0))                  
         self.reAir = int(resistances.get("Air",0))                      
         self.rePerAir = int(resistances.get("Air%",0))                  
-        self.reCc = int(resistances.get("Coups critiques",0))           #TODO
+        self.reCc = int(resistances.get("Coups critiques",0)) 
         self.rePou = int(resistances.get("Poussee",0))                  
         self.reDist = int(resistances.get("Distance",0))                
         self.reMelee = int(resistances.get("Melee",0))                  
