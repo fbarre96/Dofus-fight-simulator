@@ -339,7 +339,7 @@ class Personnage(object):
             Augmente les PA en zone le tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Conservation",150,2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur")],[],0,1,1,2,0,"cercle",True,description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
+                Sort.Sort("Conservation",150,2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),faire_au_vide=True,cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),faire_au_vide=True,cibles_possibles="Allies|Lanceur")],[],0,1,1,2,0,"cercle",True,description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
             Au tour suivant, les cibles réduisent les dommages subis de 30%.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -397,7 +397,7 @@ class Personnage(object):
             Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xelor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 1,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
+                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xelor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 0,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
             À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente.
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
