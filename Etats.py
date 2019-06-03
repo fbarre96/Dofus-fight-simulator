@@ -786,9 +786,10 @@ class EtatContre(Etat):
         if cibleAttaque.team != attaquant.team:
             distance = abs(attaquant.posX-cibleAttaque.posX)+abs(attaquant.posY-cibleAttaque.posY)
             if distance == 1:
-                retour = int(((self.pourcentage/100)*totalPerdu) + cibleAttaque.doRenvoi)
-                s=Sort.Sort("Contre",0,0,1,[Effets.EffetDegats(retour,retour,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis", bypassDmgCalc=True)],99,99,0,0,"cercle")
-                s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, attaquant.posX, attaquant.posY)
+                if typeDegats.lower() in ["terre","eau","air","feu","neutre"]:
+                    retour = int(((self.pourcentage/100)*totalPerdu) + cibleAttaque.doRenvoi)
+                    s=Sort.Sort("Contre",0,0,0,1,[Effets.EffetDegats(retour,retour,typeDegats,zone=Zones.TypeZoneCercle(self.tailleZone),cibles_possibles="Ennemis", bypassDmgCalc=True)],[],0,99,99,0,0,"cercle",False)
+                    s.lance(cibleAttaque.posX,cibleAttaque.posY, niveau, attaquant.posX, attaquant.posY)
 
 class EtatEffetSiSubit(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
