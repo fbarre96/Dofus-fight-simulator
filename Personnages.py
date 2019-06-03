@@ -47,8 +47,8 @@ class Personnage(object):
         self.retPM = int(caracsSecondaires.get("Retrait PM",0))
         self.esqPM = int(caracsSecondaires.get("Esquive PM",0))
         self.soins = int(caracsSecondaires.get("Soins",0))      #TODO
-        self.tacle = int(caracsSecondaires.get("Tacle",0))      #TODO
-        self.fuite = int(caracsSecondaires.get("Fuite",0))      #TODO
+        self.tacle = int(caracsSecondaires.get("Tacle",0))      
+        self.fuite = int(caracsSecondaires.get("Fuite",0))      
         self.ini = int(caracsSecondaires.get("Initiative",0))    
         self.invocationLimite = int(caracsSecondaires.get("Invocation",1))    
         self.prospection = int(caracsSecondaires.get("Prospection",0))  # Aucune utilité dans le simulateur de combat
@@ -182,6 +182,8 @@ class Personnage(object):
         elif(classe=="Xelor"):
             retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
+            sortieInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Intaclable")],[],0, 99,99,0,0,"cercle",False)
+            deplacementInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Intaclabe",0,0,0,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Intaclable",0,1,"fuite",999999), etat_requis_cibles="!Intaclable")],[],0, 99,99,0,0,"cercle",False)
             activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
             activationRune = [Effets.EffetTp(generer_TF=True, faire_au_vide=True)]
@@ -363,7 +365,7 @@ class Personnage(object):
                 Sort.Sort("Raulebaque",137,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,2,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Instabilité Temporelle",160,3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
+                Sort.Sort("Instabilité Temporelle",160,3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,deplacementInstabiliteTemporelle,sortieInstabiliteTemporelle, 2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
             Les entités dans le glyphe sont dans l'état Intaclable.
             Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
             ]))
@@ -676,7 +678,7 @@ class Personnage(object):
             Interdit l'utilisation des armes et du sort Colère de Iop.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Agitation",170,2,0,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Agitation",0,1,"PM",2)),Effets.EffetEtat(Etats.Etat("Intaclable",0,1))],[],0,1,1,2,0,"cercle",True,description="""Augmente les PM et rend Intaclable pour le tour en cours.""", chaine=True)
+                Sort.Sort("Agitation",170,2,0,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Agitation",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Intaclable",0,1,"fuite",999999))],[],0,1,1,2,0,"cercle",True,description="""Augmente les PM et rend Intaclable pour le tour en cours.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Tempête de Puissance",62,3,3,4,[Effets.EffetDegats(24,28,"Feu")],[Effets.EffetDegats(29,33,"Feu")],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu.""", chaine=True),
@@ -859,6 +861,20 @@ class Personnage(object):
                 niveau.pieges.remove(piege)
             i+=1
             nbPieges = len(niveau.pieges)
+        # Verifie les entrées et sorties de glyphes:
+        for glyphe in niveau.glyphes:
+            if glyphe.actif():
+                # Test Entre dans la glyphe
+                if glyphe.sortDeplacement.APorte(glyphe.centre_x, glyphe.centre_y,self.posX,self.posY, 0):
+                    for effet in glyphe.sortDeplacement.effets:
+                        niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
+                else: # n'est pas dans la glyphe
+                    dernierePos = self.historiqueDeplacement[-1]
+                    # Test s'il était dans la glyphe avant
+                    
+                    if glyphe.sortDeplacement.APorte(glyphe.centre_x, glyphe.centre_y,dernierePos[0],dernierePos[1], 0):
+                        for effet in glyphe.sortSortie.effets:
+                            niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
         niveau.depileEffets()
         return True,piegeDeclenche

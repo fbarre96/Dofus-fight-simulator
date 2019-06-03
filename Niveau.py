@@ -74,11 +74,15 @@ def ajoutTrie(liste,noeud):
 class Glyphe:
     """@summary: Classe décrivant une glyphe dans le jeu Dofus.
      Une glyphe est une zone au sol qui déclenche un effet sur les joueurs se trouvant dessus au début de leur tour."""
-    def __init__(self, nomSort, sortMono, dureeGlyphe, centre_x, centre_y, lanceur, couleur):
+    def __init__(self, nomSort, sortMono,sortDeplacement, sortSortie, dureeGlyphe, centre_x, centre_y, lanceur, couleur):
         """@summary: Initialise une glyphe.
         @nomSort: le nom du sort à l'origine de la glyphe
         @type: string
         @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
+        @type: Sort
+        @sortDeplacement: Le sort qui va s'activer sur un joueur qui rentre dans la glyphe
+        @type: Sort
+        @sortSortie: Le sort qui va s'activer sur un joueur qui sort de la glyphe
         @type: Sort
         @dureeGlyphe: Le nombre de début de tour du poseur que la glyphe va vivre
         @type: int
@@ -92,6 +96,8 @@ class Glyphe:
         @type: tuple (R,G,B)"""
         self.nomSort = nomSort
         self.sortMono = sortMono
+        self.sortDeplacement = sortDeplacement
+        self.sortSortie = sortSortie
         self.duree = dureeGlyphe
         self.centre_x = centre_x
         self.centre_y = centre_y
@@ -106,20 +112,20 @@ class Piege:
     """@summary: Classe décrivant un piège dans le jeu Dofus.
      Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
     def __init__(self,nomSort, zone_declenchement,effets, centre_x, centre_y, lanceur, couleur):
-        """@summary: Initialise une glyphe.
-        @nomSort: le nom du sort à l'origine de la glyphe
+        """@summary: Initialise un piège.
+        @nomSort: le nom du sort à l'origine du piège
         @type: string
         @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
         @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
         @type: Sort
-        @centre_x: la coordonnée x du centre de la zone de la glyphe.
+        @centre_x: la coordonnée x du centre de la zone du piège.
         @type: int
-        @centre_y: la coordonnée y du centre de la zone de la glyphe.
+        @centre_y: la coordonnée y du centre de la zone du piège.
         @type: int
-        @lanceur: le joueur ayant posé la glyphe.
+        @lanceur: le joueur ayant posé le piège.
         @type: Personnage
-        @couleur: la coordonnée x du centre de la zone de la glyphe.
+        @couleur: la coordonnée x du centre de la zone du piège.
         @type: tuple (R,G,B)"""
         self.zone_declenchement = zone_declenchement
         self.nomSort = nomSort
@@ -137,20 +143,20 @@ class Rune:
     """@summary: Classe décrivant une rune dans le jeu Dofus.
      Une rune est une zone au sol qui se déclenche à la fin de sa durée de vie."""
     def __init__(self,nomRune, duree, effets, centre_x, centre_y, lanceur, couleur):
-        """@summary: Initialise une glyphe.
-        @nomSort: le nom du sort à l'origine de la glyphe
+        """@summary: Initialise une rune.
+        @nomSort: le nom du sort à l'origine de la rune
         @type: string
         @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
-        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
+        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la rune. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
         @type: Sort
-        @centre_x: la coordonnée x du centre de la zone de la glyphe.
+        @centre_x: la coordonnée x du centre de la zone de la rune.
         @type: int
-        @centre_y: la coordonnée y du centre de la zone de la glyphe.
+        @centre_y: la coordonnée y du centre de la zone de la rune.
         @type: int
-        @lanceur: le joueur ayant posé la glyphe.
+        @lanceur: le joueur ayant posé la rune.
         @type: Personnage
-        @couleur: la coordonnée x du centre de la zone de la glyphe.
+        @couleur: la coordonnée x du centre de la zone de la rune.
         @type: tuple (R,G,B)"""
         self.duree = duree
         self.nom = nomRune
@@ -562,12 +568,12 @@ class Niveau:
         longueurTab = len(self.runes)
         #Parcours des runes
         while i < longueurTab:
-            #On teste si la glyphe appartient à celui qui vient de débuter son tour
+            #On teste si la rune appartient à celui qui vient de débuter son tour
             if self.runes[i].lanceur == duPersonnage:
                 #Si la rune était active, on réduit sa durée
                 if self.runes[i].actif():
                     self.runes[i].duree -= 1 # Réduction du temps restant
-                    #Test si la glyphe est terminée
+                    #Test si la rune est terminée
                     if(self.runes[i].duree <= 0):
                         #Si c'est le cas on l'active puis on la supprime
                         self.runes[i].activation(self)
@@ -1038,7 +1044,7 @@ class Niveau:
         @type: int
 
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
-        if type(effet) == type(Effets.EffetGlyphe(None,None,None,None)):
+        if isinstance(type(effet),Effets.EffetGlyphe):
             effetALancer = effet.deepcopy()
             effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
             return True
@@ -1359,6 +1365,16 @@ class Niveau:
 
         @return: L'indice d'ajout de la glype"""
         self.glyphes.append(glyphe)
+        if glyphe.actif():
+            casesDansPorte = self.getZonePorteSort(glyphe.sortDeplacement, glyphe.centre_x, glyphe.centre_y,0)
+            for effet in glyphe.sortDeplacement.effets:
+                ciblesTraitees = []
+                for caseDansPorte in casesDansPorte:
+                    cibleDansPorte = self.getJoueurSur(caseDansPorte[0],caseDansPorte[1])
+                    if cibleDansPorte != None:
+                        if cibleDansPorte not in ciblesTraitees:
+                            sestApplique, cibles=self.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y, glyphe.sortDeplacement.nom, cibleDansPorte.posX, cibleDansPorte.posY, glyphe.lanceur)
+                            ciblesTraitees += cibles
         return len(self.glyphes)-1
 
     def posePiege(self,piege):
