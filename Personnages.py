@@ -8,9 +8,11 @@ import Overlays
 import pygame
 from pygame.locals import *
 import json
+from copy import deepcopy
+import copy 
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
-    def __init__(self, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone=""):
+    def __init__(self, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone="",sorts=None):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
@@ -96,8 +98,10 @@ class Personnage(object):
         self.lvl = int(lvl)
         self.classe = classe
 
-        self.sorts = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
-        
+        if sorts is None:
+            self.sorts = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
+        else:
+            self.sorts = sorts
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
         self.etats = []                                   # La liste des états affectant le personange
@@ -108,6 +112,8 @@ class Personnage(object):
         self.invocations = []
         self.overlayTexte = ""
         self.team = int(team)
+
+        self.msgsPrevisu = []
         
         if not(icone.startswith("images/")):
             self.icone = ("images/"+icone)
@@ -117,6 +123,27 @@ class Personnage(object):
         # Overlay affichange le nom de classe et sa vie restante
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText("classe",(210,105,30)), Overlays.ColoredText("overlayTexte",(224,238,238)),(56,56,56))
     
+    def __deepcopy__(self,memo):
+        toReturn = Personnage(self.classe,self.lvl,self.team,
+                    {"PA":self.PA,"PM":self.PM,"PO":self.PO,"Vitalite":self.vie,"Agilite":self.agi,"Chance":self.cha,"Force":self.fo,"Intelligence":self.int,"Puissance":self.pui,"Coups Critiques":self.cc,"Sagesse":self.sagesse},
+                    {"Retrait PA":self.retPA,"Esquive PA":self.esqPA, "Retrait PM":self.retPM,"Esquive PM":self.esqPM,"Soins":self.soins,"Tacle":self.tacle,"Fuite":self.fuite,"Initiative":self.ini,"Invocation":self.invocationLimite,"Prospection":self.prospection},
+                    {"Dommages":self.do,"Dommages critiques":self.doCri,"Neutre":self.doNeutre,"Terre":self.doTerre,"Feu":self.doFeu,"Eau":self.doEau,"Air":self.doAir,"Renvoi":self.doRenvoi,"Maitrise d'arme":self.doMaitriseArme,"Pieges":self.doPieges,"Pieges Puissance":self.doPiegesPui,"Poussee":self.doPou,"Sorts":self.doSorts,"Armes":self.doArmes,"Distance":self.doDist,"Melee":self.doMelee},
+                    {"Neutre":self.reNeutre,"Neutre%":self.rePerNeutre,"Terre":self.reTerre,"Terre%":self.rePerTerre,"Feu":self.reFeu,"Feu%":self.rePerFeu,"Eau":self.reEau,"Eau%":self.rePerEau,"Air":self.reAir,"Air%":self.rePerAir,"Coups critiques":self.reCc,"Poussee":self.rePou,"Distance":self.reDist,"Melee":self.reMelee},
+                        self.icone,
+                        self.sorts)
+        toReturn.posX = self.posX
+        toReturn.posY = self.posY
+        toReturn._PA = self._PA
+        toReturn._PM = self._PM
+        toReturn.etats = deepcopy(self.etats)
+        toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
+        toReturn.posDebTour = self.posDebTour
+        toReturn.posDebCombat = self.posDebCombat
+        toReturn.invocateur = self.invocateur
+        toReturn.invocations = deepcopy(self.invocations)
+        toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+        return toReturn
+
     def setOverlayText(self):
         self.overlayTexte = str(self.vie) +" PV"
         boubou = self.getBoucliers()
@@ -986,7 +1013,7 @@ class Personnage(object):
 
         return pb_restants
 
-    def subit(self,attaquant, niveau, degats,typeDegats):
+    def subit(self,attaquant, niveau, degats,typeDegats, shouldprint=True):
         """@summary: subit des dégâts de combats. Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
         @attaquant: Le joueur attaquant
         @type: Personnage
@@ -1033,8 +1060,9 @@ class Personnage(object):
         toprint = self.classe+" a "+str(self.vie) +"/"+str(self._vie)+" PV"
         if pb_restants > 0:
             toprint+= " et "+str(pb_restants)+" PB"
-        print("-"+str(totalPerdu)+" PV")
-        print(toprint)
+        if shouldprint:
+            print("-"+str(totalPerdu)+" PV")
+            print(toprint)
         if self.vie <= 0:
             niveau.tue(self)
         for etat in self.etats:

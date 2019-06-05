@@ -9,6 +9,7 @@ import Etats
 import Sort
 from pygame.locals import *
 import operator
+from copy import deepcopy
 class Noeud:
     """@summary: Classe servant à l'algorithme de recherche de chemin A*"""
     def __init__(self,x,y,cout=0,heur=0):
@@ -108,6 +109,7 @@ class Glyphe:
         """@summary: Test si la glyphe est encore active
             @return: Retourne un booléen qui vaut vrai si la glyphe est encore active, faux sinon"""
         return self.duree > 0
+
 class Piege:
     """@summary: Classe décrivant un piège dans le jeu Dofus.
      Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
@@ -138,6 +140,8 @@ class Piege:
 
     def aPorteDeclenchement(self,x,y):
         return self.zone_declenchement.testCaseEstDedans([self.centre_x,self.centre_y],[x,y],None)
+
+
 
 class Rune:
     """@summary: Classe décrivant une rune dans le jeu Dofus.
@@ -250,8 +254,29 @@ class PathFinding:
         self.cached_result = None
         return None
 
+class SaveStateNiveau(object):
+    def __init__(self,niveau):
+        self.joueursSave = []
+        for joueur in niveau.joueurs:
+            self.joueursSave.append(deepcopy(joueur))
+        self.tourIndex = niveau.tourIndex
+        self.structure = deepcopy(niveau.structure)
+        self.piegesSave = []
+        for piege in niveau.pieges:
+            self.piegesSave.append(deepcopy(piege))
+
+    def restore(self, niveau):
+        del niveau.joueurs
+        niveau.joueurs = self.joueursSave
+        niveau.tourIndex = self.tourIndex
+        niveau.tourDe = niveau.joueurs[self.tourIndex]
+        niveau.structure = self.structure
+        del niveau.pieges
+        niveau.pieges = self.piegesSave
+
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
+
     def __init__(self, fenetre, joueurs,font):
         """@summary: initialise le niveau.
             @fenetre: la fenêtre créé par pygame
@@ -293,7 +318,7 @@ class Niveau:
         self.initPersonnages()
         # path finding class
         self.pathfinder = PathFinding()
-
+        self.cachedPrevisu = [None,0,0,None]
     def ajoutFileEffets(self,effet,joueurCaseEffet, joueurLanceur):
         self.fileEffets.append([effet,joueurCaseEffet, joueurLanceur])
 
@@ -429,7 +454,7 @@ class Niveau:
         #Oblige de faire delta distance à la main car sur les colonnes les plus loins du centre il ny à q'une ligne à ajouter.
         #Test si la coordonnée x extême gauche est dans le grille de jeu
         if departX-delta >=0:
-            #Test si la coordonnée y est dans le grille de jeu
+            #Test si la cooficherrdonnée y est dans le grille de jeu
             if departY-distance+delta>=0:
                 retour.append([departX-delta, departY-distance+delta])
         #Test si la coordonnée extême drotie x est dans le grille de jeu
@@ -1024,7 +1049,7 @@ class Niveau:
             print("Deplacement pas implemente")
         return None
 
-    def __appliquerEffetSansBoucleSurZone(self,effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y):
+    def __appliquerEffetSansBoucleSurZone(self,effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu):
         """@summary: Fonction qui applique un effet ayant une zone sans la prendre en compte (les glyphes).
         @effet: L'effet qu'il faut appliquer
         @type: Effet
@@ -1042,7 +1067,7 @@ class Niveau:
         @type: int
         @prov_y: Coordonné y de la case d'origine de l'effet
         @type: int
-
+        
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
         if isinstance(type(effet),Effets.EffetGlyphe):
             effetALancer = effet.deepcopy()
@@ -1050,7 +1075,7 @@ class Niveau:
             return True
         return False
 
-    def __appliquerEffetSurZone(self,zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y):
+    def __appliquerEffetSurZone(self,zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu):
         """@summary: Fonction qui applique un effet ayant une zone.
         @zoneEffet: la zone de l'effet
         @type: Effet
@@ -1072,7 +1097,10 @@ class Niveau:
         @type: int
         @prov_y: Coordonné y de la case d'origine de l'effet
         @type: int
-
+        @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
+        @type: bool
+        @previsu: Un objet de type previsualisation a remplir
+        @type: Previsu
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
 
@@ -1106,7 +1134,7 @@ class Niveau:
         
         return sestApplique, ciblesTraitees
 
-    def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None):
+    def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None, isPrevisu=False, previsu=None):
         """@summary: Fonction qui applique un effet.
         @effet: L'effet qu'il faut appliquer
         @type: Effet
@@ -1122,7 +1150,10 @@ class Niveau:
         @type: int
         @lanceur: le lanceur de l'effet, None si le lanceur est sur prov_x;prov_y
         @type: Personnage, ou None
-
+        @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
+        @type: bool
+        @previsu: Un objet de type previsualisation a remplir
+        @type: Previsu
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
         if lanceur == None:
@@ -1139,10 +1170,10 @@ class Niveau:
             case_cible_y = joueurLanceur.posY
         zoneEffet = self.getZoneEffet(effet, case_cible_x,case_cible_y)
         #Effet non boucles
-        sestApplique = self.__appliquerEffetSansBoucleSurZone(effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y)
+        sestApplique = self.__appliquerEffetSansBoucleSurZone(effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
         if sestApplique == True:
             return sestApplique,ciblesTraitees
-        return self.__appliquerEffetSurZone(zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y)
+        return self.__appliquerEffetSurZone(zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
 
     def getJoueurs(self, cibles):
         """@summary: Retourne les joueurs correspondant à une liste de classes.
@@ -1205,7 +1236,6 @@ class Niveau:
 
     def afficher(self, fenetre, sortSelectionne, mouse_xy):
         """@summary: Méthode permettant d'afficher le niveau"""
-
         #Chargement des images (seule celle de team contiennent de la transparence)
         vide1 = pygame.image.load(constantes.image_vide_1).convert()
         vide2 = pygame.image.load(constantes.image_vide_2).convert()
@@ -1217,6 +1247,7 @@ class Niveau:
         #On parcourt la liste du niveau
         num_ligne = 0
         tab_cases_previ = []
+        previsuToShow = []
         for ligne in self.structure:
             #Onparcourt les listes de lignes
             num_case = 0
@@ -1272,7 +1303,14 @@ class Niveau:
                                         if len(effet.etatRequisCibleDirect)==0:
                                             if effet.APorteZone(case_x,case_y,num_case,num_ligne, self.tourDe.posX, self.tourDe.posY):
                                                 tab_cases_previ.append([num_case,num_ligne])
-
+                                if self.cachedPrevisu[0] == sortSelectionne and self.cachedPrevisu[1] == case_x and self.cachedPrevisu[2] == case_y:
+                                    previsuToShow = self.cachedPrevisu[3]
+                                else:
+                                    for joueur in self.joueurs:
+                                        joueur.msgsPrevisu = []
+                                    previsuToShow = sortSelectionne.lance(self.tourDe.posX,self.tourDe.posY,self, case_x,case_y, self.tourDe,True)
+                                    self.cachedPrevisu = [sortSelectionne, case_x, case_y, previsuToShow]
+                                
                 if sprite.type == 'j':
                     joueurOnCase = self.getJoueurSur(num_case,num_ligne)
                     if joueurOnCase != None:
@@ -1321,7 +1359,19 @@ class Niveau:
                             fenetre.blit(prevision, (case[0]*constantes.taille_sprite,case[1]*constantes.taille_sprite))
                 
 
-
+        for jdp in previsuToShow:
+            joueur = jdp
+            x = jdp.posX*constantes.taille_sprite
+            y = jdp.posY*constantes.taille_sprite
+            afficherLeJoueur = True
+            if joueur.aEtat("Invisible"):
+                if joueur.team != self.tourDe.team:
+                    afficherLeJoueur = False
+            if afficherLeJoueur:
+                image = pygame.image.load(joueur.icone).convert_alpha()
+                #image.fill((255, 255, 0, 10), None, pygame.BLEND_RGBA_MULT)
+                fenetre.blit(image, (x,y))
+                
         #Afficher joueurs
         for joueur in self.joueurs:
             x = joueur.posX*constantes.taille_sprite
@@ -1335,14 +1385,19 @@ class Niveau:
                     fenetre.blit(team1, (x,y))
                 else:
                     fenetre.blit(team2, (x,y))
+                
                 joueur.vue = Overlays.VueForOverlay(self.fenetre, x, y, 30, 30,joueur)
+                for joueurPrevisualiser in previsuToShow:
+                    if joueurPrevisualiser.classe == joueur.classe:
+                        if len(joueurPrevisualiser.msgsPrevisu) > 0:
+                            joueur.setOverlayTextGenerique("\n".join(joueurPrevisualiser.msgsPrevisu))
                 fenetre.blit(pygame.image.load(joueur.icone).convert_alpha(), (x,y))
             else:
                 x = joueur.derniere_action_posX * constantes.taille_sprite
                 y = joueur.derniere_action_posY * constantes.taille_sprite
                 joueur.vue = Overlays.VueForOverlay(self.fenetre, x, y, 30, 30,joueur)
                 fenetre.blit(pygame.image.load(joueur.icone).convert_alpha(), (x,y))
-
+        
         #AfficherOverlays
         if mouse_xy[1] > constantes.y_sorts:
             for sort in self.tourDe.sorts:
@@ -1351,7 +1406,8 @@ class Niveau:
         else:
             for joueur in self.joueurs:
                 if joueur.vue.isMouseOver(mouse_xy):
-                    joueur.setOverlayText()
+                    if sortSelectionne is None:
+                        joueur.setOverlayText()
                     joueur.overlay.afficher(joueur.posX*constantes.taille_sprite,joueur.posY*constantes.taille_sprite)
 
     def poseGlyphe(self,glyphe):

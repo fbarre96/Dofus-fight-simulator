@@ -81,7 +81,7 @@ class Overlay(object):
         @return: -le tableau de ligne de texte qui rentreront dans la largeur demandées.
                  -la hauteur calculé une fois affiché
                  -la largeur calculé une fois affiché"""
-
+       
         maxWidth = 215 #largeur de l'overlay
         titreTexte = getattr(self.myobject, self.titre.texte) # titre de l'overlay
         contenuTexte = getattr(self.myobject, self.contenu.texte) # contenu de l'overlay

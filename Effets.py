@@ -30,12 +30,18 @@ class Effet(object):
         self.faireAuVide = kwargs.get('faire_au_vide',False)
         self.typeZone = kwargs.get('zone',Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
-
+        
     def setCritique(self,val):
         self.kwargs["isCC"] = val
 
     def isCC(self):
         return self.kwargs.get("isCC",False)
+
+    def setPrevisu(self,val):
+        self.kwargs["isPrevisu"] = val
+
+    def isPrevisu(self):
+        return self.kwargs.get("isPrevisu",False)
 
     def deepcopy(self):
         return Effet(**self.kwargs)
@@ -165,7 +171,7 @@ class EffetDegats(Effet):
         cpy = EffetDegats(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
         return cpy
 
-    def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
+    def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
         if joueurCaseEffet == None:
             return None
         
@@ -228,8 +234,13 @@ class EffetDegats(Effet):
             if self.kwargs.get("bypassDmgCalc",False) == False:
                 dos += joueurLanceur.doDist
                 resFixes += joueurCaseEffet.reDist
-
-        baseDeg=random.randrange(self.minJet,self.maxJet+1)
+        if howToChoose == "min":
+            baseDeg = self.minJet
+        elif howToChoose == "max":
+            baseDeg = self.maxJet
+        else:
+            baseDeg=random.randrange(self.minJet,self.maxJet+1)
+        
         #Etats du lanceur
         total = 0
         for etat in joueurLanceur.etats:
@@ -267,8 +278,7 @@ class EffetDegats(Effet):
         @type: Personnage
 
         @return: Le total de dégâts infligés"""
-        
-        joueurCaseEffet.subit(joueurLanceur,niveau,self.total,self.typeDegats)
+        joueurCaseEffet.subit(joueurLanceur,niveau,self.total,self.typeDegats,not self.isPrevisu())
         return self.total
 
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
@@ -282,7 +292,13 @@ class EffetDegats(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            if self.isPrevisu():
+                total_min = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"),"min")
+                total_max = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"),"max")
+                self.total = total_min
+                joueurCaseEffet.msgsPrevisu.append(str(total_min)+"-"+str(total_max))
+            else:
+                self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
             niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
@@ -337,7 +353,8 @@ class EffetVolDeVie(EffetDegats):
             
             joueurLanceur.vie += (self.total/2)
             joueurLanceur.vie = int(joueurLanceur.vie)
-            print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
+            if not self.isPrevisu():
+                print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
 
 class EffetDegatsSelonPMUtilises(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -471,7 +488,8 @@ class EffetRetPA(Effet):
                 if rand <= probaRet:
                     totalRet += 1
             joueurCaseEffet.PA -= totalRet
-            print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
+            if not self.isPrevisu():
+                print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
         
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -507,7 +525,8 @@ class EffetRetPM(Effet):
                 if rand <= probaRet:
                     totalRet += 1
             joueurCaseEffet.PM -= totalRet
-            print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PM")
+            if not self.isPrevisu():
+                print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PM")
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
