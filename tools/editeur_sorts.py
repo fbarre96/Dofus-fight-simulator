@@ -62,7 +62,7 @@ def CreateChargerSorts(classe):
             if isVariante:
                 levels = range(1,2)
             for level in levels:
-                text_func+="\n\tSort.Sort(\""+nom_sort+"\","
+                text_func+="\n\tSort.Sort(\""+str(nom_sort)+"\","
                 text_func+=str(int(sort_values[str(level)]["level"]))+","
                 text_func+=str(int(sort_values[str(level)]["PA"]))+","
                 try:

@@ -43,6 +43,8 @@ class Effet(object):
     def isPrevisu(self):
         return self.kwargs.get("isPrevisu",False)
 
+    def isReverseTreatmentOrder(self):
+        return self.kwargs.get("reversedTreatmentOrder",False)
     def deepcopy(self):
         return Effet(**self.kwargs)
 
@@ -147,6 +149,63 @@ class Effet(object):
     def afficher(self):
         """@summary: Affiche un effet dans la console (DEBUG)"""
         print("Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat)+" ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues))
+
+class EffetSoinPerPVMax(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet soinges une cible à hauteur d'un pourcentage de ses pv maxs."""
+    def __init__(self,pourcentage, **kwargs):
+        """@summary: Initialise un effet de dégâts.
+        @pourcentage: le pourcentage de la vie max à soigner
+        @type: int (1 à 100)
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.pourcentage = pourcentage
+        self.kwargs = kwargs
+        super(EffetSoinPerPVMax, self).__init__(**kwargs)
+
+    def deepcopy(self):
+        cpy = EffetSoinPerPVMax(self.pourcentage, **self.kwargs)
+        return cpy
+
+    def calculSoin(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
+        if joueurCaseEffet == None:
+            return None
+        total = int((self.pourcentage/100.0) * joueurCaseEffet._vie)
+        if joueurCaseEffet.vie + total > joueurCaseEffet._vie:
+            total = joueurCaseEffet._vie - joueurCaseEffet.vie
+        return total
+    def appliquerSoin(self,niveau,joueurCaseEffet, joueurLanceur):
+        """@summary: calcul les dégâts à infligés et applique ces dégâts à la cible.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+
+        @return: Le total de dégâts infligés"""
+        joueurCaseEffet.soigne(joueurLanceur,niveau,self.total,not self.isPrevisu())
+        return self.total
+
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        if joueurCaseEffet is not None:
+            self.total = self.calculSoin(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            if self.isPrevisu():
+                joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.total))
+            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+
+    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
+        if joueurCaseEffet is not None:
+            self.appliquerSoin(niveau,joueurCaseEffet, joueurLanceur)
 
 class EffetDegats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -258,11 +317,11 @@ class EffetDegats(Effet):
         vaSubir = (vaSubir) - int((rePer/100)*vaSubir)
         for etat in joueurLanceur.etats:
             if etat.actif():
-                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats)
+                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats,joueurCaseEffet,joueurLanceur)
 
         for etat in joueurCaseEffet.etats:
             if etat.actif():
-                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats)
+                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats,joueurCaseEffet,joueurLanceur)
         if vaSubir < 0:
             vaSubir = 0
         
@@ -709,6 +768,7 @@ class EffetRune(Effet):
 class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pousse un joueur à l'opposé une position donnée."""
+    
     def __init__(self,int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet poussant un joueur à l'opposé d'une position donnée
         @int_nbCase: le nombre de case dont le joueur cible va être poussé.

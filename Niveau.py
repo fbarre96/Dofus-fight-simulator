@@ -745,7 +745,11 @@ class Niveau:
         x0 = case_x
         y0 = case_y
         # La taille de la zone n'indique pas forcément la distance la plus lointaine au centre, on parcourt donc toutes la carte en partant du centre
-        for tailleCercle in range(64):
+        if effet.isReverseTreatmentOrder():
+            mrange = range(64,-1,-1)
+        else:
+            mrange = range(65)
+        for tailleCercle in mrange:
             casesAXDistance = Niveau.getCasesAXDistanceDe(case_x,case_y,tailleCercle)
             for case in casesAXDistance:
                 # Test si la case trouvée est à porté de l'effet.
@@ -1134,7 +1138,7 @@ class Niveau:
         
         return sestApplique, ciblesTraitees
 
-    def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None, isPrevisu=False, previsu=None):
+    def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None,isPrevisu=False, previsu=None):
         """@summary: Fonction qui applique un effet.
         @effet: L'effet qu'il faut appliquer
         @type: Effet
