@@ -835,6 +835,8 @@ class EffetPousser(Effet):
             if joueurCaseEffet is None:
                 return
             self.joueurAPousser = niveau.getJoueurSur(joueurCaseEffet.posX, joueurCaseEffet.posY)
+        elif self.cible == "Lanceur":
+            self.joueurAPousser = joueurLanceur
         self.determinerSensPousser(niveau,[self.joueurAPousser.posX, self.joueurAPousser.posY],self.case_from_x,self.case_from_y)
         niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
 

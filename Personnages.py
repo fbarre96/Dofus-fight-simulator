@@ -941,30 +941,88 @@ class Personnage(object):
             Occasionne des dommages Feu si la cible subit des dommages de poussée.
             Les dommages de chaque élément peuvent être déclenchés 3 fois par tour.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Flèche Tyrannique",4,2,7,[Effets.EffetEtat(Etats.EtatEffetSiPousse("Fleche_tyrannique_air",0,2, Effets.EffetDegats(12,12,"air"),"Fleche_tyrannique","lanceur")),Effets.EffetEtat(Etats.EtatEffetSiSubit("Fleche_tyrannique_feu",0,2, Effets.EffetDegats(12,12,"feu"),"Fleche_tyrannique","doPou","lanceur"))],99,1,0,1,"ligne",description="Occasionne des dommages Air si la cible est poussée. Occasionne des dommages Feu si la cible subit des dommages de poussée."))
-            # sorts.append(Sort.Sort("Flèche Destructrice",4,5,8,[Effets.EffetDegats(30,32,"terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche destructrice",1,1,"do",-60))],99,2,0,1,"cercle",description="Occasionne des dommages Terre et réduit les dommages occasionnés par la cible."))
-            # sorts.append(Sort.Sort("Tir de Barrage",4,4,8,[Effets.EffetDegats(29,33,"terre"),Effets.EffetPousser(2)],3,2,0,1,"cercle",description="Occasionne des dommages Terre et repousse la cible."))
-            # sorts.append(Sort.Sort("Flèche Absorbante",4,6,8,[Effets.EffetVolDeVie(29,31,"air")],3,2,0,1,"cercle",description="Vole de la vie dans l'élément Air."))
-            # sorts.append(Sort.Sort("Flèche Dévorante",3,1,6,[
-            #     Effets.EffetDegats(70,74,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Fleche_devorante_lancer_3",consomme_etat=True),
-            #     Effets.EffetEtat(Etats.Etat("Fleche_devorante_lancer_3",0,-1),etat_requis_cibles="Fleche_devorante_lancer_2",consomme_etat=True),
-            #     Effets.EffetDegats(52,56,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Fleche_devorante_lancer_2",consomme_etat=True),
-            #     Effets.EffetEtat(Etats.Etat("Fleche_devorante_lancer_2",0,-1),etat_requis_cibles="Fleche_devorante_lancer_1",consomme_etat=True),
-            #     Effets.EffetDegats(34,38,"air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Fleche_devorante_lancer_1",consomme_etat=True),
-            #     Effets.EffetEtat(Etats.Etat("Fleche_devorante_lancer_1",0,-1),etat_requis_cibles="!Fleche_devorante_lancer_2|!Fleche_devorante_lancer_3")
-            #     ],2,1,0,1,"cercle",chaine=False,description="Occasionne des dommages Air. Les dommages sont appliqués lorsque le sort est lancé sur une autre cible. Peut se cumuler 3 fois sur une même cible."))
-            # sorts.append(Sort.Sort("Flèche cinglante",2,1,9,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche cinglante",0,2,"erosion",10)), Effets.EffetPousser(2)],4,2,0,1,"ligne",description="Applique de l'Érosion aux ennemis et repousse de 2 cases."))
-            # sorts.append(Sort.Sort("Flèche de repli",1,2,7,[Effets.EffetPousser(1,zone=Zones.TypeZoneCercleSansCentre(5),cible_possibles="Lanceur")],4,2,0,1,"ligne",description="Le lanceur du sort recule de 2 cases."))
-            # sorts.append(Sort.Sort("Flèche ralentissante",4,1,8,[Effets.EffetRetPA(3,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(36,38,"eau",zone=Zones.TypeZoneCercle(2))],2,1,0,1,"ligne",description="Occasionne des dommages Eau et retire des PA en zone."))
-            # sorts.append(Sort.Sort("Flèche percutante",2,1,6,[Effets.EffetDegats(6,10,"eau"),Effets.EffetEtat(Etats.EtatEffetFinTour("Fleche_percutante_retardement", 1,1,Effets.EffetDegats(6,10,"eau",zone=Zones.TypeZoneCercleSansCentre(2)),"Fleche_percutante_retardement","lanceur")),Effets.EffetEtat(Etats.EtatEffetFinTour("Fleche_percutante_retardementPA", 1,1,Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2)),"Fleche_percutante_retardementPA","lanceur"))],2,1,0,1,"cercle",description="Occasionne des dommages Eau. À la fin de son tour, la cible occasionne des dommages Eau et retire des PA en cercle de taille 2 autour d'elle."))
-            # sorts.append(Sort.Sort("Flèche explosive",4,1,8,[Effets.EffetDegats(30,34,"feu",zone=Zones.TypeZoneCercle(3))],2,1,0,1,"cercle",description="Occasionne des dommages Feu en zone."))
-            # fleche_fulminante=Sort.Sort("Flèche Fulminante",4,1,8,[Effets.EffetDegats(34,38,"feu",cibles_possibles="Ennemis|Balise Tactique"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_Fulminante_boost",0,1,"Flèche Fulminante Rebond",10))],1,1,0,1,"cercle",description="Occasionne des dommages Feu. Se propage sur l'ennemi le plus proche dans un rayon de 2 cellules. Peut rebondir sur la Balise Tactique. À chaque cible supplémentaire, les dommages du sort sont augmentés.")
-            # fleche_fulminante_rebond=Sort.Sort("Flèche Fulminante Rebond",0,0,99,[Effets.EffetDegats(34,38,"feu",cibles_possibles="Ennemis|Balise Tactique"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Fleche_Fulminante_boost",0,1,"Flèche Fulminante Rebond",10))],9,1,0,0,"cercle",description="Occasionne des dommages Feu. Se propage sur l'ennemi le plus proche dans un rayon de 2 cellules. Peut rebondir sur la Balise Tactique. À chaque cible supplémentaire, les dommages du sort sont augmentés.")
-            # fleche_fulminante.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
-            # fleche_fulminante_rebond.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
-            # sorts.append(fleche_fulminante)
-            # sorts.append(Sort.Sort("Maîtrise de l'arc",2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",60))],1,1,5,1,"cercle",description="Augmente les dommages."))
-            # sorts.append(Sort.Sort("Sentinelle",2,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostPerDommageSorts("Sentinelle",1,1,30)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100))],1,1,3,0,"cercle",description="Au tour suivant, le lanceur perd tous ses PM mais gagne un bonus de dommages."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Destructrice",62,4,5,8,[Effets.EffetDegats(20,22,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-20))],[Effets.EffetDegats(24,26,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-22))],15,99,2,0,1,"cercle",True,description="""Occasionne des dommages Terre et réduit les dommages occasionnés par la cible.""", chaine=True),
+
+                Sort.Sort("Flèche Destructrice",116,4,5,8,[Effets.EffetDegats(25,27,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-40))],[Effets.EffetDegats(29,31,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-44))],15,99,2,0,1,"cercle",True,description="""Occasionne des dommages Terre et réduit les dommages occasionnés par la cible.""", chaine=True),
+
+                Sort.Sort("Flèche Destructrice",153,4,5,8,[Effets.EffetDegats(30,32,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-60))],[Effets.EffetDegats(34,36,"Terre"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche Destructrice",0,1,"do",-66))],15,99,2,0,1,"cercle",True,description="""Occasionne des dommages Terre et réduit les dommages occasionnés par la cible.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Tir de Barrage",175,4,4,8,[Effets.EffetDegats(29,33,"Terre"),Effets.EffetPousser(2)],[Effets.EffetDegats(35,39,"Terre"),Effets.EffetPousser(2)],25,3,2,0,1,"cercle",True,description="""Occasionne des dommages Terre et repousse la cible.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Absorbante",69,4,6,8,[Effets.EffetVolDeVie(19,21,"Air")],[Effets.EffetVolDeVie(23,25,"Air")],15,3,2,0,1,"cercle",True,description="""Vole de la vie dans l'élément Air.""", chaine=True),
+
+                Sort.Sort("Flèche Absorbante",122,4,6,8,[Effets.EffetVolDeVie(24,26,"Air")],[Effets.EffetVolDeVie(28,30,"Air")],15,3,2,0,1,"cercle",True,description="""Vole de la vie dans l'élément Air.""", chaine=True),
+
+                Sort.Sort("Flèche Absorbante",162,4,6,8,[Effets.EffetVolDeVie(29,31,"Air")],[Effets.EffetVolDeVie(33,35,"Air")],15,3,2,0,1,"cercle",True,description="""Vole de la vie dans l'élément Air.""", chaine=True)
+            ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Dévorante",180,3,1,6,[
+                    Effets.EffetDegats(70,74,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 3",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetDegats(52,56,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 2",0,-1),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
+                    Effets.EffetDegats(34,38,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 1",0,-1),etat_requis_cibles="!Flèche dévorante lancer 2|!Flèche dévorante lancer 3")
+                    ],
+                    [
+                    Effets.EffetDegats(81,85,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 3",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetDegats(60,64,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 2",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetDegats(39,43,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
+                    Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 1",0,-1),etat_requis_cibles="!Flèche dévorante lancer 2|!Flèche dévorante lancer 3")
+                    ]
+                    ,15,2,1,0,1,"cercle",True,description="""Occasionne des dommages Air.
+            Les dommages sont appliqués lorsque le sort est lancé sur une autre cible.
+            Peut se cumuler 3 fois sur une même cible.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Cinglante",77,2,1,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche cinglante",0,2,"erosion",10)), Effets.EffetPousser(2)],[],0,4,2,0,1,"ligne",True,description="""Applique de l'�rosion aux ennemis et repousse de 2 cases.""", chaine=True),
+
+                Sort.Sort("Flèche Cinglante",128,2,1,7,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche cinglante",0,2,"erosion",10)), Effets.EffetPousser(2)],[],0,4,2,0,1,"ligne",True,description="""Applique de l'�rosion aux ennemis et repousse de 2 cases.""", chaine=True),
+
+                Sort.Sort("Flèche Cinglante",172,2,1,9,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche cinglante",0,2,"erosion",10)), Effets.EffetPousser(2)],[],0,4,2,0,1,"ligne",True,description="""Applique de l'�rosion aux ennemis et repousse de 2 cases.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche de Repli",185,1,2,7,[Effets.EffetPousser(2,source="CaseCible",cible="Lanceur")],[],0,3,2,0,1,"ligne",True,description="""Le lanceur du sort recule de 2 cases.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Fèche Ralentissante",84,4,1,8,[Effets.EffetRetPA(2,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(26,28,"Eau",zone=Zones.TypeZoneCercle(2))],[Effets.EffetRetPA(2,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(32,34,"Eau",zone=Zones.TypeZoneCercle(2))],15,2,1,0,1,"ligne",True,description="""Occasionne des dommages Eau et retire des PA en zone.""", chaine=True),
+
+                Sort.Sort("Flèche Ralentissante",134,4,1,8,[Effets.EffetRetPA(2,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(31,33,"Eau",zone=Zones.TypeZoneCercle(2))],[Effets.EffetRetPA(2,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(37,39,"Eau",zone=Zones.TypeZoneCercle(2))],15,2,1,0,1,"ligne",True,description="""Occasionne des dommages Eau et retire des PA en zone.""", chaine=True),
+
+                Sort.Sort("Flèche Ralentissante",178,4,1,8,[Effets.EffetRetPA(3,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(36,38,"Eau",zone=Zones.TypeZoneCercle(2))],[Effets.EffetRetPA(3,zone=Zones.TypeZoneCercle(2)),Effets.EffetDegats(42,44,"Eau",zone=Zones.TypeZoneCercle(2))],15,2,1,0,1,"ligne",True,description="""Occasionne des dommages Eau et retire des PA en zone.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Percutante",190,2,1,6,[Effets.EffetDegats(6,10,"Eau"),Effets.EffetEtat(Etats.EtatEffetFinTour("Flèche percutante à retardement",0,1,Effets.EffetDegats(6,10,"eau",zone=Zones.TypeZoneCercleSansCentre(2)),"Flèche percutante à retardement","lanceur")),Effets.EffetEtat(Etats.EtatEffetFinTour("Flèche percutante à retardement PA", 0,1,Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2)),"Flèche percutante à retardement PA","lanceur"))],[Effets.EffetDegats(9,13,"Eau"),Effets.EffetEtat(Etats.EtatEffetFinTour("Flèche percutante à retardement",0,1,Effets.EffetDegats(9,13,"eau",zone=Zones.TypeZoneCercleSansCentre(2)),"Flèche percutante à retardement","lanceur")),Effets.EffetEtat(Etats.EtatEffetFinTour("Flèche percutante à retardement PA", 0,1,Effets.EffetRetPA(2,zone=Zones.TypeZoneCercleSansCentre(2)),"Flèche percutante à retardement PA","lanceur"))],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau.
+            à la fin de son tour, la cible occasionne des dommages Eau et retire des PA en cercle de taille 2 autour d'elle.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Flèche Explosive",92,4,1,8,[Effets.EffetDegats(22,26,"Feu",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(27,31,"Feu",zone=Zones.TypeZoneCercle(2))],25,2,1,0,1,"cercle",True,description="""Occasionne des dommages Feu en zone.""", chaine=True),
+
+                Sort.Sort("Flèche Explosive",141,4,1,8,[Effets.EffetDegats(26,30,"Feu",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(31,35,"Feu",zone=Zones.TypeZoneCercle(2))],25,2,1,0,1,"cercle",True,description="""Occasionne des dommages Feu en zone.""", chaine=True),
+
+                Sort.Sort("Flèche Explosive",187,4,1,8,[Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCercle(3))],[Effets.EffetDegats(35,39,"Feu",zone=Zones.TypeZoneCercle(3))],25,2,1,0,1,"cercle",True,description="""Occasionne des dommages Feu en zone.""", chaine=True)
+            ]))
+            fleche_fulminante=Sort.Sort("Flèche Fulminante",195,4,1,8,[Effets.EffetDegats(38,42,"Feu",cibles_possibles="Ennemis|Balise Tactique"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Flèche Fulminante boost",0,1,"Flèche Fulminante Rebond",10))],[],0,1,1,0,1,"cercle",True,description="Occasionne des dommages Feu. Se propage sur l'ennemi le plus proche dans un rayon de 2 cellules. Peut rebondir sur la Balise Tactique. À chaque cible supplémentaire, les dommages du sort sont augmentés.")
+            fleche_fulminante_rebond=Sort.Sort("Flèche Fulminante Rebond",195,0,0,99,[Effets.EffetDegats(38,42,"Feu",cibles_possibles="Ennemis|Balise Tactique"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Flèche Fulminante boost",0,1,"Flèche Fulminante Rebond",10))],[],0,9,1,0,0,"cercle",True,description="Occasionne des dommages Feu. Se propage sur l'ennemi le plus proche dans un rayon de 2 cellules. Peut rebondir sur la Balise Tactique. À chaque cible supplémentaire, les dommages du sort sont augmentés.")
+            fleche_fulminante.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
+            fleche_fulminante_rebond.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
+            sorts.append(fleche_fulminante)
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Maîtrise de l'Arc",100,2,0,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",40))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",50))],25,1,1,5,1,"cercle",False,description="""Augmente les dommages.""", chaine=True),
+
+                Sort.Sort("Maîtrise de l'Arc",149,2,0,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",50))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",60))],25,1,1,5,1,"cercle",False,description="""Augmente les dommages.""", chaine=True),
+
+                Sort.Sort("Maîtrise de l'Arc",197,2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",60))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",70))],25,1,1,5,1,"cercle",False,description="""Augmente les dommages.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Sentinelle",200,3,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100)),Effets.EffetEtatSelf(Etats.EtatBoostSortsPer("Sentinelle",1,1,30))],[],0,1,1,3,0,"cercle",False,description="""Le lanceur perd tous ses PM mais gagne un bonus de dommages pour le tour en cours.""", chaine=True)
+            ]))
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif =[Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
