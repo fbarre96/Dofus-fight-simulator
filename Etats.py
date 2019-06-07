@@ -41,6 +41,9 @@ class Etat(object):
         @return: Un booléen qui vaut vrai si l'état est actif, faux sinon."""
         return self.debuteDans <= 0 and self.duree != 0
 
+    def triggerAvantPiegeDeclenche(self, piege, joueurDeclencheur):
+        pass
+
     def triggerRafraichissement(self,personnage,niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Cet état de base ne fait rien (comportement par défaut hérité).
@@ -453,7 +456,7 @@ class EtatBouclierPerLvl(Etat):
 
 class EtatBoostBaseDeg(Etat):
     """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur."""
-    def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
+    def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc="", maxBoost=-1):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -475,12 +478,13 @@ class EtatBoostBaseDeg(Etat):
         @type: string"""
         self.boostbaseDeg = boostbaseDeg
         self.nomSort=nomSort
-        super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc)
+        self.maxBoost = maxBoost
+        super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc,maxBoost)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatBoostBaseDeg(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc)
+        return EtatBoostBaseDeg(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc, self.maxBoost)
 
     def triggerAvantCalculDegats(self,dommages, baseDeg, caracs, nomSort):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
@@ -497,6 +501,8 @@ class EtatBoostBaseDeg(Etat):
         @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
         if nomSort == self.nomSort:
             baseDeg += self.boostbaseDeg
+            if baseDeg > self.maxBoost:
+                baseDeg = self.maxBoost
         return dommages, baseDeg, caracs
 
 class EtatLanceSortSiSubit(Etat):
@@ -990,10 +996,58 @@ class EtatEffetSiPousse(Etat):
 
         @return: La nouvelle valeur de dommage de poussé"""
         if self.quiLancera == "lanceur":
-            niveau.lancerEffet(self.effet,self.lanceur.posX,cibleAttaque.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, self.lanceur)
+            niveau.lancerEffet(self.effet,self.lanceur.posX,self.lanceur.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, self.lanceur)
         elif self.quiLancera == "cible":
             niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, cibleAttaque.posX, cibleAttaque.posY, cibleAttaque)
         return doPou,rePou
+
+class EtatEffetSiPiegeDeclenche(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand un joueur marche dans un piege."""
+    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,cible,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet 
+        @type: string ("lanceur" ou "cible")
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        
+        self.nomSort = nomSort
+        self.quiLancera = quiLancera
+        self.cible = cible
+        super(EtatEffetSiPiegeDeclenche, self).__init__(nom,debDans, duree, lanceur,desc)
+
+    def deepcopy(self):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
+
+    def triggerAvantPiegeDeclenche(self, piege, joueurDeclencheur):
+        if self.cible == "declencheur":
+            joueurCible = joueurDeclencheur
+        else:
+            joueurCible = self.lanceur
+        if self.quiLancera == "lanceur":
+            niveau.lancerEffet(self.effet,self.lanceur.posX,self.lanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
+        elif self.quiLancera == "cible":
+            niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurCible)
+        
+
 class EtatTelefrag(Etat):
     """@summary: Classe décrivant un état Téléfrag."""
     def __init__(self, nom,  debDans,duree, nomSort, lanceur=None,desc=""):

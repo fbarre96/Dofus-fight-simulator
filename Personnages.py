@@ -1026,10 +1026,54 @@ class Personnage(object):
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif =[Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            #sorts.append(Sort.Sort(u"Sournoiserie",3,1,5,[Effets.EffetDegats(20,22,"terre")],99,3,0,1, "cercle", description=u"Occasionne des dommages Terre."))
-            #TODO: ajout invisibilité et test avec oeil de taupe.
-            sorts.append(Sort.Sort("Invisibilité",2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],1,1,6,0, "cercle", description=u"Rend invisible."))
-            sorts.append(Sort.Sort("Piège sournois",3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],1,1,0,1, "cercle", description="Occasionne des dommages Feu et attire."))
+            activationPiegePerfide = [Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Sournoiserie",25,3,1,4,[Effets.EffetDegats(17,19,"Terre")],[Effets.EffetDegats(21,23,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Sournoiserie",52,3,1,5,[Effets.EffetDegats(20,22,"Terre")],[Effets.EffetDegats(24,26,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Chausse-Trappe",110,4,1,4,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetDegats(34,38,"Terre"),,Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente les dommages de Chausse-Trape.
+            Le bonus de dommages disparaît quand le sort est lancé.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Sournois",1,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+
+                Sort.Sort("Piège Sournois",30,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+
+                Sort.Sort("Piège Sournois",60,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Perfide",105,2,1,7,[[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegePerfide,"Piège Perfide",(240,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Invisibilité",1,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],[],0,1,1,7,0,"cercle",False,description="""Rend invisible.""", chaine=True),
+
+                Sort.Sort("Invisibilité",20,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],[],0,1,1,6,0,"cercle",False,description="""Rend invisible.""", chaine=True),
+
+                Sort.Sort("Invisibilité",40,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",2))],[],0,1,1,6,0,"cercle",False,description="""Rend invisible.""", chaine=True)
+            ]))
+            activationBrume = Sort.Sort("Activation Brume",0,0,0,3,[Effets.EffetEtat(Etats.Etat("Invisible",0,2))],[],0, 99,99,0,0,"cercle",False)
+            sortieBrume = Sort.Sort("Brume: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Invisible")],[],0, 99,99,0,0,"cercle",False)
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Brume",101,3,1,3,[Effets.EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Poison insidieux",3,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(6,7,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
+
+                Sort.Sort("Poison insidieux",35,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
+
+                Sort.Sort("Poison insidieux",67,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(12,13,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True)
+            ]))
+
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Toxines",115,3,1,7,[Effets.EffetRetireEtat("Toxine", zone=Zones.ZoneTypeCercle(99)), Effets.EffetEtat(Etats.EtatEffetFinTour("Toxine",0,2,Effets.EffetDegats(10,11,"Air"),"Toxine","lanceur")), Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxine",0,2,))],[],0,1,1,2,1,"cercle",True,description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
+            Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
+            Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=True)
+            ]))
             sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
@@ -1070,6 +1114,11 @@ class Personnage(object):
             piege = niveau.pieges[i]
             if piege.aPorteDeclenchement(x,y):
                 piegeDeclenche = True
+                for joueur in niveau.joueurs:
+                    for etat in joueur.etats:
+                        if etat.actif():
+                            etat.triggerAvantPiegeDeclenche(piege, self)
+                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",10,None,"",74))
                 for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
                 i-=1

@@ -1,1 +1,213 @@
 
+
+
+
+
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Fourvoiement",6,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 30 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 30 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(11,14,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(11,14,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(15,18,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(15,18,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+Vole de l'Agilité et de la Force.
+Applique de l'érosion.""", chaine=True),
+
+	Sort.Sort("Fourvoiement",42,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(14,17,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(14,17,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(18,21,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(18,21,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+Vole de l'Agilité et de la Force.
+Applique de l'érosion.""", chaine=True),
+
+	Sort.Sort("Fourvoiement",74,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(17,20,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(17,20,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 60 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 60 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(21,24,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(21,24,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+Vole de l'Agilité et de la Force.
+Applique de l'érosion.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Pillage",120,3,1,1,[Effets.TODO(État 'Etat temporaire',zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(34,38,"Eau",zone=Zones.TypeZoneCercle(3)),Effets.TODO(Pillage,zone=Zones.TypeZoneCercle(3)),Effets.TODO(Enlève l'état Etat temporaire,zone=Zones.TypeZoneCercle(3))],[Effets.TODO(État 'Etat temporaire',zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(40,44,"Eau",zone=Zones.TypeZoneCercle(3)),Effets.TODO(Pillage,zone=Zones.TypeZoneCercle(3)),Effets.TODO(Enlève l'état Etat temporaire,zone=Zones.TypeZoneCercle(3))],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
+50% des dommages sont distribués sous forme de soin aux alliés à 3 cellules ou moins de la cible.
+N'affecte pas le lanceur.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Coup Sournois",9,3,1,3,[Effets.EffetDegats(18,21,"Feu"),Effets.TODO(Repousse de 2 case(s))],[Effets.EffetDegats(22,25,"Feu"),Effets.TODO(Repousse de 2 case(s))],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+Pousse la cible.""", chaine=True),
+
+	Sort.Sort("Coup Sournois",47,3,1,3,[Effets.EffetDegats(22,25,"Feu"),Effets.TODO(Repousse de 2 case(s))],[Effets.EffetDegats(26,29,"Feu"),Effets.TODO(Repousse de 2 case(s))],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+Pousse la cible.""", chaine=True),
+
+	Sort.Sort("Coup Sournois",87,3,1,4,[Effets.EffetDegats(26,29,"Feu"),Effets.TODO(Repousse de 3 case(s))],[Effets.EffetDegats(31,34,"Feu"),Effets.TODO(Repousse de 3 case(s))],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+Pousse la cible.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Coupe-gorge",125,4,1,7,[Effets.EffetDegats(34,38,"Feu"),Effets.TODO(250 Puissance (pièges) (2 tours))],[Effets.EffetDegats(40,44,"Feu"),Effets.TODO(250 Puissance (pièges) (2 tours))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et augmente la puissance des pièges.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Double",13,3,1,2,[Effets.TODO(Crée un double du lanceur de sort),Effets.TODO(Complot)],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
+
+	Sort.Sort("Double",54,3,1,2,[Effets.TODO(Crée un double du lanceur de sort),Effets.TODO(Complot)],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
+
+	Sort.Sort("Double",94,3,1,2,[Effets.TODO(Crée un double du lanceur de sort),Effets.TODO(Complot)],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Comploteur",130,3,1,2,[Effets.TODO(Crée un double du lanceur de sort),Effets.TODO(Complot)],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
+Chaque piège déclenché augmente la Puissance du Double.
+Il meurt après 2 tours.
+Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Fangeux",17,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
+
+	Sort.Sort("Piège Fangeux",58,3,1,6,[Effets.TODO(Pose un piège de rang 2)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
+
+	Sort.Sort("Piège Fangeux",102,3,1,8,[Effets.TODO(Pose un piège de rang 3)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Larcin",135,4,0,0,[Effets.TODO(Vole 80 Chance (2 tours),zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(40,44,"Eau",zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.TODO(Vole 100 Chance (2 tours),zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(44,48,"Eau",zone=Zones.TypeZoneCroixDiagonale(1))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Eau et vole de la Chance.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège de Masse",22,4,1,3,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+
+	Sort.Sort("Piège de Masse",65,4,1,4,[Effets.TODO(Pose un piège de rang 2)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+
+	Sort.Sort("Piège de Masse",108,4,1,5,[Effets.TODO(Pose un piège de rang 3)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Traquenard",140,3,1,1,[Effets.EffetDegats(30,34,"Terre"),Effets.TODO(Enlève les effets du sort Pièges)],[Effets.EffetDegats(33,37,"Terre"),Effets.TODO(Enlève les effets du sort Pièges)],5,3,2,0,0,"ligne",False,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente la portée de Traquenard.
+Le bonus de portée disparaît quand le sort est lancé.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Cruauté",27,3,1,5,[Effets.EffetDegats(12,14,"Eau"),Effets.TODO(1 PM (1 tour))],[Effets.EffetDegats(16,18,"Eau"),Effets.TODO(1 PM (1 tour))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True),
+
+	Sort.Sort("Cruauté",72,3,1,6,[Effets.EffetDegats(15,17,"Eau"),Effets.TODO(1 PM (1 tour))],[Effets.EffetDegats(19,21,"Eau"),Effets.TODO(1 PM (1 tour))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True),
+
+	Sort.Sort("Cruauté",118,3,1,7,[Effets.EffetDegats(18,20,"Eau"),Effets.TODO(1 PM (1 tour))],[Effets.EffetDegats(22,24,"Eau"),Effets.TODO(1 PM (1 tour))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Guet-apens",145,3,1,5,[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.EffetDegats(30,34,"Feu"),Effets.TODO(Guet-apens),Effets.TODO(Enlève l'état Etat temporaire),Effets.TODO(Attire de 2 case(s))],[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.EffetDegats(34,38,"Feu"),Effets.TODO(Guet-apens),Effets.TODO(Enlève l'état Etat temporaire),Effets.TODO(Attire de 2 case(s))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Empoisonné",32,3,1,3,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCroix(1))],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+
+	Sort.Sort("Piège Empoisonné",81,3,1,3,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCroix(1))],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+
+	Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCroix(1))],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetDegats(28,32,"Air"),Effets.TODO(Injection Toxique)],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
+La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+
+	Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+
+	Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
+Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(2))],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+
+	Sort.Sort("Piège d'Immobilisation",97,4,1,4,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCercle(3))],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+
+	Sort.Sort("Piège d'Immobilisation",137,4,1,5,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCercle(3))],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège de Dérive",160,2,1,6,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCroixDiagonale(1))],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Insidieux",50,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+
+	Sort.Sort("Piège Insidieux",103,3,1,5,[Effets.TODO(Pose un piège de rang 2)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+
+	Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.TODO(Pose un piège de rang 3)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Épidémie",165,4,1,5,[Effets.EffetDegats(38,42,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],[Effets.EffetDegats(46,50,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],5,2,1,0,0,"ligne",True,description="""Applique un poison Air de fin de tour sur les ennemis.
+La cible propage le poison en zone autour d'elle.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège répulsif",56,3,1,3,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+Occasionne des dommages Air aux ennemis.""", chaine=True),
+
+	Sort.Sort("Piège répulsif",112,3,1,5,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+Occasionne des dommages Air aux ennemis.""", chaine=True),
+
+	Sort.Sort("Piège répulsif",147,3,1,7,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+Occasionne des dommages Air aux ennemis.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Peur",62,2,2,3,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+
+	Sort.Sort("Peur",116,2,2,5,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+
+	Sort.Sort("Peur",153,2,2,7,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Méprise",175,3,1,4,[Effets.TODO(État 'Etat temporaire' (infini)),Effets.TODO(Méprise),Effets.TODO(Dévoile tous les objets invisibles),Effets.TODO(Enlève l'état Etat temporaire)],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
+Dissipe l'invisibilité du lanceur.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Arnaque",69,3,1,6,[Effets.EffetDegats(25,29,"Air")],[Effets.EffetDegats(32,32,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
+
+	Sort.Sort("Arnaque",122,3,1,6,[Effets.EffetDegats(29,33,"Air")],[Effets.EffetDegats(36,36,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
+
+	Sort.Sort("Arnaque",162,3,1,6,[Effets.EffetDegats(33,37,"Air")],[Effets.EffetDegats(40,40,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège de Proximité",180,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Poisse",77,4,1,4,[Effets.EffetVolDeVie(22,26,"Eau"),Effets.TODO(-15% Critique (1 tour))],[Effets.EffetVolDeVie(27,31,"Eau"),Effets.TODO(-20% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
+
+	Sort.Sort("Poisse",128,4,1,4,[Effets.EffetVolDeVie(25,29,"Eau"),Effets.TODO(-20% Critique (1 tour))],[Effets.EffetVolDeVie(30,34,"Eau"),Effets.TODO(-25% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
+
+	Sort.Sort("Poisse",172,4,1,4,[Effets.EffetVolDeVie(28,32,"Eau"),Effets.TODO(-25% Critique (1 tour))],[Effets.EffetVolDeVie(33,37,"Eau"),Effets.TODO(-30% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Calamité",185,4,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Fourberie",84,4,0,0,[Effets.TODO(Vole 40 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 60 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(36,40,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+Attire les cibles.
+Vole de l'Intelligence.""", chaine=True),
+
+	Sort.Sort("Fourberie",134,4,0,0,[Effets.TODO(Vole 60 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(35,39,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 80 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(41,45,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+Attire les cibles.
+Vole de l'Intelligence.""", chaine=True),
+
+	Sort.Sort("Fourberie",178,4,0,0,[Effets.TODO(Vole 80 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(40,44,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 100 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(46,50,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+Attire les cibles.
+Vole de l'Intelligence.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Perquisition",190,3,1,5,[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.TODO(Repousse de 2 case(s)),Effets.EffetDegats(19,23,"Eau"),Effets.TODO(Perquisition),Effets.TODO(Enlève l'état Etat temporaire)],[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.TODO(Repousse de 2 case(s)),Effets.EffetDegats(23,27,"Eau"),Effets.TODO(Perquisition),Effets.TODO(Enlève l'état Etat temporaire)],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau et pousse la cible de 2 cases.
+100% des dommages sont distribués sous forme de soin aux alliés à 2 cellules de distance de la cible.
+N'affecte pas le lanceur.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Attaque Mortelle",92,4,1,2,[Effets.EffetDegats(39,43,"Terre")],[Effets.EffetDegats(49,53,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+	Sort.Sort("Attaque Mortelle",141,4,1,2,[Effets.EffetDegats(46,50,"Terre")],[Effets.EffetDegats(56,60,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+	Sort.Sort("Attaque Mortelle",187,4,1,2,[Effets.EffetDegats(53,57,"Terre")],[Effets.EffetDegats(63,67,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Funeste",195,3,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège monocible qui occasionne des dommages Terre.
+Les dommages sont augmentés en fonction du nombre d'ennemis à proximité du piège.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Piège Mortel",100,3,1,3,[Effets.TODO(Pose un piège de rang 1)],[],0,1,1,2,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+
+	Sort.Sort("Piège Mortel",147,3,1,3,[Effets.TODO(Pose un piège de rang 2)],[],0,1,1,1,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+
+	Sort.Sort("Piège Mortel",197,3,1,4,[Effets.TODO(Pose un piège de rang 3)],[],0,2,99,0,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True)
+]))
+sorts.append(Personnage.getSortRightLvl(lvl,[
+	Sort.Sort("Perfidie",200,6,1,1,[Effets.EffetDegats(58,62,"Terre"),Effets.TODO(Enlève les effets du sort Pièges)],[Effets.EffetDegats(64,68,"Terre"),Effets.TODO(Enlève les effets du sort Pièges)],25,3,2,0,0,"cercle",False,description="""Occasionne des dommages Terre. Chaque piège déclenché réduit le coût en PA de Perfidie.
+La réduction du coût en PA disparaît quand le sort est lancé.""", chaine=True)
+]))

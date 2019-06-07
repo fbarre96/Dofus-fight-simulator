@@ -54,7 +54,7 @@ def Commence_combat(persos):
     #Création de la fenêtre
     fenetre = pygame.display.set_mode((constantes.width_fenetre,constantes.height_fenetre), RESIZABLE)
     #Variable qui continue la boucle si = 1, stoppe si = 0
-    pygame.display.set_caption("Dofuk")
+    pygame.display.set_caption("Dofus fight simulator")
     continuer = 1
     #Initialisation du niveau
     niveau = Niveau.Niveau(fenetre, persos, myfont)
