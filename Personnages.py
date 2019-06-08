@@ -1026,9 +1026,9 @@ class Personnage(object):
                 Sort.Sort("Sentinelle",200,3,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100)),Effets.EffetEtatSelf(Etats.EtatBoostSortsPer("Sentinelle",1,1,30))],[],0,1,1,3,0,"cercle",False,description="""Le lanceur perd tous ses PM mais gagne un bonus de dommages pour le tour en cours.""", chaine=True)
             ]))
         elif classe=="Sram":
-            activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepulsif = [Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegePerfide = [Effets.EffetAttire(3,zone=Zones.TypeZoneCroix(3), faire_au_vide=True)]
+            activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepulsif = [Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
