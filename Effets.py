@@ -76,7 +76,7 @@ class Effet(object):
         #Test si la cible est dans les cibles possibles
         if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles):
             #Test si la cible est exclue
-            if joueurCible.classe in self.ciblesExclues or (joueurCible.classe == joueurLanceur.classe and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues):
+            if joueurCible.classe in self.ciblesExclues or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues):
                 print("DEBUG : Invalide : Cible Exclue")
                 return False
             #Test si la cible est déjà traitée
@@ -107,7 +107,7 @@ class Effet(object):
                     return False
             #La cible a passé tous les tests
             return True
-        print("DEBUG : Invalide : Cible "+joueurCible.classe +" pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
+        print("DEBUG : Invalide : Cible "+joueurCible.nomPerso +" pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
         return False
 
     def APorteZone(self, departZone_x,departZone_y, testDansZone_x,testDansZone_y, j_x, j_y):
@@ -306,7 +306,7 @@ class EffetDegats(Effet):
             if etat.actif():
                 dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
-    
+        
         #appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],[case_cible_x,case_cible_y])
         total = total * (10-eloignement)/10
@@ -413,7 +413,7 @@ class EffetVolDeVie(EffetDegats):
             joueurLanceur.vie += (self.total/2)
             joueurLanceur.vie = int(joueurLanceur.vie)
             if not self.isPrevisu():
-                print(joueurLanceur.classe+" vol "+ str(int(self.total/2)) + "PV")
+                print(joueurLanceur.nomPerso+" vol "+ str(int(self.total/2)) + "PV")
 
 class EffetDegatsSelonPMUtilises(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -548,7 +548,7 @@ class EffetRetPA(Effet):
                     totalRet += 1
             joueurCaseEffet.PA -= totalRet
             if not self.isPrevisu():
-                print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PA")
+                print(joueurCaseEffet.nomPerso+" -"+ str(totalRet) + "PA")
         
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -585,7 +585,7 @@ class EffetRetPM(Effet):
                     totalRet += 1
             joueurCaseEffet.PM -= totalRet
             if not self.isPrevisu():
-                print(joueurCaseEffet.classe+" -"+ str(totalRet) + "PM")
+                print(joueurCaseEffet.nomPerso+" -"+ str(totalRet) + "PM")
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -649,7 +649,7 @@ class EffetEtat(Effet):
         if joueurCaseEffet != None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
             etatCopier = self.etat.deepcopy()
-            joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur, niveau)
+            joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
 
 class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -906,7 +906,7 @@ class EffetAttire(EffetPousser):
         else:
             return abs(self.joueurAAttirer.posY - self.case_from_y)
 
-class EffetDureeEtats(Effet):
+class EffetRafraichirEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet change la durée des états de la cible."""
     def __init__(self,int_deXTours, **kwargs):
@@ -917,9 +917,9 @@ class EffetDureeEtats(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.deXTours = int_deXTours
-        super(EffetDureeEtats, self).__init__(**kwargs)
+        super(EffetRafraichirEtats, self).__init__(**kwargs)
     def deepcopy(self):
-        return EffetDureeEtats(self.deXTours,**self.kwargs)
+        return EffetRafraichirEtats(self.deXTours,**self.kwargs)
     def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
@@ -931,7 +931,36 @@ class EffetDureeEtats(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueurCaseEffet.changeDureeEffets(self.deXTours, niveau)
-
+class EffetSetDureeEtat(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet set la durée des états de la cible."""
+    def __init__(self,nomEtat,nouveauDebut,nouvelleDuree, **kwargs):
+        """@summary: Initialise un effet changeant la durée des états de la cible
+        @int_deXTours: le nombre de tour qui vont être additionés (dans Z) à chaque état de la cible.
+        @type: int
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        self.nomEtat = nomEtat
+        self.nouveauDebut = nouveauDebut
+        self.nouvelleDuree = nouvelleDuree
+        super(EffetSetDureeEtat, self).__init__(**kwargs)
+    def deepcopy(self):
+        return EffetSetDureeEtat(self.nomEtat, self.nouveauDebut, self.nouvelleDuree, **self.kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        for etat in joueurCaseEffet.etats:
+            if etat.actif() and etat.nom == self.nomEtat:
+                etat.debuteDans = self.nouveauDebut
+                etat.duree = self.nouvelleDuree
 class EffetRetireEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire les états de la cible qui portent un nom donné."""

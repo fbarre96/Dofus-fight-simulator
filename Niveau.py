@@ -264,6 +264,12 @@ class SaveStateNiveau(object):
         self.piegesSave = []
         for piege in niveau.pieges:
             self.piegesSave.append(deepcopy(piege))
+        self.runesSave = []
+        for rune in niveau.runes:
+            self.runesSave.append(deepcopy(rune))
+        self.glyphesSave = []
+        for glyphe in niveau.glyphes:
+            self.glyphesSave.append(deepcopy(glyphe))
 
     def restore(self, niveau):
         del niveau.joueurs
@@ -273,6 +279,11 @@ class SaveStateNiveau(object):
         niveau.structure = self.structure
         del niveau.pieges
         niveau.pieges = self.piegesSave
+        del niveau.runes
+        niveau.runes = self.runesSave
+        del niveau.glyphes
+        niveau.glyphes = self.glyphesSave
+
 
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
@@ -541,7 +552,7 @@ class Niveau:
             nbEtats = len(personnage.etats)
             while i < nbEtats:
                 #Baisse de la durée de vie si l'état était actif
-                if personnage.etats[i].lanceur == personnageARafraichir:
+                if personnage.etats[i].lanceur.uid == personnageARafraichir.uid:
                     if personnage.etats[i].actif():
                         personnage.etats[i].duree -= 1
                     #Si c'est un début de tour, le temps avant de début de l'état est diminué
@@ -554,7 +565,7 @@ class Niveau:
                     #Si c'est le tour de sortie de l'état on active le trigger d'état d'avant retrait
                     if personnage.etats[i].duree == 0:
                         #Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
-                        print(personnage.classe+" sort de l'etat "+personnage.etats[i].nom)
+                        print(personnage.nomPerso+" sort de l'etat "+personnage.etats[i].nom)
                         personnage.etats[i].triggerAvantRetrait(personnage)
                         del personnage.etats[i]
                         i-=1
@@ -620,7 +631,7 @@ class Niveau:
         
     def tue(self, perso):
         """@summary: Tue instantanément le joueur donné en paramètre."""
-        print(perso.classe+" est mort!")
+        print(perso.nomPerso+" est mort!")
         #Parcours des joueurs
         i= 0 
         persosJoueursRestants = []
@@ -645,7 +656,7 @@ class Niveau:
             i+=1
             tailleJoueurs = len(self.joueurs)
         if len(persosJoueursRestants) == 1:
-            print("Gagnant : "+str(persosJoueursRestants[0].classe))
+            print("Gagnant : "+str(persosJoueursRestants[0].nomPerso))
         elif len(persosJoueursRestants) == 0:
             print("Tous mort ! Egalité.")
 
@@ -721,7 +732,7 @@ class Niveau:
         @type: int
         @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
         @type: int""" 
-        print("Invocation "+invoc.classe)
+        print("Invocation "+invoc.nomPerso)
         self.structure[case_y][case_x].type = "j"
         invoc.posX = case_x
         invoc.posY = case_y
@@ -846,7 +857,7 @@ class Niveau:
             if total > 0:
                 total += doPou
                 vaSubir = total - rePou
-                print(joueurCible.classe+" perd "+ str(vaSubir) + "PV (do pou)")
+                print(joueurCible.nomPerso+" perd "+ str(vaSubir) + "PV (do pou)")
                 joueurCible.subit(pousseur,self,vaSubir,"doPou")
         return posPouX,posPouY,D
 
@@ -1230,7 +1241,7 @@ class Niveau:
                     if joueur != None:
                         #Test des conditions 
                         if (joueur.team == lanceur.team and joueur != lanceur and "Allies" in ciblesPossibles) or (joueur.team == lanceur.team and joueur == lanceur and "Lanceur" in ciblesPossibles) or (joueur.team != lanceur.team and "Ennemis" in ciblesPossibles) or (joueur.classe in ciblesPossibles):
-                            if not(joueur.classe in ciblesExclues or (joueur.classe == lanceur.classe and "Lanceur" in ciblesExclues)):
+                            if not(joueur.classe in ciblesExclues or (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues)):
                                 #Test sur l'etat requis.
                                 if joueur.aEtatsRequis(etatRequisCibles):
                                     #Test si le joueur ciblé à déjà été impacté
@@ -1392,7 +1403,7 @@ class Niveau:
                 
                 joueur.vue = Overlays.VueForOverlay(self.fenetre, x, y, 30, 30,joueur)
                 for joueurPrevisualiser in previsuToShow:
-                    if joueurPrevisualiser.classe == joueur.classe:
+                    if joueurPrevisualiser.uid == joueur.uid:
                         if len(joueurPrevisualiser.msgsPrevisu) > 0:
                             joueur.setOverlayTextGenerique("\n".join(joueurPrevisualiser.msgsPrevisu))
                 fenetre.blit(pygame.image.load(joueur.icone).convert_alpha(), (x,y))

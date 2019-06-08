@@ -113,7 +113,7 @@ class Sort:
         #Test si la case est bien dans la portée du sort
         if self.APorte(origine_x, origine_y,case_cible_x,case_cible_y, caraclanceur.PO):
             if not isPrevisu:
-                print(caraclanceur.classe+" lance :"+self.nom)
+                print(caraclanceur.nomPerso+" lance :"+self.nom)
             #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
             res,explication,coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
             if res == True:
@@ -121,7 +121,7 @@ class Sort:
                 if not isPrevisu:
                     caraclanceur.PA -= coutPA
                     self.marquerLancer(joueurCible)
-                    print(caraclanceur.classe+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
+                    print(caraclanceur.nomPerso+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
                 randomVal = round(random.random(),2)
                 if self.probaCC == 0:
@@ -157,5 +157,4 @@ class Sort:
         if isPrevisu:
             toReturn = deepcopy(niveau.joueurs)
             save.restore(niveau)
-            print("Restored !")
             return toReturn

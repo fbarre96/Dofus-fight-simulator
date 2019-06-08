@@ -87,7 +87,7 @@ def LaunchSimu(evt, persosToSave):
     pygame.init()
     persos = []
     for perso in persosToSave:
-        joueur = Personnages.Personnage(perso["Classe"]["Classe"],perso["Level"]["Level"],perso["Team"]["Team"],perso["Primaires"],perso["Secondaires"],perso["Dommages"],perso["Resistances"],perso["Classe"]["Classe"]+".png")
+        joueur = Personnages.Personnage(perso["Classe"]["Nom"],perso["Classe"]["Classe"],perso["Level"]["Level"],perso["Team"]["Team"],perso["Primaires"],perso["Secondaires"],perso["Dommages"],perso["Resistances"],perso["Classe"]["Classe"]+".png")
         persos.append(joueur)
     Commence_combat(persos)
 

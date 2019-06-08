@@ -10,9 +10,10 @@ from pygame.locals import *
 import json
 from copy import deepcopy
 import copy 
+import uuid
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
-    def __init__(self, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone="",sorts=None):
+    def __init__(self, nomPerso, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone="",sorts=None):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
@@ -93,11 +94,11 @@ class Personnage(object):
         self._vie = self.vie
         self._PM = int(self.PM)
         self._PA = int(self.PA)
-
+        self.nomPerso = nomPerso
         self.erosion = 10 # Erosion de base
         self.lvl = int(lvl)
         self.classe = classe
-
+        self.uid = uuid.uuid4()
         if sorts is None:
             self.sorts = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
         else:
@@ -121,10 +122,10 @@ class Personnage(object):
             self.icone = (icone)
         self.icone=constantes.normaliser(self.icone)
         # Overlay affichange le nom de classe et sa vie restante
-        self.overlay = Overlays.Overlay(self, Overlays.ColoredText("classe",(210,105,30)), Overlays.ColoredText("overlayTexte",(224,238,238)),(56,56,56))
+        self.overlay = Overlays.Overlay(self, Overlays.ColoredText("nomPerso",(210,105,30)), Overlays.ColoredText("overlayTexte",(224,238,238)),(56,56,56))
     
     def __deepcopy__(self,memo):
-        toReturn = Personnage(self.classe,self.lvl,self.team,
+        toReturn = Personnage(self.nomPerso, self.classe,self.lvl,self.team,
                     {"PA":self.PA,"PM":self.PM,"PO":self.PO,"Vitalite":self.vie,"Agilite":self.agi,"Chance":self.cha,"Force":self.fo,"Intelligence":self.int,"Puissance":self.pui,"Coups Critiques":self.cc,"Sagesse":self.sagesse},
                     {"Retrait PA":self.retPA,"Esquive PA":self.esqPA, "Retrait PM":self.retPM,"Esquive PM":self.esqPM,"Soins":self.soins,"Tacle":self.tacle,"Fuite":self.fuite,"Initiative":self.ini,"Invocation":self.invocationLimite,"Prospection":self.prospection},
                     {"Dommages":self.do,"Dommages critiques":self.doCri,"Neutre":self.doNeutre,"Terre":self.doTerre,"Feu":self.doFeu,"Eau":self.doEau,"Air":self.doAir,"Renvoi":self.doRenvoi,"Maitrise d'arme":self.doMaitriseArme,"Pieges":self.doPieges,"Pieges Puissance":self.doPiegesPui,"Poussee":self.doPou,"Sorts":self.doSorts,"Armes":self.doArmes,"Distance":self.doDist,"Melee":self.doMelee},
@@ -136,6 +137,7 @@ class Personnage(object):
         toReturn._PA = self._PA
         toReturn._PM = self._PM
         toReturn._vie = self._vie
+        toReturn.uid = self.uid
         toReturn.etats = deepcopy(self.etats)
         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
         toReturn.posDebTour = self.posDebTour
@@ -382,7 +384,7 @@ class Personnage(object):
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Suspension Temporelle",155,3,1,6,[Effets.EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,29,"Feu")],[Effets.EffetDureeEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(29,33,"Feu")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+                Sort.Sort("Suspension Temporelle",155,3,1,6,[Effets.EffetRafraichirEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,29,"Feu")],[Effets.EffetRafraichirEtats(1,etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(29,33,"Feu")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
             Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -398,13 +400,13 @@ class Personnage(object):
             Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Démotivation",50,3,1,3,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(17,20,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(22,25,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+                Sort.Sort("Démotivation",50,3,1,3,[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(17,20,"Terre",cibles_possibles="Ennemis")],[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(22,25,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
             Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True),
 
-                Sort.Sort("Démotivation",103,3,1,4,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(20,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,28,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+                Sort.Sort("Démotivation",103,3,1,4,[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(20,23,"Terre",cibles_possibles="Ennemis")],[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(25,28,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
             Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True),
 
-                Sort.Sort("Démotivation",143,3,1,5,[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(23,26,"Terre",cibles_possibles="Ennemis")],[Effets.EffetDureeEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(28,31,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
+                Sort.Sort("Démotivation",143,3,1,5,[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(23,26,"Terre",cibles_possibles="Ennemis")],[Effets.EffetRafraichirEtats(1,cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis="Telefrag",consomme_etat=True),Effets.EffetDegats(28,31,"Terre",cibles_possibles="Ennemis")],25,3,2,0,0,"diagonale",True,description="""Occasionne des dommages Terre aux ennemis en diagonale.
             Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1025,8 +1027,8 @@ class Personnage(object):
             ]))
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepulsif =[Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegePerfide = [Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepulsif = [Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegePerfide = [Effets.EffetAttire(3,zone=Zones.TypeZoneCroix(3), faire_au_vide=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
@@ -1036,8 +1038,8 @@ class Personnage(object):
                 Sort.Sort("Sournoiserie",52,3,1,5,[Effets.EffetDegats(20,22,"Terre")],[Effets.EffetDegats(24,26,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Chausse-Trappe",110,4,1,4,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetDegats(34,38,"Terre"),,Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente les dommages de Chausse-Trape.
-            Le bonus de dommages disparaît quand le sort est lancé.""", chaine=True)
+                Sort.Sort("Chausse-Trappe",110,4,1,4,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetDegats(34,38,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente les dommages de Chausse-Trape.
+            Le bonus de dommages disparaît quand le sort est lancé.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège Sournois",1,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
@@ -1047,7 +1049,7 @@ class Personnage(object):
                 Sort.Sort("Piège Sournois",60,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Perfide",105,2,1,7,[[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegePerfide,"Piège Perfide",(240,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
+                Sort.Sort("Piège Perfide",105,2,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegePerfide,"Piège Perfide",(240,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Invisibilité",1,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],[],0,1,1,7,0,"cercle",False,description="""Rend invisible.""", chaine=True),
@@ -1056,25 +1058,29 @@ class Personnage(object):
 
                 Sort.Sort("Invisibilité",40,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",2))],[],0,1,1,6,0,"cercle",False,description="""Rend invisible.""", chaine=True)
             ]))
-            activationBrume = Sort.Sort("Activation Brume",0,0,0,3,[Effets.EffetEtat(Etats.Etat("Invisible",0,2))],[],0, 99,99,0,0,"cercle",False)
-            sortieBrume = Sort.Sort("Brume: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Invisible")],[],0, 99,99,0,0,"cercle",False)
+            activationBrume = Sort.Sort("Activation Brume",0,0,0,3,[Effets.EffetEtat(Etats.Etat("Invisible",0,2),cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
+            sortieBrume = Sort.Sort("Brume: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Invisible",cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Brume",101,3,1,3,[Effets.EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Poison insidieux",3,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(6,7,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
+                Sort.Sort("Poison insidieux",3,3,1,4,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(6,7,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
 
-                Sort.Sort("Poison insidieux",35,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
+                Sort.Sort("Poison insidieux",35,3,1,4,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
 
-                Sort.Sort("Poison insidieux",67,3,1,4,[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetFinTour("Poison insidieux",0,2,Effets.EffetDegats(12,13,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True)
+                Sort.Sort("Poison insidieux",67,3,1,4,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(10,11,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(12,13,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True)
             ]))
-
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Toxines",115,3,1,7,[Effets.EffetRetireEtat("Toxine", zone=Zones.ZoneTypeCercle(99)), Effets.EffetEtat(Etats.EtatEffetFinTour("Toxine",0,2,Effets.EffetDegats(10,11,"Air"),"Toxine","lanceur")), Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxine",0,2,))],[],0,1,1,2,1,"cercle",True,description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
+                Sort.Sort("Toxines",115,3,1,7,[
+                    Effets.EffetRetireEtat("Toxines", zone=Zones.TypeZoneCercle(99)),
+                    Effets.EffetEtat(Etats.EtatEffetDebutTour("Toxines",0,2,Effets.EffetDegats(10,11,"Air"),"Toxines","lanceur")),
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxines",0,2,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Toxines",0,-1,"Toxines",10)),"Toxines","lanceur","lanceur"), etat_requis_cibles="Toxines"),
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxines",0,2,Effets.EffetSetDureeEtat("Toxines",0,2,zone=Zones.TypeZoneCercle(99)),"Toxines","lanceur","declencheur"), etat_requis_cibles="Toxines")
+                ],[],0,1,1,2,1,"cercle",True,description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
             Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
-            Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=True)
+            Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=False)
             ]))
-            sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
+            # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
@@ -1117,8 +1123,9 @@ class Personnage(object):
                 for joueur in niveau.joueurs:
                     for etat in joueur.etats:
                         if etat.actif():
-                            etat.triggerAvantPiegeDeclenche(piege, self)
-                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",10,None,"",74))
+                            etat.triggerAvantPiegeDeclenche(niveau,piege, self)
+                #Chausse trappe
+                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",10), piege.lanceur, 4)
                 for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
                 i-=1
@@ -1234,7 +1241,7 @@ class Personnage(object):
         while i < nbEtats:
             if self.etats[i].nom in nomsEtatCherche:
                 #Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
-                print(self.classe+" sort de l'etat "+self.etats[i].nom)
+                print(self.nomPerso+" sort de l'etat "+self.etats[i].nom)
                 self.etats[i].triggerAvantRetrait(self)
                 del self.etats[i]
                 i-=1
@@ -1308,7 +1315,7 @@ class Personnage(object):
         if self.vie > self._vie:
             self.vie = self._vie
         toprint = ""
-        toprint = self.classe+" a "+str(self.vie) +"/"+str(self._vie)+" PV"
+        toprint = self.nomPerso+" a "+str(self.vie) +"/"+str(self._vie)+" PV"
         if pb_restants > 0:
             toprint+= " et "+str(pb_restants)+" PB"
         if shouldprint:
@@ -1344,7 +1351,7 @@ class Personnage(object):
                 if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y,self.posX,self.posY, 0):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
-        niveau.depileEffets()
+        
         niveau.rafraichirEtats(self)
         niveau.rafraichirGlyphes(self)
         niveau.rafraichirRunes(self)
@@ -1354,15 +1361,15 @@ class Personnage(object):
                 etat.triggerDebutTour(self,niveau)
 
         self.posDebTour = [self.posX, self.posY]
-
+        niveau.depileEffets()
         niveau.afficherSorts()
-        print("Debut de tour.")
+        print("Debut de tour de "+str(self.nomPerso)+".")
         print("PA : "+str(self.PA))
         print("PM : "+str(self.PM))
         print("PV : "+str(self.vie))
 
 
-    def appliquerEtat(self,etat,lanceur, niveau=None):
+    def appliquerEtat(self,etat,lanceur, cumulMax=-1, niveau=None):
         """@summary: Applique un nouvel état sur le Personnage. Active le trigger d'état triggerInstantane
         @etat: l'état qui va être appliqué
         @type: Etat
@@ -1370,7 +1377,15 @@ class Personnage(object):
         @type: Personnage
         @niveau: La grille de jeu (optionnel)
         @type: Niveau"""
-        print(self.classe+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
+        if cumulMax != -1:
+            count = 0
+            for etatJoueur in lanceur.etats:
+                if etat.nom == etatJoueur.nom:
+                    count += 1
+            if count >= cumulMax:
+                print("DEBUG : Cumul max atteint pour l'état "+etat.nom)
+                return
+        print(self.nomPerso+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
         etat.lanceur = lanceur
         self.etats.append(etat)
         if self.etats[-1].actif():
@@ -1456,9 +1471,9 @@ class Personnage(object):
                     if joueurInfo != None:
                         for etat in joueurInfo.etats:
                             if etat.actif():
-                                print(joueurInfo.classe+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
+                                print(joueurInfo.nomPerso+" est dans l'etat "+etat.nom+" ("+str(etat.duree)+")")
                             elif etat.debuteDans > 0:
-                                print(joueurInfo.classe+" sera dans l'etat "+etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")    
+                                print(joueurInfo.nomPerso+" sera dans l'etat "+etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")    
                     if sortSelectionne != None:
                         sortSelectionne = None
         return sortSelectionne
@@ -1473,7 +1488,7 @@ class PersonnageMur(Personnage):
     def deepcopy(self):
         """@summary: Clone le personnageMur
         @return: le clone"""
-        cp = PersonnageMur(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
+        cp = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
         cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
@@ -1487,7 +1502,7 @@ class PersonnageMur(Personnage):
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
-        print("Tour de "+(niveau.tourDe.classe))
+        print("Tour de "+(niveau.tourDe.nomPerso))
         niveau.finTour()
 
 class PersonnageSansPM(Personnage):
@@ -1500,7 +1515,7 @@ class PersonnageSansPM(Personnage):
     def deepcopy(self):
         """@summary: Clone le PersonnageSansPM
         @return: le clone"""
-        cp = PersonnageSansPM(self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
+        cp = PersonnageSansPM(self.nomPerso,self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
         cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
@@ -1518,11 +1533,11 @@ class PersonnageSansPM(Personnage):
         niveau.finTour()
 # La liste des invocations disponibles.
 INVOCS = {
-"Cadran de Xelor" : PersonnageSansPM("Cadran de Xelor",100,1,{"Vitalite":1000},{},{},{},"cadran_de_xelor.png"),
-"Cawotte" : PersonnageMur("Cawotte",0,1,{"Vitalite":800},{},{},{},"cawotte.png"),
-"Synchro" : PersonnageMur("Synchro",0,1,{"Vitalite":1200},{},{},{},"synchro.png"),
-"Complice" : PersonnageMur("Complice",0,1,{"Vitalite":650},{},{},{},"complice.png"),
-"Balise de Rappel" : PersonnageSansPM("Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
-"Balise Tactique" : PersonnageMur("Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
-"Stratege Iop" : PersonnageMur("Stratege Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
+"Cadran de Xelor" : PersonnageSansPM("Cadran de Xelor","Cadran de Xelor",100,1,{"Vitalite":1000},{},{},{},"cadran_de_xelor.png"),
+"Cawotte" : PersonnageMur("Cawotte","Cawotte",0,1,{"Vitalite":800},{},{},{},"cawotte.png"),
+"Synchro" : PersonnageMur("Synchro","Synchro",0,1,{"Vitalite":1200},{},{},{},"synchro.png"),
+"Complice" : PersonnageMur("Complice","Complice",0,1,{"Vitalite":650},{},{},{},"complice.png"),
+"Balise de Rappel" : PersonnageSansPM("Balise de Rappel","Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
+"Balise Tactique" : PersonnageMur("Balise Tactique","Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
+"Stratege Iop" : PersonnageMur("Stratege Iop","Stratège Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
 }

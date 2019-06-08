@@ -41,7 +41,7 @@ class Etat(object):
         @return: Un booléen qui vaut vrai si l'état est actif, faux sinon."""
         return self.debuteDans <= 0 and self.duree != 0
 
-    def triggerAvantPiegeDeclenche(self, piege, joueurDeclencheur):
+    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur):
         pass
 
     def triggerRafraichissement(self,personnage,niveau):
@@ -211,7 +211,6 @@ class EtatActiveSort(Etat):
         @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
-        #print "Rafraichissement de active sort : "+personnage.classe+" lance "+self.sort.nom + " sur sa pose."
         self.sort.lance(personnage.posX,personnage.posY,niveau,personnage.posX,personnage.posY)
 
 class EtatRedistribuerPer(Etat):
@@ -456,7 +455,7 @@ class EtatBouclierPerLvl(Etat):
 
 class EtatBoostBaseDeg(Etat):
     """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur."""
-    def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc="", maxBoost=-1):
+    def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -478,13 +477,12 @@ class EtatBoostBaseDeg(Etat):
         @type: string"""
         self.boostbaseDeg = boostbaseDeg
         self.nomSort=nomSort
-        self.maxBoost = maxBoost
-        super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc,maxBoost)
+        super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatBoostBaseDeg(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc, self.maxBoost)
+        return EtatBoostBaseDeg(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc)
 
     def triggerAvantCalculDegats(self,dommages, baseDeg, caracs, nomSort):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
@@ -501,8 +499,6 @@ class EtatBoostBaseDeg(Etat):
         @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
         if nomSort == self.nomSort:
             baseDeg += self.boostbaseDeg
-            if baseDeg > self.maxBoost:
-                baseDeg = self.maxBoost
         return dommages, baseDeg, caracs
 
 class EtatLanceSortSiSubit(Etat):
@@ -1037,7 +1033,7 @@ class EtatEffetSiPiegeDeclenche(Etat):
         @return: Le clone de l'état"""
         return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
 
-    def triggerAvantPiegeDeclenche(self, piege, joueurDeclencheur):
+    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur):
         if self.cible == "declencheur":
             joueurCible = joueurDeclencheur
         else:
