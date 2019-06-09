@@ -1027,7 +1027,7 @@ class Personnage(object):
             ]))
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepulsif = [Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1174,7 +1174,17 @@ class Personnage(object):
                 Sort.Sort("Double",94,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+            Occasionne des dommages Air aux ennemis.""", chaine=True),
+
+                Sort.Sort("Piège répulsif",112,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+            Occasionne des dommages Air aux ennemis.""", chaine=True),
+
+                Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+            Occasionne des dommages Air aux ennemis.""", chaine=True)
+            ]))
+            # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[,1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
