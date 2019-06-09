@@ -347,9 +347,7 @@ class EffetDegats(Effet):
             resFixes += joueurCaseEffet.reNeutre
             rePer = joueurCaseEffet.rePerNeutre
         if self.kwargs.get("piege",False) == True:
-            
             if self.kwargs.get("bypassDmgCalc",False) == False:
-                print("DEGATS DES PIEGES")
                 carac += joueurLanceur.doPiegesPui
                 dos += joueurLanceur.doPieges
         if self.isCC():
@@ -365,14 +363,7 @@ class EffetDegats(Effet):
             carac += joueurLanceur.pui
         
         distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [joueurLanceur.posX, joueurLanceur.posY])
-        if distance == 1:
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                dos += joueurLanceur.doMelee
-                resFixes += joueurCaseEffet.reMelee
-        else:
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                dos += joueurLanceur.doDist
-                resFixes += joueurCaseEffet.reDist
+        
         if howToChoose == "min":
             baseDeg = self.minJet
         elif howToChoose == "max":
@@ -386,7 +377,14 @@ class EffetDegats(Effet):
             if etat.actif():
                 dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
-        
+        if distance == 1:
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                total += int((joueurLanceur.doMelee/100.0) * total)
+                rePer += joueurCaseEffet.reMelee
+        else:
+            if self.kwargs.get("bypassDmgCalc",False) == False:
+                total += int((joueurLanceur.doDist/100.0) * total)
+                rePer += joueurCaseEffet.reDist
         #appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],[case_cible_x,case_cible_y])
         total = total * (10-eloignement)/10
@@ -1307,8 +1305,10 @@ class EffetEtatSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
+        print("ETAT SELF ON LANCEUR ")
         etatCopier = self.etat.deepcopy()
-        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur)
+        
+        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
         
 class EffetEntiteLanceSort(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -1479,6 +1479,7 @@ class EffetDouble(Effet):
         joueurCaseEffet.posX = saveJoueurCaseEffet.posX
         joueurCaseEffet.posY = saveJoueurCaseEffet.posY
         joueurCaseEffet.uid = saveJoueurCaseEffet.uid
+        joueurCaseEffet.nomPerso = saveJoueurCaseEffet.nomPerso
         joueurCaseEffet.etats = saveJoueurCaseEffet.etats
         joueurCaseEffet.historiqueDeplacement = saveJoueurCaseEffet.historiqueDeplacement
         joueurCaseEffet.posDebTour = saveJoueurCaseEffet.posDebTour

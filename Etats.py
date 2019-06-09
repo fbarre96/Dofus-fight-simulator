@@ -41,7 +41,7 @@ class Etat(object):
         @return: Un booléen qui vaut vrai si l'état est actif, faux sinon."""
         return self.debuteDans <= 0 and self.duree != 0
 
-    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur):
+    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur, porteur):
         pass
 
     def triggerRafraichissement(self,personnage,niveau):
@@ -1040,15 +1040,19 @@ class EtatEffetSiPiegeDeclenche(Etat):
         @return: Le clone de l'état"""
         return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
 
-    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur):
+    def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur,porteur):
         if self.cible == "declencheur":
             joueurCible = joueurDeclencheur
+        elif self.cible == "porteur":
+            joueurCible = porteur
         else:
             joueurCible = self.lanceur
         if self.quiLancera == "lanceur":
             niveau.lancerEffet(self.effet,self.lanceur.posX,self.lanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
         elif self.quiLancera == "cible":
             niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurCible)
+        elif self.quiLancera == "porteur":
+            niveau.lancerEffet(self.effet,porteur.posX,porteur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, porteur)
         
 
 class EtatTelefrag(Etat):

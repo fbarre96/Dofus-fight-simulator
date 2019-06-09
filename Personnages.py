@@ -1026,7 +1026,7 @@ class Personnage(object):
                 Sort.Sort("Sentinelle",200,3,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100)),Effets.EffetEtatSelf(Etats.EtatBoostSortsPer("Sentinelle",1,1,30))],[],0,1,1,3,0,"cercle",False,description="""Le lanceur perd tous ses PM mais gagne un bonus de dommages pour le tour en cours.""", chaine=True)
             ]))
         elif classe=="Sram":
-            activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
 
@@ -1164,6 +1164,8 @@ class Personnage(object):
             ]))
             activationDoubleComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Invocateur"),Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
             activationDoubleComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Double",0,2,Effets.EffetEntiteLanceSort("Double",activationDoubleComplot2),"Explosion Double","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
+            activationComploteurComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetDegats(39,41,"Neutre",zone=Zones.TypeZoneCercleSansCentre(1)),Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation", chaine=False)
+            activationComploteurComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Comploteur",0,2,Effets.EffetEntiteLanceSort("Comploteur",activationComploteurComplot2),"Explosion Comploteur","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Double",13,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
@@ -1173,6 +1175,12 @@ class Personnage(object):
 
                 Sort.Sort("Double",94,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Comploteur",130,3,1,2,[Effets.EffetInvoque("Comploteur",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationComploteurComplot)),Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche("Comploteur",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("ComplotBoost",0,-1,"Complot",14),cumulMax=4),"Complot","porteur","porteur"))],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
+            Chaque piège déclenché augmente la Puissance du Double.
+            Il meurt après 2 tours.
+            Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
@@ -1227,9 +1235,9 @@ class Personnage(object):
                 for joueur in niveau.joueurs:
                     for etat in joueur.etats:
                         if etat.actif():
-                            etat.triggerAvantPiegeDeclenche(niveau,piege, self)
+                            etat.triggerAvantPiegeDeclenche(niveau,piege, self, joueur)
                 #Chausse trappe
-                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",10), piege.lanceur, 4)
+                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), piege.lanceur, 4)
                 for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
                 i-=1
@@ -1644,5 +1652,6 @@ INVOCS = {
 "Balise de Rappel" : PersonnageSansPM("Balise de Rappel","Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
 "Balise Tactique" : PersonnageMur("Balise Tactique","Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
 "Stratege Iop" : PersonnageMur("Stratege Iop","Stratège Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png"),
-"Double" : Personnage("Double","Double",0,1,{"Vitalite":1},{},{},{},"sram.png")
+"Double" : Personnage("Double","Double",0,1,{"Vitalite":1},{},{},{},"sram.png"),
+"Comploteur" : Personnage("Comploteur","Comploteur",0,1,{"Vitalite":1},{},{},{},"sram.png"),
 }

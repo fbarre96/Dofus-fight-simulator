@@ -8,12 +8,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Comploteur",130,3,1,2,[Effets.TODO(Crée un double du lanceur de sort),Effets.TODO(Complot)],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
-Chaque piège déclenché augmente la Puissance du Double.
-Il meurt après 2 tours.
-Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Piège Fangeux",17,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
 Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
