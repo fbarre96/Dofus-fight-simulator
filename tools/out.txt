@@ -3,24 +3,8 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Fourvoiement",6,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 30 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 30 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(11,14,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(11,14,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(15,18,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(15,18,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
-Vole de l'Agilité et de la Force.
-Applique de l'érosion.""", chaine=True),
 
-	Sort.Sort("Fourvoiement",42,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 40 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(14,17,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(14,17,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(18,21,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(18,21,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
-Vole de l'Agilité et de la Force.
-Applique de l'érosion.""", chaine=True),
 
-	Sort.Sort("Fourvoiement",74,4,0,0,[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 50 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(17,20,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(17,20,"Terre",zone=Zones.TypeZoneCroix(1))],[Effets.TODO(10% Érosion (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 60 Agilité (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.TODO(Vole 60 Force (3 tours),zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(21,24,"Air",zone=Zones.TypeZoneCroix(1)),Effets.EffetDegats(21,24,"Terre",zone=Zones.TypeZoneCroix(1))],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
-Vole de l'Agilité et de la Force.
-Applique de l'érosion.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Pillage",120,3,1,1,[Effets.TODO(État 'Etat temporaire',zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(34,38,"Eau",zone=Zones.TypeZoneCercle(3)),Effets.TODO(Pillage,zone=Zones.TypeZoneCercle(3)),Effets.TODO(Enlève l'état Etat temporaire,zone=Zones.TypeZoneCercle(3))],[Effets.TODO(État 'Etat temporaire',zone=Zones.TypeZoneCercle(3)),Effets.EffetDegats(40,44,"Eau",zone=Zones.TypeZoneCercle(3)),Effets.TODO(Pillage,zone=Zones.TypeZoneCercle(3)),Effets.TODO(Enlève l'état Etat temporaire,zone=Zones.TypeZoneCercle(3))],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
-50% des dommages sont distribués sous forme de soin aux alliés à 3 cellules ou moins de la cible.
-N'affecte pas le lanceur.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Coup Sournois",9,3,1,3,[Effets.EffetDegats(18,21,"Feu"),Effets.TODO(Repousse de 2 case(s))],[Effets.EffetDegats(22,25,"Feu"),Effets.TODO(Repousse de 2 case(s))],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
 Pousse la cible.""", chaine=True),

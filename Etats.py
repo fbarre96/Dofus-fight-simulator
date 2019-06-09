@@ -893,7 +893,7 @@ class EtatContre(Etat):
 
 class EtatEffetSiSubit(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
-    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,typeDeg="",lanceur=None,desc=""):
+    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,cible,typeDeg="",lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -906,9 +906,10 @@ class EtatEffetSiSubit(Etat):
         @type: Effet
         @nomSort: le nom du sort qui inflige les dégâts
         @type: string
-        @quiLancera: le personnage qui subira l'effet 
+        @quiLancera: le personnage qui lancera l'effet 
         @type: string ("lanceur" ou "cible")
-
+        @cible: Le personnage qui subira l'effet
+        @type: string ("attaquant" ou "cible")
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
         @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
@@ -918,13 +919,14 @@ class EtatEffetSiSubit(Etat):
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
+        self.cible = cible
         self.typeDeg = typeDeg
         super(EtatEffetSiSubit, self).__init__(nom,debDans, duree, lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiSubit(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.typeDeg,self.lanceur,self.desc)
+        return EtatEffetSiSubit(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.typeDeg,self.lanceur,self.desc)
 
     def triggerAvantSubirDegats(self,cibleAttaque,niveau,totalPerdu,typeDegats,attaquant):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages vont être subits.
@@ -940,10 +942,15 @@ class EtatEffetSiSubit(Etat):
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
         if totalPerdu >0 and (self.typeDeg == typeDegats or self.typeDeg==""):
+            
+            self.effet.setDegatsSubits(totalPerdu, typeDegats)
+            joueurCible = cibleAttaque
+            if self.cible == "attaquant":
+                joueurCible = attaquant
             if self.quiLancera == "lanceur":
-                niveau.lancerEffet(self.effet,attaquant.posX,attaquant.posY,self.nomSort, attaquant.posX, attaquant.posY, self.lanceur)
+                niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
             elif self.quiLancera == "cible":
-                niveau.lancerEffet(self.effet,cibleAttaque.posX,cibleAttaque.posY,self.nomSort, attaquant.posX, attaquant.posY, attaquant)
+                niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
 class EtatEffetSiPousse(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,lanceur=None,desc=""):

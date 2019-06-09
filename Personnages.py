@@ -456,7 +456,7 @@ class Personnage(object):
                 Sort.Sort("Contre",162,2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Bouclier Temporel",180,3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur",""))],[],0,1,1,3,0,"cercle",True,description="""Si la cible subit des dommages, son attaquant et elle reviennent à leur position précédente.""", chaine=True)
+                Sort.Sort("Bouclier Temporel",180,3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur","attaquant",""))],[],0,1,1,3,0,"cercle",True,description="""Si la cible subit des dommages, son attaquant et elle reviennent à leur position précédente.""", chaine=True)
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -939,7 +939,7 @@ class Personnage(object):
                 Sort.Sort("Flèche Persécutrice",147,3,5,8,[Effets.EffetDegats(11,13,"Feu"),Effets.EffetDegats(11,13,"Air")],[Effets.EffetDegats(13,15,"Feu"),Effets.EffetDegats(13,15,"Air")],5,99,2,0,1,"ligne",True,description="""Occasionne des dommages Air et Feu.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche Tyrannique",170,4,2,7,[Effets.EffetEtat(Etats.EtatEffetSiPousse("Flèche tyrannique air",0,2, Effets.EffetDegats(15,15,"Air"),"Flèche tyrannique","lanceur")), Effets.EffetEtat(Etats.EtatEffetSiSubit("Flèche tyrannique feu",0,2, Effets.EffetDegats(15,15,"Feu"),"Flèche tyrannique","lanceur","doPou"))],[],0,3,1,0,1,"ligne",True,description="""Occasionne des dommages Air si la cible est pouss�e.
+                Sort.Sort("Flèche Tyrannique",170,4,2,7,[Effets.EffetEtat(Etats.EtatEffetSiPousse("Flèche tyrannique air",0,2, Effets.EffetDegats(15,15,"Air"),"Flèche tyrannique","lanceur")), Effets.EffetEtat(Etats.EtatEffetSiSubit("Flèche tyrannique feu",0,2, Effets.EffetDegats(15,15,"Feu"),"Flèche tyrannique","lanceur","cible","doPou"))],[],0,3,1,0,1,"ligne",True,description="""Occasionne des dommages Air si la cible est pouss�e.
             Occasionne des dommages Feu si la cible subit des dommages de poussée.
             Les dommages de chaque élément peuvent être déclenchés 3 fois par tour.""", chaine=True)
             ]))
@@ -1079,6 +1079,75 @@ class Personnage(object):
                 ],[],0,1,1,2,1,"cercle",True,description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
             Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
             Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=False)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+	            Sort.Sort("Fourvoiement",6,4,0,0,[
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-30),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",30)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-30),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",30)),
+                    Effets.EffetDegats(11,14,"Air",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetDegats(11,14,"Terre",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroix(1))
+                    ],
+                    [
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-40),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",40)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-40),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",40)),
+                    Effets.EffetDegats(15,18,"Air",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetDegats(15,18,"Terre",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroix(1))
+                    ],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+            Vole de l'Agilité et de la Force.
+            Applique de l'érosion.""", chaine=True),
+
+                Sort.Sort("Fourvoiement",42,4,0,0,[
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-40),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",40)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-40),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",40)),
+                    Effets.EffetDegats(14,17,"Air",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur"),
+                    Effets.EffetDegats(14,17,"Terre",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")
+                    ],
+                    [
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-50),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",50)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-50),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",50)),
+                    Effets.EffetDegats(18,21,"Air",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur"),
+                    Effets.EffetDegats(18,21,"Terre",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")
+                    ],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+            Vole de l'Agilité et de la Force.
+            Applique de l'érosion.""", chaine=True),
+
+                Sort.Sort("Fourvoiement",74,4,0,0,[
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-50),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",50)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-50),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",50)),
+                    Effets.EffetDegats(17,20,"Air",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur"),
+                    Effets.EffetDegats(17,20,"Terre",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")
+                    ],
+                    [
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"erosion",10),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",-60),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"agi",60)),
+                    Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",-60),cibles_exclues="Lanceur", zone=Zones.TypeZoneCroix(1)),
+                    Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourvoiement",0,3,"fo",60)),
+                    Effets.EffetDegats(21,24,"Air",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur"),
+                    Effets.EffetDegats(21,24,"Terre",zone=Zones.TypeZoneCroix(1),cibles_exclues="Lanceur")
+                    ],5,2,99,0,0,"cercle",False,description="""Occasionne des dommages Air et Terre.
+            Vole de l'Agilité et de la Force.
+            Applique de l'érosion.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+	            Sort.Sort("Pillage",120,3,1,1,[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(3),cibles_possibles="Allies"),"Pillage","lanceur","cible")),Effets.EffetDegats(34,38,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(3)),"Pillage","lanceur","cible")),Effets.EffetDegats(40,44,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
+                50% des dommages sont distribués sous forme de soin aux alliés à 3 cellules ou moins de la cible.
+                N'affecte pas le lanceur.""", chaine=True)
             ]))
             # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
