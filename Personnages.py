@@ -1029,7 +1029,7 @@ class Personnage(object):
             activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
-
+            activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau"),Effets.EffetRetireEtat('Etat temporaire')]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1181,6 +1181,16 @@ class Personnage(object):
             Chaque piège déclenché augmente la Puissance du Double.
             Il meurt après 2 tours.
             Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Fangeux",17,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+            Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
+
+                Sort.Sort("Piège Fangeux",58,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+            Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
+
+                Sort.Sort("Piège Fangeux",102,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+            Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
