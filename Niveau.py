@@ -1275,18 +1275,6 @@ class Niveau:
                         fenetre.blit(vide1, (x,y))
                     else:
                         fenetre.blit(vide2, (x,y))
-                    #Afficher les cases glyphees
-                    for glyphe in self.glyphes:
-                        if glyphe.actif():
-                            if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
-                                pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
-                    for piege in self.pieges:
-                        if piege.lanceur.team == self.tourDe.team or not piege.invisible:
-                            if piege.aPorteDeclenchement(num_case, num_ligne):
-                                pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
-                    for rune in self.runes:
-                        if rune.centre_x == num_case and rune.centre_y == num_ligne:
-                            pygame.draw.rect(fenetre, rune.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                     
                     #Afficher previsualation portee du sort selectionne
                     if sortSelectionne != None:
@@ -1324,6 +1312,18 @@ class Niveau:
                                         joueur.msgsPrevisu = []
                                     previsuToShow = sortSelectionne.lance(self.tourDe.posX,self.tourDe.posY,self, case_x,case_y, self.tourDe,True)
                                     self.cachedPrevisu = [sortSelectionne, case_x, case_y, previsuToShow]
+                    #Afficher les cases glyphees
+                    for glyphe in self.glyphes:
+                        if glyphe.actif():
+                            if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
+                                pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
+                    for piege in self.pieges:
+                        if piege.lanceur.team == self.tourDe.team or not piege.invisible:
+                            if piege.aPorteDeclenchement(num_case, num_ligne):
+                                pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
+                    for rune in self.runes:
+                        if rune.centre_x == num_case and rune.centre_y == num_ligne:
+                            pygame.draw.rect(fenetre, rune.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne*constantes.taille_sprite+1,constantes.taille_sprite-2,constantes.taille_sprite-2))
                                 
                 if sprite.type == 'j':
                     joueurOnCase = self.getJoueurSur(num_case,num_ligne)
