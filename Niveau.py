@@ -1199,7 +1199,6 @@ class Niveau:
         """
         onCherche = cibles.split("|")
         retour = []
-        #if (joueurCaseEffet.team == joueurLanceur.team and joueurCaseEffet != joueurLanceur and effet.faireAuxAllies) or (joueurCaseEffet.team == joueurLanceur.team and joueurCaseEffet == joueurLanceur and effet.faireAuLanceur) or (joueurCaseEffet.team != joueurLanceur.team and effet.faireAuxEnnemis):
         for joueur in self.joueurs:
             if joueur.classe in onCherche:
                 retour.append(joueur)
@@ -1240,7 +1239,7 @@ class Niveau:
                     joueur = self.getJoueurSur(case[0],case[1])
                     if joueur != None:
                         #Test des conditions 
-                        if (joueur.team == lanceur.team and joueur != lanceur and "Allies" in ciblesPossibles) or (joueur.team == lanceur.team and joueur == lanceur and "Lanceur" in ciblesPossibles) or (joueur.team != lanceur.team and "Ennemis" in ciblesPossibles) or (joueur.classe in ciblesPossibles):
+                        if (joueur.team == lanceur.team and joueur != lanceur and "Allies" in ciblesPossibles) or (joueur.team == lanceur.team and joueur == lanceur and "Lanceur" in ciblesPossibles) or (joueur.team != lanceur.team and "Ennemis" in ciblesPossibles) or (joueur.classe in ciblesPossibles) or (joueur.invocateur is not None and "Invoc" in ciblesPossibles) or (lanceur.invocateur is not None and "Invocateur" in ciblesExclues and joueur.uid == lanceur.invocateur.uid):
                             if not(joueur.classe in ciblesExclues or (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues)):
                                 #Test sur l'etat requis.
                                 if joueur.aEtatsRequis(etatRequisCibles):

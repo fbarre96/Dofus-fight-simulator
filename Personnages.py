@@ -1028,7 +1028,7 @@ class Personnage(object):
         elif classe=="Sram":
             activationPiegeSournois = [Effets.EffetDegats(10,12,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(10,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True)]
+            activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
@@ -1148,6 +1148,31 @@ class Personnage(object):
 	            Sort.Sort("Pillage",120,3,1,1,[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(3),cibles_possibles="Allies"),"Pillage","lanceur","cible")),Effets.EffetDegats(34,38,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(3)),"Pillage","lanceur","cible")),Effets.EffetDegats(40,44,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],15,3,2,0,0,"cercle",False,description="""Occasionne des dommages Eau.
                 50% des dommages sont distribués sous forme de soin aux alliés à 3 cellules ou moins de la cible.
                 N'affecte pas le lanceur.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Coup Sournois",9,3,1,3,[Effets.EffetDegats(18,21,"Feu"),Effets.EffetPousser(2)],[Effets.EffetDegats(22,25,"Feu"),Effets.EffetPousser(2)],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+            Pousse la cible.""", chaine=True),
+
+                Sort.Sort("Coup Sournois",47,3,1,3,[Effets.EffetDegats(22,25,"Feu"),Effets.EffetPousser(2)],[Effets.EffetDegats(26,29,"Feu"),Effets.EffetPousser(2)],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+            Pousse la cible.""", chaine=True),
+
+                Sort.Sort("Coup Sournois",87,3,1,4,[Effets.EffetDegats(26,29,"Feu"),Effets.EffetPousser(3)],[Effets.EffetDegats(31,34,"Feu"),Effets.EffetPousser(3)],15,3,2,0,0,"ligne",True,description="""Occasionne des dommages Feu sur les ennemis.
+            Pousse la cible.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Coupe-gorge",125,4,1,7,[Effets.EffetDegats(34,38,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Coupe-gorge",0,2,"doPiegesPui",250))],[Effets.EffetDegats(40,44,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Coupe-gorge",0,2,"doPiegesPui",250))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et augmente la puissance des pièges.""", chaine=True)
+            ]))
+            activationDoubleComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Invocateur"),Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
+            activationDoubleComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Double",0,2,Effets.EffetEntiteLanceSort("Double",activationDoubleComplot2),"Explosion Double","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Double",13,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+            N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
+
+                Sort.Sort("Double",54,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+            N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
+
+                Sort.Sort("Double",94,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+            N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
             ]))
             # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
@@ -1608,5 +1633,6 @@ INVOCS = {
 "Complice" : PersonnageMur("Complice","Complice",0,1,{"Vitalite":650},{},{},{},"complice.png"),
 "Balise de Rappel" : PersonnageSansPM("Balise de Rappel","Balise de Rappel",0,1,{"Vitalite":1000},{},{},{},"balise_de_rappel.png"),
 "Balise Tactique" : PersonnageMur("Balise Tactique","Balise Tactique",0,1,{"Vitalite":1000},{},{},{},"balise_tactique.png"),
-"Stratege Iop" : PersonnageMur("Stratege Iop","Stratège Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png")
+"Stratege Iop" : PersonnageMur("Stratege Iop","Stratège Iop",0,1,{"Vitalite":1385},{},{},{},"conquete.png"),
+"Double" : Personnage("Double","Double",0,1,{"Vitalite":1},{},{},{},"sram.png")
 }

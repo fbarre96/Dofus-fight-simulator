@@ -4,6 +4,7 @@ import random
 import Personnages
 import Niveau
 import Etats
+from copy import deepcopy
 
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -80,9 +81,9 @@ class Effet(object):
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         #Test si la cible est dans les cibles possibles
-        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles):
+        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesPossibles and joueurCible.uid == joueurLanceur.invocateur.uid):
             #Test si la cible est exclue
-            if joueurCible.classe in self.ciblesExclues or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues):
+            if joueurCible.classe in self.ciblesExclues or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues and joueurCible.uid == joueurLanceur.invocateur.uid):
                 print("DEBUG : Invalide : Cible Exclue")
                 return False
             #Test si la cible est déjà traitée
@@ -176,6 +177,7 @@ class EffetSoin(Effet):
     def calculSoin(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
         if joueurCaseEffet == None:
             return None
+        self.valSoin += joueurLanceur.soins
         if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet._vie:
             self.valSoin = joueurCaseEffet._vie - joueurCaseEffet.vie
         return self.valSoin
@@ -345,7 +347,9 @@ class EffetDegats(Effet):
             resFixes += joueurCaseEffet.reNeutre
             rePer = joueurCaseEffet.rePerNeutre
         if self.kwargs.get("piege",False) == True:
+            
             if self.kwargs.get("bypassDmgCalc",False) == False:
+                print("DEGATS DES PIEGES")
                 carac += joueurLanceur.doPiegesPui
                 dos += joueurLanceur.doPieges
         if self.isCC():
@@ -1421,7 +1425,7 @@ class EffetInvoque(Effet):
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
         
-        invoc = Personnages.INVOCS[self.nomInvoque].deepcopy()
+        invoc = deepcopy(Personnages.INVOCS[self.nomInvoque])
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
@@ -1444,3 +1448,57 @@ class EffetInvoque(Effet):
             if len(joueurLanceur.invocations) + 1 > joueurLanceur.invocationLimite:
                 return False, "Limite d'invocation atteinte"
         return True,""
+
+class EffetDouble(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet est unique pour le double du sram"""
+    def __init__(self, **kwargs):
+        """@summary: Initialise un effet invoquant un personnage.
+        @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
+        @type: string
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        super(EffetDouble, self).__init__(**kwargs)
+    def deepcopy(self):
+        return EffetDouble(**self.kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
+        @type: **kwargs"""
+        copyJoueurLanceur = deepcopy(joueurLanceur)
+        saveJoueurCaseEffet = deepcopy(joueurCaseEffet)
+        joueurCaseEffet = copyJoueurLanceur
+        
+        joueurCaseEffet.posX = saveJoueurCaseEffet.posX
+        joueurCaseEffet.posY = saveJoueurCaseEffet.posY
+        joueurCaseEffet.uid = saveJoueurCaseEffet.uid
+        joueurCaseEffet.etats = saveJoueurCaseEffet.etats
+        joueurCaseEffet.historiqueDeplacement = saveJoueurCaseEffet.historiqueDeplacement
+        joueurCaseEffet.posDebTour = saveJoueurCaseEffet.posDebTour
+        joueurCaseEffet.posDebCombat = saveJoueurCaseEffet.posDebCombat
+        joueurCaseEffet.invocateur = saveJoueurCaseEffet.invocateur
+        joueurCaseEffet.invocations = saveJoueurCaseEffet.invocations
+        joueurCaseEffet.sorts = saveJoueurCaseEffet.sorts
+        joueurCaseEffet.classe = saveJoueurCaseEffet.classe
+        i = 0
+        while i < len(niveau.joueurs):
+            if niveau.joueurs[i].uid == joueurCaseEffet.uid:
+                del niveau.joueurs[i]
+                niveau.joueurs.insert(i,joueurCaseEffet)
+                break
+            i+=1
+        if joueurCaseEffet.invocateur is not None:
+            i = 0
+            while i < len(joueurCaseEffet.invocateur.invocations):
+                if joueurCaseEffet.invocateur.invocations[i].uid == joueurCaseEffet.uid:
+                    del joueurCaseEffet.invocateur.invocations[i]
+                    joueurCaseEffet.invocateur.invocations.insert(i,joueurCaseEffet)
+                    break
+                i+=1
