@@ -1193,6 +1193,9 @@ class Personnage(object):
             Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Larcin",135,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(40,44,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(44,48,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Eau et vole de la Chance.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 
