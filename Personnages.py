@@ -1233,6 +1233,13 @@ class Personnage(object):
             La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+
+                Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+
+                Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 

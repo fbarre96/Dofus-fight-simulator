@@ -3,14 +3,6 @@
 
 
 
-
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
-
-	Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
-
-	Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
 Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
