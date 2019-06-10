@@ -3,20 +3,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Guet-apens",145,3,1,5,[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.EffetDegats(30,34,"Feu"),Effets.TODO(Guet-apens),Effets.TODO(Enlève l'état Etat temporaire),Effets.TODO(Attire de 2 case(s))],[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.EffetDegats(34,38,"Feu"),Effets.TODO(Guet-apens),Effets.TODO(Enlève l'état Etat temporaire),Effets.TODO(Attire de 2 case(s))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège Empoisonné",32,3,1,3,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCroix(1))],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
 
-	Sort.Sort("Piège Empoisonné",81,3,1,3,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCroix(1))],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
-
-	Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCroix(1))],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetDegats(28,32,"Air"),Effets.TODO(Injection Toxique)],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
-La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetVolDeVie(15,Feu),"tour"),Effets.TODO(État 'Concentration de Chakra' (1 tour))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 

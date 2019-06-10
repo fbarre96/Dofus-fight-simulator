@@ -1030,7 +1030,8 @@ class Personnage(object):
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
             activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
-            activationPiegeDeMasse = [Effets.EffetDegats(0,0,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+            activationPiegeDeMasse = [Effets.EffetDegats(6969,6969,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+            activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(6969,6969,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
@@ -1219,6 +1220,18 @@ class Personnage(object):
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Guet-apens",145,3,1,5,[Effets.EffetDegats(30,34,"Feu"),Effets.EffetEtat(Etats.Etat("Guet-Apens",0,-1)),Effets.EffetEntiteLanceSort("Double",activationGuetApens)],[Effets.EffetDegats(34,38,"Feu"),Effets.EffetAttire(2,"JoueurCaseEffet","Lanceur",zone=Zones.TypeZoneCercle(99),cibles_possibles="Double")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
             ]))
+            
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Empoisonné",32,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+
+                Sort.Sort("Piège Empoisonné",81,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+
+                Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetEtat(Etats.EffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"lanceur")),Effets.EffetRetireEtat("Injection Toxique")],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
+            La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
+            ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
@@ -1229,7 +1242,6 @@ class Personnage(object):
                 Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True)
             ]))
-            # sorts.append(Sort.Sort("Piège répulsif",3,1,7,[,1,1,1,1, "cercle", description="Occasionne des dommages Feu et attire."))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
@@ -1273,7 +1285,7 @@ class Personnage(object):
                     for etat in joueur.etats:
                         if etat.actif():
                             etat.triggerAvantPiegeDeclenche(niveau,piege, self, joueur)
-                #Chausse trappe Et traquenard TODO: Appliquer etat en debut de match
+                #Chausse trappe ET traquenard ET piège empoisonné TODO: Appliquer etat en debut de match
                 piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), piege.lanceur, 4)
                 # TODO piege.lanceur.appliquerEtat(Etats.EtatBoostSortCarac("Traquenard",0,-1,"POMax",1), piege.lanceur, 4)
 
