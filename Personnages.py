@@ -1029,7 +1029,9 @@ class Personnage(object):
             activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
-            activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau"),Effets.EffetRetireEtat('Etat temporaire')]
+            activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
+            activationPiegeDeMasse = [Effets.EffetDegats(0,0,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1196,6 +1198,28 @@ class Personnage(object):
                 Sort.Sort("Larcin",135,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(40,44,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(44,48,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Eau et vole de la Chance.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
+	            Sort.Sort("Piège de Masse",22,4,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+
+                Sort.Sort("Piège de Masse",65,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+
+                Sort.Sort("Piège de Masse",108,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Traquenard",140,3,1,1,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Traquenard")],[Effets.EffetDegats(33,37,"Terre"),Effets.EffetRetireEtat("Traquenard")],5,3,2,0,0,"ligne",False,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente la portée de Traquenard.
+            Le bonus de portée disparaît quand le sort est lancé.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Cruauté",27,3,1,5,[Effets.EffetDegats(12,14,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],[Effets.EffetDegats(16,18,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True),
+
+                Sort.Sort("Cruauté",72,3,1,6,[Effets.EffetDegats(15,17,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],[Effets.EffetDegats(19,21,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True),
+
+                Sort.Sort("Cruauté",118,3,1,7,[Effets.EffetDegats(18,20,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],[Effets.EffetDegats(22,24,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True)
+            ]))
+            activationGuetApens = Sort.Sort("Activation Guet-apens",145,0,0,99,[Effets.EffetAttire(2,"Lanceur","JoueurCaseEffet",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Guet-Apens",consomme_etat=True)],[],0,99,99,0,0,"cercle",False,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Guet-apens",145,3,1,5,[Effets.EffetDegats(30,34,"Feu"),Effets.EffetEtat(Etats.Etat("Guet-Apens",0,-1)),Effets.EffetEntiteLanceSort("Double",activationGuetApens)],[Effets.EffetDegats(34,38,"Feu"),Effets.EffetAttire(2,"JoueurCaseEffet","Lanceur",zone=Zones.TypeZoneCercle(99),cibles_possibles="Double")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 
@@ -1249,8 +1273,10 @@ class Personnage(object):
                     for etat in joueur.etats:
                         if etat.actif():
                             etat.triggerAvantPiegeDeclenche(niveau,piege, self, joueur)
-                #Chausse trappe
+                #Chausse trappe Et traquenard TODO: Appliquer etat en debut de match
                 piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), piege.lanceur, 4)
+                # TODO piege.lanceur.appliquerEtat(Etats.EtatBoostSortCarac("Traquenard",0,-1,"POMax",1), piege.lanceur, 4)
+
                 for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
                 i-=1

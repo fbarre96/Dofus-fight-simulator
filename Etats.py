@@ -261,7 +261,8 @@ class EtatRedistribuerPer(Etat):
         totalPerdu = int(totalPerdu*(self.pourcentage/100.0))
         effetRedistribution = Effets.EffetDegats(totalPerdu,totalPerdu,"renvoie",zone=Zones.TypeZoneCercle(self.tailleZone),bypassDmgCalc=True,cibles_possibles=self.cibles,cibles_exclues="Lanceur")
         niveau.lancerEffet(effetRedistribution,cibleAttaque.posX,cibleAttaque.posY,"Redistribution", cibleAttaque.posX,cibleAttaque.posY)
-        
+
+
 
 class EtatBoostCaracFixe(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique."""
