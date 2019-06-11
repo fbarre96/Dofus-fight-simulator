@@ -99,8 +99,9 @@ class Personnage(object):
         self.lvl = int(lvl)
         self.classe = classe
         self.uid = uuid.uuid4()
+        self.sortsDebutCombat = []
         if sorts is None:
-            self.sorts = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
+            self.sorts, self.sortsDebutCombat = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
         else:
             self.sorts = sorts
         self.posX = 0                                     # Sa position X sur la carte
@@ -132,6 +133,7 @@ class Personnage(object):
                     {"Neutre":self.reNeutre,"Neutre%":self.rePerNeutre,"Terre":self.reTerre,"Terre%":self.rePerTerre,"Feu":self.reFeu,"Feu%":self.rePerFeu,"Eau":self.reEau,"Eau%":self.rePerEau,"Air":self.reAir,"Air%":self.rePerAir,"Coups critiques":self.reCc,"Poussee":self.rePou,"Distance":self.reDist,"Melee":self.reMelee},
                         self.icone,
                         self.sorts)
+        toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
         toReturn._PA = self._PA
@@ -199,17 +201,43 @@ class Personnage(object):
 
         @return: tableau de Sort"""
         sorts = []
+        sortsDebutCombat = []
         if(classe=="Stratege Iop"):
             sorts.append(Sort.Sort("Strategie_iop",0,0,0,0,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Stratégie Iop",0,-1, 50,"Ennemis|Allies",2))],[],0,99,99,0,0,"cercle",False))
-            return sorts
+            return sorts,sortsDebutCombat
         elif(classe=="Cadran de Xelor"):
             sorts.append(Sort.Sort("Synchronisation",0,0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Synchronisation",0,1,"PA",2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],[],0,99,99,0,0,"cercle",False,chaine=False))
-            return sorts
+            return sorts,sortsDebutCombat
         elif(classe=="Balise de Rappel"):
             sorts.append(Sort.Sort("Rappel",0,0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False))
+            return sorts,sortsDebutCombat
         elif classe == "Poutch":
-            return sorts
+            return sorts,sortsDebutCombat
+        elif classe == "Synchro":
+            # TODO FIX : La limite par tour se met meme si l'état TF était déjà fait et donc aucun nouveau boost a été rajouté
+            sortsDebutCombat.append(
+                Sort.Sort("Synchronisation",0,0,0,0,[
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Synchronisation",0,-1,Effets.EffetEtatSelfTF(Etats.EtatBoostBaseDegLvlBased("toReplace",0,-1,"Fin des temps",190), "Rembobinage", cumulMax=1, etat_requis="!DejaBoost"),"Téléfrageur","porteur","porteur")), 
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Limite synchronisation par tour",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                    # TODO EXPLOSION Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Attente de la fin des temps",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+            return sorts,sortsDebutCombat
         elif(classe=="Xelor"):
+            sortsDebutCombat.append(
+                Sort.Sort("Téléfrageur",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Téléfrageur",0,-1,Effets.EffetEtatSelfTF(Etats.EtatBoostCaracFixe("toReplace",0,-1,"PA",2), "Rembobinage", cumulMax=1),"Téléfrageur","reelLanceur","reelLanceur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+            sortsDebutCombat.append(
+                Sort.Sort("Glas Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Glas Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Glas",0,-1,"Glas",4), cumulMax=10),"Glas","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+
+            # #Test Explosion synchro
+            # if ("Synchro" == joueurBougeant.classe) and not reelLanceur.aEtat("Faille_temporelle"):
+            #     self.__exploserSynchro(joueurBougeant,reelLanceur)
+            # elif ("Synchro" == joueurASwap.classe) and not reelLanceur.aEtat("Faille_temporelle"):
+            #     self.__exploserSynchro(joueurASwap,reelLanceur)
+            # #Activation des glyphes qui s'activent après un téléfrag
+            # self.__glypheActiveTF(reelLanceur,nomSort)
+
             retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
             sortieInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Intaclable")],[],0, 99,99,0,0,"cercle",False)
@@ -410,7 +438,7 @@ class Personnage(object):
             Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Pendule",165,4,1,5,[Effets.EffetTpSym(),Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")],[Effets.EffetTpSym(),Effets.EffetDegats(46,50,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrecLanceur(1,cibles_possibles="Lanceur")],5,2,1,0,0,"cercle",True,description="""Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination.
+                Sort.Sort("Pendule",165,4,1,5,[Effets.EffetTpSym(),Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetTpSym(),Effets.EffetDegats(46,50,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],5,2,1,0,0,"cercle",True,description="""Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination.
             Il revient ensuite à sa position précédente.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1026,12 +1054,18 @@ class Personnage(object):
                 Sort.Sort("Sentinelle",200,3,0,0,[Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Sentinelle",1,1,"PM",-100)),Effets.EffetEtatSelf(Etats.EtatBoostSortsPer("Sentinelle",1,1,30))],[],0,1,1,3,0,"cercle",False,description="""Le lanceur perd tous ses PM mais gagne un bonus de dommages pour le tour en cours.""", chaine=True)
             ]))
         elif classe=="Sram":
+            sortsDebutCombat.append(
+                Sort.Sort("Chausse-Trappe Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Chausse-Trappe Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), cumulMax=4),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+            sortsDebutCombat.append(
+                Sort.Sort("Traquenard Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Traquenard Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Traquenard",0,-1,"Traquenard","POMax",1), cumulMax=4),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
             activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
             activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
-            activationPiegeDeMasse = [Effets.EffetDegats(6969,6969,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
-            activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(6969,6969,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
+            activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+            activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
@@ -1228,17 +1262,17 @@ class Personnage(object):
 
                 Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
             ]))
-            sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetEtat(Etats.EffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"lanceur")),Effets.EffetRetireEtat("Injection Toxique")],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
-            La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
-            ]))
-            sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+            # sorts.append(Personnage.getSortRightLvl(lvl,[
+            #     Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetEtat(Etats.EffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"lanceur")),Effets.EffetRetireEtat("Injection Toxique")],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
+            # La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
+            # ]))
+            # sorts.append(Personnage.getSortRightLvl(lvl,[
+            #     Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 
-                Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+            #     Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 
-                Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
-            ]))
+            #     Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
+            # ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
@@ -1258,7 +1292,11 @@ class Personnage(object):
                 total_nb_sorts-=1
                 i-=1
             i+=1
-        return sorts
+        return sorts, sortsDebutCombat
+
+    def LancerSortsDebutCombat(self, niveau):
+        for sort in self.sortsDebutCombat:
+            sort.lance(self.posX,self.posY,niveau, self.posX, self.posY)
 
     def bouge(self, niveau, x,y, ajouteHistorique=True,canSwap=False):
         """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
@@ -1292,10 +1330,7 @@ class Personnage(object):
                     for etat in joueur.etats:
                         if etat.actif():
                             etat.triggerAvantPiegeDeclenche(niveau,piege, self, joueur)
-                #Chausse trappe ET traquenard ET piège empoisonné TODO: Appliquer etat en debut de match
-                piege.lanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), piege.lanceur, 4)
-                # TODO piege.lanceur.appliquerEtat(Etats.EtatBoostSortCarac("Traquenard",0,-1,"POMax",1), piege.lanceur, 4)
-
+                
                 for effet in piege.effets: 
                     sestApplique, cibles = niveau.lancerEffet(effet,piege.centre_x,piege.centre_y,piege.nomSort, piege.centre_x,piege.centre_y,piege.lanceur)          
                 i-=1
@@ -1659,7 +1694,7 @@ class PersonnageMur(Personnage):
         """@summary: Clone le personnageMur
         @return: le clone"""
         cp = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
-        cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
+        cp.sorts, cp.sortsDebutCombat = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageMur d'effectuer ses actions.
@@ -1686,7 +1721,7 @@ class PersonnageSansPM(Personnage):
         """@summary: Clone le PersonnageSansPM
         @return: le clone"""
         cp = PersonnageSansPM(self.nomPerso,self.classe, self.lvl, self.team, self.caracsPrimaires, self.caracsSecondaires, self.dommages, self.resistances ,self.icone)
-        cp.sorts = Personnage.ChargerSorts(cp.classe, cp.lvl)
+        cp.sorts, cp.sortsDebutCombat = Personnage.ChargerSorts(cp.classe, cp.lvl)
         return cp
     def joue(self,event,niveau,mouse_xy,sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageSansPM d'effectuer ses actions.

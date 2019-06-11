@@ -43,6 +43,8 @@ class Etat(object):
 
     def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur, porteur):
         pass
+    def triggerApresTF(self, niveau, joueurOrigineTF, joueurEchangeTF, porteur, reelLanceur, nomSort):
+        pass
 
     def triggerRafraichissement(self,personnage,niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
@@ -262,7 +264,73 @@ class EtatRedistribuerPer(Etat):
         effetRedistribution = Effets.EffetDegats(totalPerdu,totalPerdu,"renvoie",zone=Zones.TypeZoneCercle(self.tailleZone),bypassDmgCalc=True,cibles_possibles=self.cibles,cibles_exclues="Lanceur")
         niveau.lancerEffet(effetRedistribution,cibleAttaque.posX,cibleAttaque.posY,"Redistribution", cibleAttaque.posX,cibleAttaque.posY)
 
+class EtatBoostSortCarac(Etat):
+    """@summary: Classe décrivant un état qui modifie la valeur d'une Sort."""
+    def __init__(self, nom, debDans,duree, nomSort, nomAttributCarac, boostCarac,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+        @nomSort: Le sort dont les caracs doivent être modifiées
+        @type: str
+        @nomAttributCarac: Le nom de l'attribut a boost
+        @type: string qui doit être dans les attribut de la classe Personnage
+        @boostCarac: le gain de Caractéristique a appliqué
+        @type: int (négatif ou positif)
 
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.nomAttributCarac = nomAttributCarac
+        self.boostCarac = boostCarac
+        self.nomSort = nomSort
+        super(EtatBoostSortCarac, self).__init__(nom,  debDans,duree,lanceur,desc)
+
+    def deepcopy(self):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatBoostSortCarac(self.nom, self.debuteDans, self.duree, self.nomSort,self.nomAttributCarac, self.boostCarac, self.lanceur,self.desc)
+
+    def triggerRafraichissement(self, personnage,niveau):
+        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
+                     Les points de porté sont reboostés à chaque rafraîchissement de l'état.
+        @personnage: Le personnage dont l'état est en train d'être rafraichit
+        @type: Personnage
+        @niveau: La grille de jeu en cours
+        @type: Niveau"""
+        self.triggerInstantane(joueurCaseEffet=personnage)
+
+    def __getSortToUpdate(self, perso):
+        for sort in perso.sorts:
+            if sort.nom == self.nomSort:
+                return sort
+    
+    def triggerInstantane(self,**kwargs):
+        """@summary: Un trigger appelé au moment ou un état est appliqué.
+                     change la carac du joueur selon le boost carac et le nom de l'attribut a boost
+        @kwargs: les options non prévisibles selon les états.
+        @type: **kwargs"""
+        personnage = kwargs.get("joueurCaseEffet")
+        sortToUpdate = self.__getSortToUpdate(personnage)
+        caracValue = getattr(sortToUpdate,self.nomAttributCarac)
+        setattr(sortToUpdate,self.nomAttributCarac,caracValue + self.boostCarac)
+        print("Modification du sort "+sortToUpdate.nom+" "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) )
+    
+    def triggerAvantRetrait(self,personnage):
+        """@summary: Un trigger appelé au moment ou un état va être retirés.
+                     Retire la vitalité bonus lorsque l'état se termine
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        sortToUpdate = self.__getSortToUpdate(personnage)
+        caracValue = getattr(sortToUpdate,self.nomAttributCarac) 
+        setattr(sortToUpdate,self.nomAttributCarac,caracValue - self.boostCarac)
+        print("Fin de modification du sort "+sortToUpdate.nom+" "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) )
 
 class EtatBoostCaracFixe(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique."""
@@ -294,15 +362,6 @@ class EtatBoostCaracFixe(Etat):
         @return: Le clone de l'état"""
         return EtatBoostCaracFixe(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCarac, self.lanceur,self.desc)
 
-    def triggerRafraichissement(self, personnage,niveau):
-        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
-                     Les points de porté sont reboostés à chaque rafraîchissement de l'état.
-        @personnage: Le personnage dont l'état est en train d'être rafraichit
-        @type: Personnage
-        @niveau: La grille de jeu en cours
-        @type: Niveau"""
-        self.triggerInstantane(joueurCaseEffet=personnage)
-
     def triggerInstantane(self,**kwargs):
         """@summary: Un trigger appelé au moment ou un état est appliqué.
                      change la carac du joueur selon le boost carac et le nom de l'attribut a boost
@@ -312,6 +371,15 @@ class EtatBoostCaracFixe(Etat):
         caracValue = getattr(personnage,self.nomAttributCarac)
         setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
         print("Modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) )
+
+    def triggerRafraichissement(self, personnage,niveau):
+        """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
+                     Les points de porté sont reboostés à chaque rafraîchissement de l'état.
+        @personnage: Le personnage dont l'état est en train d'être rafraichit
+        @type: Personnage
+        @niveau: La grille de jeu en cours
+        @type: Niveau"""
+        self.triggerInstantane(joueurCaseEffet=personnage)
     
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
@@ -500,6 +568,32 @@ class EtatBoostBaseDeg(Etat):
         @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
         if nomSort == self.nomSort:
             baseDeg += self.boostbaseDeg
+        return dommages, baseDeg, caracs
+
+class EtatBoostBaseDegLvlBased(EtatBoostBaseDeg):
+    """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur selon son lvl.
+    Hérite de EtatBoostBaseDeg"""
+    def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
+        super(EtatBoostBaseDegLvlBased, self).__init__(nom, debDans,duree,boostbaseDeg,nomSort, lanceur,desc)
+    def deepcopy(self):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatBoostBaseDegLvlBased(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc)    
+    def triggerAvantCalculDegats(self,dommages, baseDeg, caracs, nomSort):
+        """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
+             Les dégâts de base du sort sont boostés si le nom du sort correspond à l'état
+        @dommages: La somme des dommages bonus qui ont été calculé jusque là (panoplie et autres états)
+        @type: int
+        @baseDeg: Le dégât de base aléatoire qui a été calculé jusque là (jet aléatoire plus autres états)
+        @type: int
+        @caracs: La somme de point de caractéristiques calculé jusque là (panoplie et autres états)
+        @type: int
+        @nomSort: Le sort qui est provoque les dégâts. (utile pour les états modifiant les dégâts de base d'un seul sort)
+        @type: string
+
+        @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base, la nouvelle valeur point de caractéristiques."""
+        if nomSort == self.nomSort:
+            baseDeg += int((self.boostbaseDeg/100.0)*(self.lanceur.lvl))
         return dommages, baseDeg, caracs
 
 class EtatLanceSortSiSubit(Etat):
@@ -952,6 +1046,7 @@ class EtatEffetSiSubit(Etat):
                 niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
             elif self.quiLancera == "cible":
                 niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
+
 class EtatEffetSiPousse(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
     def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,lanceur=None,desc=""):
@@ -1054,7 +1149,64 @@ class EtatEffetSiPiegeDeclenche(Etat):
             niveau.lancerEffet(self.effet,joueurCible.posX,joueurCible.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurCible)
         elif self.quiLancera == "porteur":
             niveau.lancerEffet(self.effet,porteur.posX,porteur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, porteur)
+
+class EtatEffetSiTFGenere(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand un joueur est téléfragé."""
+    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,cible,lanceur=None,desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devra passé pour que l'état se désactive.
+        @type: int
+        @effet: l effet qui s'activera lors d'un TF
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet 
+        @type: string ("lanceur" ou "cible")
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
         
+        self.nomSort = nomSort
+        self.quiLancera = quiLancera
+        self.cible = cible
+        super(EtatEffetSiTFGenere, self).__init__(nom,debDans, duree, lanceur,desc)
+
+    def deepcopy(self):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiTFGenere(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
+
+    def triggerApresTF(self, niveau, joueurOrigineTF, joueurEchangeTF, porteur, reelLanceur, nomSortTF):
+        if self.cible == "joueurOrigineTF":
+            joueurCible = joueurOrigineTF
+        elif self.cible == "joueurEchangeTF":
+            joueurCible = joueurEchangeTF
+        elif self.cible == "porteur":
+            joueurCible = porteur
+        elif self.cible == "reelLanceur":
+            joueurCible = reelLanceur
+        else:
+            joueurCible = self.lanceur
+        if self.quiLancera == "joueurOrigineTF":
+            joueurLanceur = joueurOrigineTF
+        elif self.quiLancera == "joueurEchangeTF":
+            joueurLanceur = joueurEchangeTF
+        elif self.quiLancera == "porteur":
+            joueurLanceur = porteur
+        elif self.quiLancera == "reelLanceur":
+            joueurLanceur = reelLanceur
+        else:
+            joueurLanceur = self.lanceur
+        self.effet.setNomSortTF(nomSortTF)
+        niveau.lancerEffet(self.effet,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)        
 
 class EtatTelefrag(Etat):
     """@summary: Classe décrivant un état Téléfrag."""

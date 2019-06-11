@@ -43,6 +43,12 @@ class Effet(object):
 
     def isPrevisu(self):
         return self.kwargs.get("isPrevisu",False)
+    
+    def setNomSortTF(self,val):
+        self.kwargs["nomSortTF"] = val
+
+    def getNomSortTF(self):
+        return self.kwargs.get("nomSortTF","")
 
     def isReverseTreatmentOrder(self):
         return self.kwargs.get("reversedTreatmentOrder",False)
@@ -530,39 +536,6 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
             ratioPM = max(ratioPM,0)
             self.total = int(ratioPM * self.total)
             niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-
-class EffetDegatsPosLanceur(EffetDegats):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Hérite de EffetsDegats.
-    Cet effet inflige des dégâts en ciblant la position actuelle du lanceur."""
-    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
-        """@summary: Initialise un effet de vol de vie.
-        @int_minJet: le jet minimum possible de dégâts de base de l'effet
-        @type: int
-        @int_maxJet: le jet maximum possible de dégâts de base de l'effet
-        @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        super(EffetDegatsPosLanceur, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
-    
-    def deepcopy(self):
-        return EffetDegatsPosLanceur(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
-
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, prov_x et prov_y et nom_sort doivent être mentionées
-        @type: **kwargs"""
-        joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
-        total = super(EffetDegatsPosLanceur, self).appliquerDegats(niveau,joueurCaseEffet, joueurLanceur,str(kwargs.get("nom_sort")))
 
 class EffetTue(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -1122,34 +1095,7 @@ class EffetTeleportePosPrec(Effet):
         @kwargs: options supplémentaires, l'option nom_sort doit être mentionée
         @type: **kwargs"""
         joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
-
-class EffetTeleportePosPrecLanceur(Effet):
-    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet téléporte le lanceur vers sa position précedente. L'historique des 2 derniers tours seulement est gardé."""
-    def __init__(self,int_nbCase,**kwargs):
-        """@summary: Initialise un effet téléportant le lanceur vers sa position précédente. L'historique des 2 derniers tours seulement est gardé.
-        @int_nbCase: le nombre de retour en arrière effectué. Par forcément égale au nombre de case reculés.
-        @type: int
-        @kwargs: Options de l'effets
-        @type: **kwargs"""
-        self.kwargs = kwargs
-        self.nbCase = int_nbCase
-        super(EffetTeleportePosPrecLanceur, self).__init__(**kwargs)
-    def deepcopy(self):
-        return EffetTeleportePosPrecLanceur(self.nbCase ,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
-        """@summary: Appelé lors de l'application de l'effet.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
-        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
-        @type: Personnage
-        @kwargs: options supplémentaires, l'option nom_sort, prov_x et prov_y doivent être mentionées
-        @type: **kwargs"""
-        joueurLanceur = niveau.getJoueurSur(kwargs.get("prov_x"),kwargs.get("prov_y"))
-        joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
-                      
+           
 class EffetTeleporteDebutTour(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte la cible vers sa position de début de tour."""
@@ -1305,11 +1251,42 @@ class EffetEtatSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        print("ETAT SELF ON LANCEUR ")
         etatCopier = self.etat.deepcopy()
-        
-        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
-        
+        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+
+class EffetEtatSelfTF(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet place un état sur le lanceur portant le nom du sort à l'origine d'un TF."""
+    def __init__(self,etat_etat, sorts_exclus, **kwargs):
+        """@summary: Initialise un effet placant un état sur le lanceur
+        @etat_etat: l'état à placer sur le lanceur
+        @type: Etat
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.etat = etat_etat
+        self.sorts_exclus = sorts_exclus
+        self.kwargs = kwargs
+        super(EffetEtatSelfTF, self).__init__(**kwargs)
+    def deepcopy(self):
+        return EffetEtatSelfTF(self.etat,self.sorts_exclus,**self.kwargs)
+    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        nomSort = self.getNomSortTF()
+        if nomSort in self.sorts_exclus:
+            return
+        etatCopier = self.etat.deepcopy()
+        if self.kwargs.get("remplaceNom",True):
+            etatCopier.nom = nomSort
+        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+            
 class EffetEntiteLanceSort(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet fait lancer un sort à une entité/joueur"""

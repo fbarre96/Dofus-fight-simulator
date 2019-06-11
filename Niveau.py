@@ -539,6 +539,7 @@ class Niveau:
                 joueur.posDebTour = [joueur.posX, joueur.posY]
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
             self.structure[joueur.posY][joueur.posX].type="j"
+            joueur.LancerSortsDebutCombat(self)
 
     def rafraichirEtats(self,personnageARafraichir,debutTour=True):
         """@summary: met à jour les états du personnage. (diminution de durée restante),  
@@ -739,6 +740,7 @@ class Niveau:
         for i in range(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
+                invoc.LancerSortsDebutCombat(self)
                 break
 
     def getZoneEffet(self, effet, case_x,case_y):
@@ -911,22 +913,6 @@ class Niveau:
 
         joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
 
-    def __boostApresTF(self,nomSort,reelLanceur):
-        """@summary: Tous les boost après un téléfrag sont généré ici
-        @nomSort: le nom du sort à l'origine du Téléfrag
-        @type: string
-        @reelLanceur: Le joueur étant à l'origine du Téléfrag
-        @type: Personnage"""
-
-        #BoostSynchro
-        synchros = self.getJoueurs("Synchro")
-        for synchro in synchros:
-            if not synchro.aEtat(nomSort) and nomSort != "Rembobinage" and not synchro.aEtat("DejaBoost"):
-                synchro.appliquerEtat(Etats.Etat("Boost Synchro "+nomSort,0,-1, reelLanceur),reelLanceur)
-                synchro.appliquerEtat(Etats.Etat("DejaBoost",0,1,[nomSort], reelLanceur),reelLanceur)
-        #BoostGlas
-        reelLanceur.appliquerEtat(Etats.EtatBoostBaseDeg("Glas",0,-1,"Glas",4),reelLanceur)
-
     def __exploserSynchro(self,synchro,reelLanceur):
         """@summary: Explose la synchro du xélor si elle est téléfragé
         @synchro: la synchro
@@ -982,22 +968,10 @@ class Niveau:
         #Si un téléfrag doit généré, il l'a été dans effectuerTF
         if genereTF:
             #Résultats d'un téléfrag (activation de glyphe, synchro, boost, et boost PA)
-            #Si le xelor est pas deja boostPA par ce sort, rembo ne peut pas boost PA
-
-            #Boost PA
-            if not reelLanceur.aEtat(nomSort) and nomSort != "Rembobinage":
-                reelLanceur.appliquerEtat(Etats.EtatBoostCaracFixe("BoostPATelefrag",0,1,"PA",2,reelLanceur),reelLanceur)
-                reelLanceur.appliquerEtat(Etats.Etat(nomSort,0,1,["Telefrag"],reelLanceur),reelLanceur)
-            #Boost Glas, Synchro
-            self.__boostApresTF(nomSort,reelLanceur)
-            #Test Explosion synchro
-            if ("Synchro" == joueurBougeant.classe) and not reelLanceur.aEtat("Faille_temporelle"):
-                self.__exploserSynchro(joueurBougeant,reelLanceur)
-            elif ("Synchro" == joueurASwap.classe) and not reelLanceur.aEtat("Faille_temporelle"):
-                self.__exploserSynchro(joueurASwap,reelLanceur)
-            #Activation des glyphes qui s'activent après un téléfrag
-            self.__glypheActiveTF(reelLanceur,nomSort)
- 
+            for joueur in self.joueurs:
+                for etat in joueur.etats:
+                    if etat.actif():
+                        etat.triggerApresTF(self, joueurBougeant, joueurASwap, joueur, reelLanceur, nomSort)
 
     def __effectuerTF(self, joueurASwap,joueurBougeant,posAtteinte,reelLanceur,nomSort,AjouteHistorique,genereTF):
         """@summary: Echange les joueurs en téléfrag.
@@ -1023,6 +997,7 @@ class Niveau:
             joueurASwap.retirerEtats("Telefrag")
             joueurBougeant.appliquerEtat(Etats.Etat("Telefrag",0,2,[nomSort],reelLanceur),reelLanceur)
             joueurASwap.appliquerEtat(Etats.Etat("Telefrag",0,2,[nomSort],reelLanceur),reelLanceur)
+            
 
     def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur, nomSort, AjouteHistorique=True, genereTF=True):
         """@summary: Fonction à appeler pour les déplacements pouvant créer un téléfrag.
@@ -1179,10 +1154,6 @@ class Niveau:
         joueurLanceur.derniere_action_posY = joueurLanceur.posY
         ciblesTraitees = [] # initialisation des cibles déjà traitées
         joueurCibleDirect = self.getJoueurSur(case_cible_x, case_cible_y) # Le joueur cible direct est celui ciblé pour lancer le sort.
-        #Si l'effet est lancé dynamiquement sur le lanceur, calcul de la pos cible
-        if type(effet) is Effets.EffetDegatsPosLanceur or type(effet) is Effets.EffetTeleportePosPrecLanceur:
-            case_cible_x = joueurLanceur.posX
-            case_cible_y = joueurLanceur.posY
         zoneEffet = self.getZoneEffet(effet, case_cible_x,case_cible_y)
         #Effet non boucles
         sestApplique = self.__appliquerEffetSansBoucleSurZone(effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
