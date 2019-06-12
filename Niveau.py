@@ -913,30 +913,14 @@ class Niveau:
 
         joueurBougeant.bouge(self,posAtteinte[0], posAtteinte[1],AjouteHistorique)
 
-    def __exploserSynchro(self,synchro,reelLanceur):
-        """@summary: Explose la synchro du xélor si elle est téléfragé
-        @synchro: la synchro
-        @type: Personnage de classe synchro
-        @reelLanceur: Le joueur étant à l'origine de la synchro (le niveau du xélor est prit en compte dans les dégâts)
-        @type: Personnage"""
 
-        nbTF = 0 # Nombre de téléfrag qui boost la synchro
-        for etat in synchro.etats:
-            if etat.nom.startswith("Boost Synchro"):
-                nbTF+=1
-        #Explosion
-        fin_des_temps = Sort.Sort("Fin des temps",0,0,0,0,[Effets.EffetDegats(int(reelLanceur.lvl*1.90)*(nbTF*2-1),int(reelLanceur.lvl*1.90)*(nbTF*2-1),"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
-        fin_des_temps.lance(synchro.posX,synchro.posY,self,synchro.posX,synchro.posY)
-        self.tue(synchro)
+    def activerGlyphe(self,nomSort):
+        """@summary: Active une glyphe selon le nom du sort 
 
-    def __glypheActiveTF(self,reelLanceur,nomSort):
-        """@summary: Active les glyphes qui s'activent après un téléfrag (Instabilité_temporelle)
-        @reelLanceur: Le joueur étant à l'origine du téléfrag
-        @type: Personnage
-        @nomSort: le nom du sort qui est jeté
+        @nomSort: le nom du sort à l'origine de la glyphe a activer
         @type: string"""
         for glyphe in self.glyphes:
-            if glyphe.nomSort == "Instabilite_temporelle" and glyphe.actif() and reelLanceur == glyphe.lanceur and glyphe.sortMono.nom != nomSort:
+            if glyphe.nomSort == nomSort and glyphe.actif():
                 casesDansPorte = self.getZonePorteSort(glyphe.sortMono, glyphe.centre_x, glyphe.centre_y,0)
                 for effet in glyphe.sortMono.effets:
                     ciblesTraitees = []

@@ -1152,7 +1152,7 @@ class EtatEffetSiPiegeDeclenche(Etat):
 
 class EtatEffetSiTFGenere(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand un joueur est téléfragé."""
-    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,cible,lanceur=None,desc=""):
+    def __init__(self, nom,  debDans,duree,effet,nomSort,quiLancera,cible,porteurEstTF=False,sortInterdit="",lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -1173,18 +1173,21 @@ class EtatEffetSiTFGenere(Etat):
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.effet = effet
-        
-        self.nomSort = nomSort
+        self.porteurEstTF = porteurEstTF
+        self.nomSort = nomSort  
         self.quiLancera = quiLancera
         self.cible = cible
+        self.sortInterdit = sortInterdit
         super(EtatEffetSiTFGenere, self).__init__(nom,debDans, duree, lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiTFGenere(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
+        return EtatEffetSiTFGenere(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.porteurEstTF,self.sortInterdit,self.lanceur,self.desc)
 
     def triggerApresTF(self, niveau, joueurOrigineTF, joueurEchangeTF, porteur, reelLanceur, nomSortTF):
+        if self.porteurEstTF == True and porteur.uid != joueurOrigineTF.uid and porteur.uid != joueurEchangeTF.uid:
+            return
         if self.cible == "joueurOrigineTF":
             joueurCible = joueurOrigineTF
         elif self.cible == "joueurEchangeTF":
@@ -1206,6 +1209,10 @@ class EtatEffetSiTFGenere(Etat):
         else:
             joueurLanceur = self.lanceur
         self.effet.setNomSortTF(nomSortTF)
+
+        if nomSortTF == self.sortInterdit:
+            return
+
         niveau.lancerEffet(self.effet,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)        
 
 class EtatTelefrag(Etat):

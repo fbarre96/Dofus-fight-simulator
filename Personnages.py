@@ -215,11 +215,12 @@ class Personnage(object):
             return sorts,sortsDebutCombat
         elif classe == "Synchro":
             # TODO FIX : La limite par tour se met meme si l'état TF était déjà fait et donc aucun nouveau boost a été rajouté
+            activationFinDesTemps = Sort.Sort("Fin des temps",0,0,0,0,[Effets.EffetDegats(0,0,"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis"), Effets.EffetTue(cibles_possibles="Lanceur")],[],0, 99,99,0,0,"cercle",False, chaine=False)
             sortsDebutCombat.append(
                 Sort.Sort("Synchronisation",0,0,0,0,[
                     Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Synchronisation",0,-1,Effets.EffetEtatSelfTF(Etats.EtatBoostBaseDegLvlBased("toReplace",0,-1,"Fin des temps",190), "Rembobinage", cumulMax=1, etat_requis="!DejaBoost"),"Téléfrageur","porteur","porteur")), 
-                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Limite synchronisation par tour",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
-                    # TODO EXPLOSION Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Attente de la fin des temps",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Limite synchronisation par tour",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur")),
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Attente de la fin des temps",0,-1,Effets.EffetEntiteLanceSort("Synchro",activationFinDesTemps),"Téléfrageur","porteur","porteur",True,"Rembobinage"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False)
             )
             return sorts,sortsDebutCombat
         elif(classe=="Xelor"):
@@ -229,12 +230,9 @@ class Personnage(object):
             sortsDebutCombat.append(
                 Sort.Sort("Glas Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Glas Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Glas",0,-1,"Glas",4), cumulMax=10),"Glas","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
-
-            # #Test Explosion synchro
-            # if ("Synchro" == joueurBougeant.classe) and not reelLanceur.aEtat("Faille_temporelle"):
-            #     self.__exploserSynchro(joueurBougeant,reelLanceur)
-            # elif ("Synchro" == joueurASwap.classe) and not reelLanceur.aEtat("Faille_temporelle"):
-            #     self.__exploserSynchro(joueurASwap,reelLanceur)
+            sortsDebutCombat.append(
+                Sort.Sort("Instabilité Temporelle Réactivation",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Instabilité Temporelle Réactivation",0,-1,Effets.EffetActiveGlyphe("Instabilité Temporelle"),"Instabilité Temporelle","reelLanceur","reelLanceur",False,"Activation Instabilité Temporelle"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
             # #Activation des glyphes qui s'activent après un téléfrag
             # self.__glypheActiveTF(reelLanceur,nomSort)
 
