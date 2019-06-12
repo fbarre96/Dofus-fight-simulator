@@ -305,9 +305,9 @@ class Personnage(object):
             Occasionne des dommages Air supplémentaires aux ennemis autour de la cible au début du prochain tour du lanceur.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Rembobinage",6,2,0,2,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
-                Sort.Sort("Rembobinage",42,2,0,4,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
-                Sort.Sort("Rembobinage",74,2,0,6,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True)
+                Sort.Sort("Rembobinage",6,2,0,2,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1,"Rembobinage"),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
+                Sort.Sort("Rembobinage",42,2,0,4,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1,"Rembobinage"),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True),
+                Sort.Sort("Rembobinage",74,2,0,6,[Effets.EffetEtat(Etats.EtatRetourCaseDepart("Bobine",0,1,"Rembobinage"),cibles_possibles="Allies|Lanceur")],[],0,1,1,3,0,"ligne",True,description="""À la fin de son tour, téléporte l'allié ciblé sur sa position de début de tour.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Renvoi",120,3,1,6,[Effets.EffetTeleporteDebutTour()],[],0,1,1,2,0,"ligne",True,description="""Téléporte la cible ennemie à sa cellule de début de tour.""", chaine=True)
@@ -458,20 +458,20 @@ class Personnage(object):
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
-            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
-            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True),
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
-            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=True)
+            À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Désynchronisation",175,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège qui téléporte symétriquement les entités proches.""", chaine=True)
@@ -1554,7 +1554,6 @@ class Personnage(object):
                 if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y,self.posX,self.posY, 0):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet,glyphe.centre_x,glyphe.centre_y,glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
-        
         niveau.rafraichirEtats(self)
         niveau.rafraichirGlyphes(self)
         niveau.rafraichirRunes(self)

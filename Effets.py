@@ -1094,6 +1094,8 @@ class EffetTeleportePosPrec(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort doit être mentionée
         @type: **kwargs"""
+        if joueurCaseEffet is None:
+            return
         joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
            
 class EffetTeleporteDebutTour(Effet):
@@ -1190,6 +1192,7 @@ class EffetTpSymSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, l'option nom_sort, doit être mentionée
         @type: **kwargs"""
+
         distanceX = (joueurCaseEffet.posX-joueurLanceur.posX)
         distanceY = (joueurCaseEffet.posY-joueurLanceur.posY)
         arriveeX = joueurLanceur.posX-distanceX

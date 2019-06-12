@@ -632,8 +632,11 @@ class Niveau:
         
     def tue(self, perso):
         """@summary: Tue instantanément le joueur donné en paramètre."""
-        print(perso.nomPerso+" est mort!")
+        
         #Parcours des joueurs
+        if perso is None:
+            return False
+        print(perso.nomPerso+" est mort!")
         i= 0 
         persosJoueursRestants = []
         tailleJoueurs = len(self.joueurs)
@@ -660,7 +663,7 @@ class Niveau:
             print("Gagnant : "+str(persosJoueursRestants[0].nomPerso))
         elif len(persosJoueursRestants) == 0:
             print("Tous mort ! Egalité.")
-
+        return True
     def generer(self):
         """@summary: Méthode permettant de générer le niveau.
         On crée une liste générale, contenant une liste par ligne à afficher""" 
@@ -1043,7 +1046,7 @@ class Niveau:
         @type: int
         
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
-        if isinstance(type(effet),Effets.EffetGlyphe):
+        if isinstance(effet, Effets.EffetGlyphe):
             effetALancer = effet.deepcopy()
             effetALancer.appliquerEffet(self,None,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
             return True
@@ -1079,8 +1082,6 @@ class Niveau:
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
 
         sestApplique = False
-        
-
         #Pour chaque case dans la zone
         for case_effet in zoneEffet:
             case_x = case_effet[0]

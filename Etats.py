@@ -734,7 +734,7 @@ class EtatEffetDebutTour(Etat):
 
 class EtatRetourCaseDepart(Etat):
     """@summary: Classe décrivant un état qui renvoie le porteur à sa case de début de tour lorsqu'il termine son tour."""
-    def __init__(self, nom, debDans, duree, lanceur=None,desc=""):
+    def __init__(self, nom, debDans, duree, nomSort,lanceur=None,desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -749,12 +749,13 @@ class EtatRetourCaseDepart(Etat):
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
+        self.nomSort = nomSort
         super(EtatRetourCaseDepart, self).__init__(nom,  debDans,duree,lanceur,desc)
 
     def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatRetourCaseDepart(self.nom, self.debuteDans,self.duree, self.lanceur,self.desc)
+        return EtatRetourCaseDepart(self.nom, self.debuteDans,self.duree, self.nomSort, self.lanceur,self.desc)
 
     def triggerFinTour(self,personnage,niveau):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
@@ -763,7 +764,7 @@ class EtatRetourCaseDepart(Etat):
         @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
-        niveau.gereDeplacementTF(personnage,personnage.posDebTour,personnage,self.nom,AjouteHistorique=True)
+        niveau.gereDeplacementTF(personnage,personnage.posDebTour,personnage,self.nomSort,AjouteHistorique=True)
 
 class EtatCoutPA(Etat):
     """@summary: Classe décrivant un état qui modifie le coût en PA d'un des sorts du porteur."""
