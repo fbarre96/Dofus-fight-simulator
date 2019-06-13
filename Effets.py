@@ -700,7 +700,7 @@ class EffetEtat(Effet):
         if joueurCaseEffet != None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
             etatCopier = self.etat.deepcopy()
-            joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
+            return joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
 
 class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -1255,7 +1255,7 @@ class EffetEtatSelf(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         etatCopier = self.etat.deepcopy()
-        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+        return joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
 
 class EffetEtatSelfTF(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -1284,11 +1284,11 @@ class EffetEtatSelfTF(Effet):
         @type: **kwargs"""
         nomSort = self.getNomSortTF()
         if nomSort in self.sorts_exclus:
-            return
+            return False
         etatCopier = self.etat.deepcopy()
         if self.kwargs.get("remplaceNom",True):
             etatCopier.nom = nomSort
-        joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+        return joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
             
 class EffetActiveGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

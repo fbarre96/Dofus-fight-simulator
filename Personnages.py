@@ -218,8 +218,7 @@ class Personnage(object):
             activationFinDesTemps = Sort.Sort("Fin des temps",0,0,0,0,[Effets.EffetDegats(0,0,"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis"), Effets.EffetTue(cibles_possibles="Lanceur")],[],0, 99,99,0,0,"cercle",False, chaine=False)
             sortsDebutCombat.append(
                 Sort.Sort("Synchronisation",0,0,0,0,[
-                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Synchronisation",0,-1,Effets.EffetEtatSelfTF(Etats.EtatBoostBaseDegLvlBased("toReplace",0,-1,"Fin des temps",190), "Rembobinage", cumulMax=1, etat_requis="!DejaBoost"),"Téléfrageur","porteur","porteur")), 
-                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Limite synchronisation par tour",0,-1,Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1),"Téléfrageur","porteur","porteur")),
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Synchronisation",0,-1,[Effets.EffetEtatSelfTF(Etats.EtatBoostBaseDegLvlBased("toReplace",0,-1,"Fin des temps",190), "Rembobinage", cumulMax=1, etat_requis="!DejaBoost"),Effets.EffetEtatSelfTF(Etats.Etat("DejaBoost",0,1), "Rembobinage", remplaceNom=False, cumulMax=1)],"Téléfrageur","porteur","porteur")), 
                     Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Attente de la fin des temps",0,-1,Effets.EffetEntiteLanceSort("Synchro",activationFinDesTemps),"Téléfrageur","porteur","porteur",True,"Rembobinage"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False)
             )
             return sorts,sortsDebutCombat
@@ -233,8 +232,7 @@ class Personnage(object):
             sortsDebutCombat.append(
                 Sort.Sort("Instabilité Temporelle Réactivation",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiTFGenere("Instabilité Temporelle Réactivation",0,-1,Effets.EffetActiveGlyphe("Instabilité Temporelle"),"Instabilité Temporelle","reelLanceur","reelLanceur",False,"Activation Instabilité Temporelle"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
-            # #Activation des glyphes qui s'activent après un téléfrag
-            # self.__glypheActiveTF(reelLanceur,nomSort)
+
 
             retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
@@ -1586,7 +1584,7 @@ class Personnage(object):
                     count += 1
             if count >= cumulMax:
                 print("DEBUG : Cumul max atteint pour l'état "+etat.nom)
-                return
+                return False
         print(self.nomPerso+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
         etat.lanceur = lanceur
         self.etats.append(etat)

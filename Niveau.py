@@ -1095,8 +1095,11 @@ class Niveau:
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet,joueurCibleDirect,ciblesTraitees):
                     #On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
-                    effetALancer.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y,case_effet_x=case_x,case_effet_y=case_y)
-                    sestApplique = True
+                    sestApplique = effetALancer.appliquerEffet(self,joueurCaseEffet,joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y,case_effet_x=case_x,case_effet_y=case_y)
+                    if sestApplique is None:
+                        sestApplique = True
+                    elif isinstance(sestApplique, bool) == False:
+                        raise Exception("Retour d'effet inattendu : "+str(sestApplique))
                     #Peu import le type, l'etat requis est retire s'il est consomme
                     if effet.consommeEtat:
                         joueurCaseEffet.retirerEtats(effet.etatRequisCibleDirect)

@@ -1209,12 +1209,20 @@ class EtatEffetSiTFGenere(Etat):
             joueurLanceur = reelLanceur
         else:
             joueurLanceur = self.lanceur
-        self.effet.setNomSortTF(nomSortTF)
-
         if nomSortTF == self.sortInterdit:
             return
+        if isinstance(self.effet, list):
+            for eff in self.effet:
+                eff.setNomSortTF(nomSortTF)
+                sestApplique,ciblesTraitees = niveau.lancerEffet(eff,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)     
+                print("Effet "+str(type(eff))+" sest applique "+str(sestApplique))
+                if not sestApplique:
+                    break
+        else:
+            self.effet.setNomSortTF(nomSortTF)
+            niveau.lancerEffet(self.effet,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)      
 
-        niveau.lancerEffet(self.effet,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)        
+         
 
 class EtatTelefrag(Etat):
     """@summary: Classe décrivant un état Téléfrag."""
