@@ -392,15 +392,13 @@ class Niveau:
         tacleurs.append(self.getJoueurSur(posX, posY-1))
         tacleurs.append(self.getJoueurSur(posX+1, posY))
         tacleurs.append(self.getJoueurSur(posX-1, posY))
-        try: # Quand la posX et posY donné est collé au fuyard, il est pris dans les tacleurs
-            tacleurs.remove(fuyard)
-        except:
-            pass
+
         ratio = 1
         for tacleur in tacleurs:
             if tacleur is not None:
-                tacle = tacleur.tacle
-                ratio *= float(fuyard.fuite + 2) / float(2*(tacle +2))
+                if tacleur.uid != fuyard.uid and tacleur.team != fuyard.team:
+                    tacle = tacleur.tacle
+                    ratio *= float(fuyard.fuite + 2) / float(2*(tacle +2))
         ratio = min(ratio,1)
         ratio = max(ratio,0)
         pmApresTacle = int(round(fuyard.PM * ratio))
