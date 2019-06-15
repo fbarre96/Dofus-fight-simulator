@@ -1071,6 +1071,7 @@ class Personnage(object):
             activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), faire_au_vide=True, piege=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepoussant = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+            activationPiegeDeProximite = [Effets.EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1339,7 +1340,23 @@ class Personnage(object):
             Sort.Sort("Méprise",175,3,1,4,[Effets.EffetEchangePlace("cible",zone=Zones.TypeZoneInfini(),cibles_possibles="Double|Comploteur"), Effets.EffetRetireEtat("Invisible",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
                 Dissipe l'invisibilité du lanceur.""", chaine=True)
             ]))
-                        
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Arnaque",69,3,1,6,[Effets.EffetDegats(25,29,"Air")],[Effets.EffetDegats(32,32,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
+
+                Sort.Sort("Arnaque",122,3,1,6,[Effets.EffetDegats(29,33,"Air")],[Effets.EffetDegats(36,36,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
+
+                Sort.Sort("Arnaque",162,3,1,6,[Effets.EffetDegats(33,37,"Air")],[Effets.EffetDegats(40,40,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège de Proximité",180,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeProximite,"Piège de Proximité",(30,120,30),faire_au_vide=True)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Poisse",77,4,1,4,[Effets.EffetVolDeVie(22,26,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-15))],[Effets.EffetVolDeVie(27,31,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-20))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
+
+                Sort.Sort("Poisse",128,4,1,4,[Effets.EffetVolDeVie(25,29,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-20))],[Effets.EffetVolDeVie(30,34,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-25))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
+
+                Sort.Sort("Poisse",172,4,1,4,[Effets.EffetVolDeVie(28,32,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-25))],[Effets.EffetVolDeVie(33,37,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-30))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
+            ]))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0

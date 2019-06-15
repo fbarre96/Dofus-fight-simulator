@@ -2,23 +2,9 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Arnaque",69,3,1,6,[Effets.EffetDegats(25,29,"Air")],[Effets.EffetDegats(32,32,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
 
-	Sort.Sort("Arnaque",122,3,1,6,[Effets.EffetDegats(29,33,"Air")],[Effets.EffetDegats(36,36,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
 
-	Sort.Sort("Arnaque",162,3,1,6,[Effets.EffetDegats(33,37,"Air")],[Effets.EffetDegats(40,40,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège de Proximité",180,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Poisse",77,4,1,4,[Effets.EffetVolDeVie(22,26,"Eau"),Effets.TODO(-15% Critique (1 tour))],[Effets.EffetVolDeVie(27,31,"Eau"),Effets.TODO(-20% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
 
-	Sort.Sort("Poisse",128,4,1,4,[Effets.EffetVolDeVie(25,29,"Eau"),Effets.TODO(-20% Critique (1 tour))],[Effets.EffetVolDeVie(30,34,"Eau"),Effets.TODO(-25% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
-
-	Sort.Sort("Poisse",172,4,1,4,[Effets.EffetVolDeVie(28,32,"Eau"),Effets.TODO(-25% Critique (1 tour))],[Effets.EffetVolDeVie(33,37,"Eau"),Effets.TODO(-30% Critique (1 tour))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Calamité",185,4,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
 ]))
