@@ -129,7 +129,7 @@ class Piege:
     """@summary: Classe décrivant un piège dans le jeu Dofus.
      Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
 
-    def __init__(self, nomSort, zone_declenchement, effets, centre_x, centre_y, lanceur, couleur):
+    def __init__(self, nomSort, zone_declenchement, effets, centre_x, centre_y, lanceur, couleur, icone=None):
         """@summary: Initialise un piège.
         @nomSort: le nom du sort à l'origine du piège
         @type: string
@@ -153,6 +153,13 @@ class Piege:
         self.lanceur = lanceur
         self.invisible = True
         self.couleur = couleur
+        if icone is not None:
+            self.icone = icone
+        else:
+            self.icone = "images/"+constantes.normaliser(nomSort.lower())+".jpg"
+
+    def getDistanceDuPoint(self, x, y):
+        return abs(self.centre_x - x) + abs(self.centre_y - y)
 
     def aPorteDeclenchement(self, x, y):
         return self.zone_declenchement.testCaseEstDedans([self.centre_x, self.centre_y], [x, y], None)
@@ -1345,16 +1352,20 @@ class Niveau:
                         if glyphe.actif():
                             if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
                                 pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                               constantes.taille_sprite+1, constantes.taille_sprite-2, constantes.taille_sprite-2))
+                                                                               constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
                     for piege in self.pieges:
                         if piege.lanceur.team == self.tourDe.team or not piege.invisible:
                             if piege.aPorteDeclenchement(num_case, num_ligne):
                                 pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                              constantes.taille_sprite+1, constantes.taille_sprite-2, constantes.taille_sprite-2))
+                                                                              constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
+                            if piege.getDistanceDuPoint(num_case, num_ligne) == 0:
+                                piegeIcone = pygame.image.load(piege.icone).convert_alpha()
+                                fenetre.blit(piegeIcone, (num_case*constantes.taille_sprite+1, num_ligne *
+                                                                              constantes.taille_sprite+1))
                     for rune in self.runes:
                         if rune.centre_x == num_case and rune.centre_y == num_ligne:
                             pygame.draw.rect(fenetre, rune.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                         constantes.taille_sprite+1, constantes.taille_sprite-2, constantes.taille_sprite-2))
+                                                                         constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
 
                 if sprite.type == 'j':
                     joueurOnCase = self.getJoueurSur(num_case, num_ligne)
@@ -1498,6 +1509,11 @@ class Niveau:
         @type: Piege
 
         @return: L'indice d'ajout du piège"""
+        # Deux pièges ne peuvent pas être superposés.
+        for piegeExistants in self.pieges:
+            if piegeExistants.getDistanceDuPoint(piege.centre_x, piege.centre_y) == 0:
+                return None
+        # Ajout du piège
         self.pieges.append(piege)
         return len(self.pieges)-1
 

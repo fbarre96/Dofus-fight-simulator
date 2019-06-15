@@ -49,7 +49,7 @@ class Personnage(object):
         self.esqPA = int(caracsSecondaires.get("Esquive PA",0))
         self.retPM = int(caracsSecondaires.get("Retrait PM",0))
         self.esqPM = int(caracsSecondaires.get("Esquive PM",0))
-        self.soins = int(caracsSecondaires.get("Soins",0))      #TODO
+        self.soins = int(caracsSecondaires.get("Soins",0))
         self.tacle = int(caracsSecondaires.get("Tacle",0))      
         self.fuite = int(caracsSecondaires.get("Fuite",0))      
         self.ini = int(caracsSecondaires.get("Initiative",0))    
@@ -213,7 +213,6 @@ class Personnage(object):
         elif classe == "Poutch":
             return sorts,sortsDebutCombat
         elif classe == "Synchro":
-            # TODO FIX : La limite par tour se met meme si l'état TF était déjà fait et donc aucun nouveau boost a été rajouté
             activationFinDesTemps = Sort.Sort("Fin des temps",0,0,0,0,[Effets.EffetDegats(0,0,"air",zone=Zones.TypeZoneCercle(3),cibles_possibles="Ennemis"), Effets.EffetTue(cibles_possibles="Lanceur")],[],0, 99,99,0,0,"cercle",False, chaine=False)
             sortsDebutCombat.append(
                 Sort.Sort("Synchronisation",0,0,0,0,[
@@ -239,7 +238,7 @@ class Personnage(object):
             deplacementInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Intaclabe",0,0,0,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Intaclable",0,1,"fuite",999999), etat_requis_cibles="!Intaclable")],[],0, 99,99,0,0,"cercle",False)
             activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"),Effets.EffetEtat(Etats.Etat("ParadoxeTemporel",0,2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur|Xelor|Synchro"), Effets.EffetEtatSelf(Etats.EtatActiveSort("RetourParadoxe",1,1,retourParadoxe),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False)
             activationDesynchro = [Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercleSansCentre(3))]
-            activationRune = [Effets.EffetTp(generer_TF=True, faire_au_vide=True)]
+            activationRune = [Effets.EffetTp(generer_TF=True, cible_requise=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Ralentissement",1,2,1,4,[Effets.EffetDegats(4,5,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],[Effets.EffetDegats(7,8,"Eau"), Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis"),Effets.EffetRetPA(1,cibles_possibles="Allies|Ennemis",etat_requis_cibles="Telefrag")],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et retire 1 PA à la cible.
             Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
@@ -320,20 +319,20 @@ class Personnage(object):
             Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Engrenage",125,3,1,5,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetDegats(31,35,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1),  faire_au_vide=True)],[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetDegats(34,38,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],25,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
+                Sort.Sort("Engrenage",125,3,1,5,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetDegats(31,35,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1),  cible_requise=True)],[Effets.EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetDegats(34,38,"Terre",cibles_possibles="Ennemis",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],25,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Complice",13,2,1,3,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",13,2,1,3,[Effets.EffetInvoque("Complice",False,cibles_possibles="",cible_requise=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-                Sort.Sort("Complice",54,2,1,4,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",54,2,1,4,[Effets.EffetInvoque("Complice",False,cibles_possibles="",cible_requise=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-                Sort.Sort("Complice",94,2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
+                Sort.Sort("Complice",94,2,1,5,[Effets.EffetInvoque("Complice",False,cibles_possibles="",cible_requise=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,99,0,0,"cercle",True,description="""Invoque un Complice statique qui ne possède aucun sort.
             Il est tué si un autre Complice est invoqué.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Cadran de Xelor",130,3,1,5,[Effets.EffetInvoque("Cadran de Xelor",False,cibles_possibles="",faire_au_vide=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,1,3,0,"cercle",True,description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
+                Sort.Sort("Cadran de Xelor",130,3,1,5,[Effets.EffetInvoque("Cadran de Xelor",False,cibles_possibles="",cible_requise=True),Effets.EffetTue(cibles_possibles="Cadran de Xelor|Complice",zone=Zones.TypeZoneCercleSansCentre(99))],[],0,1,1,3,0,"cercle",True,description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
             Donne des PA aux alliés autour de lui et dans l'état Téléfrag.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -382,17 +381,17 @@ class Personnage(object):
             Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",32,2,1,1,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),cible_requise=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,5,0,"cercle",False,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",81,2,1,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),cible_requise=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,4,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True),
 
-                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
+                Sort.Sort("Flou",124,2,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",0,1,"PA",-2),zone=Zones.TypeZoneCercle(3),cible_requise=True,cibles_exclues="Lanceur"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flou",1,1,"PA",2),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,3,0,"cercle",True,description="""Retire des PA en zone le tour en cours.
             Augmente les PA en zone le tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Conservation",150,2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),faire_au_vide=True,cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),faire_au_vide=True,cibles_possibles="Allies|Lanceur")],[],0,1,1,2,0,"cercle",True,description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
+                Sort.Sort("Conservation",150,2,0,5,[Effets.EffetEtat(Etats.EtatModDegPer("Conservation",0,1,130),zone=Zones.TypeZoneCercle(2),cible_requise=True,cibles_possibles="Allies|Lanceur"),Effets.EffetEtat(Etats.EtatModDegPer("Conservation",1,1,70),zone=Zones.TypeZoneCercle(2),cible_requise=True,cibles_possibles="Allies|Lanceur")],[],0,1,1,2,0,"cercle",True,description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
             Au tour suivant, les cibles réduisent les dommages subis de 30%.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -418,7 +417,7 @@ class Personnage(object):
                 Sort.Sort("Raulebaque",137,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini())],[],0,1,1,2,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Instabilité Temporelle",160,3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,deplacementInstabiliteTemporelle,sortieInstabiliteTemporelle, 2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
+                Sort.Sort("Instabilité Temporelle",160,3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,deplacementInstabiliteTemporelle,sortieInstabiliteTemporelle, 2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
             Les entités dans le glyphe sont dans l'état Intaclable.
             Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
             ]))
@@ -455,28 +454,28 @@ class Personnage(object):
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",cible_requise=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",cible_requise=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",cible_requise=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Désynchronisation",175,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège qui téléporte symétriquement les entités proches.""", chaine=True)
+                Sort.Sort("Désynchronisation",175,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationDesynchro,"Désynchronisation",(255,0,255),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège qui téléporte symétriquement les entités proches.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Contre",69,2,0,2,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 30,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
-                Sort.Sort("Contre",122,2,0,4,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 40,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
-                Sort.Sort("Contre",162,2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", faire_au_vide=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True)
+                Sort.Sort("Contre",69,2,0,2,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 30,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", cible_requise=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
+                Sort.Sort("Contre",122,2,0,4,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 40,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", cible_requise=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
+                Sort.Sort("Contre",162,2,0,6,[Effets.EffetEtat(Etats.EtatContre("Contre",0,2, 50,1),zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies|Lanceur", cible_requise=True)],[],0,1,1,5,0,"cercle",True,description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Bouclier Temporel",180,3,0,3,[Effets.EffetEtat(Etats.EtatEffetSiSubit("Bouclier temporel",0,1, Effets.EffetTeleportePosPrec(1),"Bouclier Temporel","lanceur","attaquant",""))],[],0,1,1,3,0,"cercle",True,description="""Si la cible subit des dommages, son attaquant et elle reviennent à leur position précédente.""", chaine=True)
@@ -491,7 +490,7 @@ class Personnage(object):
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Prémonition",185,2,1,5,[Effets.EffetRune(1, activationRune,"Prémonition",(164,78,163),faire_au_vide=True)],[],0,1,1,1,0,"cercle",False,description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
+                Sort.Sort("Prémonition",185,2,1,5,[Effets.EffetRune(1, activationRune,"Prémonition",(164,78,163),cible_requise=True)],[],0,1,1,1,0,"cercle",False,description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
             ]))
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -557,13 +556,13 @@ class Personnage(object):
                 Sort.Sort("Tannée",110,4,1,7,[Effets.EffetDegats(30,34,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(36,40,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],5,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone et retire des PM.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Bond",1,5,1,5,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,2,0,"cercle",False,description="""Téléporte sur la case ciblée.
+                Sort.Sort("Bond",1,5,1,5,[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,2,0,"cercle",False,description="""Téléporte sur la case ciblée.
             Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
 
-                Sort.Sort("Bond",20,5,1,5,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,1,0,"cercle",False,description="""Téléporte sur la case ciblée.
+                Sort.Sort("Bond",20,5,1,5,[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,1,0,"cercle",False,description="""Téléporte sur la case ciblée.
             Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
 
-                Sort.Sort("Bond",40,5,1,6,[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,99,0,0,"cercle",False,description="""Téléporte sur la case ciblée.
+                Sort.Sort("Bond",40,5,1,6,[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[Effets.EffetTp(cibles_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,99,0,0,"cercle",False,description="""Téléporte sur la case ciblée.
             Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True)
             ]))
             
@@ -579,7 +578,7 @@ class Personnage(object):
                 Sort.Sort("Intimidation",52,2,1,2,[Effets.EffetDegats(11,13,"Neutre"),Effets.EffetPousser(3)],[Effets.EffetDegats(13,15,"Neutre"),Effets.EffetPousser(3)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Neutre sur les ennemis et repousse la cible.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Conquête",105,3,1,6,[Effets.EffetInvoque("Stratege Iop",True,cible_possibles="",faire_au_vide=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
+                Sort.Sort("Conquête",105,3,1,6,[Effets.EffetInvoque("Stratege Iop",True,cible_possibles="",cible_requise=True),Effets.EffetEtat(Etats.EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Déferlement",3,4,0,5,[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(24,28,"Eau",cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],[Effets.EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),Effets.EffetDegats(32,36,"Eau",cibles_exclues="Lanceur"), Effets.EffetEtatSelf(Etats.EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
@@ -607,14 +606,14 @@ class Personnage(object):
             Applique des points de bouclier pour chaque ennemi touché.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Epée Destructrice",9,4,1,5,[Effets.EffetDegats(24,28,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],[Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
+                Sort.Sort("Epée Destructrice",9,4,1,5,[Effets.EffetDegats(24,28,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
 
-                Sort.Sort("Epée Destructrice",47,4,1,5,[Effets.EffetDegats(28,32,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],[Effets.EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
+                Sort.Sort("Epée Destructrice",47,4,1,5,[Effets.EffetDegats(28,32,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[Effets.EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
 
-                Sort.Sort("Epée Destructrice",87,4,1,5,[Effets.EffetDegats(32,36,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],[Effets.EffetDegats(38,42,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False)
+                Sort.Sort("Epée Destructrice",87,4,1,5,[Effets.EffetDegats(32,36,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[Effets.EffetDegats(38,42,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),Effets.EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Anneau Destructeur",125,3,0,2,[Effets.EffetDegats(26,30,"Air",zone=Zones.TypeZoneAnneau(3),cibles_possibles="Ennemis",faire_au_vide=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneAnneau(3),faire_au_vide=True)],[Effets.EffetDegats(30,34,"Air",zone=Zones.TypeZoneAnneau(3), cibles_possibles="Ennemis",faire_au_vide=True),Effets.EffetAttire(1,"CaseCible", zone=Zones.TypeZoneAnneau(3),faire_au_vide=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Air en anneau et attire les cibles.""", chaine=False)
+                Sort.Sort("Anneau Destructeur",125,3,0,2,[Effets.EffetDegats(26,30,"Air",zone=Zones.TypeZoneAnneau(3),cibles_possibles="Ennemis",cible_requise=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneAnneau(3),cible_requise=True)],[Effets.EffetDegats(30,34,"Air",zone=Zones.TypeZoneAnneau(3), cibles_possibles="Ennemis",cible_requise=True),Effets.EffetAttire(1,"CaseCible", zone=Zones.TypeZoneAnneau(3),cible_requise=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Air en anneau et attire les cibles.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Massacre",13,2,1,3,[Effets.EffetEtat(Etats.EtatRedistribuerPer("Massacre",0,2,50,"Allies",1))],[],0,1,1,3,0,"cercle",True,description="""Lorsque la cible ennemie reçoit des dommages de sorts, elle occasionne 50% de ces dommages aux ennemis au contact.""", chaine=True),
@@ -628,11 +627,11 @@ class Personnage(object):
             Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Souffle",17,2,2,4,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+                Sort.Sort("Souffle",17,2,2,4,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Souffle",58,2,2,6,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+                Sort.Sort("Souffle",58,2,2,6,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
+                Sort.Sort("Souffle",102,2,2,8,[Effets.EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Violence",135,2,0,0,[Effets.EffetAttire(1,zone=Zones.TypeZoneCercle(2)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entités é proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
@@ -652,14 +651,14 @@ class Personnage(object):
             Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Couper",27,3,1,3,[Effets.EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],[Effets.EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+                Sort.Sort("Couper",27,3,1,3,[Effets.EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[Effets.EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
 
-                Sort.Sort("Couper",72,3,1,3,[Effets.EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],[Effets.EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+                Sort.Sort("Couper",72,3,1,3,[Effets.EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[Effets.EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
 
-                Sort.Sort("Couper",118,3,1,4,[Effets.EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],[Effets.EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3), faire_au_vide=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), faire_au_vide=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
+                Sort.Sort("Couper",118,3,1,4,[Effets.EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[Effets.EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),Effets.EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Fracture",145,4,1,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True),Effets.EffetDegats(34,38,"Air", zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True),Effets.EffetDegats(39,43,"Air", zone=Zones.TypeZoneLigneJusque(0), faire_au_vide=True)],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'é la cellule ciblée.
+                Sort.Sort("Fracture",145,4,1,4,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), cible_requise=True),Effets.EffetDegats(34,38,"Air", zone=Zones.TypeZoneLigneJusque(0), cible_requise=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(0), cible_requise=True),Effets.EffetDegats(39,43,"Air", zone=Zones.TypeZoneLigneJusque(0), cible_requise=True)],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'é la cellule ciblée.
             Applique un malus d'érosion.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -752,7 +751,7 @@ class Personnage(object):
                 Sort.Sort("Épée Céleste",162,4,0,4,[Effets.EffetDegats(36,40,"Air",zone=Zones.TypeZoneCercle(2))],[Effets.EffetDegats(42,46,"Air",zone=Zones.TypeZoneCercle(2))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Zénith",180,5,1,3,[Effets.EffetDegatsSelonPMUtilises(86,94,"Air",zone=Zones.TypeZoneLigne(4), faire_au_vide=True)],[Effets.EffetDegatsSelonPMUtilises(104,112,"Air",zone=Zones.TypeZoneLigne(4), faire_au_vide=True)],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
+                Sort.Sort("Zénith",180,5,1,3,[Effets.EffetDegatsSelonPMUtilises(86,94,"Air",zone=Zones.TypeZoneLigne(4), cible_requise=True)],[Effets.EffetDegatsSelonPMUtilises(104,112,"Air",zone=Zones.TypeZoneLigne(4), cible_requise=True)],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
             Moins le lanceur a utilisé de PM pendant son tour de jeu, plus les dommages occasionnés sont importants.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -770,11 +769,11 @@ class Personnage(object):
             Applique des points de bouclier au lanceur.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Épée de Iop",84,4,1,5,[Effets.EffetDegats(27,31,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+                Sort.Sort("Épée de Iop",84,4,1,5,[Effets.EffetDegats(27,31,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
 
-                Sort.Sort("Épée de Iop",134,4,1,5,[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+                Sort.Sort("Épée de Iop",134,4,1,5,[Effets.EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
 
-                Sort.Sort("Épée de Iop",178,4,1,6,[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],[Effets.EffetDegats(42,46,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",faire_au_vide=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True)
+                Sort.Sort("Épée de Iop",178,4,1,6,[Effets.EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[Effets.EffetDegats(42,46,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Pugilat",190,2,1,6,[Effets.EffetDegats(9,11,"Terre",zone=Zones.TypeZoneCercle(2),cibles_exclues="Lanceur"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",15))],[Effets.EffetDegats(11,13,"Terre",cibles_exclues="Lanceur",zone=Zones.TypeZoneCercle(2)), Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",18))],5,4,1,0,0,"cercle",True,description="""Occasionne des dommages Terre en zone.
@@ -831,11 +830,11 @@ class Personnage(object):
                 Sort.Sort("Flèche érosive",105,3,1,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche Erosive",0,2,"erosion",10)),Effets.EffetDegats(25,29,"Terre")],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fleche Erosive",0,2,"erosion",10)),Effets.EffetDegats(29,33,"Terre")],15,3,2,0,1,"ligne",True,description="""Occasionne des dommages Terre et applique un malus d'�rosion.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche de dispersion",1,3,1,6,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),faire_au_vide=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True),
+                Sort.Sort("Flèche de dispersion",1,3,1,6,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),cible_requise=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True),
 
-                Sort.Sort("Flèche de dispersion",30,3,1,9,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),faire_au_vide=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True),
+                Sort.Sort("Flèche de dispersion",30,3,1,9,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),cible_requise=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True),
 
-                Sort.Sort("Flèche de dispersion",60,3,1,12,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),faire_au_vide=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True)
+                Sort.Sort("Flèche de dispersion",60,3,1,12,[Effets.EffetPousser(2,"CaseCible",reversedTreatmentOrder=True,zone=Zones.TypeZoneCroix(2),cible_requise=True)],[],0,1,1,2,1,"cercle",True,description="""Pousse les ennemis et alliés, même s'ils sont bloqués par d'autres entités.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Represailles",110,4,2,5,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Represailles",0,1,"PM",-100)),Effets.EffetEtat(Etats.Etat("Pesanteur",0,1))],[],0,1,1,5,0,"ligne",True,description="""Immobilise la cible et applique l'état Pesanteur.""", chaine=True)
@@ -848,17 +847,17 @@ class Personnage(object):
                 Sort.Sort("Flèche Glacée",67,3,3,10,[Effets.EffetDegats(17,19,"Feu"),Effets.EffetRetPA(2)],[Effets.EffetDegats(20,22,"Feu"),Effets.EffetRetPA(2)],5,99,2,0,1,"cercle",True,description="""Occasionne des dommages Feu et retire des PA.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche Paralysante",115,5,2,6,[Effets.EffetDegats(39,42,"Feu",faire_au_vide=True,zone=Zones.TypeZoneCroix(1)),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],[Effets.EffetDegats(43,46,"Feu",zone=Zones.TypeZoneCroix(1),faire_au_vide=True),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1),faire_au_vide=True)],25,1,99,0,0,"cercle",True,description="""Occasionne des dommages Feu et retire des PA.""", chaine=True)
+                Sort.Sort("Flèche Paralysante",115,5,2,6,[Effets.EffetDegats(39,42,"Feu",cible_requise=True,zone=Zones.TypeZoneCroix(1)),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1),cible_requise=True)],[Effets.EffetDegats(43,46,"Feu",zone=Zones.TypeZoneCroix(1),cible_requise=True),Effets.EffetRetPA(4,zone=Zones.TypeZoneCroix(1),cible_requise=True)],25,1,99,0,0,"cercle",True,description="""Occasionne des dommages Feu et retire des PA.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche Enflammée",6,4,1,4,[Effets.EffetDegats(23,25,"Feu",faire_au_vide=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(26,28,"Feu",zone=Zones.TypeZoneLigne(5),faire_au_vide=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True),
+                Sort.Sort("Flèche Enflammée",6,4,1,4,[Effets.EffetDegats(23,25,"Feu",cible_requise=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(26,28,"Feu",zone=Zones.TypeZoneLigne(5),cible_requise=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True),
 
-                Sort.Sort("Flèche Enflammée",42,4,1,6,[Effets.EffetDegats(27,29,"Feu",faire_au_vide=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(30,32,"Feu",zone=Zones.TypeZoneLigne(5),faire_au_vide=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True),
+                Sort.Sort("Flèche Enflammée",42,4,1,6,[Effets.EffetDegats(27,29,"Feu",cible_requise=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(30,32,"Feu",zone=Zones.TypeZoneLigne(5),cible_requise=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True),
 
-                Sort.Sort("Flèche Enflammée",74,4,1,8,[Effets.EffetDegats(33,35,"Feu",faire_au_vide=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(39,41,"Feu",zone=Zones.TypeZoneLigne(5),faire_au_vide=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),faire_au_vide=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True)
+                Sort.Sort("Flèche Enflammée",74,4,1,8,[Effets.EffetDegats(33,35,"Feu",cible_requise=True,zone=Zones.TypeZoneLigne(5)),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],[Effets.EffetDegats(39,41,"Feu",zone=Zones.TypeZoneLigne(5),cible_requise=True),Effets.EffetPousser(1,zone=Zones.TypeZoneLigne(5),cible_requise=True,reversedTreatmentOrder=True)],25,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et pousse les cibles présentes dans la zone d'effet du sort.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche Répulsive",120,3,1,7,[Effets.EffetDegats(28,32,"Feu",faire_au_vide=True,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetPousser(1,"CaseCible",faire_au_vide=True,zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1),faire_au_vide=True),Effets.EffetPousser(1,"CibleDirect",faire_au_vide=True,zone=Zones.TypeZoneLignePerpendiculaire(1))],5,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu et repousse de 1 case.""", chaine=True)
+                Sort.Sort("Flèche Répulsive",120,3,1,7,[Effets.EffetDegats(28,32,"Feu",cible_requise=True,zone=Zones.TypeZoneLignePerpendiculaire(1)),Effets.EffetPousser(1,"CaseCible",cible_requise=True,zone=Zones.TypeZoneLignePerpendiculaire(1))],[Effets.EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1),cible_requise=True),Effets.EffetPousser(1,"CibleDirect",cible_requise=True,zone=Zones.TypeZoneLignePerpendiculaire(1))],5,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu et repousse de 1 case.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Tir éloigné",9,3,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir_eloigne",0,4,"PO",2),zone=Zones.TypeZoneCercle(2))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir_eloigne",0,4,"PO",3),zone=Zones.TypeZoneCercle(2))],25,1,1,5,0,"cercle",False,description="""Augmente la port�e des cibles pr�sentes dans la zone d'effet.""", chaine=True),
@@ -881,14 +880,14 @@ class Personnage(object):
                 Sort.Sort("Flèche de Rédemption",130,3,6,8,[Effets.EffetDegats(19,22,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Flèche de rédemption",1,1,"Flèche de Rédemption",12))],[Effets.EffetDegats(23,26,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Flèche de rédemption",1,1,"Flèche de Rédemption",12))],25,3,2,0,1,"cercle",True,description="""Occasionne des dommages Eau qui sont augment�s si le sort est relanc� le tour suivant.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Oeil de Taupe",17,3,5,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-2),zone=Zones.TypeZoneCercle(2), faire_au_vide=True),Effets.EffetVolDeVie(8,10,"Eau",zone=Zones.TypeZoneCercle(2), faire_au_vide=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), faire_au_vide=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-2), faire_au_vide=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetVolDeVie(11,13,"Eau", faire_au_vide=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), faire_au_vide=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True),
+                Sort.Sort("Oeil de Taupe",17,3,5,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-2),zone=Zones.TypeZoneCercle(2), cible_requise=True),Effets.EffetVolDeVie(8,10,"Eau",zone=Zones.TypeZoneCercle(2), cible_requise=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), cible_requise=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-2), cible_requise=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetVolDeVie(11,13,"Eau", cible_requise=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), cible_requise=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True),
 
-                Sort.Sort("Oeil de Taupe",58,3,5,8,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-4),zone=Zones.TypeZoneCercle(2), faire_au_vide=True),Effets.EffetVolDeVie(12,14,"Eau",zone=Zones.TypeZoneCercle(2), faire_au_vide=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), faire_au_vide=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-4), faire_au_vide=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetVolDeVie(15,17,"Eau", faire_au_vide=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), faire_au_vide=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True),
+                Sort.Sort("Oeil de Taupe",58,3,5,8,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-4),zone=Zones.TypeZoneCercle(2), cible_requise=True),Effets.EffetVolDeVie(12,14,"Eau",zone=Zones.TypeZoneCercle(2), cible_requise=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), cible_requise=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-4), cible_requise=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetVolDeVie(15,17,"Eau", cible_requise=True,zone=Zones.TypeZoneCercle(2)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(2), cible_requise=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True),
 
-                Sort.Sort("Oeil de Taupe",102,3,5,10,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",1,3,"PO",-6),zone=Zones.TypeZoneCercle(3), faire_au_vide=True),Effets.EffetVolDeVie(16,18,"Eau",zone=Zones.TypeZoneCercle(3), faire_au_vide=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), faire_au_vide=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-6), faire_au_vide=True,zone=Zones.TypeZoneCercle(3)),Effets.EffetVolDeVie(19,21,"Eau", faire_au_vide=True,zone=Zones.TypeZoneCercle(3)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), faire_au_vide=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True)
+                Sort.Sort("Oeil de Taupe",102,3,5,10,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",1,3,"PO",-6),zone=Zones.TypeZoneCercle(3), cible_requise=True),Effets.EffetVolDeVie(16,18,"Eau",zone=Zones.TypeZoneCercle(3), cible_requise=True),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_requise=True)],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Oeil de taupe",0,3,"PO",-6), cible_requise=True,zone=Zones.TypeZoneCercle(3)),Effets.EffetVolDeVie(19,21,"Eau", cible_requise=True,zone=Zones.TypeZoneCercle(3)),Effets.EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_requise=True)],25,1,1,4,1,"cercle",True,description="""R�duit la port�e des personnages cibl�s, vole de la vie dans l'�l�ment Eau et rep�re les objets invisibles dans sa zone d'effet.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Flèche écrasante",135,3,5,7,[Effets.EffetEtat(Etats.Etat("Pesanteur",0,1),faire_au_vide=True,zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(34,38,"Feu",faire_au_vide=True,zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.EffetEtat(Etats.Etat("Pesanteur",1,1),faire_au_vide=True,zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(37,41,"Feu",faire_au_vide=True,zone=Zones.TypeZoneCroixDiagonale(1))],25,1,1,3,1,"cercle",True,description="""Occasionne des dommages Feu et applique l'�tat Pesanteur.""", chaine=True)
+                Sort.Sort("Flèche écrasante",135,3,5,7,[Effets.EffetEtat(Etats.Etat("Pesanteur",0,1),cible_requise=True,zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(34,38,"Feu",cible_requise=True,zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.EffetEtat(Etats.Etat("Pesanteur",1,1),cible_requise=True,zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(37,41,"Feu",cible_requise=True,zone=Zones.TypeZoneCroixDiagonale(1))],25,1,1,3,1,"cercle",True,description="""Occasionne des dommages Feu et applique l'�tat Pesanteur.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Tir Critique",22,2,0,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique",0,4,"cc", 10))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique",0,4,"cc", 10)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique Critique",0,4,"pui", 10))],25,1,1,5,1,"cercle",True,description="""Augmente la probabilit� de faire un coup critique.""", chaine=True),
@@ -898,7 +897,7 @@ class Personnage(object):
                 Sort.Sort("Tir Critique",108,2,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique",0,4,"cc", 14))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique",0,4,"cc", 14)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Critique Critique",0,4,"pui", 50))],25,1,1,5,1,"cercle",True,description="""Augmente la probabilit� de faire un coup critique.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Balise de Rappel",140,2,1,5,[Effets.EffetInvoque("Balise de Rappel",True,cibles_possibles="",faire_au_vide=True)],[],0,1,1,2,0,"cercle",True,description="""Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour).""", chaine=True)
+                Sort.Sort("Balise de Rappel",140,2,1,5,[Effets.EffetInvoque("Balise de Rappel",True,cibles_possibles="",cible_requise=True)],[],0,1,1,2,0,"cercle",True,description="""Invoque une balise qui échange sa position avec celle du lanceur (au début du prochain tour).""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Flèche d'Immobilisation",27,2,1,6,[Effets.EffetDegats(6,7,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche d'Immobilisation",0,1,"PM",-1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Flèche d'Immobilisation",0,1,"PM",1))],[Effets.EffetDegats(7,8,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Flèche d'Immobilisation",0,1,"PM",-1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Flèche d'Immobilisation",0,1,"PM",1))],5,4,2,0,1,"cercle",True,description="""Occasionne des dommages Eau et vole des PM � la cible.""", chaine=True),
@@ -930,7 +929,7 @@ class Personnage(object):
                 Sort.Sort("Tir Puissant",132,3,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Puissant",0,3,"pui",250))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Puissant",0,3,"pui",290))],25,1,1,6,1,"cercle",True,description="""Augmente les dommages des sorts.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Balise Tactique",155,1,1,10,[Effets.EffetTue(cibles_possibles="Balise Tactique",zone=Zones.TypeZoneInfini()),Effets.EffetInvoque("Balise Tactique",True, cibles_possibles="", faire_au_vide=True), Effets.EffetEtat(Etats.EtatModDegPer("Balise Tactique",0,-1,50,"Allies"))],[],0,1,1,2,1,"cercle",True,description="""Invoque une Balise qui peut servir d'obstacle et de cible.
+                Sort.Sort("Balise Tactique",155,1,1,10,[Effets.EffetTue(cibles_possibles="Balise Tactique",zone=Zones.TypeZoneInfini()),Effets.EffetInvoque("Balise Tactique",True, cibles_possibles="", cible_requise=True), Effets.EffetEtat(Etats.EtatModDegPer("Balise Tactique",0,-1,50,"Allies"))],[],0,1,1,2,1,"cercle",True,description="""Invoque une Balise qui peut servir d'obstacle et de cible.
             La Balise subit 2 fois moins de dommages des alliés.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1050,30 +1049,34 @@ class Personnage(object):
             ]))
         elif classe=="Sram":
             sortsDebutCombat.append(
-                Sort.Sort("Chausse-Trappe Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Chausse-Trappe Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), cumulMax=4),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                Sort.Sort("Chausse-Trappe Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Chausse-Trappe Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), cumulMax=5),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
             sortsDebutCombat.append(
-                Sort.Sort("Traquenard Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Traquenard Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Traquenard",0,-1,"Traquenard","POMax",1), cumulMax=4),"Traquenard Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                Sort.Sort("Traquenard Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Traquenard Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Traquenard",0,-1,"Traquenard","POMax",1), cumulMax=5),"Traquenard Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
             sortsDebutCombat.append(
-                Sort.Sort("Injection Toxique Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Injection Toxique Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Injection Toxique",0,-1,"Injection Toxique","nbTourEntreDeux",-1), cumulMax=4),"Injection Toxique Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                Sort.Sort("Injection Toxique Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Injection Toxique Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Injection Toxique",0,-1,"Injection Toxique","nbTourEntreDeux",-1), cumulMax=5),"Injection Toxique Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
-            activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
-            activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
-            activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
-            activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
-            activationPiegeAFragmentation = [Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), faire_au_vide=True,piege=True),Effets.EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), faire_au_vide=True,piege=True),Effets.EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), faire_au_vide=True,piege=True),Effets.EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), faire_au_vide=True,piege=True)]
-            activationPiegeDimmobilisation = [Effets.EffetRetPM(4,zone=Zones.TypeZoneCercle(3), faire_au_vide=True,piege=True)]
-            activationPiegeDeDerive = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), faire_au_vide=True,piege=True)]
+            sortsDebutCombat.append(
+                Sort.Sort("Perfidie Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Perfidie Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Perfidie",0,-1,"Perfidie","coutPA",-1), cumulMax=5),"Perfidie Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+            activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), cible_requise=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_requise=True)]
+            activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), cible_requise=True,piege=True)]
+            activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,cible_requise=True),Effets.EffetRetireEtat('Etat temporaire')]
+            activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
+            activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), cible_requise=True,piege=True)]
+            activationPiegeAFragmentation = [Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), cible_requise=True,piege=True),Effets.EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), cible_requise=True,piege=True),Effets.EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), cible_requise=True,piege=True),Effets.EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), cible_requise=True,piege=True)]
+            activationPiegeDimmobilisation = [Effets.EffetRetPM(4, 3, zone=Zones.TypeZoneCercle(3), cible_requise=True,piege=True)]
+            activationPiegeDeDerive = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), cible_requise=True,piege=True)]
             activationGlypheInsidieuse = Sort.Sort("Piège insidieux : poison fin de tour",0,0,0,3,[Effets.EffetEtat(Etats.EtatEffetFinTour("Piège insidieux : poison fin de tour",0,1,Effets.EffetDegats(34,38,"Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
-            sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", faire_au_vide=True)],[],0, 99,99,0,0,"cercle",False)
-            activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), faire_au_vide=True, piege=True)]
-            activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepoussant = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
-            activationPiegeDeProximite = [Effets.EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
-            activationCalamite = [Effets.EffetVolDeVie(38,42,"Eau",zone=Zones.TypeZoneCarre(1), faire_au_vide=True,piege=True), Effets.EffetEtat(Etats.EtatBoostCaracFixe("Calamité",0,1,"fuite",-30),zone=Zones.TypeZoneCarre(1), faire_au_vide=True,piege=True)]
-            
+            sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", cible_requise=True)],[],0, 99,99,0,0,"cercle",False)
+            activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), cible_requise=True, piege=True)]
+            activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), cible_requise=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_requise=True)]
+            activationPiegeRepoussant = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
+            activationPiegeDeProximite = [Effets.EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
+            activationCalamite = [Effets.EffetVolDeVie(38,42,"Eau",zone=Zones.TypeZoneCarre(1), cible_requise=True,piege=True), Effets.EffetEtat(Etats.EtatBoostCaracFixe("Calamité",0,1,"fuite",-30),zone=Zones.TypeZoneCarre(1), cible_requise=True,piege=True)]
+            activationPiegeFuneste = [Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Etat temporaire piège funeste",0,1,"Piège Funeste",30),zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"), Effets.EffetDegats(28,32,"Terre") ,Effets.EffetRetireEtat("Etat temporaire piège funeste",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")]
+            activationPiegeMortel = [Effets.EffetDegats(53,57,"Terre")]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1086,14 +1089,14 @@ class Personnage(object):
             Le bonus de dommages disparaît quand le sort est lancé.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Sournois",1,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+                Sort.Sort("Piège Sournois",1,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
 
-                Sort.Sort("Piège Sournois",30,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+                Sort.Sort("Piège Sournois",30,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
 
-                Sort.Sort("Piège Sournois",60,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
+                Sort.Sort("Piège Sournois",60,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Perfide",105,2,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegePerfide,"Piège Perfide",(240,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
+                Sort.Sort("Piège Perfide",105,2,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegePerfide,"Piège Perfide",(240,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Invisibilité",1,2,0,0,[Effets.EffetEtat(Etats.Etat("Invisible",0,3)),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],[],0,1,1,7,0,"cercle",False,description="""Rend invisible.""", chaine=True),
@@ -1105,7 +1108,7 @@ class Personnage(object):
             activationBrume = Sort.Sort("Activation Brume",0,0,0,3,[Effets.EffetEtat(Etats.Etat("Invisible",0,2),cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
             sortieBrume = Sort.Sort("Brume: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Invisible",cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Brume",101,3,1,3,[Effets.EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
+                Sort.Sort("Brume",101,3,1,3,[Effets.EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Poison insidieux",3,3,1,4,[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(6,7,"Air"),"Poison insidieux","lanceur"))],[Effets.EffetEtat(Etats.EtatEffetDebutTour("Poison insidieux",0,2,Effets.EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
@@ -1211,40 +1214,40 @@ class Personnage(object):
             activationComploteurComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetDegats(39,41,"Neutre",zone=Zones.TypeZoneCercleSansCentre(1)),Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation", chaine=False)
             activationComploteurComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Comploteur",0,2,Effets.EffetEntiteLanceSort("Comploteur",activationComploteurComplot2),"Explosion Comploteur","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Double",13,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+                Sort.Sort("Double",13,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),Effets.EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-                Sort.Sort("Double",54,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+                Sort.Sort("Double",54,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),Effets.EffetDouble()],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-                Sort.Sort("Double",94,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+                Sort.Sort("Double",94,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
             N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Comploteur",130,3,1,2,[Effets.EffetInvoque("Comploteur",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationComploteurComplot)),Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche("Comploteur",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("ComplotBoost",0,-1,"Complot",14),cumulMax=4),"Complot","porteur","porteur"))],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
+                Sort.Sort("Comploteur",130,3,1,2,[Effets.EffetInvoque("Comploteur",True,cibles_possibles="", cible_requise=True),Effets.EffetDouble(),Effets.EffetEtat(Etats.EtatActiveSort("Complot",2,1,activationComploteurComplot)),Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche("Comploteur",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("ComplotBoost",0,-1,"Complot",14),cumulMax=4),"Complot","porteur","porteur"))],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
             Chaque piège déclenché augmente la Puissance du Double.
             Il meurt après 2 tours.
             Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Fangeux",17,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+                Sort.Sort("Piège Fangeux",17,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
             Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
 
-                Sort.Sort("Piège Fangeux",58,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+                Sort.Sort("Piège Fangeux",58,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
             Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
 
-                Sort.Sort("Piège Fangeux",102,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),faire_au_vide=True)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+                Sort.Sort("Piège Fangeux",102,3,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
             Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Larcin",135,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(40,44,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",-100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Larcin",0,2,"cha",100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),Effets.EffetDegats(44,48,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Eau et vole de la Chance.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-	            Sort.Sort("Piège de Masse",22,4,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+	            Sort.Sort("Piège de Masse",22,4,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
 
-                Sort.Sort("Piège de Masse",65,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+                Sort.Sort("Piège de Masse",65,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
 
-                Sort.Sort("Piège de Masse",108,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
+                Sort.Sort("Piège de Masse",108,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Traquenard",140,3,1,1,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Traquenard")],[Effets.EffetDegats(33,37,"Terre"),Effets.EffetRetireEtat("Traquenard")],5,3,2,0,0,"ligne",False,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente la portée de Traquenard.
@@ -1263,11 +1266,11 @@ class Personnage(object):
             ]))
             
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Empoisonné",32,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+                Sort.Sort("Piège Empoisonné",32,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
 
-                Sort.Sort("Piège Empoisonné",81,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+                Sort.Sort("Piège Empoisonné",81,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
 
-                Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
+                Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Injection Toxique",150,5,1,5,[
@@ -1283,25 +1286,25 @@ class Personnage(object):
                 Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra',0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeAFragmentation,"Piège à Fragmentation",(120,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
+                Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeAFragmentation,"Piège à Fragmentation",(120,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
             Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(2),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+                Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(2),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-                Sort.Sort("Piège d'Immobilisation",97,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+                Sort.Sort("Piège d'Immobilisation",97,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-                Sort.Sort("Piège d'Immobilisation",137,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
+                Sort.Sort("Piège d'Immobilisation",137,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège de Dérive",160,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCroixDiagonale(1),activationPiegeDeDerive,"Piège de Dérive",(0,0,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
+                Sort.Sort("Piège de Dérive",160,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCroixDiagonale(1),activationPiegeDeDerive,"Piège de Dérive",(0,0,120),cible_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Insidieux",50,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+                Sort.Sort("Piège Insidieux",50,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
 
-                Sort.Sort("Piège Insidieux",103,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+                Sort.Sort("Piège Insidieux",103,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
 
-                Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
+                Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
             ]))
             effetPoisonEpidemie = Effets.EffetEtat(Etats.EtatEffetFinTour("Poison Épidémie",0,1,Effets.EffetDegats(38,42,"Air"),"Poison Épidémie","lanceur"), cibles_possibles="Ennemis")
             etatPropageEpidemie = Etats.EtatEffetFinTour("Propagation Épidémie",0,1,Effets.EffetEtat(Etats.EtatEffetFinTour("Propagation Poison Épidémie",0,1,Effets.EffetDegats(38,42,"Air"),"Propagation Poison Épidémie","lanceur"), cibles_possibles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Propagation Épidémie","lanceur")
@@ -1319,24 +1322,24 @@ class Personnage(object):
             La cible propage le poison en zone autour d'elle.""", chaine=True)
             sorts.append(Personnage.getSortRightLvl(lvl,[epidemie]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+                Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 
-                Sort.Sort("Piège répulsif",112,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+                Sort.Sort("Piège répulsif",112,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 
-                Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+                Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
+                Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Peur",62,2,2,3,[Effets.EffetPousserJusque(faire_au_vide=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+                Sort.Sort("Peur",62,2,2,3,[Effets.EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Peur",116,2,2,5,[Effets.EffetPousserJusque(faire_au_vide=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+                Sort.Sort("Peur",116,2,2,5,[Effets.EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
-                Sort.Sort("Peur",153,2,2,7,[Effets.EffetPousserJusque(faire_au_vide=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
+                Sort.Sort("Peur",153,2,2,7,[Effets.EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
             Sort.Sort("Méprise",175,3,1,4,[Effets.EffetEchangePlace("cible",zone=Zones.TypeZoneInfini(),cibles_possibles="Double|Comploteur"), Effets.EffetRetireEtat("Invisible",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
@@ -1350,7 +1353,7 @@ class Personnage(object):
                 Sort.Sort("Arnaque",162,3,1,6,[Effets.EffetDegats(33,37,"Air")],[Effets.EffetDegats(40,40,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Piège de Proximité",180,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeProximite,"Piège de Proximité",(30,120,30),faire_au_vide=True)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
+                Sort.Sort("Piège de Proximité",180,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeProximite,"Piège de Proximité",(30,120,30),cible_requise=True)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Poisse",77,4,1,4,[Effets.EffetVolDeVie(22,26,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-15))],[Effets.EffetVolDeVie(27,31,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-20))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
@@ -1360,7 +1363,7 @@ class Personnage(object):
                 Sort.Sort("Poisse",172,4,1,4,[Effets.EffetVolDeVie(28,32,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-25))],[Effets.EffetVolDeVie(33,37,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-30))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Calamité",185,4,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationCalamite,"Calamité",(30,30,220),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
+                Sort.Sort("Calamité",185,4,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationCalamite,"Calamité",(30,30,220),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Fourberie",84,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-40),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",40),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCroix(2,3))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(36,40,"Feu",zone=Zones.TypeZoneCroix(2,3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
@@ -1373,7 +1376,34 @@ class Personnage(object):
             Attire les cibles.
             Vole de l'Intelligence.""", chaine=True)
             ]))
-        sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Perquisition",190,3,1,5,[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(100,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies",cibles_exclues="Lanceur"),"Perquisition","lanceur","cible")),Effets.EffetPousser(2),Effets.EffetDegats(19,23,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],[Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(100,zone=Zones.TypeZoneCercle(3)),"Perquisition","lanceur","cible")), Effets.EffetPousser(2), Effets.EffetDegats(23,27,"Eau"),Effets.EffetRetireEtat('Etat temporaire')],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau et pousse la cible de 2 cases.
+            100% des dommages sont distribués sous forme de soin aux alliés à 2 cellules de distance de la cible.
+            N'affecte pas le lanceur.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Attaque Mortelle",92,4,1,2,[Effets.EffetDegats(39,43,"Terre")],[Effets.EffetDegats(49,53,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Attaque Mortelle",141,4,1,2,[Effets.EffetDegats(46,50,"Terre")],[Effets.EffetDegats(56,60,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Attaque Mortelle",187,4,1,2,[Effets.EffetDegats(53,57,"Terre")],[Effets.EffetDegats(63,67,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Funeste",195,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFuneste,"Piège Funeste",(30,30,50),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège monocible qui occasionne des dommages Terre.
+            Les dommages sont augmentés en fonction du nombre d'ennemis à proximité du piège.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Mortel",100,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,1,1,2,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Piège Mortel",147,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,1,1,1,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+
+                Sort.Sort("Piège Mortel",197,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,2,99,0,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Perfidie",200,6,1,1,[Effets.EffetDegats(58,62,"Terre"),Effets.EffetRetireEtat("Perfidie",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur")],[Effets.EffetDegats(64,68,"Terre"),Effets.EffetRetireEtat("Perfidie",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur")],25,3,2,0,0,"cercle",False,description="""Occasionne des dommages Terre. Chaque piège déclenché réduit le coût en PA de Perfidie.
+            La réduction du coût en PA disparaît quand le sort est lancé.""", chaine=True)
+            ]))
+        sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", cible_requise=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
         while i < total_nb_sorts:

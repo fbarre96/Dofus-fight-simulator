@@ -18,7 +18,7 @@ class Effet(object):
                                                      consomme_etat (booléen, Faux par défaut),
                                                      cibles_possibles (string, "Allies|Ennemis|Lanceur" par défaut)
                                                      cibles_exclues (string, aucune par défaut)
-                                                     faire_au_vide (booléen, Faux par défaut). Indique si l'effet peut être lancé s'il n'a pas de cible direct (autrement dit si le sort est lancé sur une case vide).
+                                                     cible_requise (booléen, Faux par défaut). Indique si l'effet peut être lancé s'il n'a pas de cible direct (autrement dit si le sort est lancé sur une case vide).
                                                      zone (Zone, Zones.TypeZoneCercle(0) par défaut = sort mono cible)
         @type: **kwargs"""
         self.etatRequisCibleDirect = kwargs.get('etat_requis', "").split("|")
@@ -31,7 +31,7 @@ class Effet(object):
         self.ciblesPossibles = kwargs.get(
             'cibles_possibles', "Allies|Ennemis|Lanceur").split("|")
         self.ciblesExclues = kwargs.get('cibles_exclues', "").split("|")
-        self.faireAuVide = kwargs.get('faire_au_vide', False)
+        self.faireAuVide = kwargs.get('cible_requise', False)
         self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
 
@@ -654,7 +654,7 @@ class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire des PM esquivables normalement (pas implémenté l'esquive)."""
 
-    def __init__(self, int_retrait, **kwargs):
+    def __init__(self, int_retrait, pourNbTour=1, desenvoutable=True, **kwargs):
         """@summary: Initialise un effet de retrait de PM.
         @int_retrait: le nombre de PM qui vont être retiré au maximum
         @type: int
@@ -662,10 +662,12 @@ class EffetRetPM(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.retrait = int_retrait
+        self.pourNbTour = pourNbTour
+        self.desenvoutable = desenvoutable
         super(EffetRetPM, self).__init__(**kwargs)
 
     def deepcopy(self):
-        return EffetRetPM(self.retrait, **self.kwargs)
+        return EffetRetPM(self.retrait, self.pourNbTour, self.desenvoutable, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -687,9 +689,15 @@ class EffetRetPM(Effet):
                 rand = random.random()
                 if rand <= probaRet:
                     totalRet += 1
-            joueurCaseEffet.PM -= totalRet
-            if not self.isPrevisu():
-                print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PM")
+            if self.pourNbTour > 1:
+                nomSort = kwargs.get("nom_sort", "Retrait PM")
+                joueurCaseEffet.appliquerEtat(Etats.EtatBoostCaracFixe(nomSort, 0, self.pourNbTour, "PM", -1*totalRet), joueurLanceur, -1, niveau)
+                if not self.isPrevisu():
+                    print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PM ("+str(self.pourNbTour)+" tours).")
+            else:
+                joueurCaseEffet.PM -= totalRet
+                if not self.isPrevisu():
+                    print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PM")
 
 
 class EffetPropage(Effet):
