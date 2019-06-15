@@ -29,6 +29,16 @@ class Sort:
         self.description = kwargs.get("description","")
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText("nom",(210,105,30)), Overlays.ColoredText("description",(224,238,238)),(56,56,56))
 
+    def __deepcopy__(self,memo):
+        toReturn = Sort(self.nom,self.lvl,self.coutPA,self.POMin,self.POMax, self.effets, self.effetsCC, self.probaCC, self.nbLancerParTour, self.nbLancerParTourParJoueur, self.nbTourEntreDeux, self.POMod,self.typeLancer,self.ldv)
+        toReturn.description = self.description
+        toReturn.compteTourEntreDeux = self.compteTourEntreDeux
+        toReturn.compteLancerParTourParJoueur = self.compteLancerParTourParJoueur
+        toReturn.chaine = self.chaine
+        toReturn.hitbox = self.hitbox
+        toReturn.image = self.image
+        return toReturn
+
     def APorte(self, j1x,j1y,ciblex,cibley,PO):
         distanceX = abs(ciblex-j1x)
         distanceY = abs(cibley-j1y)
@@ -120,6 +130,7 @@ class Sort:
                 #Lancer du sort
                 if not isPrevisu:
                     caraclanceur.PA -= coutPA
+                    print("Marquer lancer sort "+str(self)+"")
                     self.marquerLancer(joueurCible)
                     print(caraclanceur.nomPerso+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
@@ -155,6 +166,7 @@ class Sort:
         niveau.depileEffets()
         niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
         if isPrevisu:
+            print("Restoring")
             toReturn = deepcopy(niveau.joueurs)
             save.restore(niveau)
             return toReturn

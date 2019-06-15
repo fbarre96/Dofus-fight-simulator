@@ -256,32 +256,32 @@ class PathFinding:
 
 class SaveStateNiveau(object):
     def __init__(self,niveau):
-        self.joueursSave = []
-        for joueur in niveau.joueurs:
-            self.joueursSave.append(deepcopy(joueur))
+        self.joueursSave = niveau.joueurs
+        niveau.joueurs = []
+        for joueur in self.joueursSave:
+            niveau.joueurs.append(deepcopy(joueur))
         self.tourIndex = niveau.tourIndex
         self.structure = deepcopy(niveau.structure)
-        self.piegesSave = []
-        for piege in niveau.pieges:
-            self.piegesSave.append(deepcopy(piege))
-        self.runesSave = []
-        for rune in niveau.runes:
-            self.runesSave.append(deepcopy(rune))
-        self.glyphesSave = []
+        self.piegesSave = niveau.pieges
+        niveau.pieges = []
+        for piege in self.piegesSave:
+            niveau.pieges.append(deepcopy(piege))
+        self.runesSave = niveau.runes
+        niveau.runes = []
+        for rune in self.runesSave:
+            niveau.runes.append(deepcopy(rune))
+        self.glyphesSave = niveau.glyphes
+        niveau.glyphes = []
         for glyphe in niveau.glyphes:
-            self.glyphesSave.append(deepcopy(glyphe))
+           niveau.glyphes.append(deepcopy(glyphe))
 
     def restore(self, niveau):
-        del niveau.joueurs
         niveau.joueurs = self.joueursSave
         niveau.tourIndex = self.tourIndex
         niveau.tourDe = niveau.joueurs[self.tourIndex]
         niveau.structure = self.structure
-        del niveau.pieges
         niveau.pieges = self.piegesSave
-        del niveau.runes
         niveau.runes = self.runesSave
-        del niveau.glyphes
         niveau.glyphes = self.glyphesSave
 
 
@@ -1144,8 +1144,11 @@ class Niveau:
         #Effet non boucles
         sestApplique = self.__appliquerEffetSansBoucleSurZone(effet,joueurLanceur,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
         if sestApplique == True:
+            self.afficherSorts()
             return sestApplique,ciblesTraitees
-        return self.__appliquerEffetSurZone(zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
+        sestApplique,ciblesTraitees = self.__appliquerEffetSurZone(zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
+        self.afficherSorts()
+        return sestApplique,ciblesTraitees
 
     def getJoueurs(self, cibles):
         """@summary: Retourne les joueurs correspondant à une liste de classes.

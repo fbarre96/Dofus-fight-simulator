@@ -13,7 +13,7 @@ import copy
 import uuid
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
-    def __init__(self, nomPerso, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone="",sorts=None):
+    def __init__(self, nomPerso, classe, lvl,team,caracsPrimaires, caracsSecondaires,dommages, resistances,icone=""):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
@@ -100,10 +100,7 @@ class Personnage(object):
         self.classe = classe
         self.uid = uuid.uuid4()
         self.sortsDebutCombat = []
-        if sorts is None:
-            self.sorts, self.sortsDebutCombat = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
-        else:
-            self.sorts = sorts
+        self.sorts, self.sortsDebutCombat = Personnage.ChargerSorts(self.classe,self.lvl) # la liste des sorts du personnage
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
         self.etats = []                                   # La liste des états affectant le personange
@@ -131,8 +128,7 @@ class Personnage(object):
                     {"Retrait PA":self.retPA,"Esquive PA":self.esqPA, "Retrait PM":self.retPM,"Esquive PM":self.esqPM,"Soins":self.soins,"Tacle":self.tacle,"Fuite":self.fuite,"Initiative":self.ini,"Invocation":self.invocationLimite,"Prospection":self.prospection},
                     {"Dommages":self.do,"Dommages critiques":self.doCri,"Neutre":self.doNeutre,"Terre":self.doTerre,"Feu":self.doFeu,"Eau":self.doEau,"Air":self.doAir,"Renvoi":self.doRenvoi,"Maitrise d'arme":self.doMaitriseArme,"Pieges":self.doPieges,"Pieges Puissance":self.doPiegesPui,"Poussee":self.doPou,"Sorts":self.doSorts,"Armes":self.doArmes,"Distance":self.doDist,"Melee":self.doMelee},
                     {"Neutre":self.reNeutre,"Neutre%":self.rePerNeutre,"Terre":self.reTerre,"Terre%":self.rePerTerre,"Feu":self.reFeu,"Feu%":self.rePerFeu,"Eau":self.reEau,"Eau%":self.rePerEau,"Air":self.reAir,"Air%":self.rePerAir,"Coups critiques":self.reCc,"Poussee":self.rePou,"Distance":self.reDist,"Melee":self.reMelee},
-                        self.icone,
-                        self.sorts)
+                        self.icone)
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
@@ -140,6 +136,8 @@ class Personnage(object):
         toReturn._PM = self._PM
         toReturn._vie = self._vie
         toReturn.uid = self.uid
+        toReturn.sorts = deepcopy(self.sorts)
+        toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
         toReturn.etats = deepcopy(self.etats)
         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
         toReturn.posDebTour = self.posDebTour
@@ -1054,7 +1052,10 @@ class Personnage(object):
                 Sort.Sort("Chausse-Trappe Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Chausse-Trappe Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Chausse-Trappe",0,-1,"Chausse-Trappe",8), cumulMax=4),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
             sortsDebutCombat.append(
-                Sort.Sort("Traquenard Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Traquenard Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Traquenard",0,-1,"Traquenard","POMax",1), cumulMax=4),"Chausse-Trappe Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+                Sort.Sort("Traquenard Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Traquenard Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Traquenard",0,-1,"Traquenard","POMax",1), cumulMax=4),"Traquenard Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
+            )
+            sortsDebutCombat.append(
+                Sort.Sort("Injection Toxique Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Injection Toxique Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Injection Toxique",0,-1,"Injection Toxique","nbTourEntreDeux",-1), cumulMax=4),"Injection Toxique Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
             activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
@@ -1258,10 +1259,12 @@ class Personnage(object):
 
                 Sort.Sort("Piège Empoisonné",124,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
             ]))
-            # sorts.append(Personnage.getSortRightLvl(lvl,[
-            #     Sort.Sort("Injection Toxique",150,5,1,5,[Effets.EffetEtat(Etats.EffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"lanceur")),Effets.EffetRetireEtat("Injection Toxique")],[Effets.EffetDegats(34,38,"Air"),Effets.TODO(Injection Toxique)],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
-            # La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=True)
-            # ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Injection Toxique",150,5,1,5,[
+                    Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneCercle(99), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"Injection Toxique","lanceur"))],
+                    [ Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneCercle(99), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(34,38,"Air"),"Injection Toxique","lanceur"))],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
+            La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=False)
+            ]))
             # sorts.append(Personnage.getSortRightLvl(lvl,[
             #     Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 
@@ -1649,6 +1652,7 @@ class Personnage(object):
                     for sort in niveau.tourDe.sorts:
                         if sort.vue.isMouseOver(mouse_xy):
                             sortSelectionne = self.selectionSort(sort,niveau)
+                            print("Sort selectionne "+str(sortSelectionne))
                             break
                 #Clic gauche grille de jeu = tentative de lancé un sort si un sort est selectionné ou tentative de déplacement sinon
                 else:
