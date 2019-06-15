@@ -4,23 +4,9 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(2))],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-	Sort.Sort("Piège d'Immobilisation",97,4,1,4,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCercle(3))],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-	Sort.Sort("Piège d'Immobilisation",137,4,1,5,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCercle(3))],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège de Dérive",160,2,1,6,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCroixDiagonale(1))],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège Insidieux",50,3,1,4,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
 
-	Sort.Sort("Piège Insidieux",103,3,1,5,[Effets.TODO(Pose un piège de rang 2)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
-
-	Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.TODO(Pose un piège de rang 3)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Épidémie",165,4,1,5,[Effets.EffetDegats(38,42,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],[Effets.EffetDegats(46,50,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],5,2,1,0,0,"ligne",True,description="""Applique un poison Air de fin de tour sur les ennemis.
 La cible propage le poison en zone autour d'elle.""", chaine=True)

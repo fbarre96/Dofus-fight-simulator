@@ -700,7 +700,7 @@ class EffetEtat(Effet):
         if joueurCaseEffet != None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
             etatCopier = self.etat.deepcopy()
-            return joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,kwargs.get("cumulMax",-1), niveau)
+            return joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
 
 class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

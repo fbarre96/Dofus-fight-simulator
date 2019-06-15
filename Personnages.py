@@ -1065,7 +1065,11 @@ class Personnage(object):
             activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
             activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
             activationPiegeAFragmentation = [Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), faire_au_vide=True,piege=True),Effets.EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), faire_au_vide=True,piege=True),Effets.EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), faire_au_vide=True,piege=True),Effets.EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), faire_au_vide=True,piege=True)]
-
+            activationPiegeDimmobilisation = [Effets.EffetRetPM(4,zone=Zones.TypeZoneCercle(3), faire_au_vide=True,piege=True)]
+            activationPiegeDeDerive = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), faire_au_vide=True,piege=True)]
+            activationGlypheInsidieuse = Sort.Sort("Piège insidieux : poison fin de tour",0,0,0,3,[Effets.EffetEtat(Etats.EtatEffetFinTour("Piège insidieux : poison fin de tour",0,1,Effets.EffetDegats(34,38,"Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
+            sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", faire_au_vide=True)],[],0, 99,99,0,0,"cercle",False)
+            activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(3), faire_au_vide=True, piege=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1279,6 +1283,23 @@ class Personnage(object):
             Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(2),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+
+                Sort.Sort("Piège d'Immobilisation",97,4,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+
+                Sort.Sort("Piège d'Immobilisation",137,4,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),faire_au_vide=True)],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège de Dérive",160,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCroixDiagonale(1),activationPiegeDeDerive,"Piège de Dérive",(0,0,120),faire_au_vide=True)],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Insidieux",50,3,1,4,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+
+                Sort.Sort("Piège Insidieux",103,3,1,5,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+
+                Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
 
@@ -1288,6 +1309,7 @@ class Personnage(object):
                 Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True)
             ]))
+            
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
@@ -1587,7 +1609,7 @@ class Personnage(object):
         @type: Niveau"""
         if cumulMax != -1:
             count = 0
-            for etatJoueur in lanceur.etats:
+            for etatJoueur in self.etats:
                 if etat.nom == etatJoueur.nom:
                     count += 1
             if count >= cumulMax:
