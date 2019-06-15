@@ -1072,6 +1072,8 @@ class Personnage(object):
             activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegeRepoussant = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
             activationPiegeDeProximite = [Effets.EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
+            activationCalamite = [Effets.EffetVolDeVie(38,42,"Eau",zone=Zones.TypeZoneCarre(1), faire_au_vide=True,piege=True), Effets.EffetEtat(Etats.EtatBoostCaracFixe("Calamité",0,1,"fuite",-30),zone=Zones.TypeZoneCarre(1), faire_au_vide=True,piege=True)]
+            
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1357,6 +1359,20 @@ class Personnage(object):
 
                 Sort.Sort("Poisse",172,4,1,4,[Effets.EffetVolDeVie(28,32,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-25))],[Effets.EffetVolDeVie(33,37,"Eau"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Poisse",0,1,"cc",-30))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
             ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Calamité",185,4,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationCalamite,"Calamité",(30,30,220),faire_au_vide=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Fourberie",84,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-40),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",40),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCroix(2,3))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(36,40,"Feu",zone=Zones.TypeZoneCroix(2,3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+            Attire les cibles.
+            Vole de l'Intelligence.""", chaine=True),
+                Sort.Sort("Fourberie",134,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",60),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(35,39,"Feu",zone=Zones.TypeZoneCroix(2,3))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-80),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",80),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(41,45,"Feu",zone=Zones.TypeZoneCroix(2,3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+            Attire les cibles.
+            Vole de l'Intelligence.""", chaine=True),
+                Sort.Sort("Fourberie",178,4,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-80),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",80),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(40,44,"Feu",zone=Zones.TypeZoneCroix(2,3))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",-100),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Fourberie",0,3,"int",100),zone=Zones.TypeZoneCroix(2,3)),Effets.EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),Effets.EffetDegats(46,50,"Feu",zone=Zones.TypeZoneCroix(2,3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
+            Attire les cibles.
+            Vole de l'Intelligence.""", chaine=True)
+            ]))
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0
@@ -1371,6 +1387,13 @@ class Personnage(object):
     def LancerSortsDebutCombat(self, niveau):
         for sort in self.sortsDebutCombat:
             sort.lance(self.posX,self.posY,niveau, self.posX, self.posY)
+    
+    def ajoutHistoriqueDeplacement(self,posX=None,posY=None):
+        if posX is None:
+            posX = self.posX
+        if posY is None:
+            posY = self.posY
+        self.historiqueDeplacement.append([posX, posY,2])
 
     def bouge(self, niveau, x,y, ajouteHistorique=True,canSwap=False):
         """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
@@ -1384,7 +1407,7 @@ class Personnage(object):
         elif niveau.structure[y][x].type != "v":
             return False,False
         if ajouteHistorique:
-            self.historiqueDeplacement.append([self.posX,self.posY,2])
+            self.ajoutHistoriqueDeplacement()
         niveau.structure[self.posY][self.posX].type = "v"
         niveau.structure[y][x].type = "j"
         self.posX = x
@@ -1440,8 +1463,8 @@ class Personnage(object):
             print("DEBUG : THIS SHOULD NOT BE POSSIBLE")
             return False,False
         if ajouteHistorique:
-            self.historiqueDeplacement.append([self.posX,self.posY,2])
-        joueurCible.historiqueDeplacement.append([joueurCible.posX,joueurCible.posY,2])
+            self.ajoutHistoriqueDeplacement()
+        joueurCible.ajoutHistoriqueDeplacement()
         x = self.posX
         y = self.posY
         self.posX = joueurCible.posX
@@ -1723,7 +1746,6 @@ class Personnage(object):
                     for sort in niveau.tourDe.sorts:
                         if sort.vue.isMouseOver(mouse_xy):
                             sortSelectionne = self.selectionSort(sort,niveau)
-                            print("Sort selectionne "+str(sortSelectionne))
                             break
                 #Clic gauche grille de jeu = tentative de lancé un sort si un sort est selectionné ou tentative de déplacement sinon
                 else:

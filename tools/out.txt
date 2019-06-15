@@ -1,26 +1,4 @@
 
-
-
-
-
-
-
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Calamité",185,4,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Fourberie",84,4,0,0,[Effets.TODO(Vole 40 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 60 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(36,40,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
-Attire les cibles.
-Vole de l'Intelligence.""", chaine=True),
-
-	Sort.Sort("Fourberie",134,4,0,0,[Effets.TODO(Vole 60 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(35,39,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 80 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(41,45,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
-Attire les cibles.
-Vole de l'Intelligence.""", chaine=True),
-
-	Sort.Sort("Fourberie",178,4,0,0,[Effets.TODO(Vole 80 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(40,44,"Feu",zone=Zones.TypeZoneCroix(3))],[Effets.TODO(Vole 100 Intelligence (3 tours),zone=Zones.TypeZoneCroix(3)),Effets.TODO(Attire de 2 case(s),zone=Zones.TypeZoneCroix(3)),Effets.EffetDegats(46,50,"Feu",zone=Zones.TypeZoneCroix(3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
-Attire les cibles.
-Vole de l'Intelligence.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Perquisition",190,3,1,5,[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.TODO(Repousse de 2 case(s)),Effets.EffetDegats(19,23,"Eau"),Effets.TODO(Perquisition),Effets.TODO(Enlève l'état Etat temporaire)],[Effets.TODO(État 'Etat temporaire' (1 tour)),Effets.TODO(Repousse de 2 case(s)),Effets.EffetDegats(23,27,"Eau"),Effets.TODO(Perquisition),Effets.TODO(Enlève l'état Etat temporaire)],5,3,2,0,0,"cercle",True,description="""Occasionne des dommages Eau et pousse la cible de 2 cases.
 100% des dommages sont distribués sous forme de soin aux alliés à 2 cellules de distance de la cible.

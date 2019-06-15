@@ -87,11 +87,12 @@ class TypeZoneCercleSansCentre(TypeZone):
 
 class TypeZoneCroix(TypeZone):
     """@summary: Définit une zone d'action en croix pour un effet. Hérite de TypeZone"""
-    def __init__(self, zonePO):
+    def __init__(self, zonePO, zonePOMax=None):
         """@summary: Initialise une instance de zone croix
         @zonePO: la taille de chaque pointe de la croix
         @type: entier"""
         self.zonePO = zonePO
+        self.zonePOMax = zonePOMax
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
         """@summary: Retourne un booléen disant si un case est dans la zone en croix
         @departZone: case de depart de la zone (ici le centre de la croix). Souvent donné par le point d'impact d'un sort.
@@ -103,9 +104,14 @@ class TypeZoneCroix(TypeZone):
         @return: Renvoie vrai si la case testée est dans la zone, faux sinon
         """
         #Si la case testée n'est pas en ligne, pas dans la zone
+
         if getDistanceY(departZone,caseTestee) >0 and getDistanceX(departZone,caseTestee)>0:
             return False
-        return getDistancePoint(departZone,caseTestee) <= self.zonePO        
+        distance = getDistancePoint(departZone,caseTestee)
+        if self.zonePOMax is not None:
+            return distance <= self.zonePOMax and distance >= self.zonePO
+        return distance <= self.zonePO
+
 class TypeZoneCroixDiagonale(TypeZone):
     """@summary: Définit une zone d'action en croix diagonale (En X) pour un effet. Hérite de TypeZone"""
     def __init__(self, zonePO):

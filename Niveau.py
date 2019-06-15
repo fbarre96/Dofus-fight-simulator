@@ -852,17 +852,18 @@ class Niveau:
                  ,posPouY -> int indiquant la coordonnée y d'arrivé après poussé
                  ,D       -> int indiquant le nombre de case non déplacé pour cause d'obstacle"""
 
-        print("Pousse de "+str(nbCases))
         D = 0  # Nombre de cases obstacles cognés
         # calcul de poussé de nbCases
         fait = 0
+        startPosX = joueurCible.posX
+        startPosY = joueurCible.posY
         while fait < nbCases:
             # Calcul de la case d'arrivée après une poussée de 1 case
             posPouX = joueurCible.posX + coordonnes[0]
             if posPouX != joueurCible.posX:
                 # test si la case d'arrivé est hors-map (compte comme un obstacle)
                 aBouge, piegeDeclenche = joueurCible.bouge(
-                    self, posPouX, joueurCible.posY)
+                    self, posPouX, joueurCible.posY, False)
                 if not aBouge:
                     D += 1
                 if piegeDeclenche:
@@ -872,13 +873,14 @@ class Niveau:
             if posPouY != joueurCible.posY:
             # test si la case d'arrivé est hors-map (compte comme un obstacle)
                 aBouge, piegeDeclenche = joueurCible.bouge(
-                    self, joueurCible.posX, posPouY)
+                    self, joueurCible.posX, posPouY, False)
                 if not aBouge:
                     D += 1
                 if piegeDeclenche:
                     break
                 fait += 1
-
+        if startPosX != joueurCible.posX or startPosY != joueurCible.posY:
+            joueurCible.ajoutHistoriqueDeplacement(startPosX, startPosY)
         # Calcul des dégâtss
         R = 6
         if doDeg:
