@@ -49,6 +49,23 @@ class TypeZoneCercle(TypeZone):
         """
         return getDistancePoint(departZone,caseTestee) <= self.zonePO
 
+class TypeZoneInfini(TypeZone):
+    """@summary: Définit une zone d'action circulaire pour un effet. Hérite de TypeZone"""
+    def __init__(self):
+        """@summary: Initialise une instance de zone qui est infini"""
+        pass
+    def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
+        """@summary: Retourne un booléen disant si un case est dans la zone circulaire
+        @departZone: case de depart de la zone (ici le centre du cercle). Souvent donné par le point d'impact d'un sort.
+        @type: tableau de 2 coordonnées entières
+        @caseTestee: case dont on testera l'appartenance à la zone
+        @type: tableau de 2 coordonnées entières
+        @joueurLanceur: le joueur qui lance le sort. Hérité de TypeZone mais inutile pour la zone Cercle
+        @type: Personnage
+        @return: Renvoie vrai si la case testée est dans la zone, faux sinon
+        """
+        return True
+
 class TypeZoneCercleSansCentre(TypeZone):
     """@summary: Définit une zone d'action circulaire sans centre pour un effet. Hérite de TypeZone"""
     def __init__(self, zonePO):

@@ -208,7 +208,7 @@ class Personnage(object):
             sorts.append(Sort.Sort("Synchronisation",0,0,0,0,[Effets.EffetDegats(100,130,"feu",zone=Zones.TypeZoneCercleSansCentre(4), cibles_possibles="Ennemis|Lanceur",etat_requis_cibles="Telefrag"),Effets.EffetEtat(Etats.EtatBoostCaracFixe("Synchronisation",0,1,"PA",2),zone=Zones.TypeZoneCercleSansCentre(4),cibles_possibles="Allies|Lanceur",etat_requis_cibles="Telefrag")],[],0,99,99,0,0,"cercle",False,chaine=False))
             return sorts,sortsDebutCombat
         elif(classe=="Balise de Rappel"):
-            sorts.append(Sort.Sort("Rappel",0,0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False))
+            sorts.append(Sort.Sort("Rappel",0,0,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneInfini(),cibles_possibles="Cra"), Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,99,99,0,0,"cercle",False))
             return sorts,sortsDebutCombat
         elif classe == "Poutch":
             return sorts,sortsDebutCombat
@@ -233,7 +233,7 @@ class Personnage(object):
             )
 
 
-            retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneCercle(99),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
+            retourParadoxe = Sort.Sort("Retour Paradoxe",0,0,0,0,[Effets.EffetTpSymCentre(zone=Zones.TypeZoneInfini(),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",etat_requis_cibles="ParadoxeTemporel",consomme_etat=True)],[],0,99,99,0,0,"cercle",False)
             activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle",0,0,0,3,[Effets.EffetTeleportePosPrec(1)],[],0, 99,99,0,0,"cercle",False)
             sortieInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Intaclable")],[],0, 99,99,0,0,"cercle",False)
             deplacementInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Intaclabe",0,0,0,3,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Intaclable",0,1,"fuite",999999), etat_requis_cibles="!Intaclable")],[],0, 99,99,0,0,"cercle",False)
@@ -411,11 +411,11 @@ class Personnage(object):
             Réduit la durée des effets sur les cibles ennemies dans l'état Téléfrag et retire l'état.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Raulebaque",44,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,4,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
+                Sort.Sort("Raulebaque",44,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini())],[],0,1,1,4,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
 
-                Sort.Sort("Raulebaque",97,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,3,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
+                Sort.Sort("Raulebaque",97,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini())],[],0,1,1,3,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True),
 
-                Sort.Sort("Raulebaque",137,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99))],[],0,1,1,2,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
+                Sort.Sort("Raulebaque",137,2,0,0,[Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini())],[],0,1,1,2,0,"cercle",False,description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Instabilité Temporelle",160,3,0,7,[Effets.EffetGlyphe(activationInstabiliteTemporelle,deplacementInstabiliteTemporelle,sortieInstabiliteTemporelle, 2,"Instabilité Temporelle",(255,255,0),zone=Zones.TypeZoneCercle(3),faire_au_vide=True)],[],0,1,1,3,1,"cercle",False,description="""Pose un glyphe qui renvoie les entités à leur position précédente.
@@ -433,7 +433,7 @@ class Personnage(object):
             Réduit la durée des effets sur les cibles dans l'état Téléfrag et retire l'état.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Pendule",165,4,1,5,[Effets.EffetTpSym(),Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetTpSym(),Effets.EffetDegats(46,50,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],5,2,1,0,0,"cercle",True,description="""Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination.
+                Sort.Sort("Pendule",165,4,1,5,[Effets.EffetTpSym(),Effets.EffetDegats(38,42,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[Effets.EffetTpSym(),Effets.EffetDegats(46,50,"Air",zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"),Effets.EffetTeleportePosPrec(1,zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],5,2,1,0,0,"cercle",True,description="""Le lanceur se téléporte symétriquement par rapport à la cible et occasionne des dommages Air en zone sur sa cellule de destination.
             Il revient ensuite à sa position précédente.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -450,22 +450,22 @@ class Personnage(object):
             Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Cadran de Xelor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 0,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneCercle(99),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
+                Sort.Sort("Faille Temporelle",170,3,0,0,[Effets.EffetEchangePlace(zone=Zones.TypeZoneInfini(),cibles_possibles="Cadran de Xelor|Complice",generer_TF=True),Effets.EffetEtat(Etats.EtatEffetFinTour("Retour faille temporelle", 0,1,Effets.EffetTeleportePosPrec(1),"Fin faille Temporelle","cible")), Effets.EffetEtat(Etats.Etat("Faille_temporelle",0,1),zone=Zones.TypeZoneInfini(),cibles_possibles="Xelor")],[],0,1,1,2,0,"cercle",False,description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
             À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente.
             La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",62,2,1,2,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",116,2,1,3,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+                Sort.Sort("Synchro",153,2,1,4,[Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Synchro"),Effets.EffetInvoque("Synchro",False,cibles_possibles="",faire_au_vide=True),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Synchro",1,-1,"PA",-1))],[],0,1,1,3,0,"cercle",False,description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
             La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
             Elle n'est pas affectée par les effets de Rembobinage.
             À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False)
@@ -533,14 +533,14 @@ class Personnage(object):
             Si la cible est dans l'état Téléfrag, occasionne des dommages Terre en zone aux ennemis autour d'elle.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Momification",100,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,5,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
+                Sort.Sort("Momification",100,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneInfini())],[],0,1,1,5,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
 
-                Sort.Sort("Momification",147,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,4,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
+                Sort.Sort("Momification",147,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneInfini())],[],0,1,1,4,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True),
 
-                Sort.Sort("Momification",197,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneCercle(99))],[],0,1,1,3,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True)
+                Sort.Sort("Momification",197,2,0,0,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Momification",0,1,"PM",2)),Effets.EffetEtat(Etats.EtatTelefrag("Telefrag",0,1,"Momification"),zone=Zones.TypeZoneInfini())],[],0,1,1,3,0,"cercle",False,description="""Gagne 2 PM et fixe l'état Téléfrag à tous les alliés et ennemis.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Glas",200,3,0,3,[Effets.EffetDegats(4,4,"Air",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Eau",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Terre",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Feu",zone=Zones.TypeZoneCarre(1)),Effets.EffetRetireEtat("Glas",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,2,0,"ligne",True,description="""Occasionne des dommages Air, Eau, Terre, Feu.
+                Sort.Sort("Glas",200,3,0,3,[Effets.EffetDegats(4,4,"Air",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Eau",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Terre",zone=Zones.TypeZoneCarre(1)),Effets.EffetDegats(4,4,"Feu",zone=Zones.TypeZoneCarre(1)),Effets.EffetRetireEtat("Glas",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,1,2,0,"ligne",True,description="""Occasionne des dommages Air, Eau, Terre, Feu.
             Les dommages sont augmentés pour chaque Téléfrag généré depuis son dernier lancer.
             N'occasionne pas de dommages si aucun Téléfrag n'a été généré depuis son dernier lancer.""", chaine=True)
             ]))
@@ -930,7 +930,7 @@ class Personnage(object):
                 Sort.Sort("Tir Puissant",132,3,0,6,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Puissant",0,3,"pui",250))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Tir Puissant",0,3,"pui",290))],25,1,1,6,1,"cercle",True,description="""Augmente les dommages des sorts.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Balise Tactique",155,1,1,10,[Effets.EffetTue(cibles_possibles="Balise Tactique",zone=Zones.TypeZoneCercle(99)),Effets.EffetInvoque("Balise Tactique",True, cibles_possibles="", faire_au_vide=True), Effets.EffetEtat(Etats.EtatModDegPer("Balise Tactique",0,-1,50,"Allies"))],[],0,1,1,2,1,"cercle",True,description="""Invoque une Balise qui peut servir d'obstacle et de cible.
+                Sort.Sort("Balise Tactique",155,1,1,10,[Effets.EffetTue(cibles_possibles="Balise Tactique",zone=Zones.TypeZoneInfini()),Effets.EffetInvoque("Balise Tactique",True, cibles_possibles="", faire_au_vide=True), Effets.EffetEtat(Etats.EtatModDegPer("Balise Tactique",0,-1,50,"Allies"))],[],0,1,1,2,1,"cercle",True,description="""Invoque une Balise qui peut servir d'obstacle et de cible.
             La Balise subit 2 fois moins de dommages des alliés.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -986,19 +986,19 @@ class Personnage(object):
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Flèche Dévorante",180,3,1,6,[
-                    Effets.EffetDegats(70,74,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
+                    Effets.EffetDegats(70,74,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 3",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
-                    Effets.EffetDegats(52,56,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetDegats(52,56,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 2",0,-1),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
-                    Effets.EffetDegats(34,38,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
+                    Effets.EffetDegats(34,38,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 1",0,-1),etat_requis_cibles="!Flèche dévorante lancer 2|!Flèche dévorante lancer 3")
                     ],
                     [
-                    Effets.EffetDegats(81,85,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
+                    Effets.EffetDegats(81,85,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 3",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 3",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
-                    Effets.EffetDegats(60,64,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
+                    Effets.EffetDegats(60,64,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 2",0,-1),etat_requis_cibles="Flèche dévorante lancer 2",consomme_etat=True),
-                    Effets.EffetDegats(39,43,"Air",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
+                    Effets.EffetDegats(39,43,"Air",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Flèche dévorante lancer 1",consomme_etat=True),
                     Effets.EffetEtat(Etats.Etat("Flèche dévorante lancer 1",0,-1),etat_requis_cibles="!Flèche dévorante lancer 2|!Flèche dévorante lancer 3")
                     ]
                     ,15,2,1,0,1,"cercle",True,description="""Occasionne des dommages Air.
@@ -1079,7 +1079,7 @@ class Personnage(object):
                 Sort.Sort("Sournoiserie",52,3,1,5,[Effets.EffetDegats(20,22,"Terre")],[Effets.EffetDegats(24,26,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Chausse-Trappe",110,4,1,4,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[Effets.EffetDegats(34,38,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente les dommages de Chausse-Trape.
+                Sort.Sort("Chausse-Trappe",110,4,1,4,[Effets.EffetDegats(30,34,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[Effets.EffetDegats(34,38,"Terre"),Effets.EffetRetireEtat("Chausse-Trappe",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente les dommages de Chausse-Trape.
             Le bonus de dommages disparaît quand le sort est lancé.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1113,10 +1113,10 @@ class Personnage(object):
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Toxines",115,3,1,7,[
-                    Effets.EffetRetireEtat("Toxines", zone=Zones.TypeZoneCercle(99)),
+                    Effets.EffetRetireEtat("Toxines", zone=Zones.TypeZoneInfini()),
                     Effets.EffetEtat(Etats.EtatEffetDebutTour("Toxines",0,2,Effets.EffetDegats(10,11,"Air"),"Toxines","lanceur")),
                     Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxines",0,2,Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Toxines",0,-1,"Toxines",10)),"Toxines","lanceur","lanceur"), etat_requis_cibles="Toxines"),
-                    Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxines",0,2,Effets.EffetSetDureeEtat("Toxines",0,2,zone=Zones.TypeZoneCercle(99)),"Toxines","lanceur","declencheur"), etat_requis_cibles="Toxines")
+                    Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Toxines",0,2,Effets.EffetSetDureeEtat("Toxines",0,2,zone=Zones.TypeZoneInfini()),"Toxines","lanceur","declencheur"), etat_requis_cibles="Toxines")
                 ],[],0,1,1,2,1,"cercle",True,description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
             Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
             Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=False)
@@ -1203,9 +1203,9 @@ class Personnage(object):
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Coupe-gorge",125,4,1,7,[Effets.EffetDegats(34,38,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Coupe-gorge",0,2,"doPiegesPui",250))],[Effets.EffetDegats(40,44,"Feu"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Coupe-gorge",0,2,"doPiegesPui",250))],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et augmente la puissance des pièges.""", chaine=True)
             ]))
-            activationDoubleComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEchangePlace(zone=Zones.TypeZoneCercle(99),cibles_possibles="Invocateur"),Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
+            activationDoubleComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEchangePlace(zone=Zones.TypeZoneInfini(),cibles_possibles="Invocateur"),Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
             activationDoubleComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Double",0,2,Effets.EffetEntiteLanceSort("Double",activationDoubleComplot2),"Explosion Double","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
-            activationComploteurComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetDegats(39,41,"Neutre",zone=Zones.TypeZoneCercleSansCentre(1)),Effets.EffetTue(zone=Zones.TypeZoneCercle(99),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation", chaine=False)
+            activationComploteurComplot2 = Sort.Sort("Complot",0,0,0,99,[Effets.EffetDegats(39,41,"Neutre",zone=Zones.TypeZoneCercleSansCentre(1)),Effets.EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation", chaine=False)
             activationComploteurComplot = Sort.Sort("Complot",0,0,0,99,[Effets.EffetEtatSelf(Etats.EtatEffetFinTour("Explosion Comploteur",0,2,Effets.EffetEntiteLanceSort("Comploteur",activationComploteurComplot2),"Explosion Comploteur","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Double",13,3,1,2,[Effets.EffetInvoque("Double",True,cibles_possibles="", faire_au_vide=True),Effets.EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
@@ -1254,9 +1254,9 @@ class Personnage(object):
 
                 Sort.Sort("Cruauté",118,3,1,7,[Effets.EffetDegats(18,20,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],[Effets.EffetDegats(22,24,"Eau"),Effets.EffetEtatSelf(Etats.EtatBoostCaracFixe("Cruauté",0,1,"PM",1))],5,2,99,0,1,"cercle",True,description="""Occasionne des dommages Eau et augmente les PM du lanceur.""", chaine=True)
             ]))
-            activationGuetApens = Sort.Sort("Activation Guet-apens",145,0,0,99,[Effets.EffetAttire(2,"Lanceur","JoueurCaseEffet",zone=Zones.TypeZoneCercle(99),etat_requis_cibles="Guet-Apens",consomme_etat=True)],[],0,99,99,0,0,"cercle",False,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
+            activationGuetApens = Sort.Sort("Activation Guet-apens",145,0,0,99,[Effets.EffetAttire(2,"Lanceur","JoueurCaseEffet",zone=Zones.TypeZoneInfini(),etat_requis_cibles="Guet-Apens",consomme_etat=True)],[],0,99,99,0,0,"cercle",False,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
             sorts.append(Personnage.getSortRightLvl(lvl,[
-                Sort.Sort("Guet-apens",145,3,1,5,[Effets.EffetDegats(30,34,"Feu"),Effets.EffetEtat(Etats.Etat("Guet-Apens",0,-1)),Effets.EffetEntiteLanceSort("Double",activationGuetApens)],[Effets.EffetDegats(34,38,"Feu"),Effets.EffetAttire(2,"JoueurCaseEffet","Lanceur",zone=Zones.TypeZoneCercle(99),cibles_possibles="Double")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
+                Sort.Sort("Guet-apens",145,3,1,5,[Effets.EffetDegats(30,34,"Feu"),Effets.EffetEtat(Etats.Etat("Guet-Apens",0,-1)),Effets.EffetEntiteLanceSort("Double|Comploteur",activationGuetApens)],[Effets.EffetDegats(34,38,"Feu"),Effets.EffetAttire(2,"JoueurCaseEffet","Lanceur",zone=Zones.TypeZoneInfini(),cibles_possibles="Double|Comploteur")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Feu et attire la cible vers le Double.""", chaine=True)
             ]))
             
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1268,8 +1268,8 @@ class Personnage(object):
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Injection Toxique",150,5,1,5,[
-                    Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneCercle(99), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"Injection Toxique","lanceur"))],
-                    [ Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneCercle(99), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(34,38,"Air"),"Injection Toxique","lanceur"))],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
+                    Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(28,32,"Air"),"Injection Toxique","lanceur"))],
+                    [ Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(34,38,"Air"),"Injection Toxique","lanceur"))],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
             La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=False)
             ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1334,6 +1334,10 @@ class Personnage(object):
                 Sort.Sort("Peur",116,2,2,5,[Effets.EffetPousserJusque(faire_au_vide=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
                 Sort.Sort("Peur",153,2,2,7,[Effets.EffetPousserJusque(faire_au_vide=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+            Sort.Sort("Méprise",175,3,1,4,[Effets.EffetEchangePlace("cible",zone=Zones.TypeZoneInfini(),cibles_possibles="Double|Comploteur"), Effets.EffetRetireEtat("Invisible",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
+                Dissipe l'invisibilité du lanceur.""", chaine=True)
             ]))
                         
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 

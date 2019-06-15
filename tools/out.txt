@@ -1,10 +1,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Méprise",175,3,1,4,[Effets.TODO(État 'Etat temporaire' (infini)),Effets.TODO(Méprise),Effets.TODO(Dévoile tous les objets invisibles),Effets.TODO(Enlève l'état Etat temporaire)],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
-Dissipe l'invisibilité du lanceur.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Arnaque",69,3,1,6,[Effets.EffetDegats(25,29,"Air")],[Effets.EffetDegats(32,32,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True),
 

@@ -1595,15 +1595,16 @@ class EffetEchangePlace(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet échange deux joueurs et peut provoquer un téléfrag"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, persoADeplace="lanceur", **kwargs):
         """@summary: Initialise un effet échangeant deux joueurs et puvant provoquer un téléfrag
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
+        self.persoADeplace = persoADeplace
         super(EffetEchangePlace, self).__init__(**kwargs)
 
     def deepcopy(self):
-        return EffetEchangePlace(**self.kwargs)
+        return EffetEchangePlace(self.persoADeplace, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -1615,8 +1616,15 @@ class EffetEchangePlace(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options cible_traitees et nom_sort doivent être mentionnées. L'option generer_TF peut être mentionnée.
         @type: **kwargs"""
+        perso1AEchange = None
+        if self.persoADeplace == "lanceur":
+            perso1AEchange = joueurLanceur
+        elif self.persoADeplace == "cible":
+            perso1AEchange = niveau.getJoueurSur(kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+        if perso1AEchange is None:
+            return
         genereTF = kwargs.get("generer_TF", False)
-        joueurTF = niveau.gereDeplacementTF(joueurLanceur, [
+        joueurTF = niveau.gereDeplacementTF(perso1AEchange, [
                                             joueurCaseEffet.posX, joueurCaseEffet.posY], joueurLanceur, kwargs.get("nom_sort"), True, genereTF)
         if joueurTF != None:
             kwargs.get("cibles_traitees").append(joueurTF)
