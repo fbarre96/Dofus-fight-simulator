@@ -321,7 +321,9 @@ class EtatBoostSortCarac(Etat):
         caracValue = getattr(sortToUpdate,self.nomAttributCarac)
         setattr(sortToUpdate,self.nomAttributCarac,caracValue + self.boostCarac)
         print("Modification du sort "+sortToUpdate.nom+" "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) )
-    
+        niveau = kwargs.get("niveau",None)
+        if niveau is not None:
+            niveau.afficherSorts()
     def triggerAvantRetrait(self,personnage):
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Retire la vitalité bonus lorsque l'état se termine
@@ -886,7 +888,6 @@ class EtatBoostSortsPer(Etat):
 
     def triggerApresCalculDegats(self,total,typeDeg,cible,attaquant):
         if typeDeg != "arme":
-            print("TRIGGERED SENTINELLE : "+str(self.pourcentage))
             return int((total * self.pourcentage)/100)
         else:
             return total
@@ -1215,7 +1216,6 @@ class EtatEffetSiTFGenere(Etat):
             for eff in self.effet:
                 eff.setNomSortTF(nomSortTF)
                 sestApplique,ciblesTraitees = niveau.lancerEffet(eff,joueurLanceur.posX,joueurLanceur.posY,self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)     
-                print("Effet "+str(type(eff))+" sest applique "+str(sestApplique))
                 if not sestApplique:
                     break
         else:

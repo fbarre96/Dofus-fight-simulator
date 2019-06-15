@@ -113,8 +113,15 @@ class Sort:
         @type: int
         @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
         @type: Personnage (ou None pour prendre le lanceur)"""
+        saveLanceur = None
         if isPrevisu:
-            save = Niveau.SaveStateNiveau(niveau)
+            save = niveau
+            niveau = deepcopy(niveau)
+            if caraclanceur is not None:
+                saveLanceur = caraclanceur
+                for joueur in niveau.joueurs:
+                    if joueur.uid == caraclanceur.uid:
+                        caraclanceur = joueur
         case_cible_x = int(case_cible_x)
         case_cible_y = int(case_cible_y)
         caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x,origine_y)
@@ -130,7 +137,6 @@ class Sort:
                 #Lancer du sort
                 if not isPrevisu:
                     caraclanceur.PA -= coutPA
-                    print("Marquer lancer sort "+str(self)+"")
                     self.marquerLancer(joueurCible)
                     print(caraclanceur.nomPerso+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
@@ -164,9 +170,13 @@ class Sort:
             if not isPrevisu:
                 print("Cible hors de porte")
         niveau.depileEffets()
-        niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
+        toReturn = None
         if isPrevisu:
-            print("Restoring")
             toReturn = deepcopy(niveau.joueurs)
-            save.restore(niveau)
-            return toReturn
+            del niveau
+            niveau = save
+            if saveLanceur is not None:
+                caraclanceur = saveLanceur
+        niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
+        return toReturn
+

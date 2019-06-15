@@ -254,36 +254,6 @@ class PathFinding:
         self.cached_result = None
         return None
 
-class SaveStateNiveau(object):
-    def __init__(self,niveau):
-        self.joueursSave = niveau.joueurs
-        niveau.joueurs = []
-        for joueur in self.joueursSave:
-            niveau.joueurs.append(deepcopy(joueur))
-        self.tourIndex = niveau.tourIndex
-        self.structure = deepcopy(niveau.structure)
-        self.piegesSave = niveau.pieges
-        niveau.pieges = []
-        for piege in self.piegesSave:
-            niveau.pieges.append(deepcopy(piege))
-        self.runesSave = niveau.runes
-        niveau.runes = []
-        for rune in self.runesSave:
-            niveau.runes.append(deepcopy(rune))
-        self.glyphesSave = niveau.glyphes
-        niveau.glyphes = []
-        for glyphe in niveau.glyphes:
-           niveau.glyphes.append(deepcopy(glyphe))
-
-    def restore(self, niveau):
-        niveau.joueurs = self.joueursSave
-        niveau.tourIndex = self.tourIndex
-        niveau.tourDe = niveau.joueurs[self.tourIndex]
-        niveau.structure = self.structure
-        niveau.pieges = self.piegesSave
-        niveau.runes = self.runesSave
-        niveau.glyphes = self.glyphesSave
-
 
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
@@ -296,7 +266,8 @@ class Niveau:
             @type: tableau de Personnage
             @font: décrit une police d'écriture pygame
             @type: Font de pygame"""
-
+        if fenetre is None:
+            return
         #Le double tableau qui décrit les lignes de case la grilel de jeus
         self.structure = None
         #le nombre de case sur un côté de la carte (carré)
@@ -330,6 +301,21 @@ class Niveau:
         # path finding class
         self.pathfinder = PathFinding()
         self.cachedPrevisu = [None,0,0,None]
+
+    def __deepcopy__(self, memo):
+        toReturn = Niveau(None,None,None)
+        toReturn.bloquerFile = self.bloquerFile
+        toReturn.fileEffets = deepcopy(self.fileEffets)
+        toReturn.joueurs = deepcopy(self.joueurs)
+        toReturn.tourIndex = self.tourIndex
+        toReturn.tourDe = toReturn.joueurs[toReturn.tourIndex]
+        print("TOUR DE VAUT : "+str(toReturn.tourDe)+" / "+str(type(toReturn.tourDe)))
+        toReturn.structure = deepcopy(self.structure)
+        toReturn.pieges = deepcopy(self.pieges)
+        toReturn.runes = deepcopy(self.runes)
+        toReturn.glyphes = deepcopy(self.glyphes)
+        return toReturn
+
     def ajoutFileEffets(self,effet,joueurCaseEffet, joueurLanceur):
         self.fileEffets.append([effet,joueurCaseEffet, joueurLanceur])
 
@@ -1147,7 +1133,6 @@ class Niveau:
             self.afficherSorts()
             return sestApplique,ciblesTraitees
         sestApplique,ciblesTraitees = self.__appliquerEffetSurZone(zoneEffet,effet,joueurLanceur,joueurCibleDirect,case_cible_x,case_cible_y,nomSort,ciblesTraitees,prov_x,prov_y, isPrevisu, previsu)
-        self.afficherSorts()
         return sestApplique,ciblesTraitees
 
     def getJoueurs(self, cibles):

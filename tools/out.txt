@@ -3,10 +3,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.TODO(Pose un piège de rang 1)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
-Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Piège d'Immobilisation",44,4,1,4,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(2))],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 

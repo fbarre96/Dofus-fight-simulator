@@ -144,6 +144,7 @@ class Personnage(object):
         toReturn.posDebCombat = self.posDebCombat
         toReturn.invocateur = self.invocateur
         toReturn.invocations = deepcopy(self.invocations)
+        toReturn.invocationLimite = self.invocationLimite
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
         return toReturn
 
@@ -1063,6 +1064,7 @@ class Personnage(object):
             activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
             activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
             activationPiegeEmpoisonne = [Effets.EffetEtat(Etats.EtatEffetDebutTour("Piège Empoisonné",0,3,Effets.EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), faire_au_vide=True,piege=True)]
+            activationPiegeAFragmentation = [Effets.EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), faire_au_vide=True,piege=True),Effets.EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), faire_au_vide=True,piege=True),Effets.EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), faire_au_vide=True,piege=True),Effets.EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), faire_au_vide=True,piege=True)]
 
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
@@ -1265,13 +1267,17 @@ class Personnage(object):
                     [ Effets.EffetRetireEtat("Injection Toxique",zone=Zones.TypeZoneCercle(99), cibles_possibles="Lanceur"),Effets.EffetEtat(Etats.EtatEffetDebutTour("Injection Toxique",0,3,Effets.EffetDegats(34,38,"Air"),"Injection Toxique","lanceur"))],5,1,1,5,0,"cercle",True,description="""Applique un poison Air sur la cible. Chaque piège déclenché réduit le temps de relance d'Injection Toxique.
             La réduction du temps de relance disparaît quand le sort est lancé.""", chaine=False)
             ]))
-            # sorts.append(Personnage.getSortRightLvl(lvl,[
-            #     Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Concentration de Chakra",38,2,1,4,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra',0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,4,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 
-            #     Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
+                Sort.Sort("Concentration de Chakra",90,2,1,5,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra',0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,3,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True),
 
-            #     Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra'0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
-            # ]))
+                Sort.Sort("Concentration de Chakra",132,2,1,6,[Effets.EffetEtat(Etats.EtatEffetSiPiegeDeclenche('Concentration de Chakra',0,1,Effets.EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
+            ]))
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège à Fragmentation",155,4,1,8,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeAFragmentation,"Piège à Fragmentation",(120,0,0),faire_au_vide=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
+            Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
+            ]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),
@@ -1470,7 +1476,6 @@ class Personnage(object):
         @soins: Le nombre de points de soins calculés
         @type: int
         """
-        print("SOuns "+str(soins))
         self.vie += soins
         if shouldprint:
             print("+"+str(soins)+" PV")
