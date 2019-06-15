@@ -2,4 +2,7 @@
     "python.pythonPath": "D:\\Python37\\python37.exe",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
+	"python.linting.pylintArgs": [
+		"--extension-pkg-whitelist=lxml"  // The extension is "lxml" not "1xml"
+	]
 }

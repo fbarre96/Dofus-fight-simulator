@@ -6,10 +6,12 @@ import Niveau
 import Etats
 from copy import deepcopy
 
+
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
                  Cette classe est 'abstraite' et doit être héritée."""
-    def __init__(self,**kwargs):
+
+    def __init__(self, **kwargs):
         """@summary: Initialise un Effet.
         @kwargs: Options de l'effets, possibilitées: etat_requis (string séparé par |, aucun par défaut),
                                                      etat_requis_cibles (string séparé par |, aucun par défaut),
@@ -19,47 +21,50 @@ class Effet(object):
                                                      faire_au_vide (booléen, Faux par défaut). Indique si l'effet peut être lancé s'il n'a pas de cible direct (autrement dit si le sort est lancé sur une case vide).
                                                      zone (Zone, Zones.TypeZoneCercle(0) par défaut = sort mono cible)
         @type: **kwargs"""
-        self.etatRequisCibleDirect = kwargs.get('etat_requis',"").split("|")
+        self.etatRequisCibleDirect = kwargs.get('etat_requis', "").split("|")
         if self.etatRequisCibleDirect[-1] == "":
             self.etatRequisCibleDirect = []
-        self.etatRequisCibles = kwargs.get('etat_requis_cibles',"").split("|")
+        self.etatRequisCibles = kwargs.get('etat_requis_cibles', "").split("|")
         if self.etatRequisCibles[-1] == "":
             self.etatRequisCibles = []
-        self.consommeEtat = kwargs.get('consomme_etat',False)
-        self.ciblesPossibles = kwargs.get('cibles_possibles',"Allies|Ennemis|Lanceur").split("|")
-        self.ciblesExclues = kwargs.get('cibles_exclues',"").split("|")
-        self.faireAuVide = kwargs.get('faire_au_vide',False)
-        self.typeZone = kwargs.get('zone',Zones.TypeZoneCercle(0))
+        self.consommeEtat = kwargs.get('consomme_etat', False)
+        self.ciblesPossibles = kwargs.get(
+            'cibles_possibles', "Allies|Ennemis|Lanceur").split("|")
+        self.ciblesExclues = kwargs.get('cibles_exclues', "").split("|")
+        self.faireAuVide = kwargs.get('faire_au_vide', False)
+        self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
-        
-    def setCritique(self,val):
+
+    def setCritique(self, val):
         self.kwargs["isCC"] = val
 
     def isCC(self):
-        return self.kwargs.get("isCC",False)
+        return self.kwargs.get("isCC", False)
 
-    def setPrevisu(self,val):
+    def setPrevisu(self, val):
         self.kwargs["isPrevisu"] = val
 
     def isPrevisu(self):
-        return self.kwargs.get("isPrevisu",False)
-    
-    def setNomSortTF(self,val):
+        return self.kwargs.get("isPrevisu", False)
+
+    def setNomSortTF(self, val):
         self.kwargs["nomSortTF"] = val
 
     def getNomSortTF(self):
-        return self.kwargs.get("nomSortTF","")
+        return self.kwargs.get("nomSortTF", "")
 
     def isReverseTreatmentOrder(self):
-        return self.kwargs.get("reversedTreatmentOrder",False)
+        return self.kwargs.get("reversedTreatmentOrder", False)
+
     def deepcopy(self):
         return Effet(**self.kwargs)
-    
+
     def setDegatsSubits(self, valPerdu, typeDegats):
         self.kwargs["degatsSubits"] = valPerdu
         self.kwargs["typeDegats"] = typeDegats
+
     def getDegatsSubits(self):
-        return self.kwargs.get("degatsSubits",0),self.kwargs.get("typeDegats","")
+        return self.kwargs.get("degatsSubits", 0), self.kwargs.get("typeDegats", "")
 
     def estLancable(self, joueurLanceur, joueurCible):
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
@@ -72,9 +77,9 @@ class Effet(object):
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
-        return True,""
+        return True, ""
 
-    def cibleValide(self, joueurLanceur, joueurCible,joueurCibleDirect, ciblesDejaTraitees):
+    def cibleValide(self, joueurLanceur, joueurCible, joueurCibleDirect, ciblesDejaTraitees):
         """@summary: Test si un joueur cible est un cible valide selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
         @type: Personnage
@@ -86,44 +91,47 @@ class Effet(object):
         @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
-        #Test si la cible est dans les cibles possibles
+        # Test si la cible est dans les cibles possibles
         if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesPossibles and joueurCible.uid == joueurLanceur.invocateur.uid):
-            #Test si la cible est exclue
+            # Test si la cible est exclue
             if joueurCible.classe in self.ciblesExclues or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues and joueurCible.uid == joueurLanceur.invocateur.uid):
                 print("DEBUG : Invalide : Cible Exclue")
                 return False
-            #Test si la cible est déjà traitée
+            # Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
                 print("DEBUG : Invalide : Cible deja traitee")
                 return False
-            #Test si un état est requis sur la cible direct et qu'une cible direct existe
-            if (joueurCibleDirect == None and len(self.etatRequisCibleDirect)!=0):
-                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct ("+str(self.etatRequisCibleDirect)+")")
+            # Test si un état est requis sur la cible direct et qu'une cible direct existe
+            if (joueurCibleDirect == None and len(self.etatRequisCibleDirect) != 0):
+                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct (" +
+                      str(self.etatRequisCibleDirect)+")")
                 return False
-            #Test si une cible direct n'existe pas si l'effet doit être jouée
+            # Test si une cible direct n'existe pas si l'effet doit être jouée
             if (joueurCibleDirect == None and not self.faireAuVide):
-                print("DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
+                print(
+                    "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
                 return False
-            #Test si la cible est une case vide et que l'effet ne nécessite pas d'êtat pour la cible
-            if (joueurCible == None and len(self.etatRequisCibles)!=0):
+            # Test si la cible est une case vide et que l'effet ne nécessite pas d'êtat pour la cible
+            if (joueurCible == None and len(self.etatRequisCibles) != 0):
                 print("DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible")
                 return False
-            #Test si la cible n'est pas une case vide qu'il a bien les états requis
+            # Test si la cible n'est pas une case vide qu'il a bien les états requis
             if joueurCible != None:
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
                     print("DEBUG : Invalide :etatRequis pour cible non present")
                     return False
-            #Test si la cible firect n'est pas une case vide qu'il a bien les états requis
+            # Test si la cible firect n'est pas une case vide qu'il a bien les états requis
             if joueurCibleDirect != None:
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
                     print("DEBUG : Invalide :etatRequis pour cible direct non present")
                     return False
-            #La cible a passé tous les tests
+            # La cible a passé tous les tests
             return True
-        print("DEBUG : Invalide : Cible "+joueurCible.nomPerso +" pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
+        print("DEBUG : Invalide : Cible "+joueurCible.nomPerso +
+              " pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
         return False
 
-    def APorteZone(self, departZone_x,departZone_y, testDansZone_x,testDansZone_y, j_x, j_y):
+    def APorteZone(self, departZone_x, departZone_y, testDansZone_x, testDansZone_y, j_x, j_y):
         """@summary: Test si une case appartient à une zone donnée. Wrapper pour la fonction testCaseEstDedans polymorphique.
         @departZone_x: L'abcisse de la case de départ de la zone, souvent le centre et souvent le centre de l'effet
         @type: int
@@ -139,10 +147,10 @@ class Effet(object):
         @type: int
         @return: booléen indiquant vrai si la case testée est dans la zone, faux sinon"""
 
-        #Le lanceur peut pas etre dans la zone si y a le - a la fin du type zone
-        return self.typeZone.testCaseEstDedans([departZone_x,departZone_y],[testDansZone_x,testDansZone_y],[j_x,j_y])
+        # Le lanceur peut pas etre dans la zone si y a le - a la fin du type zone
+        return self.typeZone.testCaseEstDedans([departZone_x, departZone_y], [testDansZone_x, testDansZone_y], [j_x, j_y])
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Applique les modifications sur le jeu créées par l'effet.
         @niveau: la grille de simulation de combat.
         @type: Niveau
@@ -153,20 +161,23 @@ class Effet(object):
         @kwargs: Les paramètres optionnels supplémentaires pour chaque effet.s
         @type: **kwargs"""
 
-        #Comportement neutre non défini
+        # Comportement neutre non défini
         niveau.ajoutFileEffets(self)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         print("Activation non définie")
 
     def afficher(self):
         """@summary: Affiche un effet dans la console (DEBUG)"""
-        print("Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat)+" ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues))
+        print("Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat) +
+              " ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues))
+
 
 class EffetSoin(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet soinges une cible."""
-    def __init__(self,valSoin, **kwargs):
+
+    def __init__(self, valSoin, **kwargs):
         """@summary: Initialise un effet de dégâts.
         @pourcentage: le pourcentage de la vie max à soigner
         @type: int (1 à 100)
@@ -180,14 +191,15 @@ class EffetSoin(Effet):
         cpy = EffetSoin(self.valSoin, **self.kwargs)
         return cpy
 
-    def calculSoin(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y):
+    def calculSoin(self, niveau, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y):
         if joueurCaseEffet == None:
             return None
         self.valSoin += joueurLanceur.soins
         if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet._vie:
             self.valSoin = joueurCaseEffet._vie - joueurCaseEffet.vie
         return self.valSoin
-    def appliquerSoin(self,niveau,joueurCaseEffet, joueurLanceur):
+
+    def appliquerSoin(self, niveau, joueurCaseEffet, joueurLanceur):
         """@summary: calcul les soi,s à infligés et applique ces soins à la cible.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -197,10 +209,11 @@ class EffetSoin(Effet):
         @type: Personnage
 
         @return: Le total de soins infligés"""
-        joueurCaseEffet.soigne(joueurLanceur,niveau,self.valSoin,not self.isPrevisu())
+        joueurCaseEffet.soigne(joueurLanceur, niveau,
+                               self.valSoin, not self.isPrevisu())
         return self.valSoin
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -211,19 +224,22 @@ class EffetSoin(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            self.valSoin = self.calculSoin(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
-            self.appliquerSoin(niveau,joueurCaseEffet, joueurLanceur)
+            self.appliquerSoin(niveau, joueurCaseEffet, joueurLanceur)
+
 
 class EffetSoinPerPVMax(EffetSoin):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet soinges une cible à hauteur d'un pourcentage de ses pv maxs."""
-    def __init__(self,pourcentage, **kwargs):
+
+    def __init__(self, pourcentage, **kwargs):
         """@summary: Initialise un effet de dégâts.
         @pourcentage: le pourcentage de la vie max à soigner
         @type: int (1 à 100)
@@ -231,13 +247,13 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super(EffetSoinPerPVMax, self).__init__(0,**kwargs)
+        super(EffetSoinPerPVMax, self).__init__(0, **kwargs)
 
     def deepcopy(self):
         cpy = EffetSoinPerPVMax(self.pourcentage, **self.kwargs)
         return cpy
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -249,16 +265,19 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             self.valSoin = int((self.pourcentage/100.0) * joueurCaseEffet._vie)
-            self.valSoin = self.calculSoin(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
 
 class EffetSoinSelonSubit(EffetSoin):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet soinges une cible à hauteur d'un pourcentage des dégats subits
     DOIT AVOIR UN SETTER DEGATS SUBITS ."""
-    def __init__(self,pourcentage, **kwargs):
+
+    def __init__(self, pourcentage, **kwargs):
         """@summary: Initialise un effet de dégâts.
         @pourcentage: le pourcentage de la vie max à soigner
         @type: int (1 à 100)
@@ -266,13 +285,13 @@ class EffetSoinSelonSubit(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super(EffetSoinSelonSubit, self).__init__(0,**kwargs)
+        super(EffetSoinSelonSubit, self).__init__(0, **kwargs)
 
     def deepcopy(self):
         cpy = EffetSoinSelonSubit(self.pourcentage, **self.kwargs)
         return cpy
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -286,15 +305,18 @@ class EffetSoinSelonSubit(EffetSoin):
             print("Effet soin selon subit : "+str(self.getDegatsSubits()))
             subitDegats, subitType = self.getDegatsSubits()
             self.valSoin = int((self.pourcentage/100.0) * subitDegats)
-            self.valSoin = self.calculSoin(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
 
 class EffetDegats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet inflige des dégâts à une cible."""
-    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+
+    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
         """@summary: Initialise un effet de dégâts.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -311,107 +333,112 @@ class EffetDegats(Effet):
         super(EffetDegats, self).__init__(**kwargs)
 
     def deepcopy(self):
-        cpy = EffetDegats(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+        cpy = EffetDegats(self.minJet, self.maxJet,
+                          self.typeDegats, **self.kwargs)
         return cpy
 
-    def calculDegats(self,niveau,joueurCaseEffet, joueurLanceur,nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
+    def calculDegats(self, niveau, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
         if joueurCaseEffet == None:
             return None
-        
+
         carac = 0
         dos = 0
         resFixes = 0
         rePer = 0
         if self.typeDegats == "eau":
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                carac+=joueurLanceur.cha
+            if self.kwargs.get("bypassDmgCalc", False) == False:
+                carac += joueurLanceur.cha
                 dos += joueurLanceur.doEau
             resFixes += joueurCaseEffet.reEau
             rePer = joueurCaseEffet.rePerEau
         elif self.typeDegats == "air":
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                carac+=joueurLanceur.agi
+            if self.kwargs.get("bypassDmgCalc", False) == False:
+                carac += joueurLanceur.agi
                 dos += joueurLanceur.doAir
             resFixes += joueurCaseEffet.reAir
             rePer = joueurCaseEffet.rePerAir
         elif self.typeDegats == "terre":
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                carac+=joueurLanceur.fo
+            if self.kwargs.get("bypassDmgCalc", False) == False:
+                carac += joueurLanceur.fo
                 dos += joueurLanceur.doTerre
             resFixes += joueurCaseEffet.reTerre
             rePer = joueurCaseEffet.rePerTerre
         elif self.typeDegats == "feu":
-            if self.kwargs.get("bypassDmgCalc",False) == False:
-                carac+=joueurLanceur.int
+            if self.kwargs.get("bypassDmgCalc", False) == False:
+                carac += joueurLanceur.int
                 dos += joueurLanceur.doFeu
             resFixes += joueurCaseEffet.reFeu
             rePer = joueurCaseEffet.rePerFeu
         elif self.typeDegats == "neutre":
-            if self.kwargs.get("bypassDmgCalc",False) == False:
+            if self.kwargs.get("bypassDmgCalc", False) == False:
                 carac += joueurLanceur.fo
                 dos += joueurLanceur.doNeutre
             resFixes += joueurCaseEffet.reNeutre
             rePer = joueurCaseEffet.rePerNeutre
-        if self.kwargs.get("piege",False) == True:
-            if self.kwargs.get("bypassDmgCalc",False) == False:
+        if self.kwargs.get("piege", False) == True:
+            if self.kwargs.get("bypassDmgCalc", False) == False:
                 carac += joueurLanceur.doPiegesPui
                 dos += joueurLanceur.doPieges
         if self.isCC():
-            if self.kwargs.get("bypassDmgCalc",False) == False:
+            if self.kwargs.get("bypassDmgCalc", False) == False:
                 dos += joueurLanceur.doCri
             resFixes += joueurCaseEffet.reCc
-        if self.kwargs.get("bypassDmgCalc",False) == False:
+        if self.kwargs.get("bypassDmgCalc", False) == False:
             if nomSort != "cac":
                 dos += joueurLanceur.doSorts
             else:
                 dos += joueurLanceur.doArmes
             dos += joueurLanceur.do
             carac += joueurLanceur.pui
-        
-        distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [joueurLanceur.posX, joueurLanceur.posY])
-        
+
+        distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [
+                                          joueurLanceur.posX, joueurLanceur.posY])
+
         if howToChoose == "min":
             baseDeg = self.minJet
         elif howToChoose == "max":
             baseDeg = self.maxJet
         else:
-            baseDeg=random.randrange(self.minJet,self.maxJet+1)
-        
-        #Etats du lanceur
+            baseDeg = random.randrange(self.minJet, self.maxJet+1)
+
+        # Etats du lanceur
         total = 0
         for etat in joueurLanceur.etats:
             if etat.actif():
-                dos,baseDeg,carac = etat.triggerAvantCalculDegats(dos,baseDeg,carac,nomSort)
+                dos, baseDeg, carac = etat.triggerAvantCalculDegats(
+                    dos, baseDeg, carac, nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
         if distance == 1:
-            if self.kwargs.get("bypassDmgCalc",False) == False:
+            if self.kwargs.get("bypassDmgCalc", False) == False:
                 total += int((joueurLanceur.doMelee/100.0) * total)
                 rePer += joueurCaseEffet.reMelee
         else:
-            if self.kwargs.get("bypassDmgCalc",False) == False:
+            if self.kwargs.get("bypassDmgCalc", False) == False:
                 total += int((joueurLanceur.doDist/100.0) * total)
                 rePer += joueurCaseEffet.reDist
-        #appliquer les effets des etats sur les degats total du joueur cible
-        eloignement = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],[case_cible_x,case_cible_y])
+        # appliquer les effets des etats sur les degats total du joueur cible
+        eloignement = Zones.getDistancePoint(
+            [joueurCaseEffet.posX, joueurCaseEffet.posY], [case_cible_x, case_cible_y])
         total = total * (10-eloignement)/10
         total = int(total)
 
-        
         vaSubir = total - resFixes
         vaSubir = (vaSubir) - int((rePer/100)*vaSubir)
         for etat in joueurLanceur.etats:
             if etat.actif():
-                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats,joueurCaseEffet,joueurLanceur)
+                vaSubir = etat.triggerApresCalculDegats(
+                    vaSubir, self.typeDegats, joueurCaseEffet, joueurLanceur)
 
         for etat in joueurCaseEffet.etats:
             if etat.actif():
-                vaSubir = etat.triggerApresCalculDegats(vaSubir,self.typeDegats,joueurCaseEffet,joueurLanceur)
+                vaSubir = etat.triggerApresCalculDegats(
+                    vaSubir, self.typeDegats, joueurCaseEffet, joueurLanceur)
         if vaSubir < 0:
             vaSubir = 0
-        
+
         return vaSubir
 
-    def appliquerDegats(self,niveau,joueurCaseEffet, joueurLanceur):
+    def appliquerDegats(self, niveau, joueurCaseEffet, joueurLanceur):
         """@summary: calcul les dégâts à infligés et applique ces dégâts à la cible.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -421,10 +448,11 @@ class EffetDegats(Effet):
         @type: Personnage
 
         @return: Le total de dégâts infligés"""
-        joueurCaseEffet.subit(joueurLanceur,niveau,self.total,self.typeDegats,not self.isPrevisu())
+        joueurCaseEffet.subit(joueurLanceur, niveau,
+                              self.total, self.typeDegats, not self.isPrevisu())
         return self.total
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -436,23 +464,29 @@ class EffetDegats(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             if self.isPrevisu():
-                total_min = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"),"min")
-                total_max = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"),"max")
+                total_min = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "min")
+                total_max = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "max")
                 self.total = total_min
-                joueurCaseEffet.msgsPrevisu.append(str(total_min)+"-"+str(total_max))
+                joueurCaseEffet.msgsPrevisu.append(
+                    str(total_min)+"-"+str(total_max))
             else:
-                self.total = self.calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+                self.total = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
-            self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
+            self.appliquerDegats(niveau, joueurCaseEffet, joueurLanceur)
+
 
 class EffetVolDeVie(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Hérite de EffetsDegats.
     Cet effet inflige des dégâts à une cible et soigne le lanceur de la moitié des dégâts infligés."""
-    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+
+    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
         """@summary: Initialise un effet de vol de vie.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -463,11 +497,13 @@ class EffetVolDeVie(EffetDegats):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetVolDeVie, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
-    def deepcopy(self):
-        return EffetVolDeVie(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+        super(EffetVolDeVie, self).__init__(
+            int_minJet, int_maxJet, str_typeDegats, **kwargs)
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def deepcopy(self):
+        return EffetVolDeVie(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -478,32 +514,35 @@ class EffetVolDeVie(EffetDegats):
         @kwargs: options supplémentaires
         @type: **kwargs"""
 
-        #Utilisation du parent EffetDegats
+        # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = super(EffetVolDeVie, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-        
+            self.total = super(EffetVolDeVie, self).calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        #Et enfin le vol de  vie
-        
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        # Et enfin le vol de  vie
+
         if joueurCaseEffet is not None:
-            #Le soin est majoré à la vie de début du combat
+            # Le soin est majoré à la vie de début du combat
             if joueurLanceur.vie > joueurLanceur._vie:
                 joueurLanceur.vie = joueurLanceur._vie
-            self.appliquerDegats(niveau,joueurCaseEffet, joueurLanceur)
-            #Soin
-            
+            self.appliquerDegats(niveau, joueurCaseEffet, joueurLanceur)
+            # Soin
+
             joueurLanceur.vie += (self.total/2)
             joueurLanceur.vie = int(joueurLanceur.vie)
             if not self.isPrevisu():
-                print(joueurLanceur.nomPerso+" vol "+ str(int(self.total/2)) + "PV")
+                print(joueurLanceur.nomPerso+" vol " +
+                      str(int(self.total/2)) + "PV")
+
 
 class EffetDegatsSelonPMUtilises(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Hérite de EffetsDegats.
     Cet effet inflige des dégâts à une cible divisés selon le ratio PM."""
-    def __init__(self,int_minJet,int_maxJet,str_typeDegats, **kwargs):
+
+    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
         """@summary: Initialise un effet de vol de vie.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -514,11 +553,13 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetDegatsSelonPMUtilises, self).__init__(int_minJet,int_maxJet,str_typeDegats,**kwargs)
-    def deepcopy(self):
-        return EffetDegatsSelonPMUtilises(self.minJet,self.maxJet,self.typeDegats,**self.kwargs)
+        super(EffetDegatsSelonPMUtilises, self).__init__(
+            int_minJet, int_maxJet, str_typeDegats, **kwargs)
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def deepcopy(self):
+        return EffetDegatsSelonPMUtilises(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -529,28 +570,31 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
         @kwargs: options supplémentaires
         @type: **kwargs"""
 
-        #Utilisation du parent EffetDegats
+        # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = super(EffetDegatsSelonPMUtilises, self).calculDegats(niveau,joueurCaseEffet, joueurLanceur,kwargs.get("nom_sort",""),kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            self.total = super(EffetDegatsSelonPMUtilises, self).calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             ratioPM = abs(float(joueurLanceur.PM) / float(joueurLanceur._PM))
-            ratioPM = max(ratioPM,0)
+            ratioPM = max(ratioPM, 0)
             self.total = int(ratioPM * self.total)
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
 
 class EffetTue(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet tue immédiatement les cibles."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet tueur.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTue , self).__init__(**kwargs)
+        super(EffetTue, self).__init__(**kwargs)
 
     def deepcopy(self):
         return EffetTue(**self.kwargs)
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -562,11 +606,13 @@ class EffetTue(Effet):
         @type: **kwargs"""
         niveau.tue(joueurCaseEffet)
 
+
 class EffetRetPA(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire des PA esquivables normalement (pas implémenté l'esquive).
     https://www.dofus.com/fr/forum/1003-divers/2281673-formule-calcul-retrait-ou-esquives-pa-pm"""
-    def __init__(self,int_retrait, **kwargs):
+
+    def __init__(self, int_retrait, **kwargs):
         """@summary: Initialise un effet de retrait de PA.
         @int_retrait: le nombre de PA qui vont être retiré au maximum
         @type: int
@@ -577,8 +623,9 @@ class EffetRetPA(Effet):
         super(EffetRetPA, self).__init__(**kwargs)
 
     def deepcopy(self):
-        return EffetRetPA(self.retrait,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetRetPA(self.retrait, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -593,18 +640,21 @@ class EffetRetPA(Effet):
             for i in range(self.retrait):
                 esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
                 basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
-                probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * (float(joueurCaseEffet.PA)/float(basePa))
+                probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * \
+                    (float(joueurCaseEffet.PA)/float(basePa))
                 rand = random.random()
                 if rand <= probaRet:
                     totalRet += 1
             joueurCaseEffet.PA -= totalRet
             if not self.isPrevisu():
-                print(joueurCaseEffet.nomPerso+" -"+ str(totalRet) + "PA")
-        
+                print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PA")
+
+
 class EffetRetPM(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire des PM esquivables normalement (pas implémenté l'esquive)."""
-    def __init__(self,int_retrait, **kwargs):
+
+    def __init__(self, int_retrait, **kwargs):
         """@summary: Initialise un effet de retrait de PM.
         @int_retrait: le nombre de PM qui vont être retiré au maximum
         @type: int
@@ -613,9 +663,11 @@ class EffetRetPM(Effet):
         self.kwargs = kwargs
         self.retrait = int_retrait
         super(EffetRetPM, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetRetPM(self.retrait,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetRetPM(self.retrait, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -630,18 +682,21 @@ class EffetRetPM(Effet):
             for i in range(self.retrait):
                 esqPm = joueurCaseEffet.esqPM if joueurCaseEffet.esqPM != 0 else 1
                 basePm = joueurCaseEffet._PM if joueurCaseEffet._PM != 0 else 1
-                probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * (float(joueurCaseEffet.PM)/float(basePm))
+                probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * \
+                    (float(joueurCaseEffet.PM)/float(basePm))
                 rand = random.random()
                 if rand <= probaRet:
                     totalRet += 1
             joueurCaseEffet.PM -= totalRet
             if not self.isPrevisu():
-                print(joueurCaseEffet.nomPerso+" -"+ str(totalRet) + "PM")
+                print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PM")
+
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet propage un sort à la cible la plus proche dans la portée du sort (Flèche fulminante par exemple)."""
-    def __init__(self,sort_sort,zone_zone, **kwargs):
+
+    def __init__(self, sort_sort, zone_zone, **kwargs):
         """@summary: Initialise un effet de propagation de sort.
         @sort_sort: le sort qui va être propagé
         @type: Sort
@@ -653,9 +708,11 @@ class EffetPropage(Effet):
         self.zone = zone_zone
         self.sort = sort_sort
         super(EffetPropage, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetPropage(self.sort,self.zone,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetPropage(self.sort, self.zone, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -666,16 +723,21 @@ class EffetPropage(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
 
-        #Etat temporaire pour marqué la cible comme déjà touché par la propagation
-        joueurCaseEffet.appliquerEtat(Etats.Etat("temporaire",0,1),joueurLanceur)
-        #Récupérations des joueurs respectant les critères du sort les plus proches, etat requis = pas temporaire
-        joueursAppliquables = niveau.getJoueurslesPlusProches(joueurCaseEffet.posX,joueurCaseEffet.posY,joueurLanceur,self.zone,["!temporaire"],self.ciblesPossibles)
-        if len(joueursAppliquables)>0:
-            self.sort.lance(joueurCaseEffet.posX,joueurCaseEffet.posY,niveau, joueursAppliquables[0].posX, joueursAppliquables[0].posY,joueurLanceur)
+        # Etat temporaire pour marqué la cible comme déjà touché par la propagation
+        joueurCaseEffet.appliquerEtat(
+            Etats.Etat("temporaire", 0, 1), joueurLanceur)
+        # Récupérations des joueurs respectant les critères du sort les plus proches, etat requis = pas temporaire
+        joueursAppliquables = niveau.getJoueurslesPlusProches(
+            joueurCaseEffet.posX, joueurCaseEffet.posY, joueurLanceur, self.zone, ["!temporaire"], self.ciblesPossibles)
+        if len(joueursAppliquables) > 0:
+            self.sort.lance(joueurCaseEffet.posX, joueurCaseEffet.posY, niveau,
+                            joueursAppliquables[0].posX, joueursAppliquables[0].posY, joueurLanceur)
+
 
 class EffetEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet applique un état à la cible."""
+
     def __init__(self, etat_etat, **kwargs):
         """@summary: Initialise un effet appliquant un état.
         @etat_etat: l'état qui va être appliqué
@@ -685,9 +747,11 @@ class EffetEtat(Effet):
         self.kwargs = kwargs
         self.etat = etat_etat
         super(EffetEtat, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetEtat(self.etat,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetEtat(self.etat, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -700,12 +764,14 @@ class EffetEtat(Effet):
         if joueurCaseEffet != None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
             etatCopier = self.etat.deepcopy()
-            return joueurCaseEffet.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+            return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+
 
 class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pose une glyphe sur la grille de jeu."""
-    def __init__(self,sort_sort,sort_deplacement,sort_sortie,int_duree,str_nom, tuple_couleur, **kwargs):
+
+    def __init__(self, sort_sort, sort_deplacement, sort_sortie, int_duree, str_nom, tuple_couleur, **kwargs):
         """@summary: Initialise un effet posant une glyphe.
         @sort_sort: le sort monocible qui est lancé sur les joueurs restants dans la glyphe
         @type: Sort
@@ -729,9 +795,11 @@ class EffetGlyphe(Effet):
         self.nom = str_nom
         self.couleur = tuple_couleur
         super(EffetGlyphe, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetGlyphe(self.sort,self.sort_deplacement,self.sort_sortie,self.duree,self.nom,self.couleur,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetGlyphe(self.sort, self.sort_deplacement, self.sort_sortie, self.duree, self.nom, self.couleur, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -741,13 +809,16 @@ class EffetGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
-        nouvelleGlyphe = Niveau.Glyphe(self.nom, self.sort,self.sort_deplacement,self.sort_sortie, self.duree, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
-        glypheID = niveau.poseGlyphe(nouvelleGlyphe)
-        
+        nouvelleGlyphe = Niveau.Glyphe(self.nom, self.sort, self.sort_deplacement, self.sort_sortie, self.duree, kwargs.get(
+            "case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur, self.couleur)
+        niveau.poseGlyphe(nouvelleGlyphe)
+
+
 class EffetPiege(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pose un piège sur la grille de jeu."""
-    def __init__(self,zone_declenchement,list_effets,str_nom, tuple_couleur, **kwargs):
+
+    def __init__(self, zone_declenchement, list_effets, str_nom, tuple_couleur, **kwargs):
         """@summary: Initialise un effet posant un piège.
         @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
@@ -765,9 +836,11 @@ class EffetPiege(Effet):
         self.nom = str_nom
         self.couleur = tuple_couleur
         super(EffetPiege, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetPiege(self.zone_declenchement,self.effets,self.nom,self.couleur,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetPiege(self.zone_declenchement, self.effets, self.nom, self.couleur, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -777,13 +850,16 @@ class EffetPiege(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
-        nouveauPiege = Niveau.Piege(self.nom, self.zone_declenchement,self.effets, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
-        piegeID = niveau.posePiege(nouveauPiege)
+        nouveauPiege = Niveau.Piege(self.nom, self.zone_declenchement, self.effets, kwargs.get(
+            "case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur, self.couleur)
+        niveau.posePiege(nouveauPiege)
+
 
 class EffetRune(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pose une rune sur la grille de jeu."""
-    def __init__(self,duree,list_effets,str_nom, tuple_couleur, **kwargs):
+
+    def __init__(self, duree, list_effets, str_nom, tuple_couleur, **kwargs):
         """@summary: Initialise un effet posant une rune.
         @duree: Le nombrede tour où la rune sera présente (avant déclenchement)
         @type: int
@@ -801,9 +877,11 @@ class EffetRune(Effet):
         self.nom = str_nom
         self.couleur = tuple_couleur
         super(EffetRune, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetRune(self.duree,self.effets,self.nom,self.couleur,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetRune(self.duree, self.effets, self.nom, self.couleur, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -813,14 +891,16 @@ class EffetRune(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
         @type: **kwargs"""
-        nouvelleRune= Niveau.Rune(self.nom, self.duree,self.effets, kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur,self.couleur)
-        runeID = niveau.poseRune(nouvelleRune)
-   
+        nouvelleRune = Niveau.Rune(self.nom, self.duree, self.effets, kwargs.get(
+            "case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur, self.couleur)
+        niveau.poseRune(nouvelleRune)
+
+
 class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pousse un joueur à l'opposé une position donnée."""
-    
-    def __init__(self,int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
+
+    def __init__(self, int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet poussant un joueur à l'opposé d'une position donnée
         @int_nbCase: le nombre de case dont le joueur cible va être poussé.
         @type: int
@@ -838,7 +918,8 @@ class EffetPousser(Effet):
 
     def deepcopy(self):
         return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
-    def determinerSensPousser(self,niveau,cible,sourceX,sourceY):
+
+    def determinerSensPousser(self, niveau, cible, sourceX, sourceY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
@@ -848,16 +929,16 @@ class EffetPousser(Effet):
         @type: int
 
         @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0). Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut. (1,-1) anti-diagonal vers le bas. 
-        """ 
+        """
 
-        #Calcul de la direction de la poussée
+        # Calcul de la direction de la poussée
         cible_posX = cible[0]
         cible_posY = cible[1]
         dist_lignes = abs(cible_posY - sourceY)
         dist_colognes = abs(cible_posX - sourceX)
-        self.coordonnees = [0,0]
+        self.coordonnees = [0, 0]
         if dist_lignes == 0 and dist_colognes == 0:
-            return 
+            return
         self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
         self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
         if self.coordonnees[0] == 1 and cible_posX < sourceX:
@@ -866,7 +947,7 @@ class EffetPousser(Effet):
             self.coordonnees[1] = -1
         return self.coordonnees[1]
 
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -885,19 +966,107 @@ class EffetPousser(Effet):
         if self.cible == "JoueurCaseEffet":
             if joueurCaseEffet is None:
                 return
-            self.joueurAPousser = niveau.getJoueurSur(joueurCaseEffet.posX, joueurCaseEffet.posY)
+            self.joueurAPousser = niveau.getJoueurSur(
+                joueurCaseEffet.posX, joueurCaseEffet.posY)
         elif self.cible == "Lanceur":
             self.joueurAPousser = joueurLanceur
-        self.determinerSensPousser(niveau,[self.joueurAPousser.posX, self.joueurAPousser.posY],self.case_from_x,self.case_from_y)
-        niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+        self.determinerSensPousser(niveau, [
+                                   self.joueurAPousser.posX, self.joueurAPousser.posY], self.case_from_x, self.case_from_y)
+        niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.pousser(self, self.joueurAPousser,joueurLanceur,True, self.case_from_x, self.case_from_y)
-        
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        niveau.pousser(self, self.joueurAPousser, joueurLanceur,
+                       True, self.case_from_x, self.case_from_y)
+
+
+class EffetPousserJusque(EffetPousser):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet pousse un joueur à l'opposé une position donnée."""
+
+    def __init__(self, **kwargs):
+        """@summary: Initialise un effet poussant un joueur à l'opposé d'une position donnée
+        @int_nbCase: le nombre de case dont le joueur cible va être poussé.
+        @type: int
+        @source: une string indiquant la provenance de la poussée (Lanceur|)
+        @type: str
+        @cible: une string indiquant la direction de la poussée (Lanceur|)
+        @type: str
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        self.nbCase = 0
+        super(EffetPousserJusque, self).__init__(0, "", "", **kwargs)
+
+    def deepcopy(self):
+        return EffetPousserJusque(**self.kwargs)
+
+    def determinerSensPousser(self, niveau, cible, sourceX, sourceY):
+        """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
+        @joueurCible: le joueur qui va être poussé
+        @type: Personnage
+        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @type: int
+        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @type: int
+
+        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0). Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut. (1,-1) anti-diagonal vers le bas. 
+        """
+
+        # Calcul de la direction de la poussée
+        cible_posX = cible[0]
+        cible_posY = cible[1]
+        dist_lignes = abs(cible_posY - sourceY)
+        dist_colognes = abs(cible_posX - sourceX)
+        self.coordonnees = [0, 0]
+        if dist_lignes == 0 and dist_colognes == 0:
+            return
+        self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
+        self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
+        if self.coordonnees[0] == 1 and cible_posX < sourceX:
+            self.coordonnees[0] = -1
+        if self.coordonnees[1] == 1 and cible_posY < sourceY:
+            self.coordonnees[1] = -1
+        return self.coordonnees[1]
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @type: **kwargs"""
+        if joueurCaseEffet is not None:
+            return
+        self.case_from_x = joueurLanceur.posX
+        self.case_from_y = joueurLanceur.posY
+        self.case_to_x = kwargs.get("case_cible_x")
+        self.case_to_y = kwargs.get("case_cible_y")
+        self.determinerSensPousser(niveau, [
+                                   self.case_to_x, self.case_to_y], self.case_from_x, self.case_from_y)
+        self.joueurAPousser = niveau.getJoueurSur(joueurLanceur.posX + self.coordonnees[0], joueurLanceur.posY + self.coordonnees[1])
+        if self.joueurAPousser is None:
+            return
+        if self.coordonnees[0] != 0:
+            self.nbCase = abs(self.case_to_x - self.joueurAPousser.posX)
+        if self.coordonnees[1] != 0:
+            self.nbCase = abs(self.case_to_y - self.joueurAPousser.posY)
+        niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        niveau.pousser(self, self.joueurAPousser, joueurLanceur,
+                       False, self.case_from_x, self.case_from_y)
+
+
+
+
 class EffetAttire(EffetPousser):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet attire un joueur vers la position du lanceur."""
-    def __init__(self,int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
+
+    def __init__(self, int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
         @int_nbCase: le nombre de case dont le joueur cible va être attiré.
         @type: int
@@ -910,12 +1079,16 @@ class EffetAttire(EffetPousser):
         self.source = source
         self.cible = cible
         self.kwargs = kwargs
-        super(EffetAttire, self).__init__(int_nbCase,source,cible,**kwargs)
+        super(EffetAttire, self).__init__(int_nbCase, source, cible, **kwargs)
+
     def deepcopy(self):
-        return EffetAttire(self.nbCase,self.source, self.cible, **self.kwargs)
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
-        niveau.attire(self,self.joueurAAttirer,joueurLanceur,self.case_from_x, self.case_from_y)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetAttire(self.nbCase, self.source, self.cible, **self.kwargs)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        niveau.attire(self, self.joueurAAttirer, joueurLanceur,
+                      self.case_from_x, self.case_from_y)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -944,23 +1117,28 @@ class EffetAttire(EffetPousser):
             self.joueurAAttirer = joueurCaseEffet
         if self.joueurAAttirer != None:
             if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:
-                super(EffetAttire, self).determinerSensPousser(niveau,[self.joueurAAttirer.posX, self.joueurAAttirer.posY],self.case_from_x,self.case_from_y)
-                self.coordonnees[0] *= -1 # changement de sens par rapport au sens de pousser
+                super(EffetAttire, self).determinerSensPousser(niveau, [
+                    self.joueurAAttirer.posX, self.joueurAAttirer.posY], self.case_from_x, self.case_from_y)
+                #  changement de sens par rapport au sens de pousser
+                self.coordonnees[0] *= -1
                 self.coordonnees[1] *= -1
-                caseMax = self.determinerAttiranceMax() # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
+                # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
+                caseMax = self.determinerAttiranceMax()
                 self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
-                niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
-        
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
     def determinerAttiranceMax(self):
         if self.coordonnees[0] != 0:
             return abs(self.joueurAAttirer.posX - self.case_from_x)
         else:
             return abs(self.joueurAAttirer.posY - self.case_from_y)
 
+
 class EffetRafraichirEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet change la durée des états de la cible."""
-    def __init__(self,int_deXTours, **kwargs):
+
+    def __init__(self, int_deXTours, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
         @int_deXTours: le nombre de tour qui vont être additionés (dans Z) à chaque état de la cible.
         @type: int
@@ -969,9 +1147,11 @@ class EffetRafraichirEtats(Effet):
         self.kwargs = kwargs
         self.deXTours = int_deXTours
         super(EffetRafraichirEtats, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetRafraichirEtats(self.deXTours,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetRafraichirEtats(self.deXTours, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -982,10 +1162,13 @@ class EffetRafraichirEtats(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         joueurCaseEffet.changeDureeEffets(self.deXTours, niveau)
+
+
 class EffetSetDureeEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet set la durée des états de la cible."""
-    def __init__(self,nomEtat,nouveauDebut,nouvelleDuree, **kwargs):
+
+    def __init__(self, nomEtat, nouveauDebut, nouvelleDuree, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
         @int_deXTours: le nombre de tour qui vont être additionés (dans Z) à chaque état de la cible.
         @type: int
@@ -996,9 +1179,11 @@ class EffetSetDureeEtat(Effet):
         self.nouveauDebut = nouveauDebut
         self.nouvelleDuree = nouvelleDuree
         super(EffetSetDureeEtat, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetSetDureeEtat(self.nomEtat, self.nouveauDebut, self.nouvelleDuree, **self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1012,10 +1197,13 @@ class EffetSetDureeEtat(Effet):
             if etat.actif() and etat.nom == self.nomEtat:
                 etat.debuteDans = self.nouveauDebut
                 etat.duree = self.nouvelleDuree
+
+
 class EffetRetireEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire les états de la cible qui portent un nom donné."""
-    def __init__(self,str_nomEtat, **kwargs):
+
+    def __init__(self, str_nomEtat, **kwargs):
         """@summary: Initialise un effet retirant les états de la cible selon un paramètre donné.
         @str_nomEtat: le nom de l'état qui va être retiré de la cible.
         @type: str
@@ -1024,9 +1212,11 @@ class EffetRetireEtat(Effet):
         self.kwargs = kwargs
         self.nomEtat = str_nomEtat
         super(EffetRetireEtat, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetRetireEtat(self.nomEtat ,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetRetireEtat(self.nomEtat, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1037,24 +1227,28 @@ class EffetRetireEtat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet != None:
-            niveau.ajoutFileEffets(self,joueurCaseEffet, joueurLanceur)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
-    def activerEffet(self,niveau,joueurCaseEffet,joueurLanceur):
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
             joueurCaseEffet.retirerEtats(self.nomEtat)
+
 
 class EffetDevoilePiege(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet dévoile les pièges invisibles."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet retirant l'invisiblité des pièges.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetDevoilePiege, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetDevoilePiege(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1064,16 +1258,18 @@ class EffetDevoilePiege(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        case_effet_x=kwargs.get("case_effet_x")
-        case_effet_y=kwargs.get("case_effet_y")
+        case_effet_x = kwargs.get("case_effet_x")
+        case_effet_y = kwargs.get("case_effet_y")
         for piege in niveau.pieges:
             if piege.aPorteDeclenchement(case_effet_x, case_effet_y):
                 piege.invisible = False
 
+
 class EffetTeleportePosPrec(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte un ennemi vers sa position précedente. L'historique des 2 derniers tours seulement est gardé."""
-    def __init__(self,int_nbCase, **kwargs):
+
+    def __init__(self, int_nbCase, **kwargs):
         """@summary: Initialise un effet téléportant sa cible vers sa position précédente. L'historique des 2 derniers tours seulement est gardé.
         @int_nbCase: le nombre de retour en arrière effectué. Par forcément égale au nombre de case reculés.
         @type: int
@@ -1082,9 +1278,11 @@ class EffetTeleportePosPrec(Effet):
         self.kwargs = kwargs
         self.nbCase = int_nbCase
         super(EffetTeleportePosPrec, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetTeleportePosPrec(self.nbCase ,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetTeleportePosPrec(self.nbCase, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1096,20 +1294,25 @@ class EffetTeleportePosPrec(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is None:
             return
-        joueurCaseEffet.tpPosPrec(self.nbCase,niveau,joueurLanceur, kwargs.get("nom_sort"))
-           
+        joueurCaseEffet.tpPosPrec(
+            self.nbCase, niveau, joueurLanceur, kwargs.get("nom_sort"))
+
+
 class EffetTeleporteDebutTour(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte la cible vers sa position de début de tour."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant la cible vers sa position de début de tour.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTeleporteDebutTour, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTeleporteDebutTour(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1119,20 +1322,25 @@ class EffetTeleporteDebutTour(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebTour,joueurLanceur,"Renvoi",AjouteHistorique=True)
+        niveau.gereDeplacementTF(joueurCaseEffet, joueurCaseEffet.posDebTour,
+                                 joueurLanceur, "Renvoi", AjouteHistorique=True)
+
 
 class EffetTeleporteDebutCombat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte la cible vers sa position de début de combat."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant la cible vers sa position de début de combat.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTeleporteDebutCombat, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTeleporteDebutCombat(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1142,20 +1350,25 @@ class EffetTeleporteDebutCombat(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        niveau.gereDeplacementTF(joueurCaseEffet,joueurCaseEffet.posDebCombat,joueurLanceur,"Renvoi",AjouteHistorique=True)
+        niveau.gereDeplacementTF(joueurCaseEffet, joueurCaseEffet.posDebCombat,
+                                 joueurLanceur, "Renvoi", AjouteHistorique=True)
+
 
 class EffetTpSym(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte le lanceur symétriquement par rapport au point de symétrie qui est le joueur cible."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant le lanceur symétriquement par rapport au point de symétrie qui est le joueur cible.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTpSym, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTpSym(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1169,20 +1382,25 @@ class EffetTpSym(Effet):
         distanceY = (joueurCaseEffet.posY-joueurLanceur.posY)
         arriveeX = joueurCaseEffet.posX+distanceX
         arriveeY = joueurCaseEffet.posY+distanceY
-        niveau.gereDeplacementTF(joueurLanceur,[arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"),AjouteHistorique=True)
-        
+        niveau.gereDeplacementTF(joueurLanceur, [
+                                 arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+
+
 class EffetTpSymSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte la cible symétriquement par rapport au point de symétrie qu'est le lanceur."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant la cible symétriquement par rapport au point de symétrie qu'est le lanceur.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTpSymSelf, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTpSymSelf(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1197,20 +1415,25 @@ class EffetTpSymSelf(Effet):
         distanceY = (joueurCaseEffet.posY-joueurLanceur.posY)
         arriveeX = joueurLanceur.posX-distanceX
         arriveeY = joueurLanceur.posY-distanceY
-        niveau.gereDeplacementTF(joueurCaseEffet,[arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
-        
+        niveau.gereDeplacementTF(joueurCaseEffet, [
+                                 arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+
+
 class EffetTpSymCentre(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte la cible symétriquement par rapport au point de symétrie donné par case_cible_x et case_cible_y."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant la cible symétriquement par rapport au point de symétrie donné par case_cible_x et case_cible_y.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTpSymCentre, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTpSymCentre(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1225,15 +1448,18 @@ class EffetTpSymCentre(Effet):
             distanceY = (joueurCaseEffet.posY-kwargs.get("case_cible_y"))
             arriveeX = kwargs.get("case_cible_x")-distanceX
             arriveeY = kwargs.get("case_cible_y")-distanceY
-            joueurTF = niveau.gereDeplacementTF(joueurCaseEffet,[arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
-            #Evite de retéléporter les cibles s'étant déplacé après un téléfrags
+            joueurTF = niveau.gereDeplacementTF(joueurCaseEffet, [
+                                                arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+            # Evite de retéléporter les cibles s'étant déplacé après un téléfrags
             if joueurTF != None:
                 kwargs.get("cibles_traitees").append(joueurTF)
-        
+
+
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur."""
-    def __init__(self,etat_etat, **kwargs):
+
+    def __init__(self, etat_etat, **kwargs):
         """@summary: Initialise un effet placant un état sur le lanceur
         @etat_etat: l'état à placer sur le lanceur
         @type: Etat
@@ -1242,9 +1468,11 @@ class EffetEtatSelf(Effet):
         self.etat = etat_etat
         self.kwargs = kwargs
         super(EffetEtatSelf, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetEtatSelf(self.etat,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetEtatSelf(self.etat, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1255,12 +1483,14 @@ class EffetEtatSelf(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         etatCopier = self.etat.deepcopy()
-        return joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
+        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+
 
 class EffetEtatSelfTF(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur portant le nom du sort à l'origine d'un TF."""
-    def __init__(self,etat_etat, sorts_exclus, **kwargs):
+
+    def __init__(self, etat_etat, sorts_exclus, **kwargs):
         """@summary: Initialise un effet placant un état sur le lanceur
         @etat_etat: l'état à placer sur le lanceur
         @type: Etat
@@ -1270,9 +1500,11 @@ class EffetEtatSelfTF(Effet):
         self.sorts_exclus = sorts_exclus
         self.kwargs = kwargs
         super(EffetEtatSelfTF, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetEtatSelfTF(self.etat,self.sorts_exclus,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetEtatSelfTF(self.etat, self.sorts_exclus, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1286,14 +1518,16 @@ class EffetEtatSelfTF(Effet):
         if nomSort in self.sorts_exclus:
             return False
         etatCopier = self.etat.deepcopy()
-        if self.kwargs.get("remplaceNom",True):
+        if self.kwargs.get("remplaceNom", True):
             etatCopier.nom = nomSort
-        return joueurLanceur.appliquerEtat(etatCopier,joueurLanceur,self.kwargs.get("cumulMax",-1), niveau)
-            
+        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+
+
 class EffetActiveGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet relance les effets d'une glyphe"""
-    def __init__(self,str_nomGlyphe, **kwargs):
+
+    def __init__(self, str_nomGlyphe, **kwargs):
         """@summary: Initialise un effet lançant un sort à une entité/joueur
         @str_nomGlyphe: la glyphe devant être réactivé
         @type: string
@@ -1303,9 +1537,11 @@ class EffetActiveGlyphe(Effet):
         self.kwargs = kwargs
         self.str_nomGlyphe = str_nomGlyphe
         super(EffetActiveGlyphe, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetActiveGlyphe(self.str_nomGlyphe, **self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1315,13 +1551,15 @@ class EffetActiveGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        
+
         niveau.activerGlyphe(self.str_nomGlyphe)
+
 
 class EffetEntiteLanceSort(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet fait lancer un sort à une entité/joueur"""
-    def __init__(self,str_nomEntites,sort_sort, **kwargs):
+
+    def __init__(self, str_nomEntites, sort_sort, **kwargs):
         """@summary: Initialise un effet lançant un sort à une entité/joueur
         @str_nomEntites: les entités devant lancer le sort
         @type: string
@@ -1333,9 +1571,11 @@ class EffetEntiteLanceSort(Effet):
         self.nomEntites = str_nomEntites
         self.sort = sort_sort
         super(EffetEntiteLanceSort, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetEntiteLanceSort(self.nomEntites, self.sort,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetEntiteLanceSort(self.nomEntites, self.sort, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1347,22 +1587,25 @@ class EffetEntiteLanceSort(Effet):
         @type: **kwargs"""
         joueursLanceurs = niveau.getJoueurs(self.nomEntites)
         for joueur in joueursLanceurs:
-            self.sort.lance(joueur.posX,joueur.posY,niveau, joueur.posX, joueur.posY)
+            self.sort.lance(joueur.posX, joueur.posY,
+                            niveau, joueur.posX, joueur.posY)
 
 
-        
 class EffetEchangePlace(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet échange deux joueurs et peut provoquer un téléfrag"""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet échangeant deux joueurs et puvant provoquer un téléfrag
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetEchangePlace, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetEchangePlace(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1372,23 +1615,28 @@ class EffetEchangePlace(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options cible_traitees et nom_sort doivent être mentionnées. L'option generer_TF peut être mentionnée.
         @type: **kwargs"""
-        genereTF = kwargs.get("generer_TF",False)
-        joueurTF = niveau.gereDeplacementTF(joueurLanceur,[joueurCaseEffet.posX, joueurCaseEffet.posY], joueurLanceur, kwargs.get("nom_sort"), True,genereTF)
+        genereTF = kwargs.get("generer_TF", False)
+        joueurTF = niveau.gereDeplacementTF(joueurLanceur, [
+                                            joueurCaseEffet.posX, joueurCaseEffet.posY], joueurLanceur, kwargs.get("nom_sort"), True, genereTF)
         if joueurTF != None:
             kwargs.get("cibles_traitees").append(joueurTF)
-        
+
+
 class EffetTp(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet téléporte le lanceur sur la case ciblée."""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet téléportant le lanceur sur la case ciblée.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetTp, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetTp(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1398,18 +1646,21 @@ class EffetTp(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
-        generer_TF = self.kwargs.get("generer_TF",False)
+        generer_TF = self.kwargs.get("generer_TF", False)
         if generer_TF:
-            joueurTF = niveau.gereDeplacementTF(joueurLanceur,[kwargs.get("case_cible_x"), kwargs.get("case_cible_y")], joueurLanceur, kwargs.get("nom_sort"), True,generer_TF)
+            joueurTF = niveau.gereDeplacementTF(joueurLanceur, [kwargs.get("case_cible_x"), kwargs.get(
+                "case_cible_y")], joueurLanceur, kwargs.get("nom_sort"), True, generer_TF)
             if joueurTF != None:
                 kwargs.get("cibles_traitees").append(joueurTF)
         else:
-            joueurLanceur.bouge(niveau,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
-        
+            joueurLanceur.bouge(niveau, kwargs.get(
+                "case_cible_x"), kwargs.get("case_cible_y"))
+
 
 class EffetInvoque(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet invoque un personnage"""
+
     def __init__(self, str_nomInvoque, compteCommeInvocation, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
         @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
@@ -1420,9 +1671,11 @@ class EffetInvoque(Effet):
         self.compteCommeInvocation = compteCommeInvocation
         self.nomInvoque = str_nomInvoque
         super(EffetInvoque, self).__init__(**kwargs)
+
     def deepcopy(self):
-        return EffetInvoque(self.nomInvoque, self.compteCommeInvocation,**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+        return EffetInvoque(self.nomInvoque, self.compteCommeInvocation, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1432,14 +1685,15 @@ class EffetInvoque(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
         @type: **kwargs"""
-        
+
         invoc = deepcopy(Personnages.INVOCS[self.nomInvoque])
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
         if self.estLancable(invoc.invocateur, None):
             joueurLanceur.invocations.append(invoc)
-            niveau.invoque(invoc,kwargs.get("case_cible_x"),kwargs.get("case_cible_y"))
+            niveau.invoque(invoc, kwargs.get("case_cible_x"),
+                           kwargs.get("case_cible_y"))
 
     def estLancable(self, joueurLanceur, joueurCible):
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
@@ -1455,11 +1709,13 @@ class EffetInvoque(Effet):
         if self.compteCommeInvocation:
             if len(joueurLanceur.invocations) + 1 > joueurLanceur.invocationLimite:
                 return False, "Limite d'invocation atteinte"
-        return True,""
+        return True, ""
+
 
 class EffetDouble(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet est unique pour le double du sram"""
+
     def __init__(self, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
         @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
@@ -1468,9 +1724,11 @@ class EffetDouble(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         super(EffetDouble, self).__init__(**kwargs)
+
     def deepcopy(self):
         return EffetDouble(**self.kwargs)
-    def appliquerEffet(self, niveau,joueurCaseEffet,joueurLanceur,**kwargs):
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
         @niveau: la grille de simulation de combat
         @type: Niveau
@@ -1483,7 +1741,7 @@ class EffetDouble(Effet):
         copyJoueurLanceur = deepcopy(joueurLanceur)
         saveJoueurCaseEffet = deepcopy(joueurCaseEffet)
         joueurCaseEffet = copyJoueurLanceur
-        
+
         joueurCaseEffet.posX = saveJoueurCaseEffet.posX
         joueurCaseEffet.posY = saveJoueurCaseEffet.posY
         joueurCaseEffet.uid = saveJoueurCaseEffet.uid
@@ -1500,14 +1758,15 @@ class EffetDouble(Effet):
         while i < len(niveau.joueurs):
             if niveau.joueurs[i].uid == joueurCaseEffet.uid:
                 del niveau.joueurs[i]
-                niveau.joueurs.insert(i,joueurCaseEffet)
+                niveau.joueurs.insert(i, joueurCaseEffet)
                 break
-            i+=1
+            i += 1
         if joueurCaseEffet.invocateur is not None:
             i = 0
             while i < len(joueurCaseEffet.invocateur.invocations):
                 if joueurCaseEffet.invocateur.invocations[i].uid == joueurCaseEffet.uid:
                     del joueurCaseEffet.invocateur.invocations[i]
-                    joueurCaseEffet.invocateur.invocations.insert(i,joueurCaseEffet)
+                    joueurCaseEffet.invocateur.invocations.insert(
+                        i, joueurCaseEffet)
                     break
-                i+=1
+                i += 1
