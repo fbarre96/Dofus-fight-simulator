@@ -1,8 +1,18 @@
 {
     "python.pythonPath": "D:\\Python37\\python37.exe",
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
 	"python.linting.pylintArgs": [
-		"--extension-pkg-whitelist=lxml"  // The extension is "lxml" not "1xml"
+        "--extension-pkg-whitelist=pygame",
+        "--module-naming-style=any",
+        "--const-naming-style=camelCase",
+        "--class-naming-style=PascalCase",
+        "--function-naming-style=camelCase",
+        "--method-naming-style=camelCase",
+        "--attr-naming-style=camelCase",
+        "--argument-naming-style=camelCase",
+        "--variable-naming-style=camelCase",
+        "--class-attribute-naming-style=camelCase",
+        "--inlinevar-naming-style=camelCase"
 	]
 }

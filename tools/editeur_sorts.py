@@ -300,7 +300,6 @@ def getNonAutoInfos():
     # print("Sort(u\""+nomSort+"\","+coutPA+","+minPO+","+maxPO+",["+efffff+"],"+nbLancerParTour+","+nbLancerParTourParCible+","+nbLancerEntreDeux+","+poMod+", \""+typeLancer+"\", chaine="+chaine+", description=u\""+desc+"\"))")
 if __name__ == "__main__":
     #Importation des bibliothèques nécessaires
-    #TODO : Modularite
     #main()
     ret = CreateChargerSorts(sys.argv[1])
     print(ret)
