@@ -305,6 +305,7 @@ class Niveau:
     def __deepcopy__(self, memo):
         toReturn = Niveau(None,None,None)
         toReturn.fenetre = None
+        toReturn.taille = self.taille
         toReturn.bloquerFile = self.bloquerFile
         toReturn.fileEffets = deepcopy(self.fileEffets)
         toReturn.joueurs = deepcopy(self.joueurs)
@@ -823,9 +824,16 @@ class Niveau:
         while fait < nbCases:
             #Calcul de la case d'arrivée après une poussée de 1 case
             posPouX = joueurCible.posX + coordonnes[0]
+            # test si la case d'arrivé est hors-map (compte comme un obstacle)
+            aBouge,piegeDeclenche = joueurCible.bouge(self,posPouX,joueurCible.posY)
+            if not aBouge:
+                D+=1
+            if piegeDeclenche:
+                break
+            fait+=1
             posPouY = joueurCible.posY + coordonnes[1]
             # test si la case d'arrivé est hors-map (compte comme un obstacle)
-            aBouge,piegeDeclenche = joueurCible.bouge(self,posPouX,posPouY)
+            aBouge,piegeDeclenche = joueurCible.bouge(self,joueurCible.posX,posPouY)
             if not aBouge:
                 D+=1
             if piegeDeclenche:

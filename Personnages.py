@@ -1059,7 +1059,6 @@ class Personnage(object):
                 Sort.Sort("Injection Toxique Boost",0,0,0,0,[Effets.EffetEtatSelf(Etats.EtatEffetSiPiegeDeclenche("Injection Toxique Boost",0,-1,Effets.EffetEtatSelf(Etats.EtatBoostSortCarac("Injection Toxique",0,-1,"Injection Toxique","nbTourEntreDeux",-1), cumulMax=4),"Injection Toxique Boost","porteur","porteur"))],[],0,99,99,0,0,"cercle",False,description="""""", chaine=False),
             )
             activationPiegeSournois = [Effets.EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
-            activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
             activationPiegePerfide = [Effets.EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), faire_au_vide=True,piege=True)]
             activationPiegeFangeux = [Effets.EffetEtat(Etats.EtatEffetSiSubit('Etat temporaire',0,1,Effets.EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),Effets.EffetDegats(33,37,"Eau",piege=True,faire_au_vide=True),Effets.EffetRetireEtat('Etat temporaire')]
             activationPiegeDeMasse = [Effets.EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
@@ -1070,6 +1069,8 @@ class Personnage(object):
             activationGlypheInsidieuse = Sort.Sort("Piège insidieux : poison fin de tour",0,0,0,3,[Effets.EffetEtat(Etats.EtatEffetFinTour("Piège insidieux : poison fin de tour",0,1,Effets.EffetDegats(34,38,"Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
             sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", faire_au_vide=True)],[],0, 99,99,0,0,"cercle",False)
             activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), faire_au_vide=True, piege=True)]
+            activationPiegeRepulsif = [Effets.EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), faire_au_vide=True,piege=True),Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), faire_au_vide=True)]
+            activationPiegeRepoussant = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), faire_au_vide=True,piege=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1303,8 +1304,15 @@ class Personnage(object):
             etatPropageEpidemie = Etats.EtatEffetFinTour("Propagation Épidémie",0,1,Effets.EffetEtat(Etats.EtatEffetFinTour("Propagation Poison Épidémie",0,1,Effets.EffetDegats(38,42,"Air"),"Propagation Poison Épidémie","lanceur"), cibles_possibles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Propagation Épidémie","lanceur")
             effetPropagationEpidemie = Effets.EffetEtat(etatPropageEpidemie, cibles_possibles="Ennemis")
             effetPropagationPropagationEpidemie = Effets.EffetEtat(Etats.EtatEffetFinTour("Continue Épidémie",0,1,Effets.EffetEtat(etatPropageEpidemie,zone=Zones.TypeZoneCercleSansCentre(2)),"Continue Épidémie","lanceur"), cibles_possibles="Ennemis")
+           
+            effetPoisonEpidemieCC = Effets.EffetEtat(Etats.EtatEffetFinTour("Poison Épidémie",0,1,Effets.EffetDegats(46,50,"Air"),"Poison Épidémie","lanceur"), cibles_possibles="Ennemis")
+            etatPropageEpidemieCC = Etats.EtatEffetFinTour("Propagation Épidémie",0,1,Effets.EffetEtat(Etats.EtatEffetFinTour("Propagation Poison Épidémie",0,1,Effets.EffetDegats(46,50,"Air"),"Propagation Poison Épidémie","lanceur"), cibles_possibles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Propagation Épidémie","lanceur")
+            effetPropagationEpidemieCC = Effets.EffetEtat(etatPropageEpidemieCC, cibles_possibles="Ennemis")
+            effetPropagationPropagationEpidemieCC = Effets.EffetEtat(Etats.EtatEffetFinTour("Continue Épidémie",0,1,Effets.EffetEtat(etatPropageEpidemieCC,zone=Zones.TypeZoneCercleSansCentre(2)),"Continue Épidémie","lanceur"), cibles_possibles="Ennemis")
+            
             epidemie=Sort.Sort("Épidémie",165,4,1,5,[effetPropagationEpidemie,effetPropagationPropagationEpidemie,effetPoisonEpidemie],[
-                ],0,2,1,0,0,"ligne",True, description="""Applique un poison Air de fin de tour sur les ennemis.
+                effetPropagationEpidemieCC,effetPropagationPropagationEpidemieCC,effetPoisonEpidemieCC
+                ],5,2,1,0,0,"ligne",True, description="""Applique un poison Air de fin de tour sur les ennemis.
             La cible propage le poison en zone autour d'elle.""", chaine=True)
             sorts.append(Personnage.getSortRightLvl(lvl,[epidemie]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
@@ -1317,7 +1325,10 @@ class Personnage(object):
                 Sort.Sort("Piège répulsif",147,3,1,7,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True)
             ]))
-            
+            sorts.append(Personnage.getSortRightLvl(lvl,[
+                Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
+            ]))
+                        
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
         i = 0

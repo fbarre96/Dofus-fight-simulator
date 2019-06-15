@@ -1,26 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège répulsif",56,3,1,3,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
-Occasionne des dommages Air aux ennemis.""", chaine=True),
-
-	Sort.Sort("Piège répulsif",112,3,1,5,[Effets.TODO(Pose un piège de rang 2,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
-Occasionne des dommages Air aux ennemis.""", chaine=True),
-
-	Sort.Sort("Piège répulsif",147,3,1,7,[Effets.TODO(Pose un piège de rang 3,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
-Occasionne des dommages Air aux ennemis.""", chaine=True)
-]))
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.TODO(Pose un piège de rang 1)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
-]))
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Peur",62,2,2,3,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
