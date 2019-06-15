@@ -1037,7 +1037,7 @@ class Personnage(object):
             fleche_fulminante_rebond=Sort.Sort("Flèche Fulminante Rebond",195,0,0,99,[Effets.EffetDegats(38,42,"Feu",cibles_possibles="Ennemis|Balise Tactique"),Effets.EffetEtatSelf(Etats.EtatBoostBaseDeg("Flèche Fulminante boost",0,1,"Flèche Fulminante Rebond",10))],[],0,9,1,0,0,"cercle",True,description="Occasionne des dommages Feu. Se propage sur l'ennemi le plus proche dans un rayon de 2 cellules. Peut rebondir sur la Balise Tactique. À chaque cible supplémentaire, les dommages du sort sont augmentés.")
             fleche_fulminante.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
             fleche_fulminante_rebond.effets.append(Effets.EffetPropage(fleche_fulminante_rebond,Zones.TypeZoneCercle(2),cibles_possibles="Ennemis|Balise Tactique"))
-            sorts.append(fleche_fulminante)
+            sorts.append(Personnage.getSortRightLvl(lvl,[fleche_fulminante]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Maîtrise de l'Arc",100,2,0,2,[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",40))],[Effets.EffetEtat(Etats.EtatBoostCaracFixe("Maitrise de l'arc",0,3,"do",50))],25,1,1,5,1,"cercle",False,description="""Augmente les dommages.""", chaine=True),
 
@@ -1069,7 +1069,7 @@ class Personnage(object):
             activationPiegeDeDerive = [Effets.EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), faire_au_vide=True,piege=True)]
             activationGlypheInsidieuse = Sort.Sort("Piège insidieux : poison fin de tour",0,0,0,3,[Effets.EffetEtat(Etats.EtatEffetFinTour("Piège insidieux : poison fin de tour",0,1,Effets.EffetDegats(34,38,"Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
             sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[Effets.EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", faire_au_vide=True)],[],0, 99,99,0,0,"cercle",False)
-            activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(3), faire_au_vide=True, piege=True)]
+            activationPiegeInsidieux = [Effets.EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), faire_au_vide=True, piege=True)]
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Sournoiserie",1,3,1,4,[Effets.EffetDegats(14,16,"Terre")],[Effets.EffetDegats(18,20,"Terre")],5,99,3,0,1,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True),
 
@@ -1299,6 +1299,14 @@ class Personnage(object):
 
                 Sort.Sort("Piège Insidieux",143,3,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
             ]))
+            effetPoisonEpidemie = Effets.EffetEtat(Etats.EtatEffetFinTour("Poison Épidémie",0,1,Effets.EffetDegats(38,42,"Air"),"Poison Épidémie","lanceur"), cibles_possibles="Ennemis")
+            etatPropageEpidemie = Etats.EtatEffetFinTour("Propagation Épidémie",0,1,Effets.EffetEtat(Etats.EtatEffetFinTour("Propagation Poison Épidémie",0,1,Effets.EffetDegats(38,42,"Air"),"Propagation Poison Épidémie","lanceur"), cibles_possibles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Propagation Épidémie","lanceur")
+            effetPropagationEpidemie = Effets.EffetEtat(etatPropageEpidemie, cibles_possibles="Ennemis")
+            effetPropagationPropagationEpidemie = Effets.EffetEtat(Etats.EtatEffetFinTour("Continue Épidémie",0,1,Effets.EffetEtat(etatPropageEpidemie,zone=Zones.TypeZoneCercleSansCentre(2)),"Continue Épidémie","lanceur"), cibles_possibles="Ennemis")
+            epidemie=Sort.Sort("Épidémie",165,4,1,5,[effetPropagationEpidemie,effetPropagationPropagationEpidemie,effetPoisonEpidemie],[
+                ],0,2,1,0,0,"ligne",True, description="""Applique un poison Air de fin de tour sur les ennemis.
+            La cible propage le poison en zone autour d'elle.""", chaine=True)
+            sorts.append(Personnage.getSortRightLvl(lvl,[epidemie]))
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège répulsif",56,3,1,3,[Effets.EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),faire_au_vide=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
             Occasionne des dommages Air aux ennemis.""", chaine=True),

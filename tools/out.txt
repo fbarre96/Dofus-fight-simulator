@@ -7,10 +7,7 @@
 
 
 
-sorts.append(Personnage.getSortRightLvl(lvl,[
-	Sort.Sort("Épidémie",165,4,1,5,[Effets.EffetDegats(38,42,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],[Effets.EffetDegats(46,50,"Air"),Effets.TODO(Épidémie),Effets.TODO(État 'Epidémie' (1 tour))],5,2,1,0,0,"ligne",True,description="""Applique un poison Air de fin de tour sur les ennemis.
-La cible propage le poison en zone autour d'elle.""", chaine=True)
-]))
+
 sorts.append(Personnage.getSortRightLvl(lvl,[
 	Sort.Sort("Piège répulsif",56,3,1,3,[Effets.TODO(Pose un piège de rang 1,zone=Zones.TypeZoneCercle(1))],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
 Occasionne des dommages Air aux ennemis.""", chaine=True),

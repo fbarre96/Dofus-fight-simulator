@@ -304,12 +304,12 @@ class Niveau:
 
     def __deepcopy__(self, memo):
         toReturn = Niveau(None,None,None)
+        toReturn.fenetre = None
         toReturn.bloquerFile = self.bloquerFile
         toReturn.fileEffets = deepcopy(self.fileEffets)
         toReturn.joueurs = deepcopy(self.joueurs)
         toReturn.tourIndex = self.tourIndex
         toReturn.tourDe = toReturn.joueurs[toReturn.tourIndex]
-        print("TOUR DE VAUT : "+str(toReturn.tourDe)+" / "+str(type(toReturn.tourDe)))
         toReturn.structure = deepcopy(self.structure)
         toReturn.pieges = deepcopy(self.pieges)
         toReturn.runes = deepcopy(self.runes)
@@ -465,6 +465,8 @@ class Niveau:
         """@summary: Méthode qui affiche les icônes des sorts sur la fenêtre."""
 
         #Réinitialisation de la zone des sorts en noir
+        if self.fenetre is None:
+            return # Pendant certaines prévisu (genre EffetPropage)
         pygame.draw.rect(self.fenetre, pygame.Color(0, 0, 0), pygame.Rect(constantes.x_sorts, constantes.y_sorts, constantes.width_sorts, constantes.height_sorts))
         #Création d'une surface grise semi-transparente pour la poser par dessus les sorts inutilisables
         surfaceGrise = pygame.Surface((30   ,30), pygame.SRCALPHA)   # La surface avec la couche de transparance ALPHA
@@ -817,7 +819,8 @@ class Niveau:
 
         D = 0     #Nombre de cases obstacles cognés
         #calcul de poussé de nbCases
-        for fait in range(nbCases):
+        fait = 0
+        while fait < nbCases:
             #Calcul de la case d'arrivée après une poussée de 1 case
             posPouX = joueurCible.posX + coordonnes[0]
             posPouY = joueurCible.posY + coordonnes[1]
@@ -827,6 +830,7 @@ class Niveau:
                 D+=1
             if piegeDeclenche:
                 break
+            fait+=1
         
         #Calcul des dégâtss
         R = 6
