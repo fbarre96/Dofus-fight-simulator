@@ -724,14 +724,14 @@ class Niveau:
         @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
         @type: int""" 
         print("Invocation "+invoc.nomPerso)
-        self.structure[case_y][case_x].type = "j"
-        invoc.posX = case_x
-        invoc.posY = case_y
+        invoc.bouge(self,case_x,case_y,False)
+        
         for i in range(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
                 invoc.LancerSortsDebutCombat(self)
                 break
+        
 
     def getZoneEffet(self, effet, case_x,case_y):
         """@summary: Retourne un tableau des cases présentes dans la zone de l'effet donné.

@@ -1328,6 +1328,13 @@ class Personnage(object):
             sorts.append(Personnage.getSortRightLvl(lvl,[
                 Sort.Sort("Piège Repoussant",170,2,1,6,[Effets.EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),faire_au_vide=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
             ]))
+            # sorts.append(Personnage.getSortRightLvl(lvl,[
+            #     Sort.Sort("Peur",62,2,2,3,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+
+            #     Sort.Sort("Peur",116,2,2,5,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+
+            #     Sort.Sort("Peur",153,2,2,7,[Effets.TODO(Pousse jusqu'à la case visée)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
+            # ]))
                         
         sorts.append(Sort.Sort("Cawotte",0,4,1,6,[Effets.EffetInvoque("Cawotte",False,cibles_possibles="", faire_au_vide=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
         total_nb_sorts = len(sorts)
