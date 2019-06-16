@@ -103,7 +103,7 @@ class EffetTeleporteDebutTour(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.gereDeplacementTF(joueurCaseEffet, joueurCaseEffet.posDebTour,
-                                 joueurLanceur, "Renvoi", AjouteHistorique=True)
+                                 joueurLanceur, "Renvoi", ajouteHistorique=True)
 
 
 class EffetTeleporteDebutCombat(Effet):
@@ -131,7 +131,7 @@ class EffetTeleporteDebutCombat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.gereDeplacementTF(joueurCaseEffet, joueurCaseEffet.posDebCombat,
-                                 joueurLanceur, "Renvoi", AjouteHistorique=True)
+                                 joueurLanceur, "Renvoi", ajouteHistorique=True)
 
 
 class EffetTpSym(Effet):
@@ -165,7 +165,7 @@ class EffetTpSym(Effet):
         arriveeX = joueurCaseEffet.posX+distanceX
         arriveeY = joueurCaseEffet.posY+distanceY
         niveau.gereDeplacementTF(joueurLanceur, [arriveeX, arriveeY],
-                                 joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+                                 joueurLanceur, kwargs.get("nom_sort"), ajouteHistorique=True)
 
 
 class EffetTpSymSelf(Effet):
@@ -200,7 +200,7 @@ class EffetTpSymSelf(Effet):
         arriveeX = joueurLanceur.posX-distanceX
         arriveeY = joueurLanceur.posY-distanceY
         niveau.gereDeplacementTF(joueurCaseEffet, [arriveeX, arriveeY],
-                                 joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
+                                 joueurLanceur, kwargs.get("nom_sort"), ajouteHistorique=True)
 
 
 class EffetTpSymCentre(Effet):
@@ -237,7 +237,7 @@ class EffetTpSymCentre(Effet):
             arriveeY = kwargs.get("caseCibleY")-distanceY
             joueurTF = niveau.gereDeplacementTF(joueurCaseEffet, [arriveeX, arriveeY],
                                                 joueurLanceur, kwargs.get("nom_sort"),
-                                                AjouteHistorique=True)
+                                                ajouteHistorique=True)
             # Evite de retéléporter les cibles s'étant déplacé après un téléfrags
             if joueurTF is not None:
                 kwargs.get("cibles_traitees").append(joueurTF)

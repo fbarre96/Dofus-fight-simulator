@@ -2,6 +2,7 @@
 
 from Effets.Effet import Effet
 import Niveau
+from Glyphe import Glyphe
 
 class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -47,7 +48,7 @@ class EffetGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
-        nouvelleGlyphe = Niveau.Glyphe(self.nom, self.sort, self.sortDeplacement, self.sortSortie,
+        nouvelleGlyphe = Glyphe(self.nom, self.sort, self.sortDeplacement, self.sortSortie,
                                        self.duree, kwargs.get("caseCibleX"),
                                        kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.poseGlyphe(nouvelleGlyphe)
@@ -83,4 +84,3 @@ class EffetActiveGlyphe(Effet):
         @type: **kwargs"""
 
         niveau.activerGlyphe(self.strNomGlyphe)
-        

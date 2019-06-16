@@ -2,6 +2,7 @@
 
 from Effets.Effet import Effet
 import Niveau
+from Rune import Rune
 
 class EffetRune(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -39,6 +40,6 @@ class EffetRune(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
-        nouvelleRune = Niveau.Rune(self.nom, self.duree, self.effets, kwargs.get(
+        nouvelleRune = Rune(self.nom, self.duree, self.effets, kwargs.get(
             "caseCibleX"), kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.poseRune(nouvelleRune)

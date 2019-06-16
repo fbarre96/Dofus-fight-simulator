@@ -1,5 +1,6 @@
 """@summary: Rassemble les effets de sort en rapport avec les pièges."""
 from Effets.Effet import Effet
+from Piege import Piege
 import Niveau
 
 
@@ -40,6 +41,6 @@ class EffetPiege(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
-        nouveauPiege = Niveau.Piege(self.nom, self.zoneDeclenchement, self.effets, kwargs.get(
+        nouveauPiege = Piege(self.nom, self.zoneDeclenchement, self.effets, kwargs.get(
             "caseCibleX"), kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.posePiege(nouveauPiege)

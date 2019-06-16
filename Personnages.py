@@ -310,7 +310,7 @@ class Personnage(object):
 
                 for effet in piege.effets:
                     sestApplique, cibles = niveau.lancerEffet(
-                        effet, piege.centre_x, piege.centre_y, piege.nomSort, piege.centre_x, piege.centre_y, piege.lanceur)
+                        effet, piege.centreX, piege.centreY, piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
                 i -= 1
                 niveau.pieges.remove(piege)
             i += 1
@@ -319,18 +319,18 @@ class Personnage(object):
         for glyphe in niveau.glyphes:
             if glyphe.actif():
                 # Test Entre dans la glyphe
-                if glyphe.sortDeplacement.APorte(glyphe.centre_x, glyphe.centre_y, self.posX, self.posY, 0):
+                if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY, self.posX, self.posY, 0):
                     for effet in glyphe.sortDeplacement.effets:
-                        niveau.lancerEffet(effet, glyphe.centre_x, glyphe.centre_y,
+                        niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
                                            glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
                 else:  # n'est pas dans la glyphe
                     dernierePos = self.historiqueDeplacement[-1]
                     # Test s'il était dans la glyphe avant
 
-                    if glyphe.sortDeplacement.APorte(glyphe.centre_x, glyphe.centre_y, dernierePos[0], dernierePos[1], 0):
+                    if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY, dernierePos[0], dernierePos[1], 0):
                         for effet in glyphe.sortSortie.effets:
                             niveau.lancerEffet(
-                                effet, glyphe.centre_x, glyphe.centre_y, glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
+                                effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
         niveau.depileEffets()
         return True, piegeDeclenche
@@ -368,7 +368,7 @@ class Personnage(object):
                     niveau.pieges.remove(piege)
                     i -= 1
                     sestApplique, cibles = niveau.lancerEffet(
-                        effet, piege.centre_x, piege.centre_y, piege.nomSort, piege.centre_x, piege.centre_y, piege.lanceur)
+                        effet, piege.centreX, piege.centreY, piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
             i += 1
             nbPieges = len(niveau.pieges)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
@@ -402,7 +402,7 @@ class Personnage(object):
                 pos = self.historiqueDeplacement[-1]
                 del self.historiqueDeplacement[-1]
                 niveau.gereDeplacementTF(
-                    self, pos, lanceur, nomSort, AjouteHistorique=False)
+                    self, pos, lanceur, nomSort, ajouteHistorique=False)
 
     def aEtat(self, nomEtatCherche):
         """@summary: Indique si un personnage possède l'état donné
@@ -531,9 +531,9 @@ class Personnage(object):
         @type: Niveau"""
         for glyphe in niveau.glyphes:
             if glyphe.actif():
-                if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, self.posX, self.posY, 0):
+                if glyphe.sortMono.APorte(glyphe.centreX, glyphe.centreY, self.posX, self.posY, 0):
                     for effet in glyphe.sortMono.effets:
-                        niveau.lancerEffet(effet, glyphe.centre_x, glyphe.centre_y,
+                        niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
                                            glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
         niveau.rafraichirEtats(self)
         niveau.rafraichirGlyphes(self)
@@ -601,14 +601,14 @@ class Personnage(object):
                   " mais "+str(niveau.tourDe.PA) + " restant.")
         return sortSelectionne
 
-    def joue(self, event, niveau, mouse_xy, sortSelectionne):
+    def joue(self, event, niveau, mouseXY, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un Personnage d'effectuer ses actions.
                      Dans la classe Personnage, c'est contrôle par utilisateur clavier/souris.
         @event: les évenements pygames survenus
         @type: Event pygame
         @niveau: La grille de jeu
         @type: Niveau
-        @mouse_xy: Les coordonnées de la souris
+        @mouseXY: Les coordonnées de la souris
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort
@@ -630,9 +630,9 @@ class Personnage(object):
             # Clic gauche
             if clicGauche:
                 # Clic gauche sort = tentative de sélection de sort
-                if mouse_xy[1] > constantes.y_sorts:
+                if mouseXY[1] > constantes.y_sorts:
                     for sort in niveau.tourDe.sorts:
-                        if sort.vue.isMouseOver(mouse_xy):
+                        if sort.vue.isMouseOver(mouseXY):
                             sortSelectionne = self.selectionSort(sort, niveau)
                             break
                 # Clic gauche grille de jeu = tentative de lancé un sort si un sort est selectionné ou tentative de déplacement sinon
@@ -640,22 +640,22 @@ class Personnage(object):
                     # Un sort est selectionne
                     if sortSelectionne != None:
                         caseCibleX = int(
-                            mouse_xy[0]/constantes.taille_sprite)
+                            mouseXY[0]/constantes.taille_sprite)
                         caseCibleY = int(
-                            mouse_xy[1]/constantes.taille_sprite)
+                            mouseXY[1]/constantes.taille_sprite)
                         sortSelectionne.lance(
                             niveau.tourDe.posX, niveau.tourDe.posY, niveau, caseCibleX, caseCibleY)
                         sortSelectionne = None
                     # Aucun sort n'est selectionne: on pm
                     else:
-                        niveau.Deplacement(mouse_xy)
+                        niveau.deplacement(mouseXY)
             # Clic droit
             elif clicDroit:
                 # Clic droit grille de jeu = affichage détaillé de l'état d'un personnage.
-                if mouse_xy[1] < constantes.y_sorts:
-                    case_x = int(mouse_xy[0]/constantes.taille_sprite)
-                    case_y = int(mouse_xy[1]/constantes.taille_sprite)
-                    joueurInfo = niveau.getJoueurSur(case_x, case_y)
+                if mouseXY[1] < constantes.y_sorts:
+                    caseX = int(mouseXY[0]/constantes.taille_sprite)
+                    caseY = int(mouseXY[1]/constantes.taille_sprite)
+                    joueurInfo = niveau.getJoueurSur(caseX, caseY)
                     if joueurInfo != None:
                         for etat in joueurInfo.etats:
                             if etat.actif():
@@ -708,14 +708,14 @@ class PersonnageMur(Personnage):
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
         return toReturn
 
-    def joue(self, event, niveau, mouse_xy, sortSelectionne):
+    def joue(self, event, niveau, mouseXY, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageMur d'effectuer ses actions.
                      Dans la classe PersonnageMur, c'est fin de tour immédiate sans action.
         @event: les évenements pygames survenus
         @type: Event pygame
         @niveau: La grille de jeu
         @type: Niveau
-        @mouse_xy: Les coordonnées de la souris
+        @mouseXY: Les coordonnées de la souris
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
@@ -762,14 +762,14 @@ class PersonnageSansPM(Personnage):
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
         return toReturn
 
-    def joue(self, event, niveau, mouse_xy, sortSelectionne):
+    def joue(self, event, niveau, mouseXY, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageSansPM d'effectuer ses actions.
                      Dans la classe PersonnageSansPM, lancer son seul sort sur lui-même et terminé son tour (comportement temporaire).
         @event: les évenements pygames survenus
         @type: Event pygame
         @niveau: La grille de jeu
         @type: Niveau
-        @mouse_xy: Les coordonnées de la souris
+        @mouseXY: Les coordonnées de la souris
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
@@ -781,7 +781,7 @@ class PersonnageSansPM(Personnage):
 
 INVOCS = {
         "Cadran de Xelor": PersonnageSansPM("Cadran de Xelor", "Cadran de Xelor", 100, 1, {"Vitalite": 1000}, {}, {}, {}, "cadran_de_xelor.png"),
-        "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1, {"Vitalite": 800}, {}, {}, {}, "cawotte.png"),
+        "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1, {"Vitalite": 800}, {}, {}, {}, "cawotte.jpg"),
         "Synchro": PersonnageMur("Synchro", "Synchro", 0, 1, {"Vitalite": 1200}, {}, {}, {}, "synchro.png"),
         "Complice": PersonnageMur("Complice", "Complice", 0, 1, {"Vitalite": 650}, {}, {}, {}, "complice.png"),
         "Balise de Rappel": PersonnageSansPM("Balise de Rappel", "Balise de Rappel", 0, 1, {"Vitalite": 1000}, {}, {}, {}, "balise_de_rappel.png"),

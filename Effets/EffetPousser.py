@@ -94,8 +94,7 @@ class EffetPousser(Effet):
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
-        niveau.pousser(self, self.joueurAPousser, joueurLanceur,
-                       True, self.caseFromX, self.caseFromY)
+        niveau.pousser(self, self.joueurAPousser, joueurLanceur)
 
 
 class EffetPousserJusque(EffetPousser):
@@ -181,8 +180,7 @@ class EffetPousserJusque(EffetPousser):
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
-        niveau.pousser(self, self.joueurAPousser, joueurLanceur,
-                       False, self.caseFromX, self.caseFromY)
+        niveau.pousser(self, self.joueurAPousser, joueurLanceur, False)
 
 
 class EffetAttire(EffetPousser):
@@ -211,8 +209,7 @@ class EffetAttire(EffetPousser):
         return EffetAttire(self.nbCase, self.source, self.cible, **self.kwargs)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
-        niveau.attire(self, self.joueurAAttirer, joueurLanceur,
-                      self.caseFromX, self.caseFromY)
+        niveau.attire(self, self.joueurAAttirer, joueurLanceur)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

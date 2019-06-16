@@ -1,209 +1,17 @@
+"""@summary: Décrit la classe Niveau qui orchestre tout se qui se passe dessus et les interactions.
+"""
 # -*- coding: utf-8 -*
+from copy import deepcopy
+import pygame
+from pygame.locals import Rect
 import Personnages
 import Zones
 import constantes
-import pygame
 import Overlays
 from Effets.EffetGlyphe import EffetGlyphe
 from Etats.Etat import Etat
-import Etats
-import Sort
-from pygame.locals import *
-import operator
-from copy import deepcopy
-
-
-class Noeud:
-    """@summary: Classe servant à l'algorithme de recherche de chemin A*"""
-
-    def __init__(self, x, y, cout=0, heur=0):
-        """@summary: Initialise un noeud du graphe.
-        @x: la cordonné x du noeud dans le graphe
-        @type: int
-        @y: la cordonné y du noeud dans le graphe
-        @type: int
-        @cout: le coût calculé pour parvenir à ce noeud, 0 par défaut
-        @type: int
-        @heur: l'heuristique calculé pour parvenir à ce noeud, 0 par défaut
-        @type: int"""
-
-        self.x = x
-        self.y = y
-        self.cout = cout
-        self.heur = heur
-
-
-def compare2Noeuds(n1, n2):
-    """@summary: Fonction comparant deux noeuds du graphe.
-        @n1: le premier noeud à comparer
-        @type: Noeud
-        @n2: le second noeud à comparer
-        @type: Noeud
-        @return: 1 si le premier noeud à la plus petite heuristique, -1 si le second à la plus petite heuristique et 0 si les deux sont égales"""
-
-    if n1.heur < n2.heur:
-        return 1
-    elif n1.heur == n2.heur:
-        return 0
-    else:
-        return -1
-
-
-def cmp_to_key(mycmp):
-    'Convert a cmp= function into a key= function'
-    class K(object):
-        def __init__(self, obj, *args):
-            self.obj = obj
-
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0
-
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-    return K
-
-
-def ajoutTrie(liste, noeud):
-    """@summary: Fonction ajoutant un noeud dans une liste triée.
-    @liste: la liste de noeud trié
-    @type: liste [Noeuds]
-    @noeud: le noeud à insérer dans la liste triée.
-    @type: Noeud"""
-
-    liste.append(noeud)
-    liste.sort(key=cmp_to_key(compare2Noeuds))
-
-
-class Glyphe:
-    """@summary: Classe décrivant une glyphe dans le jeu Dofus.
-     Une glyphe est une zone au sol qui déclenche un effet sur les joueurs se trouvant dessus au début de leur tour."""
-
-    def __init__(self, nomSort, sortMono, sortDeplacement, sortSortie, dureeGlyphe, centre_x, centre_y, lanceur, couleur):
-        """@summary: Initialise une glyphe.
-        @nomSort: le nom du sort à l'origine de la glyphe
-        @type: string
-        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
-        @type: Sort
-        @sortDeplacement: Le sort qui va s'activer sur un joueur qui rentre dans la glyphe
-        @type: Sort
-        @sortSortie: Le sort qui va s'activer sur un joueur qui sort de la glyphe
-        @type: Sort
-        @dureeGlyphe: Le nombre de début de tour du poseur que la glyphe va vivre
-        @type: int
-        @centre_x: la coordonnée x du centre de la zone de la glyphe.
-        @type: int
-        @centre_y: la coordonnée y du centre de la zone de la glyphe.
-        @type: int
-        @lanceur: le joueur ayant posé la glyphe.
-        @type: Personnage
-        @couleur: la coordonnée x du centre de la zone de la glyphe.
-        @type: tuple (R,G,B)"""
-        self.nomSort = nomSort
-        self.sortMono = sortMono
-        self.sortDeplacement = sortDeplacement
-        self.sortSortie = sortSortie
-        self.duree = dureeGlyphe
-        self.centre_x = centre_x
-        self.centre_y = centre_y
-        self.lanceur = lanceur
-        self.couleur = couleur
-
-    def actif(self):
-        """@summary: Test si la glyphe est encore active
-            @return: Retourne un booléen qui vaut vrai si la glyphe est encore active, faux sinon"""
-        return self.duree > 0
-
-
-class Piege:
-    """@summary: Classe décrivant un piège dans le jeu Dofus.
-     Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
-
-    def __init__(self, nomSort, zoneDeclenchement, effets, centre_x, centre_y, lanceur, couleur, icone=None):
-        """@summary: Initialise un piège.
-        @nomSort: le nom du sort à l'origine du piège
-        @type: string
-        @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
-        @type: Zones.TypeZone
-        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
-        @type: Sort
-        @centre_x: la coordonnée x du centre de la zone du piège.
-        @type: int
-        @centre_y: la coordonnée y du centre de la zone du piège.
-        @type: int
-        @lanceur: le joueur ayant posé le piège.
-        @type: Personnage
-        @couleur: la coordonnée x du centre de la zone du piège.
-        @type: tuple (R,G,B)"""
-        self.zoneDeclenchement = zoneDeclenchement
-        self.nomSort = nomSort
-        self.effets = effets
-        self.centre_x = centre_x
-        self.centre_y = centre_y
-        self.lanceur = lanceur
-        self.invisible = True
-        self.couleur = couleur
-        if icone is not None:
-            self.icone = icone
-        else:
-            self.icone = "images/"+constantes.normaliser(nomSort.lower())+".jpg"
-
-    def getDistanceDuPoint(self, x, y):
-        return abs(self.centre_x - x) + abs(self.centre_y - y)
-
-    def aPorteDeclenchement(self, x, y):
-        return self.zoneDeclenchement.testCaseEstDedans([self.centre_x, self.centre_y], [x, y], None)
-
-
-class Rune:
-    """@summary: Classe décrivant une rune dans le jeu Dofus.
-     Une rune est une zone au sol qui se déclenche à la fin de sa durée de vie."""
-
-    def __init__(self, nomRune, duree, effets, centre_x, centre_y, lanceur, couleur):
-        """@summary: Initialise une rune.
-        @nomSort: le nom du sort à l'origine de la rune
-        @type: string
-        @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
-        @type: Zones.TypeZone
-        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la rune. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
-        @type: Sort
-        @centre_x: la coordonnée x du centre de la zone de la rune.
-        @type: int
-        @centre_y: la coordonnée y du centre de la zone de la rune.
-        @type: int
-        @lanceur: le joueur ayant posé la rune.
-        @type: Personnage
-        @couleur: la coordonnée x du centre de la zone de la rune.
-        @type: tuple (R,G,B)"""
-        self.duree = duree
-        self.nom = nomRune
-        self.effets = effets
-        self.centre_x = centre_x
-        self.centre_y = centre_y
-        self.lanceur = lanceur
-        self.invisible = False
-        self.couleur = couleur
-
-    def actif(self):
-        """@summary: Test si la rune est encore active
-            @return: Retourne un booléen qui vaut vrai si la rune est encore active, faux sinon"""
-        return self.duree > 0
-
-    def activation(self, niveau):
-        for effet in self.effets:
-            niveau.lancerEffet(effet, self.centre_x, self.centre_y,
-                               self.nom, self.centre_x, self.centre_y, self.lanceur)
+from PathFinding.PathFinder import PathFinder
+from PathFinding.Noeud import Noeud
 
 
 class Case:
@@ -211,80 +19,15 @@ class Case:
 
     def __init__(self, typ, hitbox):
         """@summary: initialise une case.
-            @typ: le type de la case ("v" pour vide, ou "j" pour joueur) 
+            @typ: le type de la case ("v" pour vide, ou "j" pour joueur)
             @type: string (de une lettre)
-            @hitbox: la hitbox de la case. Possède une fonction pour savoir si un point est dans la case.
+            @hitbox: la hitbox de la case.
+            Possède une fonction pour savoir si un point est dans la case.
             @type: Rect (pygame.locals)
             """
         self.type = typ
         self.hitbox = hitbox
         self.effetsSur = []
-
-
-class PathFinding:
-    def __init__(self):
-        self.cached_case_x = None
-        self.cached_case_y = None
-        self.cached_dest_x = None
-        self.cached_dest_y = None
-        self.cached_result = None
-
-    def pathFinding(self, niveau, caseCibleX, caseCibleY, joueur):
-        """@summary: Implémentation de l'algorithme A*. recherche de chemin depuis la position du joueur vers la case_cible
-        @caseCibleX: La coordonnée x à laquelle on veut accéder
-        @type: int
-        @caseCibleY: La coordonnée y à laquelle on veut accéder
-        @type: int
-        @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
-        @type: Personnage
-
-        @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
-        if self.cached_dest_x == caseCibleX and self.cached_dest_y == caseCibleY and self.cached_case_x == joueur.posX and self.cached_case_y == joueur.posY:
-            return self.cached_result
-        self.cached_case_x = joueur.posX
-        self.cached_case_y = joueur.posY
-        self.cached_dest_x = caseCibleX
-        self.cached_dest_y = caseCibleY
-
-        # VOIR PSEUDO CODE WIKIPEDIA
-        listeFermee = []
-        listeOuverte = []
-        if niveau.structure[caseCibleY][caseCibleX].type != "v":
-            self.cached_result = None
-            return None
-        depart = Noeud(joueur.posX, joueur.posY)
-        ajoutTrie(listeOuverte, depart)
-        while len(listeOuverte) != 0:
-            u = listeOuverte[-1]
-            del listeOuverte[-1]
-            if u.x == caseCibleX and u.y == caseCibleY:
-                # reconstituerChemin(u,listeFermee)
-                tab = []
-                for case in listeFermee:
-                    tab.append([case.x, case.y])
-                if(len(tab) > 0):
-                    if tab[0][0] == joueur.posX and tab[0][1] == joueur.posY:
-                        del tab[0]
-                tab.append([u.x, u.y])
-                self.cached_result = tab
-                return tab
-            voisins = niveau.getVoisins(u.x, u.y)
-            for v in voisins:
-                v_existe_cout_inf = False
-                for n in listeFermee+listeOuverte:
-                    if n.x == v.x and n.y == v.y and n.cout < v.cout:
-                        v_existe_cout_inf = True
-                        break
-                if not(v_existe_cout_inf):
-                    v.cout = u.cout+1
-                    v.heur = v.cout + \
-                        (abs(v.x-caseCibleX)+abs(v.y-caseCibleY))
-                    ajoutTrie(listeOuverte, v)
-            listeFermee.append(u)
-        print("Aucun chemin trouvee")
-        self.cached_result = None
-        return None
-
 
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
@@ -293,7 +36,8 @@ class Niveau:
         """@summary: initialise le niveau.
             @fenetre: la fenêtre créé par pygame
             @type: fenêtre pygame
-            @joueurs: tous les joueurs/mosntres qui doivent être placé sur la carte au début du combat.
+            @joueurs: tous les joueurs/mosntres qui doivent être placés
+                      sur la carte au début du combat.
             @type: tableau de Personnage
             @font: décrit une police d'écriture pygame
             @type: Font de pygame"""
@@ -330,7 +74,7 @@ class Niveau:
         # Initialise tous les joueurs
         self.initPersonnages()
         # path finding class
-        self.pathfinder = PathFinding()
+        self.pathfinder = PathFinder()
         self.cachedPrevisu = [None, 0, 0, None]
 
     def __deepcopy__(self, memo):
@@ -349,13 +93,17 @@ class Niveau:
         return toReturn
 
     def ajoutFileEffets(self, effet, joueurCaseEffet, joueurLanceur):
+        """@summary: Ajout un effet sur la file.
+        """
         self.fileEffets.append([effet, joueurCaseEffet, joueurLanceur])
 
     def depileEffets(self):
+        """@summary: dépile tous les effet et les activent.
+        """
         if not self.bloquerFile:
             self.bloquerFile = True
             nbEffets = len(self.fileEffets)
-            while 0 < nbEffets:
+            while nbEffets > 0:
                 rec = self.fileEffets[0]
                 self.fileEffets.remove(self.fileEffets[0])
                 rec[0].activerEffet(self, rec[1], rec[2])
@@ -363,18 +111,19 @@ class Niveau:
                 nbEffets = len(self.fileEffets)
             self.bloquerFile = False
 
-    def Deplacement(self, mouse_xy):
+    def deplacement(self, mouseXY):
         """@summary: Le joueur dont c'est le tour a cliqué sur la carte sans sort sélectionné.
                       Un déplacement vers cette case est tenté
-            @mouse_xy: la position de la souris sur la fenêtre pygame
+            @mouseXY: la position de la souris sur la fenêtre pygame
             @type: tableau [int,int] cordonnées x,y de la souris."""
-        case_x = int(mouse_xy[0]/constantes.taille_sprite)
-        case_y = int(mouse_xy[1]/constantes.taille_sprite)
+        caseX = int(mouseXY[0]/constantes.taille_sprite)
+        caseY = int(mouseXY[1]/constantes.taille_sprite)
         joueur = self.tourDe
-        cases = self.pathfinder.pathFinding(self, case_x, case_y, joueur)
+        cases = self.pathfinder.pathFinding(self, caseX, caseY, joueur)
         # cases vaut None si aucun chemin n'a été trouvé par l'algorithme A*
-        if cases != None:
-            # Les cases à parcourir pour se rendre à la position souhaitée donnent un nombre de PM nécessaire.
+        if cases is not None:
+            # Les cases à parcourir pour se rendre
+            # à la position souhaitée donnent un nombre de PM nécessaire.
             if len(cases) <= joueur.PM:
                 # On effectue le déplacement
                 for case in cases:
@@ -382,14 +131,14 @@ class Niveau:
                     if self.structure[case[1]][case[0]].type != "v":
                         print("Un obstacle bloque ce chemin.")
                         break
-                    PAPerdus, PMPerdus = self.calculTacle(joueur)
-                    if joueur.PM - PMPerdus >= 1 and joueur.PA - PAPerdus >= 0:
-                        if PMPerdus > 0:
+                    nbPAPerdus, nbPMPerdus = self.calculTacle(joueur)
+                    if joueur.PM - nbPMPerdus >= 1 and joueur.PA - nbPAPerdus >= 0:
+                        if nbPMPerdus > 0:
                             print("Taclé, le joueur perd " +
-                                  str(PMPerdus)+" PM et "+str(PAPerdus)+" PA")
-                        joueur.PM -= PMPerdus + 1
-                        joueur.PA -= PAPerdus
-                        aBouge, piegeDeclenche = joueur.bouge(
+                                  str(nbPMPerdus)+" PM et "+str(nbPAPerdus)+" PA")
+                        joueur.PM -= nbPMPerdus + 1
+                        joueur.PA -= nbPAPerdus
+                        _, piegeDeclenche = joueur.bouge(
                             self, case[0], case[1])
                         if piegeDeclenche:
                             break
@@ -403,7 +152,10 @@ class Niveau:
             print("Deplacement impossible ("+str(joueur.PM)+" PM restants).")
 
     def calculTacle(self, fuyard, posX=None, posY=None):
-        if posX == None:
+        """@summary: calcul le nombre de PA et PM a utilisé
+                     par le fuyard pour bouger.
+        """
+        if posX is None:
             posX = fuyard.posX
             posY = fuyard.posY
         tacleurs = []
@@ -425,31 +177,37 @@ class Niveau:
         return max(0, int(fuyard.PA - paApresTacle)), max(0, int(fuyard.PM - pmApresTacle))
 
     @staticmethod
-    def getCasesAXDistanceDe(case_x, case_y, distance):
-        """@summary: Méthode statique qui renvoie toutes les cases se trouvant sur un anneau de rayon donné autour d'une case.
-            @case_x: la coordonnée x de la case centrale
+    def getCasesAXDistanceDe(caseX, caseY, distance):
+        """@summary: Méthode statique qui renvoie toutes les cases se trouvant
+                     sur un anneau de rayon donné autour d'une case.
+            @caseX: la coordonnée x de la case centrale
             @type: int
-            @case_y: la coordonnée y de la case centrale
+            @caseY: la coordonnée y de la case centrale
             @type: int
             @distance: le rayon de l'anneau dont l'on veut obtenir les cases
             @type: int
 
-            @return:  Les cases sur l'anneau de rayon donné listées gauche à droite puis de haut en bas """
-        departX = case_x
-        departY = case_y
+            @return:  Les cases sur l'anneau de rayon donné listées de
+                      gauche à droite puis de haut en bas """
+        departX = caseX
+        departY = caseY
         # La variable qui sera renvoyée
         retour = []
         # Cas de base
         if distance == 0:
-            return [[case_x, case_y]]
+            return [[caseX, caseY]]
 
-        # la logique de cette fonction est le parcours de l'anneau en partant du centre et en s'en écartant progressivement.
-        # pour chaque colonne, 2 cases sont sur le bon rayon sauf sur les deux colonnes aux extrêmes de l'anneau où il n'y en a qu'une.
+        # la logique de cette fonction est le parcours de l'anneau en partant du centre
+        # et en s'en écartant progressivement.
+        # pour chaque colonne, 2 cases sont sur le bon rayon
+        # sauf sur les deux colonnes aux extrêmes de l'anneau où il n'y en a qu'une.
         # Ces deux colonne seront traitées séparemment des colonnes centrales.
 
-        # Le delta représente l'écart au centre en cordonnée X, Plus on s'éloigne du centre, plus l'écart en ordonnée se réduit
+        # Le delta représente l'écart au centre en cordonnée X,
+        # Plus on s'éloigne du centre, plus l'écart en ordonnée se réduit
         delta = 0
-        # Obligé de faire delta 0 (colonne centrale) a la main pour éviter l'ajout de la ligne de delta +0 et delta -0
+        # Obligé de faire delta 0 (colonne centrale) a la main pour éviter
+        # l'ajout de la ligne de delta +0 et delta -0
         # Test si la coordonnée x est dans le grille de jeu
         if departX-delta >= 0:
             # Test si la case haute de la colonne centre de l'anneau est dans le grille de jeu
@@ -477,9 +235,9 @@ class Niveau:
                 # On test si la ligne souhaitée en bas à droite du centre est dans la grille de jeu
                 if departY+distance-delta < constantes.taille_carte:
                     retour.append([departX+delta, departY+distance-delta])
-
         delta = distance
-        # Oblige de faire delta distance à la main car sur les colonnes les plus loins du centre il ny à q'une ligne à ajouter.
+        # Oblige de faire delta distance à la main car sur les colonnes les plus loins
+        #  du centre il ny à q'une ligne à ajouter.
         # Test si la coordonnée x extême gauche est dans le grille de jeu
         if departX-delta >= 0:
             # Test si la cooficherrdonnée y est dans le grille de jeu
@@ -500,47 +258,48 @@ class Niveau:
         # Réinitialisation de la zone des sorts en noir
         if self.fenetre is None:
             return  # Pendant certaines prévisu (genre EffetPropage)
-        pygame.draw.rect(self.fenetre, pygame.Color(0, 0, 0), pygame.Rect(
-            constantes.x_sorts, constantes.y_sorts, constantes.width_sorts, constantes.height_sorts))
-        # Création d'une surface grise semi-transparente pour la poser par dessus les sorts inutilisables
+        pygame.draw.rect(self.fenetre, pygame.Color(0, 0, 0),
+                         pygame.Rect(constantes.x_sorts, constantes.y_sorts,
+                                     constantes.width_sorts, constantes.height_sorts))
+        # Création d'une surface grise semi-transparente
+        # pour la poser par dessus les sorts inutilisables
         # La surface avec la couche de transparance ALPHA
         surfaceGrise = pygame.Surface((30, 30), pygame.SRCALPHA)
         # Le tuple RGB + l'alpha
         surfaceGrise.fill((128, 128, 128, 128))
 
-        x = constantes.x_sorts
-        y = constantes.y_sorts
-        # Pour chaque sort du joueur dont c'est le tour on va afficher son icône + son état de jouabilité
+        posSortsX = constantes.x_sorts
+        posSortsY = constantes.y_sorts
+        # Pour chaque sort du joueur dont c'est le tour on va afficher
+        # son icône + son état de jouabilité
         for sort in self.tourDe.sorts:
-            # On ajoute l'overlay sur le sort, l'overlay est ce qui s'affichera lorsque le sort sera survolé avec la souris.
-            sort.vue = Overlays.VueForOverlay(self.fenetre, x, y, 30, 30, sort)
+            # On ajoute l'overlay sur le sort,
+            # l'overlay est ce qui s'affichera lorsque le sort sera survolé avec la souris.
+            sort.vue = Overlays.VueForOverlay(self.fenetre, posSortsX, posSortsY, 30, 30, sort)
             # On tente de récupérer l'image du sort
-            try:
-                imageSort = pygame.image.load(
-                    sort.image).convert()  # charge l'image
-                # colle l'image sur la zone
-                self.fenetre.blit(imageSort, (x, y))
-            except:
-                pass
+            imageSort = pygame.image.load(
+                sort.image).convert()  # charge l'image
+            # colle l'image sur la zone
+            self.fenetre.blit(imageSort, (posSortsX, posSortsY))
             # On récupère si le sort est jouable
-            res, explication, coutPA = sort.estLancable(
+            res, explication, _ = sort.estLancable(
                 self, self.tourDe, None)
             # Si le sort n'est pas lançable alors:
-            if res == False:
+            if not res:
                 # On le grise
-                self.fenetre.blit(surfaceGrise, (x, y))
+                self.fenetre.blit(surfaceGrise, (posSortsX, posSortsY))
                 # Si c'est une question de nombre de tour entre deux lancé:
                 if "avant prochain lance" in explication:
                     # On affiche le nombre de tour restant
                     delai = int(explication.split(":")[1])
                     delaiLabel = self.myfont.render(str(delai), 1, (0, 0, 0))
-                    self.fenetre.blit(delaiLabel, (x, y))
+                    self.fenetre.blit(delaiLabel, (posSortsX, posSortsY))
             # Les sorts sont collés les uns à côtés des autres, séparés par 30 pixels
-            x += 30
+            posSortsX += 30
             # Si on est arrivé au bout de la fenêtre, on descend d'une ligne
-            if(x+30 > constantes.x_sorts+constantes.width_sorts):
-                y += 30
-                x = constantes.x_sorts
+            if posSortsX+30 > constantes.x_sorts+constantes.width_sorts:
+                posSortsY += 30
+                posSortsX = constantes.x_sorts
 
     def initPersonnages(self):
         """@summary: Initialise les joueurs sur le niveau (positionnement)."""
@@ -554,7 +313,8 @@ class Niveau:
                 joueur.posY = self.departT1[placeT1][1]
                 # Prochain spawn
                 placeT1 += 1
-                # On initialise l'historique de déplacement du joueur avec sa pos de début de tour et début de combat
+                # On initialise l'historique de déplacement du joueur
+                # avec sa pos de début de tour et début de combat
                 joueur.posDebTour = [joueur.posX, joueur.posY]
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
             else:
@@ -567,8 +327,9 @@ class Niveau:
             joueur.LancerSortsDebutCombat(self)
 
     def rafraichirEtats(self, personnageARafraichir, debutTour=True):
-        """@summary: met à jour les états du personnage. (diminution de durée restante),  
-                active le trigger triggerRafraichissement si un état débute et active triggerAvantRetrait si un état termine
+        """@summary: met à jour les états du personnage. (diminution de durée restante),
+                active le trigger triggerRafraichissement si un état débute et
+                active triggerAvantRetrait si un état termine
         @personnage: le personnage dont on trouver les etats et les rafraichirs
         @type: Personnage
         @debutTour: Indique si le rafraichissement est dû au début de tour ou à un effet autre.
@@ -584,12 +345,14 @@ class Niveau:
                     # Si c'est un début de tour, le temps avant de début de l'état est diminué
                     if debutTour:
                         personnage.etats[i].debuteDans -= 1
-                    # Si c'est finalement le tour de début de l'état et si l'état est actif, on active le trigger d'état de rafraichissement
+                    # Si c'est finalement le tour de début de l'état et si l'état est actif,
+                    # on active le trigger d'état de rafraichissement
                     if personnage.etats[i].debuteDans == 0:
                         if personnage.etats[i].actif():
                             personnage.etats[i].triggerRafraichissement(
                                 personnage, self)
-                    # Si c'est le tour de sortie de l'état on active le trigger d'état d'avant retrait
+                    # Si c'est le tour de sortie de l'état on active
+                    #  le trigger d'état d'avant retrait
                     if personnage.etats[i].duree == 0:
                         # Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
                         print(personnage.nomPerso+" sort de l'etat " +
@@ -615,7 +378,7 @@ class Niveau:
                 if self.glyphes[i].actif():
                     self.glyphes[i].duree -= 1  #  Réduction du temps restant
                     # Test si la glyphe est terminée
-                    if(self.glyphes[i].duree <= 0):
+                    if self.glyphes[i].duree <= 0:
                         # Si c'est le cas on la supprime
                         del self.glyphes[i]
                         i -= 1
@@ -638,7 +401,7 @@ class Niveau:
                 if self.runes[i].actif():
                     self.runes[i].duree -= 1  #  Réduction du temps restant
                     # Test si la rune est terminée
-                    if(self.runes[i].duree <= 0):
+                    if self.runes[i].duree <= 0:
                         # Si c'est le cas on l'active puis on la supprime
                         self.runes[i].activation(self)
                         del self.runes[i]
@@ -688,7 +451,7 @@ class Niveau:
             tailleJoueurs = len(self.joueurs)
         if len(persosJoueursRestants) == 1:
             print("Gagnant : "+str(persosJoueursRestants[0].nomPerso))
-        elif len(persosJoueursRestants) == 0:
+        elif not persosJoueursRestants:
             print("Tous mort ! Egalité.")
         return True
 
@@ -696,51 +459,51 @@ class Niveau:
         """@summary: Méthode permettant de générer le niveau.
         On crée une liste générale, contenant une liste par ligne à afficher"""
 
-        structure_niveau = []
+        structureNiveau = []
         for i in range(self.taille):
-            ligne_niveau = []
+            ligneNiveau = []
             for j in range(self.taille):
-                x = j * constantes.taille_sprite
-                y = i * constantes.taille_sprite
-                # Toutes les cases sont initialisées à vide
-                # TODO MAP:
-                # if (i == 6 or i==7) and j in [3,4,5,6,7,8,9,10]:
-                #    ligne_niveau.append(Case("m", pygame.draw.rect(self.fenetre, (0,0,0), [x , y, constantes.taille_sprite, constantes.taille_sprite])))
-                # else:
-                ligne_niveau.append(Case("v", pygame.draw.rect(self.fenetre, (0, 0, 0), [
-                                    x, y, constantes.taille_sprite, constantes.taille_sprite])))
-            # On ajoute la ligne à la liste du niveau
-            structure_niveau.append(ligne_niveau)
-        # On sauvegarde cette structure
-        self.structure = structure_niveau
+                coordX = j * constantes.taille_sprite
+                coordY = i * constantes.taille_sprite
 
-    def getJoueurSur(self, case_x, case_y):
+                ligneNiveau.append(Case("v", pygame.draw.rect(self.fenetre, (0, 0, 0),
+                                                              [coordX,
+                                                               coordY,
+                                                               constantes.taille_sprite,
+                                                               constantes.taille_sprite])))
+            # On ajoute la ligne à la liste du niveau
+            structureNiveau.append(ligneNiveau)
+        # On sauvegarde cette structure
+        self.structure = structureNiveau
+
+    def getJoueurSur(self, caseX, caseY):
         """@summary: Retourne le joueur se trouvant sur la case donnée.
-        @case_x: La coordonnée x de la case dont on veut récupérer le joueur
+        @caseX: La coordonnée x de la case dont on veut récupérer le joueur
         @type: int
-        @case_y: La coordonnée y de la case dont on veut récupérer le joueur
+        @caseY: La coordonnée y de la case dont on veut récupérer le joueur
         @type: int
 
         @return: Personnage si la case est occupée, None sinon"""
         for i, joueur in enumerate(self.joueurs):
-            if joueur.posX == case_x and joueur.posY == case_y:
+            if joueur.posX == caseX and joueur.posY == caseY:
                 return self.joueurs[i]
         return None
 
-    def getVisualationJoueurSur(self, case_x, case_y):
-        """@summary: Retourne le joueur affiché se trouvant sur la case donnée. Diffère de getJoueurSur quand le joueur est invisible.
-        @case_x: La coordonnée x de la case dont on veut récupérer le joueur
+    def getVisualationJoueurSur(self, caseX, caseY):
+        """@summary: Retourne le joueur affiché se trouvant sur la case donnée.
+                     Diffère de getJoueurSur quand le joueur est invisible.
+        @caseX: La coordonnée x de la case dont on veut récupérer le joueur
         @type: int
-        @case_y: La coordonnée y de la case dont on veut récupérer le joueur
+        @caseY: La coordonnée y de la case dont on veut récupérer le joueur
         @type: int
 
         @return: Personnage si la case est occupée, None sinon"""
         for i, joueur in enumerate(self.joueurs):
             if joueur.aEtat("Invisible") and self.tourDe.team != joueur.team:
-                if joueur.derniere_action_posX == case_x and joueur.derniere_action_posY == case_y:
+                if joueur.derniere_action_posX == caseX and joueur.derniere_action_posY == caseY:
                     return self.joueurs[i]
             else:
-                if joueur.posX == case_x and joueur.posY == case_y:
+                if joueur.posX == caseX and joueur.posY == caseY:
                     return self.joueurs[i]
         return None
 
@@ -757,13 +520,13 @@ class Niveau:
                     retourListePersonnages.append(joueur)
         return retourListePersonnages
 
-    def invoque(self, invoc, case_x, case_y):
+    def invoque(self, invoc, caseX, caseY):
         """@summary: Invoque un nouveau joueur dans la partie
         @invoc: le joueur à invoquer
         @type: Personnage
-        @case_x: la coordonnée x de la case sur laquelle le joueur sera invoqué.
+        @caseX: la coordonnée x de la case sur laquelle le joueur sera invoqué.
         @type: int
-        @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
+        @caseY: la coordonnée y de la case sur laquelle le joueur sera invoqué.
         @type: int"""
         found = False
         for i in range(len(self.joueurs)):
@@ -776,64 +539,73 @@ class Niveau:
             raise Exception("Impossible d'invoquer si ce n'est pas votre tour.")
         else:
             print("Invocation "+invoc.nomPerso)
-            invoc.bouge(self, case_x, case_y, False)
+            invoc.bouge(self, caseX, caseY, False)
 
-    def getZoneEffet(self, effet, case_x, case_y):
-        """@summary: Retourne un tableau des cases présentes dans la zone de l'effet donné.
-                     Les cases sont triées par distances croissantes par rapport au centre de l'effet.
+    def getZoneEffet(self, effet, caseX, caseY):
+        """@summary: Retourne un tableau des cases présentes
+                     dans la zone de l'effet donné.
+                     Les cases sont triées par distances croissantes
+                     par rapport au centre de l'effet.
         @effet: l'effet dont on prendra la zone
         @type: Effet
-        @case_x: la coordonnée x de la case sur laquelle l'effet devrait être lancé.
+        @caseX: la coordonnée x de la case sur laquelle l'effet devrait être lancé.
         @type: int
-        @case_y: la coordonnée y de la case sur laquelle l'effet devrait être lancé.
+        @caseY: la coordonnée y de la case sur laquelle l'effet devrait être lancé.
         @type: int
 
-        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances croissantes par rapport au centre de l'effet."""
-        tab_cases_zone = []
-        # La taille de la zone n'indique pas forcément la distance la plus lointaine au centre, on parcourt donc toutes la carte en partant du centre
+        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances
+                 croissantes par rapport au centre de l'effet."""
+        tabCasesZone = []
+        # La taille de la zone n'indique pas forcément la distance la plus lointaine au centre,
+        # on parcourt donc toutes la carte en partant du centre
         if effet.isReverseTreatmentOrder():
             mrange = range(64, -1, -1)
         else:
             mrange = range(65)
         for tailleCercle in mrange:
             casesAXDistance = Niveau.getCasesAXDistanceDe(
-                case_x, case_y, tailleCercle)
+                caseX, caseY, tailleCercle)
             for case in casesAXDistance:
                 # Test si la case trouvée est à porté de l'effet.
-                if effet.aPorteZone(case_x, case_y, case[0], case[1], self.tourDe.posX, self.tourDe.posY):
-                    tab_cases_zone.append(case)
-        return tab_cases_zone
+                if effet.aPorteZone(caseX, caseY, case[0], case[1],
+                                    self.tourDe.posX, self.tourDe.posY):
+                    tabCasesZone.append(case)
+        return tabCasesZone
 
-    def getZonePorteSort(self, sort, x0, y0, poLanceur):
+    def getZonePorteSort(self, sort, posX0, posY0, poLanceur):
         """@summary: Retourne un tableau des cases présentes dans la portée du sort
-                     Les cases sont triées par distances croissantes par rapport au centre de l'effet.
+                     Les cases sont triées par distances croissantes par rapport au
+                     centre de l'effet.
         @sort: le sort dont on calcul les cases à portées
         @type: Sort
-        @x0: la coordonnée x de la case depuis laquelle le sort est lancé
+        @posX0: la coordonnée x de la case depuis laquelle le sort est lancé
         @type: int
-        @y0: la coordonnée y de la case depuis laquelle le sort est lancé
+        @posY0: la coordonnée y de la case depuis laquelle le sort est lancé
         @type: int
-        @poLanceur: les points de portées supplémentaires du lanceur qui peuvent influencer sur la portée du sort.
+        @poLanceur: les points de portées supplémentaires du lanceur qui peuvent
+                     influencer sur la portée du sort.
         @type: int
 
-        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances croissantes par rapport au centre du sort."""
-        tab_cases_zone = []
+        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances
+                 croissantes par rapport au centre du sort."""
+        tabCasesZone = []
         # La portée maximale * 2 (pour les sorts diagonales) donne la limite d'exploration des cases
         for tailleCercle in range(sort.POMin, sort.POMax*2+1):
-            casesAXDistance = Niveau.getCasesAXDistanceDe(x0, y0, tailleCercle)
+            casesAXDistance = Niveau.getCasesAXDistanceDe(posX0, posY0, tailleCercle)
             for case in casesAXDistance:
-                if sort.APorte(x0, y0, case[0], case[1], poLanceur):
-                    tab_cases_zone.append(case)
-        return tab_cases_zone
+                if sort.APorte(posX0, posY0, case[0], case[1], poLanceur):
+                    tabCasesZone.append(case)
+        return tabCasesZone
 
     def getZoneDeplacementJoueur(self, joueur):
         """@summary: Retourne un tableau des cases présentes dans la portée de déplacement du joueur
-                     Les cases sont triées par distances croissantes par rapport au centre de l'effet.
+                Les cases sont triées par distances croissantes par rapport au centre de l'effet.
         @joueur: le joueur dont on calcul les cases à porter de déplacement
         @type: Personnage
 
-        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances croissantes par rapport au centre du joueur."""
-        tab_cases_zone = []
+        @return: Tableau de coordonnées [int x,int y] cases sont triées par distances croissantes
+                 par rapport au centre du joueur."""
+        tabCasesZone = []
         # La portée maximale * 2 (pour les sorts diagonales) donne la limite d'exploration des cases
         for tailleCercle in range(1, joueur.PM+1):
             if joueur.aEtat("Invisible") and self.tourDe.team != joueur.team:
@@ -844,14 +616,14 @@ class Niveau:
                     joueur.posX, joueur.posY, tailleCercle)
             for case in casesAXDistance:
                 if self.structure[case[1]][case[0]].type == "v":
-                    tab_cases_zone.append(case)
+                    tabCasesZone.append(case)
                 elif self.structure[case[1]][case[0]].type == "j":
                     joueurSurCase = self.getJoueurSur(case[0], case[1])
                     if joueurSurCase.team != self.tourDe.team and joueurSurCase.aEtat("Invisible"):
-                        tab_cases_zone.append(case)
-        return tab_cases_zone
+                        tabCasesZone.append(case)
+        return tabCasesZone
 
-    def __effectuerPousser(self, joueurCible, pousseur, nbCases, doDeg, coordonnes):
+    def effectuerPousser(self, joueurCible, pousseur, nbCases, doDeg, coordonnes):
         """@summary: Fonction à appeler pour pousser un joueur.
         @joueurCible: Le joueur qui se fait pousser
         @type: Personnage
@@ -861,10 +633,10 @@ class Niveau:
         @type: tuple
 
         @return: posPouX  -> int indiquant la coordonnée x d'arrivé après poussé
-                 ,posPouY -> int indiquant la coordonnée y d'arrivé après poussé
-                 ,D       -> int indiquant le nombre de case non déplacé pour cause d'obstacle"""
+                ,posPouY -> int indiquant la coordonnée y d'arrivé après poussé
+                ,nbFoisCogne -> int indiquant le nombre de case non déplacé pour cause d'obstacle"""
 
-        D = 0  # Nombre de cases obstacles cognés
+        nbFoisCogne = 0  # Nombre de cases obstacles cognés
         # calcul de poussé de nbCases
         fait = 0
         startPosX = joueurCible.posX
@@ -877,7 +649,7 @@ class Niveau:
                 aBouge, piegeDeclenche = joueurCible.bouge(
                     self, posPouX, joueurCible.posY, False)
                 if not aBouge:
-                    D += 1
+                    nbFoisCogne += 1
                 if piegeDeclenche:
                     break
                 fait += 1
@@ -887,14 +659,14 @@ class Niveau:
                 aBouge, piegeDeclenche = joueurCible.bouge(
                     self, joueurCible.posX, posPouY, False)
                 if not aBouge:
-                    D += 1
+                    nbFoisCogne += 1
                 if piegeDeclenche:
                     break
                 fait += 1
         if startPosX != joueurCible.posX or startPosY != joueurCible.posY:
             joueurCible.ajoutHistoriqueDeplacement(startPosX, startPosY)
-        # Calcul des dégâtss
-        R = 6
+        # Calcul des dégâts
+        rStart = 6
         if doDeg:
             doPou = pousseur.doPou
             rePou = joueurCible.rePou
@@ -908,7 +680,7 @@ class Niveau:
                     doPou, rePou = etat.triggerCalculPousser(
                         doPou, rePou, self, pousseur, joueurCible)
             # Calcul des dégâts
-            total = (8+R*pousseur.lvl/50)*D
+            total = (8+rStart*pousseur.lvl/50)*nbFoisCogne
             total = int(total)
             if total > 0:
                 total += doPou
@@ -916,9 +688,9 @@ class Niveau:
                 print(joueurCible.nomPerso+" perd " +
                       str(vaSubir) + "PV (do pou)")
                 joueurCible.subit(pousseur, self, vaSubir, "doPou")
-        return posPouX, posPouY, D
+        return posPouX, posPouY, nbFoisCogne
 
-    def pousser(self, effetPousser, joueurCible, pousseur, doDeg=True, depuisX=None, depuisY=None):
+    def pousser(self, effetPousser, joueurCible, pousseur, doDeg=True):
         """@summary: Fonction à appeler pour pousser un joueur.
         @nbCases: le nombre de case dont il faut pousser la cible
         @type: int
@@ -926,19 +698,16 @@ class Niveau:
         @type: Personnage
         @pousseur: Le joueur qui va pousser
         @type: Personnage
-        @doDeg: Indique si la poussé appliquera des dommages (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
-        @type: booléen, True pas défaut
-        @depuisX: la coordonnée x depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
-        @type: int
-        @depuisY: la coordonnée y depuis laquelle le joueurCible se fera pousser,Si non renseigné None, ce sera la position du pousseur.
-        @type: int"""
-        if joueurCible != None:
-            if effetPousser.coordonnees != None:
+        @doDeg: Indique si la poussé appliquera des dommages
+                (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
+        @type: booléen, True pas défaut"""
+        if joueurCible is not None:
+            if effetPousser.coordonnees is not None:
                 if not(effetPousser.coordonnees[0] == 0 and effetPousser.coordonnees[1] == 0):
-                    self.__effectuerPousser(
+                    self.effectuerPousser(
                         joueurCible, pousseur, effetPousser.nbCase, doDeg, effetPousser.coordonnees)
 
-    def attire(self, effetAttire, joueurCible, attireur, depuisX=None, depuisY=None):
+    def attire(self, effetAttire, joueurCible, attireur):
         """@summary: Fonction à appeler pour attirer un joueur.
         @nbCases: le nombre de case dont il faut attirer la cible
         @type: int
@@ -947,69 +716,65 @@ class Niveau:
         @attireur: Le joueur qui va attirer
         @type: Personnage"""
 
-        # Pour attirer, on peut pousser la cible vers non et ne pas compter les dégâts.
-        # if effetAttire.horizontal and effetAttire.positif:
-        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX+1,joueurCible.posY)
-        # elif effetAttire.horizontal:
-        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX-1,joueurCible.posY)
-        # elif not effetAttire.horizontal and effetAttire.positif:
-        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY+1)
-        # else:
-        #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
-        self.pousser(effetAttire, joueurCible, attireur, False,
-                     effetAttire.caseFromX, effetAttire.caseFromY)
+        self.pousser(effetAttire, joueurCible, attireur, False)
 
-    def __deplacementTFVersCaseVide(self, joueurBougeant, posAtteinte, AjouteHistorique):
+    def deplacementTFVersCaseVide(self, joueurBougeant, posAtteinte, ajouteHistorique):
         """@summary: Déplacement pouvant généré un téléfrag vers une case vide.
         @joueurBougeant: le joueur qui se déplace vers une case vide
         @type: Personnage
         @posAtteinte: La position que le joueur va atteindre
         @type: [int x, int y]
-        @AjouteHistorique: indique si le déplacement compte dans l'historique. (Le passif du téléfrag n'a pas l'historique du déplacement par exemple)
+        @ajouteHistorique: indique si le déplacement compte dans l'historique.
+                           (Le passif du téléfrag n'a pas l'historique du déplacement par exemple)
         @type: booléen"""
 
         joueurBougeant.bouge(
-            self, posAtteinte[0], posAtteinte[1], AjouteHistorique)
+            self, posAtteinte[0], posAtteinte[1], ajouteHistorique)
 
     def activerGlyphe(self, nomSort):
-        """@summary: Active une glyphe selon le nom du sort 
+        """@summary: Active une glyphe selon le nom du sort
 
         @nomSort: le nom du sort à l'origine de la glyphe a activer
         @type: string"""
         for glyphe in self.glyphes:
             if glyphe.nomSort == nomSort and glyphe.actif():
                 casesDansPorte = self.getZonePorteSort(
-                    glyphe.sortMono, glyphe.centre_x, glyphe.centre_y, 0)
+                    glyphe.sortMono, glyphe.centreX, glyphe.centreY, 0)
                 for effet in glyphe.sortMono.effets:
                     ciblesTraitees = []
                     for caseDansPorte in casesDansPorte:
                         cibleDansPorte = self.getJoueurSur(
                             caseDansPorte[0], caseDansPorte[1])
-                        if cibleDansPorte != None:
+                        if cibleDansPorte is not None:
                             if cibleDansPorte not in ciblesTraitees:
-                                sestApplique, cibles = self.lancerEffet(
-                                    effet, glyphe.centre_x, glyphe.centre_y, glyphe.sortMono.nom, cibleDansPorte.posX, cibleDansPorte.posY, glyphe.lanceur)
+                                _, cibles = self.lancerEffet(effet,
+                                                             glyphe.centreX,
+                                                             glyphe.centreY,
+                                                             glyphe.sortMono.nom,
+                                                             cibleDansPorte.posX,
+                                                             cibleDansPorte.posY,
+                                                             glyphe.lanceur)
                                 ciblesTraitees += cibles
 
-    def __deplacementTFVersCaseOccupee(self, joueurASwap, joueurBougeant, posAtteinte, reelLanceur, nomSort, AjouteHistorique, genereTF):
+    def deplacementTFVersCaseOccupee(self, joueurASwap, joueurBougeant,
+                                     reelLanceur, nomSort, ajouteHistorique, genereTF):
         """@summary: Déplace le joueur en téléfrag vers une case avec un joueur.
         @joueurASwap: Le joueur qui occupe la case considéré comme occupé
         @type: Personnage
         @joueurBougeant: Le joueur qui se déplace en téléfrag vers la case occupé
         @type: string
-        @posAtteinte: Les coordonnées de la case d'arrivée
-        @type: [int x, int y]
         @reelLanceur: Le joueur étant à l'origine du téléfrag
         @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
-        @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
+        @ajouteHistorique: Indique si le déplacement doit être conservé
+                           dans l'historique de déplacement du joueur
         @type: booléen
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen"""
 
-        self.__effectuerTF(joueurASwap, joueurBougeant, posAtteinte,
-                           reelLanceur, nomSort, AjouteHistorique, genereTF)
+        self.effectuerTF(joueurASwap, joueurBougeant, reelLanceur,
+                         nomSort, ajouteHistorique, genereTF)
         # Si un téléfrag doit généré, il l'a été dans effectuerTF
         if genereTF:
             # Résultats d'un téléfrag (activation de glyphe, synchro, boost, et boost PA)
@@ -1019,25 +784,26 @@ class Niveau:
                         etat.triggerApresTF(
                             self, joueurBougeant, joueurASwap, joueur, reelLanceur, nomSort)
 
-    def __effectuerTF(self, joueurASwap, joueurBougeant, posAtteinte, reelLanceur, nomSort, AjouteHistorique, genereTF):
+    def effectuerTF(self, joueurASwap, joueurBougeant, reelLanceur,
+                    nomSort, ajouteHistorique, genereTF):
         """@summary: Echange les joueurs en téléfrag.
         @joueurASwap: Le joueur qui occupe la case considéré comme occupé
         @type: Personnage
         @joueurBougeant: Le joueur qui se déplace en téléfrag vers la case occupé
         @type: string
-        @posAtteinte: Les coordonnées de la case d'arrivée
-        @type: [int x, int y]
+
         @reelLanceur: Le joueur étant à l'origine du téléfrag
         @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
-        @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
+        @ajouteHistorique: Indique si le déplacement doit être conservé
+                           dans l'historique de déplacement du joueur
         @type: booléen
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen"""
 
         #joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY,True)
-        joueurBougeant.echangePosition(self, joueurASwap, AjouteHistorique)
+        joueurBougeant.echangePosition(self, joueurASwap, ajouteHistorique)
         if genereTF:
             joueurBougeant.retirerEtats("Telefrag")
             joueurASwap.retirerEtats("Telefrag")
@@ -1046,7 +812,8 @@ class Niveau:
             joueurASwap.appliquerEtat(Etat(
                 "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
 
-    def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur, nomSort, AjouteHistorique=True, genereTF=True):
+    def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur,
+                          nomSort, ajouteHistorique=True, genereTF=True):
         """@summary: Fonction à appeler pour les déplacements pouvant créer un téléfrag.
         @joueurBougeant: Le joueur qui se déplace en téléfrag
         @type: string
@@ -1056,40 +823,43 @@ class Niveau:
         @type: Personnage
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
-        @AjouteHistorique: Indique si le déplacement doit être conservé dans l'historique de déplacement du joueur
+        @ajouteHistorique: Indique si le déplacement doit être conservé dans
+                           l'historique de déplacement du joueur
         @type: booléen, True par défaut
         @genereTF: Indique si l'état téléfrag est placé pour les deux joueurs
         @type: booléen, True par défaut
 
         @return: Renvoie le joueur qui a été impliqué dans le téléfrag s'il existe, None sinon"""
         # Test hors-map
-        if posAtteinte[1] < 0 or posAtteinte[1] >= constantes.taille_carte or posAtteinte[0] < 0 or posAtteinte[0] >= constantes.taille_carte:
+        if posAtteinte[1] < 0 or posAtteinte[1] >= constantes.taille_carte or \
+           posAtteinte[0] < 0 or posAtteinte[0] >= constantes.taille_carte:
             return None
         # Test déplacement case vers vide
         if self.structure[posAtteinte[1]][posAtteinte[0]].type == "v":
-            self.__deplacementTFVersCaseVide(
-                joueurBougeant, posAtteinte, AjouteHistorique)
+            self.deplacementTFVersCaseVide(
+                joueurBougeant, posAtteinte, ajouteHistorique)
             return None
         # Test si sa case d'arrivé est occupé par un joueur
         elif self.structure[posAtteinte[1]][posAtteinte[0]].type == "j":
             # Si C'est une invoccation, c'est l'invocateur le réel lanceur
-            if lanceur.invocateur != None:
+            if lanceur.invocateur is not None:
                 reelLanceur = lanceur.invocateur
             else:
                 reelLanceur = lanceur
 
             joueurASwap = self.getJoueurSur(posAtteinte[0], posAtteinte[1])
-            
             if joueurASwap != joueurBougeant:
-                self.__deplacementTFVersCaseOccupee(
-                    joueurASwap, joueurBougeant, posAtteinte, reelLanceur, nomSort, AjouteHistorique, genereTF)
+                self.deplacementTFVersCaseOccupee(
+                    joueurASwap, joueurBougeant, reelLanceur, nomSort, ajouteHistorique, genereTF)
                 return joueurASwap
         else:
             print("Deplacement pas implemente")
         return None
 
-    def __appliquerEffetSansBoucleSurZone(self, effet, joueurLanceur, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
-        """@summary: Fonction qui applique un effet ayant une zone sans la prendre en compte (les glyphes).
+    def appliquerEffetSansBoucleSurZone(self, effet, joueurLanceur, caseCibleX, caseCibleY,
+                                        nomSort, ciblesTraitees, provX, provY):
+        """@summary: Fonction qui applique un effet ayant une zone
+                     sans la prendre en compte (les glyphes).
         @effet: L'effet qu'il faut appliquer
         @type: Effet
         @joueurLanceur: Le joueur à l'origine de l'effet
@@ -1102,20 +872,23 @@ class Niveau:
         @type: string
         @ciblesTraitees: La liste des cibles déjà traitées pour cet effet
         @type: tableau de Personnage
-        @prov_x: Coordonné x de la case d'origine de l'effet
+        @provX: Coordonné x de la case d'origine de l'effet
         @type: int
-        @prov_y: Coordonné y de la case d'origine de l'effet
+        @provY: Coordonné y de la case d'origine de l'effet
         @type: int
 
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
         if isinstance(effet, EffetGlyphe):
             effetALancer = deepcopy(effet)
-            effetALancer.appliquerEffet(self, None, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY,
-                                        nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
+            effetALancer.appliquerEffet(self, None, joueurLanceur,
+                                        caseCibleX=caseCibleX, caseCibleY=caseCibleY,
+                                        nom_sort=nomSort, cibles_traitees=ciblesTraitees,
+                                        provX=provX, provY=provY)
             return True
         return False
 
-    def __appliquerEffetSurZone(self, zoneEffet, effet, joueurLanceur, joueurCibleDirect, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
+    def appliquerEffetSurZone(self, zoneEffet, effet, joueurLanceur, joueurCibleDirect,
+                              caseCibleX, caseCibleY, nomSort, ciblesTraitees, provX, provY):
         """@summary: Fonction qui applique un effet ayant une zone.
         @zoneEffet: la zone de l'effet
         @type: Effet
@@ -1133,9 +906,9 @@ class Niveau:
         @type: string
         @ciblesTraitees: La liste des cibles déjà traitées pour cet effet
         @type: tableau de Personnage
-        @prov_x: Coordonné x de la case d'origine de l'effet
+        @provX: Coordonné x de la case d'origine de l'effet
         @type: int
-        @prov_y: Coordonné y de la case d'origine de l'effet
+        @provY: Coordonné y de la case d'origine de l'effet
         @type: int
         @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
         @type: bool
@@ -1146,24 +919,31 @@ class Niveau:
 
         sestApplique = False
         # Pour chaque case dans la zone
-        for case_effet in zoneEffet:
-            case_x = case_effet[0]
-            case_y = case_effet[1]
+        for caseEffet in zoneEffet:
+            caseX = caseEffet[0]
+            caseY = caseEffet[1]
             # récupération du joueur sur la case
-            joueurCaseEffet = self.getJoueurSur(case_x, case_y)
+            joueurCaseEffet = self.getJoueurSur(caseX, caseY)
             # Test si un joeuur est sur la case
             effetALancer = deepcopy(effet)
-            if joueurCaseEffet != None:
+            if joueurCaseEffet is not None:
 
                 # Si le joueur sur la case est une cible valide
-                if effet.cibleValide(joueurLanceur, joueurCaseEffet, joueurCibleDirect, ciblesTraitees):
+                if effet.cibleValide(joueurLanceur, joueurCaseEffet,
+                                     joueurCibleDirect, ciblesTraitees):
                     # On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
-                    sestApplique = effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY,
-                                                               nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, caseEffetX=case_x, caseEffetY=case_y)
+                    sestApplique = effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur,
+                                                               caseCibleX=caseCibleX,
+                                                               caseCibleY=caseCibleY,
+                                                               nom_sort=nomSort,
+                                                               cibles_traitees=ciblesTraitees,
+                                                               provX=provX, provY=provY,
+                                                               caseEffetX=caseX,
+                                                               caseEffetY=caseY)
                     if sestApplique is None:
                         sestApplique = True
-                    elif isinstance(sestApplique, bool) == False:
+                    elif not isinstance(sestApplique, bool):
                         raise Exception(
                             "Retour d'effet inattendu : "+str(sestApplique))
                     # Peu import le type, l'etat requis est retire s'il est consomme
@@ -1174,19 +954,22 @@ class Niveau:
 
             else:
                 if effet.faireAuVide:
-                    effetALancer.appliquerEffet(self, None, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY, nom_sort=nomSort,
-                                                cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, caseEffetX=case_x, caseEffetY=case_y)
+                    effetALancer.appliquerEffet(self, None, joueurLanceur,
+                                                caseCibleX=caseCibleX, caseCibleY=caseCibleY,
+                                                nom_sort=nomSort, cibles_traitees=ciblesTraitees,
+                                                provX=provX, provY=provY, caseEffetX=caseX,
+                                                caseEffetY=caseY)
                     sestApplique = True
 
         return sestApplique, ciblesTraitees
 
-    def lancerEffet(self, effet, prov_x, prov_y, nomSort, caseCibleX, caseCibleY, lanceur=None, isPrevisu=False, previsu=None):
+    def lancerEffet(self, effet, provX, provY, nomSort, caseCibleX, caseCibleY, lanceur=None):
         """@summary: Fonction qui applique un effet.
         @effet: L'effet qu'il faut appliquer
         @type: Effet
-        @prov_x: Coordonné x de la case d'origine de l'effet
+        @provX: Coordonné x de la case d'origine de l'effet
         @type: int
-        @prov_y: Coordonné y de la case d'origine de l'effet
+        @provY: Coordonné y de la case d'origine de l'effet
         @type: int
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
@@ -1194,7 +977,7 @@ class Niveau:
         @type: int
         @caseCibleY: Coordonné y de la case ciblé
         @type: int
-        @lanceur: le lanceur de l'effet, None si le lanceur est sur prov_x;prov_y
+        @lanceur: le lanceur de l'effet, None si le lanceur est sur provX;provY
         @type: Personnage, ou None
         @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
         @type: bool
@@ -1202,8 +985,8 @@ class Niveau:
         @type: Previsu
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
-        if lanceur == None:
-            joueurLanceur = self.getJoueurSur(prov_x, prov_y)
+        if lanceur is None:
+            joueurLanceur = self.getJoueurSur(provX, provY)
         else:
             joueurLanceur = lanceur
         joueurLanceur.derniere_action_posX = joueurLanceur.posX
@@ -1213,13 +996,16 @@ class Niveau:
         joueurCibleDirect = self.getJoueurSur(caseCibleX, caseCibleY)
         zoneEffet = self.getZoneEffet(effet, caseCibleX, caseCibleY)
         # Effet non boucles
-        sestApplique = self.__appliquerEffetSansBoucleSurZone(
-            effet, joueurLanceur, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
-        if sestApplique == True:
+        sestApplique = self.appliquerEffetSansBoucleSurZone(
+            effet, joueurLanceur, caseCibleX, caseCibleY, nomSort, ciblesTraitees, provX, provY)
+        if sestApplique:
             self.afficherSorts()
             return sestApplique, ciblesTraitees
-        sestApplique, ciblesTraitees = self.__appliquerEffetSurZone(
-            zoneEffet, effet, joueurLanceur, joueurCibleDirect, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
+        sestApplique, ciblesTraitees = self.appliquerEffetSurZone(zoneEffet, effet, joueurLanceur,
+                                                                  joueurCibleDirect, caseCibleX,
+                                                                  caseCibleY, nomSort,
+                                                                  ciblesTraitees,
+                                                                  provX, provY)
         return sestApplique, ciblesTraitees
 
     def getJoueurs(self, cibles):
@@ -1236,11 +1022,13 @@ class Niveau:
                 retour.append(joueur)
         return retour
 
-    def getJoueurslesPlusProches(self, case_x, case_y, lanceur, zone=Zones.TypeZoneCercle(99), etatRequisCibles=[], ciblesPossibles=[], ciblesExclues=[], ciblesTraitees=[]):
+    def getJoueurslesPlusProches(self, caseX, caseY, lanceur, zone=Zones.TypeZoneCercle(99),
+                                 etatRequisCibles=None, ciblesPossibles=None, ciblesExclues=None,
+                                 ciblesTraitees=None):
         """@summary: Retourne les joueurs correspondant aux critères donnés triés par proximité.
-        @case_x: la coordonnée x de la case de départ de la recherche 
+        @caseX: la coordonnée x de la case de départ de la recherche
         @type: int
-        @case_y: la coordonnée y de la case de départ de la recherche 
+        @caseY: la coordonnée y de la case de départ de la recherche
         @type: int
         @lanceur: le lanceur de la recherche
         @type: Personnage
@@ -1255,187 +1043,228 @@ class Niveau:
         @ciblesTraitees: la liste des cibles déjà traitées, optionnel
         @type: tableau de string
 
-        @return: Renvoie la liste des joueurs correspondant aux cirtères données triés par proximité.
+        @return: Renvoie la liste des joueurs correspondant aux crtères données triés par proximité.
         """
-
-        joueurs_cases_zone = []
-        x0 = case_x
-        y0 = case_y
+        if etatRequisCibles is None:
+            etatRequisCibles = []
+        if ciblesPossibles is None:
+            ciblesPossibles = []
+        if ciblesExclues is None:
+            ciblesExclues = []
+        if ciblesTraitees is None:
+            ciblesTraitees = []
+        joueursCasesZone = []
         for tailleCercle in range(64):
-            casesAXDistance = self.getCasesAXDistanceDe(
-                case_x, case_y, tailleCercle)
+            casesAXDistance = self.getCasesAXDistanceDe(caseX, caseY, tailleCercle)
             # Pour chaque case à distance 0, puis 1, puis 2 etc...
             for case in casesAXDistance:
                 # Si la case est dans le critère de zone
-                if zone.testCaseEstDedans([case_x, case_y], case, None):
+                if zone.testCaseEstDedans([caseX, caseY], case, None):
                     # S'il y a un joueur sur la case
                     joueur = self.getJoueurSur(case[0], case[1])
-                    if joueur != None:
+                    if joueur is not None:
                         # Test des conditions
-                        if (joueur.team == lanceur.team and joueur != lanceur and "Allies" in ciblesPossibles) or (joueur.team == lanceur.team and joueur == lanceur and "Lanceur" in ciblesPossibles) or (joueur.team != lanceur.team and "Ennemis" in ciblesPossibles) or (joueur.classe in ciblesPossibles) or (joueur.invocateur is not None and "Invoc" in ciblesPossibles) or (lanceur.invocateur is not None and "Invocateur" in ciblesExclues and joueur.uid == lanceur.invocateur.uid):
-                            if not(joueur.classe in ciblesExclues or (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues)):
+                        if (joueur.team == lanceur.team and joueur != lanceur
+                                                        and "Allies" in ciblesPossibles) \
+                            or (joueur.team == lanceur.team and joueur == lanceur
+                                and "Lanceur" in ciblesPossibles) \
+                            or (joueur.team != lanceur.team and "Ennemis" in ciblesPossibles) \
+                            or (joueur.classe in ciblesPossibles) \
+                            or (joueur.invocateur is not None and "Invoc" in ciblesPossibles) \
+                            or (lanceur.invocateur is not None and "Invocateur" in ciblesExclues
+                                and joueur.uid == lanceur.invocateur.uid):
+                            if not(joueur.classe in ciblesExclues or \
+                                (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues)):
                                 # Test sur l'etat requis.
                                 if joueur.aEtatsRequis(etatRequisCibles):
                                     # Test si le joueur ciblé à déjà été impacté
                                     if joueur not in ciblesTraitees:
-                                        joueurs_cases_zone.append(joueur)
-        return joueurs_cases_zone
+                                        joueursCasesZone.append(joueur)
+        return joueursCasesZone
 
-    def afficher(self, fenetre, sortSelectionne, mouse_xy):
+    def afficher(self, fenetre, sortSelectionne, mouseXY):
         """@summary: Méthode permettant d'afficher le niveau"""
         # Chargement des images (seule celle de team contiennent de la transparence)
         vide1 = pygame.image.load(constantes.image_vide_1).convert()
         vide2 = pygame.image.load(constantes.image_vide_2).convert()
         team1 = pygame.image.load(constantes.image_team_1).convert_alpha()
         team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
-        prevision_deplacement = pygame.image.load(constantes.image_prevision_deplacement).convert()
-        prevision_sort = pygame.image.load(constantes.image_prevision_sort).convert()
-        prevision_ldv = pygame.image.load(constantes.image_prevision_ldv).convert()
-        prevision_tacle = pygame.image.load(constantes.image_prevision_tacle).convert()
+        previsionDeplacement = pygame.image.load(constantes.image_prevision_deplacement).convert()
+        previsionSort = pygame.image.load(constantes.image_prevision_sort).convert()
+        previsionLdv = pygame.image.load(constantes.image_prevision_ldv).convert()
+        previsionTacle = pygame.image.load(constantes.image_prevision_tacle).convert()
         zone = pygame.image.load(constantes.image_prevision_zone).convert()
         # On parcourt la liste du niveau
-        num_ligne = 0
-        tab_cases_previ = []
+        nLigne = 0
+        tabCasesPrevi = []
         previsuToShow = []
         for ligne in self.structure:
             # Onparcourt les listes de lignes
-            num_case = 0
+            nCase = 0
             for sprite in ligne:
                 # On calcule la position réelle en pixels
-                x = num_case * constantes.taille_sprite
-                y = num_ligne * constantes.taille_sprite
+                pixelX = nCase * constantes.taille_sprite
+                pixelY = nLigne * constantes.taille_sprite
                 if sprite.type == 'v' or sprite.type == 'j':  # v = Vide, j = joueur
 
-                    if (num_case+(num_ligne*len(ligne))) % 2 == 0:
-                        fenetre.blit(vide1, (x, y))
+                    if (nCase+(nLigne*len(ligne))) % 2 == 0:
+                        fenetre.blit(vide1, (pixelX, pixelY))
                     else:
-                        fenetre.blit(vide2, (x, y))
+                        fenetre.blit(vide2, (pixelX, pixelY))
 
                     # Afficher previsualation portee du sort selectionne
-                    if sortSelectionne != None:
+                    if sortSelectionne is not None:
                         # Previsu de la porte du sort, une case teste par tour de double boucle
-                        if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY, num_case, num_ligne, self.tourDe.PO):
-                            if sortSelectionne.ldv == False or self.aLigneDeVue(self.tourDe.posX, self.tourDe.posY, num_case, num_ligne):
-                                fenetre.blit(prevision_sort, (x, y))
+                        if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY,
+                                                  nCase, nLigne, self.tourDe.PO):
+                            if not sortSelectionne.ldv or \
+                               self.aLigneDeVue(self.tourDe.posX, self.tourDe.posY, nCase, nLigne):
+                                fenetre.blit(previsionSort, (pixelX, pixelY))
                             else:
-                                fenetre.blit(prevision_ldv, (x, y))
+                                fenetre.blit(previsionLdv, (pixelX, pixelY))
                         # Si la souris est sur la grille de jeu (et non pas dans les sorts)
-                        if mouse_xy[1] < constantes.y_sorts:
-                            case_x = int(mouse_xy[0]/constantes.taille_sprite)
-                            case_y = int(mouse_xy[1]/constantes.taille_sprite)
-                            # Si on cible une case dans la porte du sort il faut afficher la zone effet
-                            if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY, case_x, case_y, self.tourDe.PO):
+                        if mouseXY[1] < constantes.y_sorts:
+                            caseX = int(mouseXY[0]/constantes.taille_sprite)
+                            caseY = int(mouseXY[1]/constantes.taille_sprite)
+                            # Si on cible une case dans la porte du sort il faut afficher la zone
+                            if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY,
+                                                      caseX, caseY, self.tourDe.PO):
                                 joueurCibleDirect = self.getJoueurSur(
-                                    case_x, case_y)
-                                if sortSelectionne.chaine == False:
+                                    caseX, caseY)
+                                if not sortSelectionne.chaine:
                                     tabEffets = sortSelectionne.effets
                                 else:
-                                    if len(sortSelectionne.effets) > 0:
+                                    if sortSelectionne.effets:
                                         tabEffets = [sortSelectionne.effets[0]]
                                     else:
                                         tabEffets = []
                                 # Liste des effets dont on va prévisualiser la zone.
                                 for effet in tabEffets:
-                                    if joueurCibleDirect != None:
-                                        if joueurCibleDirect.aEtatsRequis(effet.etatRequisCibleDirect):
-                                            if effet.aPorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
-                                                tab_cases_previ.append(
-                                                    [num_case, num_ligne])
+                                    if joueurCibleDirect is not None:
+                                        if joueurCibleDirect.aEtatsRequis(
+                                                effet.etatRequisCibleDirect):
+                                            if effet.aPorteZone(caseX, caseY, nCase,
+                                                                nLigne, self.tourDe.posX,
+                                                                self.tourDe.posY):
+                                                tabCasesPrevi.append(
+                                                    [nCase, nLigne])
                                     else:
-                                        if len(effet.etatRequisCibleDirect) == 0:
-                                            if effet.aPorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
-                                                tab_cases_previ.append(
-                                                    [num_case, num_ligne])
-                                if self.cachedPrevisu[0] == sortSelectionne and self.cachedPrevisu[1] == case_x and self.cachedPrevisu[2] == case_y:
+                                        if not effet.etatRequisCibleDirect:
+                                            if effet.aPorteZone(caseX, caseY, nCase, nLigne,
+                                                                self.tourDe.posX, self.tourDe.posY):
+                                                tabCasesPrevi.append(
+                                                    [nCase, nLigne])
+                                if self.cachedPrevisu[0] == sortSelectionne and \
+                                   self.cachedPrevisu[1] == caseX and \
+                                   self.cachedPrevisu[2] == caseY:
                                     previsuToShow = self.cachedPrevisu[3]
                                 else:
                                     for joueur in self.joueurs:
                                         joueur.msgsPrevisu = []
-                                    previsuToShow = sortSelectionne.lance(
-                                        self.tourDe.posX, self.tourDe.posY, self, case_x, case_y, self.tourDe, True)
+                                    previsuToShow = sortSelectionne.lance(self.tourDe.posX,
+                                                                          self.tourDe.posY,
+                                                                          self, caseX, caseY,
+                                                                          self.tourDe, True)
                                     self.cachedPrevisu = [
-                                        sortSelectionne, case_x, case_y, previsuToShow]
+                                        sortSelectionne, caseX, caseY, previsuToShow]
                     # Afficher les cases glyphees
                     for glyphe in self.glyphes:
                         if glyphe.actif():
-                            if glyphe.sortMono.APorte(glyphe.centre_x, glyphe.centre_y, num_case, num_ligne, 0):
-                                pygame.draw.rect(fenetre, glyphe.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                               constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
+                            if glyphe.sortMono.APorte(glyphe.centreX, glyphe.centreY,
+                                                      nCase, nLigne, 0):
+                                pygame.draw.rect(fenetre, glyphe.couleur,
+                                                 Rect(nCase*constantes.taille_sprite+1,
+                                                      nLigne *constantes.taille_sprite+1,
+                                                      constantes.taille_sprite-4,
+                                                      constantes.taille_sprite-4))
                     for piege in self.pieges:
                         if piege.lanceur.team == self.tourDe.team or not piege.invisible:
-                            if piege.aPorteDeclenchement(num_case, num_ligne):
-                                pygame.draw.rect(fenetre, piege.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                              constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
-                            if piege.getDistanceDuPoint(num_case, num_ligne) == 0:
+                            if piege.aPorteDeclenchement(nCase, nLigne):
+                                pygame.draw.rect(fenetre, piege.couleur,
+                                                 Rect(nCase*constantes.taille_sprite+1,
+                                                      nLigne * constantes.taille_sprite+1,
+                                                      constantes.taille_sprite-4,
+                                                      constantes.taille_sprite-4))
+                            if piege.getDistanceDuPoint(nCase, nLigne) == 0:
                                 piegeIcone = pygame.image.load(piege.icone).convert_alpha()
-                                fenetre.blit(piegeIcone, (num_case*constantes.taille_sprite+1, num_ligne *
-                                                                              constantes.taille_sprite+1))
+                                fenetre.blit(piegeIcone, (nCase*constantes.taille_sprite+1, nLigne *
+                                                          constantes.taille_sprite+1))
                     for rune in self.runes:
-                        if rune.centre_x == num_case and rune.centre_y == num_ligne:
-                            pygame.draw.rect(fenetre, rune.couleur, Rect(num_case*constantes.taille_sprite+1, num_ligne *
-                                                                         constantes.taille_sprite+1, constantes.taille_sprite-4, constantes.taille_sprite-4))
+                        if rune.centreX == nCase and rune.centreY == nLigne:
+                            pygame.draw.rect(fenetre, rune.couleur,
+                                             Rect(nCase*constantes.taille_sprite+1, nLigne *
+                                                  constantes.taille_sprite+1,
+                                                  constantes.taille_sprite-4,
+                                                  constantes.taille_sprite-4))
 
                 if sprite.type == 'j':
-                    joueurOnCase = self.getJoueurSur(num_case, num_ligne)
-                    if joueurOnCase != None:
+                    joueurOnCase = self.getJoueurSur(nCase, nLigne)
+                    if joueurOnCase is not None:
                         if joueurOnCase.aEtat("Invisible"):
                             if joueurOnCase.team == self.tourDe.team:
-                                fenetre.blit(team1, (x, y))
+                                fenetre.blit(team1, (pixelX, pixelY))
                         else:
-                            fenetre.blit(team1, (x, y))
-                num_case += 1
-            num_ligne += 1
+                            fenetre.blit(team1, (pixelX, pixelY))
+                nCase += 1
+            nLigne += 1
 
         # Affichage des cases dans la zone d'impact
-        if sortSelectionne != None:
-            for case in tab_cases_previ:
+        if sortSelectionne is not None:
+            for case in tabCasesPrevi:
                 fenetre.blit(
                     zone, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
         else:
             # si pas de sort sélectionné et souris sur la grille on prévisualise un déplacement.
-            if mouse_xy[1] < constantes.y_sorts:
-                case_x = int(mouse_xy[0]/constantes.taille_sprite)
-                case_y = int(mouse_xy[1]/constantes.taille_sprite)
+            if mouseXY[1] < constantes.y_sorts:
+                caseX = int(mouseXY[0]/constantes.taille_sprite)
+                caseY = int(mouseXY[1]/constantes.taille_sprite)
                 # Calcul du déplacement
-                joueurPointe = self.getVisualationJoueurSur(case_x, case_y)
-                if joueurPointe == None:
-                    tab_cases_previ = self.pathfinder.pathFinding(
-                        self, case_x, case_y, self.tourDe)
-                    if tab_cases_previ != None:
-                        if len(tab_cases_previ) <= self.tourDe.PM:
-                            pa_tacle, pm_tacle = self.calculTacle(self.tourDe)
+                joueurPointe = self.getVisualationJoueurSur(caseX, caseY)
+                if joueurPointe is None:
+                    tabCasesPrevi = self.pathfinder.pathFinding(
+                        self, caseX, caseY, self.tourDe)
+                    if tabCasesPrevi is not None:
+                        if len(tabCasesPrevi) <= self.tourDe.PM:
+                            nbPATacle, nbPMTacle = self.calculTacle(self.tourDe)
                             cumulTacle = [0, 0]
-                            for i, case in enumerate(tab_cases_previ):
-                                if pm_tacle > 0 or pa_tacle > 0:
-                                    cumulTacle[0] += pm_tacle
-                                    cumulTacle[1] += pa_tacle
-                                if cumulTacle[0] + i+1 > self.tourDe.PM or cumulTacle[1] > self.tourDe.PA:
-                                    fenetre.blit(
-                                        prevision_tacle, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                            for i, case in enumerate(tabCasesPrevi):
+                                if nbPMTacle > 0 or nbPATacle > 0:
+                                    cumulTacle[0] += nbPMTacle
+                                    cumulTacle[1] += nbPATacle
+                                if cumulTacle[0] + i+1 > self.tourDe.PM or \
+                                   cumulTacle[1] > self.tourDe.PA:
+                                    fenetre.blit(previsionTacle,
+                                                 (case[0]*constantes.taille_sprite,
+                                                  case[1]*constantes.taille_sprite))
                                 else:
-                                    fenetre.blit(
-                                        prevision_deplacement, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                                    fenetre.blit(previsionDeplacement,
+                                                 (case[0]*constantes.taille_sprite,
+                                                  case[1]*constantes.taille_sprite))
                                 if cumulTacle[0] != 0 or cumulTacle[1] != 0:
                                     self.tourDe.vue = Overlays.VueForOverlay(
-                                        self.fenetre, case_x*constantes.taille_sprite, case_y*constantes.taille_sprite, 30, 30, self.tourDe)
+                                        self.fenetre, caseX*constantes.taille_sprite,
+                                        caseY*constantes.taille_sprite,
+                                        30, 30, self.tourDe)
                                     self.tourDe.setOverlayTextGenerique(
                                         "-"+str(cumulTacle[0])+"PM\n-"+str(cumulTacle[1])+"PA")
                                     self.tourDe.overlay.afficher(
-                                        self.tourDe.posX*constantes.taille_sprite, self.tourDe.posY*constantes.taille_sprite)
-                                pa_tacle, pm_tacle = self.calculTacle(
+                                        self.tourDe.posX*constantes.taille_sprite,
+                                        self.tourDe.posY*constantes.taille_sprite)
+                                nbPATacle, nbPMTacle = self.calculTacle(
                                     self.tourDe, case[0], case[1])
                 else:
-                    tab_cases_previ = self.getZoneDeplacementJoueur(
+                    tabCasesPrevi = self.getZoneDeplacementJoueur(
                         joueurPointe)
-                    if tab_cases_previ != None:
-                        for case in tab_cases_previ:
-                            fenetre.blit(
-                                prevision_deplacement, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                    if tabCasesPrevi is not None:
+                        for case in tabCasesPrevi:
+                            fenetre.blit(previsionDeplacement,
+                                         (case[0]*constantes.taille_sprite,
+                                          case[1]*constantes.taille_sprite))
 
         for jdp in previsuToShow:
             joueur = jdp
-            x = jdp.posX*constantes.taille_sprite
-            y = jdp.posY*constantes.taille_sprite
+            pixelX = jdp.posX*constantes.taille_sprite
+            pixelY = jdp.posY*constantes.taille_sprite
             afficherLeJoueur = True
             if joueur.aEtat("Invisible"):
                 if joueur.team != self.tourDe.team:
@@ -1443,47 +1272,47 @@ class Niveau:
             if afficherLeJoueur:
                 image = pygame.image.load(joueur.icone).convert_alpha()
                 #image.fill((255, 255, 0, 10), None, pygame.BLEND_RGBA_MULT)
-                fenetre.blit(image, (x, y))
+                fenetre.blit(image, (pixelX, pixelY))
 
         # Afficher joueurs
         for joueur in self.joueurs:
-            x = joueur.posX*constantes.taille_sprite
-            y = joueur.posY*constantes.taille_sprite
+            pixelX = joueur.posX*constantes.taille_sprite
+            pixelY = joueur.posY*constantes.taille_sprite
             afficherLeJoueur = True
             if joueur.aEtat("Invisible"):
                 if joueur.team != self.tourDe.team:
                     afficherLeJoueur = False
             if afficherLeJoueur:
                 if joueur.team == 1:
-                    fenetre.blit(team1, (x, y))
+                    fenetre.blit(team1, (pixelX, pixelY))
                 else:
-                    fenetre.blit(team2, (x, y))
+                    fenetre.blit(team2, (pixelX, pixelY))
 
                 joueur.vue = Overlays.VueForOverlay(
-                    self.fenetre, x, y, 30, 30, joueur)
+                    self.fenetre, pixelX, pixelY, 30, 30, joueur)
                 for joueurPrevisualiser in previsuToShow:
                     if joueurPrevisualiser.uid == joueur.uid:
-                        if len(joueurPrevisualiser.msgsPrevisu) > 0:
+                        if joueurPrevisualiser.msgsPrevisu:
                             joueur.setOverlayTextGenerique(
                                 "\n".join(joueurPrevisualiser.msgsPrevisu))
                 fenetre.blit(pygame.image.load(
-                    joueur.icone).convert_alpha(), (x, y))
+                    joueur.icone).convert_alpha(), (pixelX, pixelY))
             else:
-                x = joueur.derniere_action_posX * constantes.taille_sprite
-                y = joueur.derniere_action_posY * constantes.taille_sprite
+                pixelX = joueur.derniere_action_posX * constantes.taille_sprite
+                pixelY = joueur.derniere_action_posY * constantes.taille_sprite
                 joueur.vue = Overlays.VueForOverlay(
-                    self.fenetre, x, y, 30, 30, joueur)
+                    self.fenetre, pixelX, pixelY, 30, 30, joueur)
                 fenetre.blit(pygame.image.load(
-                    joueur.icone).convert_alpha(), (x, y))
+                    joueur.icone).convert_alpha(), (pixelX, pixelY))
 
         # AfficherOverlays
-        if mouse_xy[1] > constantes.y_sorts:
+        if mouseXY[1] > constantes.y_sorts:
             for sort in self.tourDe.sorts:
-                if sort.vue.isMouseOver(mouse_xy):
+                if sort.vue.isMouseOver(mouseXY):
                     sort.overlay.afficher(sort.vue.x, constantes.y_sorts)
         else:
             for joueur in self.joueurs:
-                if joueur.vue.isMouseOver(mouse_xy):
+                if joueur.vue.isMouseOver(mouseXY):
                     if sortSelectionne is None:
                         joueur.setOverlayText()
                     joueur.overlay.afficher(
@@ -1498,16 +1327,18 @@ class Niveau:
         self.glyphes.append(glyphe)
         if glyphe.actif():
             casesDansPorte = self.getZonePorteSort(
-                glyphe.sortDeplacement, glyphe.centre_x, glyphe.centre_y, 0)
+                glyphe.sortDeplacement, glyphe.centreX, glyphe.centreY, 0)
             for effet in glyphe.sortDeplacement.effets:
                 ciblesTraitees = []
                 for caseDansPorte in casesDansPorte:
                     cibleDansPorte = self.getJoueurSur(
                         caseDansPorte[0], caseDansPorte[1])
-                    if cibleDansPorte != None:
+                    if cibleDansPorte is not None:
                         if cibleDansPorte not in ciblesTraitees:
-                            sestApplique, cibles = self.lancerEffet(
-                                effet, glyphe.centre_x, glyphe.centre_y, glyphe.sortDeplacement.nom, cibleDansPorte.posX, cibleDansPorte.posY, glyphe.lanceur)
+                            _, cibles = self.lancerEffet(
+                                effet, glyphe.centreX, glyphe.centreY,
+                                glyphe.sortDeplacement.nom, cibleDansPorte.posX,
+                                cibleDansPorte.posY, glyphe.lanceur)
                             ciblesTraitees += cibles
         return len(self.glyphes)-1
 
@@ -1519,7 +1350,7 @@ class Niveau:
         @return: L'indice d'ajout du piège"""
         # Deux pièges ne peuvent pas être superposés.
         for piegeExistants in self.pieges:
-            if piegeExistants.getDistanceDuPoint(piege.centre_x, piege.centre_y) == 0:
+            if piegeExistants.getDistanceDuPoint(piege.centreX, piege.centreY) == 0:
                 return None
         # Ajout du piège
         self.pieges.append(piege)
@@ -1534,82 +1365,89 @@ class Niveau:
         self.runes.append(rune)
         return len(self.runes)-1
 
-    def getVoisins(self, x, y):
+    def getVoisins(self, posX, posY):
         """@summary: Retourne les cases vides existantes adjacentes à une case donnée
-        @x: La coordonnée x de la case dont on veut les voisins
+        @posX: La coordonnée x de la case dont on veut les voisins
         @type: int
-        @y: La coordonnée y de la case dont on veut les voisins
+        @posY: La coordonnée y de la case dont on veut les voisins
         @type: int
 
         @return: la liste des cases voisines vides à celle donnée"""
         voisins = []
-        if x > 0:
-            if self.structure[y][x-1].type == "v":
-                voisins.append(Noeud(x-1, y))
-            elif self.structure[y][x-1].type == "j":
-                if self.getJoueurSur(x-1, y).aEtat("Invisible") and self.getJoueurSur(x-1, y).team != self.tourDe.team:
-                    voisins.append(Noeud(x-1, y))
-        if x < constantes.taille_carte-1:
-            if self.structure[y][x+1].type == "v":
-                voisins.append(Noeud(x+1, y))
-            elif self.structure[y][x+1].type == "j":
-                if self.getJoueurSur(x+1, y).aEtat("Invisible") and self.getJoueurSur(x+1, y).team != self.tourDe.team:
-                    voisins.append(Noeud(x+1, y))
-        if y > 0:
-            if self.structure[y-1][x].type == "v":
-                voisins.append(Noeud(x, y-1))
-            elif self.structure[y-1][x].type == "j":
-                if self.getJoueurSur(x, y-1).aEtat("Invisible") and self.getJoueurSur(x, y-1).team != self.tourDe.team:
-                    voisins.append(Noeud(x, y-1))
-        if y < constantes.taille_carte-1:
-            if self.structure[y+1][x].type == "v":
-                voisins.append(Noeud(x, y+1))
-            elif self.structure[y+1][x].type == "j":
-                if self.getJoueurSur(x, y+1).aEtat("Invisible") and self.getJoueurSur(x, y+1).team != self.tourDe.team:
-                    voisins.append(Noeud(x, y+1))
+        if posX > 0:
+            if self.structure[posY][posX-1].type == "v":
+                voisins.append(Noeud(posX-1, posY))
+            elif self.structure[posY][posX-1].type == "j":
+                if self.getJoueurSur(posX-1, posY).aEtat("Invisible") and \
+                   self.getJoueurSur(posX-1, posY).team != self.tourDe.team:
+                    voisins.append(Noeud(posX-1, posY))
+        if posX < constantes.taille_carte-1:
+            if self.structure[posY][posX+1].type == "v":
+                voisins.append(Noeud(posX+1, posY))
+            elif self.structure[posY][posX+1].type == "j":
+                if self.getJoueurSur(posX+1, posY).aEtat("Invisible") and \
+                   self.getJoueurSur(posX+1, posY).team != self.tourDe.team:
+                    voisins.append(Noeud(posX+1, posY))
+        if posY > 0:
+            if self.structure[posY-1][posX].type == "v":
+                voisins.append(Noeud(posX, posY-1))
+            elif self.structure[posY-1][posX].type == "j":
+                if self.getJoueurSur(posX, posY-1).aEtat("Invisible") and \
+                   self.getJoueurSur(posX, posY-1).team != self.tourDe.team:
+                    voisins.append(Noeud(posX, posY-1))
+        if posY < constantes.taille_carte-1:
+            if self.structure[posY+1][posX].type == "v":
+                voisins.append(Noeud(posX, posY+1))
+            elif self.structure[posY+1][posX].type == "j":
+                if self.getJoueurSur(posX, posY+1).aEtat("Invisible") and \
+                   self.getJoueurSur(posX, posY+1).team != self.tourDe.team:
+                    voisins.append(Noeud(posX, posY+1))
         return voisins
 
-    def aLigneDeVue(self, x0, y0, x1, y1):
+    def aLigneDeVue(self, posX0, posY0, posX1, posY1):
+        """@summary: calcul si la pos 0 à la la lidgne de vue sur la pos 1
+           @return: booléen
+        """
         ldv = True
-        distanceX = abs(x1 - x0)
-        distanceY = abs(y1 - y0)
-        x = x0
-        y = y0
-        n = -1 + distanceX + distanceY
-        xInc = 1 if x1 > x0 else -1
-        yInc = 1 if y1 > y0 else -1
+        distanceX = abs(posX1 - posX0)
+        distanceY = abs(posY1 - posY0)
+        cumulX = posX0
+        cumulY = posY0
+        cumulN = -1 + distanceX + distanceY
+        xInc = 1 if posX1 > posX0 else -1
+        yInc = 1 if posY1 > posY0 else -1
         error = distanceX - distanceY
         distanceX *= 2
         distanceY *= 2
 
         if error > 0:
-            x += xInc
+            cumulX += xInc
             error -= distanceY
         elif error < 0:
-            y += yInc
+            cumulY += yInc
             error += distanceX
         else:
-            x += xInc
+            cumulX += xInc
             error -= distanceY
-            y += yInc
+            cumulY += yInc
             error += distanceX
-            n-=1
+            cumulN -= 1
 
-        while n > 0 and ldv:
-            if self.structure[y][x].type != "v":
+        while cumulN > 0 and ldv:
+            if self.structure[cumulY][cumulX].type != "v":
                 ldv = False
             else:
                 if error > 0:
-                    x += xInc
+                    cumulX += xInc
                     error -= distanceY
                 elif error < 0:
-                    y += yInc
+                    cumulY += yInc
                     error += distanceX
                 else:
-                    x += xInc
+                    cumulX += xInc
                     error -= distanceY
-                    y += yInc
+                    cumulY += yInc
                     error += distanceX
-                    n-=1
-                n-=1
+                    cumulN -= 1
+                cumulN -= 1
         return ldv

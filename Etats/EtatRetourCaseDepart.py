@@ -40,4 +40,4 @@ class EtatRetourCaseDepart(Etat):
         @niveau: La grille de jeu
         @type: Niveau"""
         niveau.gereDeplacementTF(
-            personnage, personnage.posDebTour, personnage, self.nomSort, AjouteHistorique=True)
+            personnage, personnage.posDebTour, personnage, self.nomSort, ajouteHistorique=True)
