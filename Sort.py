@@ -66,16 +66,16 @@ class Sort:
         return coutPA
 
     def estLancable(self, niveau, joueurLanceur,joueurCible):
-        res,msg,coutPA = self.sortEstLancable(niveau, joueurLanceur,joueurCible)
+        res,msg,coutPA = self.sortEstLancable(niveau, joueurLanceur, joueurCible)
         if res == False:
             return res,msg,coutPA
         for effet in self.effets:
-            res, msg =effet.estLancable(joueurLanceur,joueurCible)
+            res, msg = effet.estLancable(joueurLanceur, joueurCible)
             if res == False:
                 return res, msg, coutPA
         return True, msg, coutPA
 
-    def sortEstLancable(self, niveau, joueurLanceur,joueurCible):
+    def sortEstLancable(self, niveau, joueurLanceur, joueurCible):
         coutPA = self.getCoutPA(joueurLanceur)
         if self.compteTourEntreDeux >= self.nbTourEntreDeux:
             if self.compteLancerParTour < self.nbLancerParTour:
@@ -113,6 +113,11 @@ class Sort:
         @type: int
         @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
         @type: Personnage (ou None pour prendre le lanceur)"""
+        case_cible_x = int(case_cible_x)
+        case_cible_y = int(case_cible_y)
+        if self.ldv == True and not niveau.aLigneDeVue(origine_x, origine_y, case_cible_x, case_cible_y):
+            print("Pas de ligne de vue !")
+            return niveau.joueurs
         saveLanceur = None
         if isPrevisu:
             save = niveau
@@ -122,17 +127,16 @@ class Sort:
                 for joueur in niveau.joueurs:
                     if joueur.uid == caraclanceur.uid:
                         caraclanceur = joueur
-        case_cible_x = int(case_cible_x)
-        case_cible_y = int(case_cible_y)
-        caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x,origine_y)
+        
+        caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x, origine_y)
         #Get toutes les cases dans la zone d'effet
-        joueurCible=niveau.getJoueurSur(case_cible_x,case_cible_y)
+        joueurCible = niveau.getJoueurSur(case_cible_x, case_cible_y)
         #Test si la case est bien dans la portée du sort
-        if self.APorte(origine_x, origine_y,case_cible_x,case_cible_y, caraclanceur.PO):
+        if self.APorte(origine_x, origine_y, case_cible_x, case_cible_y, caraclanceur.PO):
             if not isPrevisu:
                 print(caraclanceur.nomPerso+" lance :"+self.nom)
             #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
-            res,explication,coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
+            res, explication, coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
             if res == True:
                 #Lancer du sort
                 if not isPrevisu:
@@ -140,7 +144,7 @@ class Sort:
                     self.marquerLancer(joueurCible)
                     print(caraclanceur.nomPerso+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
-                randomVal = round(random.random(),2)
+                randomVal = round(random.random(), 2)
                 if self.probaCC == 0:
                     isCC = False
                 else:

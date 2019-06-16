@@ -1284,10 +1284,11 @@ class Niveau:
         vide2 = pygame.image.load(constantes.image_vide_2).convert()
         team1 = pygame.image.load(constantes.image_team_1).convert_alpha()
         team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
-        prevision = pygame.image.load(constantes.image_prevision).convert()
-        prevision_tacle = pygame.image.load(
-            constantes.image_prevision_tacle).convert()
-        zone = pygame.image.load(constantes.image_zone).convert()
+        prevision_deplacement = pygame.image.load(constantes.image_prevision_deplacement).convert()
+        prevision_sort = pygame.image.load(constantes.image_prevision_sort).convert()
+        prevision_ldv = pygame.image.load(constantes.image_prevision_ldv).convert()
+        prevision_tacle = pygame.image.load(constantes.image_prevision_tacle).convert()
+        zone = pygame.image.load(constantes.image_prevision_zone).convert()
         # On parcourt la liste du niveau
         num_ligne = 0
         tab_cases_previ = []
@@ -1310,7 +1311,10 @@ class Niveau:
                     if sortSelectionne != None:
                         # Previsu de la porte du sort, une case teste par tour de double boucle
                         if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY, num_case, num_ligne, self.tourDe.PO):
-                            fenetre.blit(prevision, (x, y))
+                            if sortSelectionne.ldv == False or self.aLigneDeVue(self.tourDe.posX, self.tourDe.posY, num_case, num_ligne):
+                                fenetre.blit(prevision_sort, (x, y))
+                            else:
+                                fenetre.blit(prevision_ldv, (x, y))
                         # Si la souris est sur la grille de jeu (et non pas dans les sorts)
                         if mouse_xy[1] < constantes.y_sorts:
                             case_x = int(mouse_xy[0]/constantes.taille_sprite)
@@ -1406,7 +1410,7 @@ class Niveau:
                                         prevision_tacle, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
                                 else:
                                     fenetre.blit(
-                                        prevision, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                                        prevision_deplacement, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
                                 if cumulTacle[0] != 0 or cumulTacle[1] != 0:
                                     self.tourDe.vue = Overlays.VueForOverlay(
                                         self.fenetre, case_x*constantes.taille_sprite, case_y*constantes.taille_sprite, 30, 30, self.tourDe)
@@ -1422,7 +1426,7 @@ class Niveau:
                     if tab_cases_previ != None:
                         for case in tab_cases_previ:
                             fenetre.blit(
-                                prevision, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                                prevision_deplacement, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
 
         for jdp in previsuToShow:
             joueur = jdp
@@ -1560,3 +1564,48 @@ class Niveau:
                 if self.getJoueurSur(x, y+1).aEtat("Invisible") and self.getJoueurSur(x, y+1).team != self.tourDe.team:
                     voisins.append(Noeud(x, y+1))
         return voisins
+
+    def aLigneDeVue(self, x0, y0, x1, y1):
+        ldv = True
+        distanceX = abs(x1 - x0)
+        distanceY = abs(y1 - y0)
+        x = x0
+        y = y0
+        n = -1 + distanceX + distanceY
+        xInc = 1 if x1 > x0 else -1
+        yInc = 1 if y1 > y0 else -1
+        error = distanceX - distanceY
+        distanceX *= 2
+        distanceY *= 2
+
+        if error > 0:
+            x += xInc
+            error -= distanceY
+        elif error < 0:
+            y += yInc
+            error += distanceX
+        else:
+            x += xInc
+            error -= distanceY
+            y += yInc
+            error += distanceX
+            n-=1
+
+        while n > 0 and ldv:
+            if self.structure[y][x].type != "v":
+                ldv = False
+            else:
+                if error > 0:
+                    x += xInc
+                    error -= distanceY
+                elif error < 0:
+                    y += yInc
+                    error += distanceX
+                else:
+                    x += xInc
+                    error -= distanceY
+                    y += yInc
+                    error += distanceX
+                    n-=1
+                n-=1
+        return ldv

@@ -24,9 +24,11 @@ image_vide_1 = "images/vide1.png"
 image_vide_2 = "images/vide2.png"
 image_team_1 = "images/T1.png"
 image_team_2 = "images/T2.png"
-image_prevision = "images/prevision.png"
-image_prevision_tacle = "images/prevision_tacle.png"
-image_zone = "images/zone.png"
+image_prevision_sort = "images/prevision_sort.jpg"
+image_prevision_deplacement = "images/prevision_deplacement.jpg"
+image_prevision_ldv = "images/prevision_ldv.jpg"
+image_prevision_tacle = "images/prevision_tacle.jpg"
+image_prevision_zone = "images/prevision_zone.jpg"
 
 def normaliser(chaine):
 	"""@summary: enlève les accents d'une chaîne de caractère et la met en minuscule. Remplace également les espaces et apostrophes par un underscore.
