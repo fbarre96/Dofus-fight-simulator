@@ -1,4 +1,4 @@
-import Etats
+from Etats.Etat import Etat
 from Effets.Effet import Effet
 
 class EffetPropage(Effet):
@@ -34,7 +34,7 @@ class EffetPropage(Effet):
 
         # Etat temporaire pour marqué la cible comme déjà touché par la propagation
         joueurCaseEffet.appliquerEtat(
-            Etats.Etat("temporaire", 0, 1), joueurLanceur)
+            Etat("temporaire", 0, 1), joueurLanceur)
         # Récupérations des joueurs respectant les critères du sort les plus proches, etat requis = pas temporaire
         joueursAppliquables = niveau.getJoueurslesPlusProches(
             joueurCaseEffet.posX, joueurCaseEffet.posY, joueurLanceur, self.zone, ["!temporaire"], self.ciblesPossibles)

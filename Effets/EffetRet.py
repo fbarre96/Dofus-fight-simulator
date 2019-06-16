@@ -2,7 +2,7 @@ import random
 
 import Etats
 from Effets.Effet import Effet
-
+from Etats.EtatBoostCarac import EtatBoostCaracFixe
 class EffetRetPA(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire des PA esquivables normalement (pas implémenté l'esquive).
@@ -87,7 +87,7 @@ class EffetRetPM(Effet):
                     totalRet += 1
             if self.pourNbTour > 1:
                 nomSort = kwargs.get("nom_sort", "Retrait PM")
-                joueurCaseEffet.appliquerEtat(Etats.EtatBoostCaracFixe(
+                joueurCaseEffet.appliquerEtat(EtatBoostCaracFixe(
                     nomSort, 0, self.pourNbTour, "PM", -1*totalRet), joueurLanceur, -1, niveau)
                 if not self.isPrevisu():
                     print(joueurCaseEffet.nomPerso+" -" + str(totalRet) +

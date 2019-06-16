@@ -5,6 +5,7 @@ import constantes
 import pygame
 import Overlays
 from Effets.EffetGlyphe import EffetGlyphe
+from Etats.Etat import Etat
 import Etats
 import Sort
 from pygame.locals import *
@@ -1036,9 +1037,9 @@ class Niveau:
         if genereTF:
             joueurBougeant.retirerEtats("Telefrag")
             joueurASwap.retirerEtats("Telefrag")
-            joueurBougeant.appliquerEtat(Etats.Etat(
+            joueurBougeant.appliquerEtat(Etat(
                 "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
-            joueurASwap.appliquerEtat(Etats.Etat(
+            joueurASwap.appliquerEtat(Etat(
                 "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
 
     def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur, nomSort, AjouteHistorique=True, genereTF=True):

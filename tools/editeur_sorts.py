@@ -21,24 +21,7 @@ def TrouveClassesEffets():
                     found = True
     return classesEffet
 
-def TrouveClassesEtats():
-    classesEtat = []
-    findRegs = []
-    found = False
-    regEffet = r"class\s+Etat(\w+)"
-    with open("Etats.py") as file:
-        for line in file:
-            if found:
-                if "def __init__" in line:
-                    found = False
-                    args = line.strip().replace("def __init__(self,","")
-                    args = args.strip().replace("):","").rstrip()
-                    classesEtat.append([findRegs[0],args])
-            else:
-                findRegs=re.findall(regEffet, line)
-                if len(findRegs)>0:
-                    found = True
-    return classesEtat
+
 def TrouveClassesZones():
     classesZones = []
     regEffet = r"class\s+TypeZone(\w+)"

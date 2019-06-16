@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 import Sort as Sort
 import Zones as Zones
-import Etats as Etats
+from Etats.EtatBouclier import EtatBouclierPerLvl
 from Effets.EffetInvoque import EffetInvoque
 import constantes
 import Overlays
@@ -435,7 +435,7 @@ class Personnage(object):
         pb_restants = 0
         for etat in self.etats:
             if etat.actif():
-                if isinstance(etat, Etats.EtatBouclierPerLvl):
+                if isinstance(etat, EtatBouclierPerLvl):
                     pb_restants += etat.boostBouclier
 
         return pb_restants
@@ -472,7 +472,7 @@ class Personnage(object):
         pb_restants = 0
         for etat in self.etats:
             if etat.actif():
-                if isinstance(etat, Etats.EtatBouclierPerLvl):
+                if isinstance(etat, EtatBouclierPerLvl):
                     bouclierPrend = etat.boostBouclier - degats
                     if bouclierPrend > etat.boostBouclier:
                         degats -= etat.boostBouclier
