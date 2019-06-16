@@ -15,9 +15,9 @@ class EffetEntiteLanceSort(Effet):
         self.kwargs = kwargs
         self.nomEntites = str_nomEntites
         self.sort = sort_sort
-        super(EffetEntiteLanceSort, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetEntiteLanceSort(self.nomEntites, self.sort, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

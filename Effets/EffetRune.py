@@ -22,9 +22,9 @@ class EffetRune(Effet):
         self.effets = list_effets
         self.nom = str_nom
         self.couleur = tuple_couleur
-        super(EffetRune, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetRune(self.duree, self.effets, self.nom, self.couleur, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

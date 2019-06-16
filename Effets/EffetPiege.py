@@ -23,9 +23,9 @@ class EffetPiege(Effet):
         self.effets = list_effets
         self.nom = str_nom
         self.couleur = tuple_couleur
-        super(EffetPiege, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetPiege(self.zone_declenchement, self.effets, self.nom, self.couleur, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

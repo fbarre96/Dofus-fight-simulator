@@ -9,9 +9,9 @@ class EffetTp(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTp, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTp(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -46,9 +46,9 @@ class EffetTeleportePosPrec(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.nbCase = int_nbCase
-        super(EffetTeleportePosPrec, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTeleportePosPrec(self.nbCase, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -76,9 +76,9 @@ class EffetTeleporteDebutTour(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTeleporteDebutTour, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTeleporteDebutTour(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -104,9 +104,9 @@ class EffetTeleporteDebutCombat(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTeleporteDebutCombat, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTeleporteDebutCombat(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -132,9 +132,9 @@ class EffetTpSym(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTpSym, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTpSym(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -164,9 +164,9 @@ class EffetTpSymSelf(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTpSymSelf, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTpSymSelf(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -197,9 +197,9 @@ class EffetTpSymCentre(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTpSymCentre, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTpSymCentre(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -234,9 +234,9 @@ class EffetEchangePlace(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.persoADeplace = persoADeplace
-        super(EffetEchangePlace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetEchangePlace(self.persoADeplace, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

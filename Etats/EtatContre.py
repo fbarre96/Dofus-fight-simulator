@@ -27,9 +27,9 @@ class EtatContre(Etat):
         @type: string"""
         self.pourcentage = pourcentage
         self.tailleZone = tailleZone
-        super(EtatContre, self).__init__(nom, debDans,duree, lanceur,desc)
+        super().__init__(nom, debDans,duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatContre(self.nom, self.debuteDans,self.duree,  self.pourcentage, self.tailleZone, self.lanceur,self.desc)

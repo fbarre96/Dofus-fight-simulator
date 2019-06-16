@@ -21,9 +21,9 @@ class EtatActiveSort(Etat):
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.sort = sort
-        super(EtatActiveSort, self).__init__(nom,debDans, duree, lanceur,desc)
+        super().__init__(nom,debDans, duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatActiveSort(self.nom, self.debuteDans,self.duree,  self.sort, self.lanceur,self.desc)

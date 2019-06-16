@@ -18,12 +18,12 @@ class EffetPousser(Effet):
         self.nbCase = int_nbCase
         self.source = source
         self.cible = cible
-        super(EffetPousser, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
 
-    def determinerSensPousser(self, niveau, cible, sourceX, sourceY):
+    def determinerSensPousser(self, cible, sourceX, sourceY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
@@ -74,7 +74,7 @@ class EffetPousser(Effet):
                 joueurCaseEffet.posX, joueurCaseEffet.posY)
         elif self.cible == "Lanceur":
             self.joueurAPousser = joueurLanceur
-        self.determinerSensPousser(niveau, [
+        self.determinerSensPousser([
                                    self.joueurAPousser.posX, self.joueurAPousser.posY], self.case_from_x, self.case_from_y)
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
@@ -99,12 +99,12 @@ class EffetPousserJusque(EffetPousser):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.nbCase = 0
-        super(EffetPousserJusque, self).__init__(0, "", "", **kwargs)
+        super().__init__(0, "", "", **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetPousserJusque(**self.kwargs)
 
-    def determinerSensPousser(self, niveau, cible, sourceX, sourceY):
+    def determinerSensPousser(self, cible, sourceX, sourceY):
         """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
@@ -148,7 +148,7 @@ class EffetPousserJusque(EffetPousser):
         self.case_from_y = joueurLanceur.posY
         self.case_to_x = kwargs.get("case_cible_x")
         self.case_to_y = kwargs.get("case_cible_y")
-        self.determinerSensPousser(niveau, [
+        self.determinerSensPousser([
                                    self.case_to_x, self.case_to_y], self.case_from_x, self.case_from_y)
         self.joueurAPousser = niveau.getJoueurSur(
             joueurLanceur.posX + self.coordonnees[0], joueurLanceur.posY + self.coordonnees[1])
@@ -182,9 +182,9 @@ class EffetAttire(EffetPousser):
         self.source = source
         self.cible = cible
         self.kwargs = kwargs
-        super(EffetAttire, self).__init__(int_nbCase, source, cible, **kwargs)
+        super().__init__(int_nbCase, source, cible, **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetAttire(self.nbCase, self.source, self.cible, **self.kwargs)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
@@ -220,7 +220,7 @@ class EffetAttire(EffetPousser):
             self.joueurAAttirer = joueurCaseEffet
         if self.joueurAAttirer != None:
             if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:
-                super(EffetAttire, self).determinerSensPousser(niveau, [
+                super().determinerSensPousser([
                     self.joueurAAttirer.posX, self.joueurAAttirer.posY], self.case_from_x, self.case_from_y)
                 #  changement de sens par rapport au sens de pousser
                 self.coordonnees[0] *= -1

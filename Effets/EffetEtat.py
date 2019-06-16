@@ -1,4 +1,5 @@
 from Effets.Effet import Effet
+from copy import deepcopy
 
 class EffetEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -12,9 +13,9 @@ class EffetEtat(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.etat = etat_etat
-        super(EffetEtat, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetEtat(self.etat, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -29,9 +30,9 @@ class EffetEtat(Effet):
         @type: **kwargs"""
         if joueurCaseEffet != None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
-            etatCopier = self.etat.deepcopy()
+            etatCopier = deepcopy(self.etat)
             return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
-            
+
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur."""
@@ -44,9 +45,9 @@ class EffetEtatSelf(Effet):
         @type: **kwargs"""
         self.etat = etat_etat
         self.kwargs = kwargs
-        super(EffetEtatSelf, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetEtatSelf(self.etat, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -59,7 +60,7 @@ class EffetEtatSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        etatCopier = self.etat.deepcopy()
+        etatCopier = deepcopy(self.etat)
         return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
 
 
@@ -76,9 +77,9 @@ class EffetEtatSelfTF(Effet):
         self.etat = etat_etat
         self.sorts_exclus = sorts_exclus
         self.kwargs = kwargs
-        super(EffetEtatSelfTF, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetEtatSelfTF(self.etat, self.sorts_exclus, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -94,7 +95,7 @@ class EffetEtatSelfTF(Effet):
         nomSort = self.getNomSortTF()
         if nomSort in self.sorts_exclus:
             return False
-        etatCopier = self.etat.deepcopy()
+        etatCopier = deepcopy(self.etat)
         if self.kwargs.get("remplaceNom", True):
             etatCopier.nom = nomSort
         return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
@@ -111,9 +112,9 @@ class EffetRafraichirEtats(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.deXTours = int_deXTours
-        super(EffetRafraichirEtats, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetRafraichirEtats(self.deXTours, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -143,9 +144,9 @@ class EffetSetDureeEtat(Effet):
         self.nomEtat = nomEtat
         self.nouveauDebut = nouveauDebut
         self.nouvelleDuree = nouvelleDuree
-        super(EffetSetDureeEtat, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetSetDureeEtat(self.nomEtat, self.nouveauDebut, self.nouvelleDuree, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -176,9 +177,9 @@ class EffetRetireEtat(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.nomEtat = str_nomEtat
-        super(EffetRetireEtat, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetRetireEtat(self.nomEtat, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

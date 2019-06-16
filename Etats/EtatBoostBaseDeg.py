@@ -24,9 +24,9 @@ class EtatBoostBaseDeg(Etat):
         @type: string"""
         self.boostbaseDeg = boostbaseDeg
         self.nomSort=nomSort
-        super(EtatBoostBaseDeg, self).__init__(nom, debDans,duree, lanceur,desc)
+        super().__init__(nom, debDans,duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostBaseDeg(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc)
@@ -52,8 +52,8 @@ class EtatBoostBaseDegLvlBased(EtatBoostBaseDeg):
     """@summary: Classe décrivant un état qui modifie les dégâts de base d'un sort pour le porteur selon son lvl.
     Hérite de EtatBoostBaseDeg"""
     def __init__(self, nom,  debDans, duree,nomSort,boostbaseDeg,lanceur=None,desc=""):
-        super(EtatBoostBaseDegLvlBased, self).__init__(nom, debDans,duree,boostbaseDeg,nomSort, lanceur,desc)
-    def deepcopy(self):
+        super().__init__(nom, debDans,duree,boostbaseDeg,nomSort, lanceur,desc)
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostBaseDegLvlBased(self.nom,  self.debuteDans, self.duree, self.nomSort, self.boostbaseDeg,self.lanceur,self.desc)    

@@ -16,9 +16,9 @@ class EffetRetPA(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.retrait = int_retrait
-        super(EffetRetPA, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetRetPA(self.retrait, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -60,9 +60,9 @@ class EffetRetPM(Effet):
         self.retrait = int_retrait
         self.pourNbTour = pourNbTour
         self.desenvoutable = desenvoutable
-        super(EffetRetPM, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetRetPM(self.retrait, self.pourNbTour, self.desenvoutable, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -79,7 +79,7 @@ class EffetRetPM(Effet):
             totalRet = 0
             for i in range(self.retrait):
                 esqPm = joueurCaseEffet.esqPM if joueurCaseEffet.esqPM != 0 else 1
-                basePm = joueurCaseEffet._PM if joueurCaseEffet._PM != 0 else 1
+                basePm = joueurCaseEffet.PMBase if joueurCaseEffet.PMBase != 0 else 1
                 probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * \
                     (float(joueurCaseEffet.PM)/float(basePm))
                 rand = random.random()

@@ -28,9 +28,6 @@ class Etat(object):
         self.desc = desc
 
     def __deepcopy__(self, memo):
-        return self.deepcopy()
-
-    def deepcopy(self):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return Etat(self.nom, self.debuteDans, self.duree, self.lanceur, self.tabCarac, self.desc)

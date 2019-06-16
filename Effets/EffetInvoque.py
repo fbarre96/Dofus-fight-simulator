@@ -15,9 +15,9 @@ class EffetInvoque(Effet):
         self.kwargs = kwargs
         self.compteCommeInvocation = compteCommeInvocation
         self.nomInvoque = str_nomInvoque
-        super(EffetInvoque, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetInvoque(self.nomInvoque, self.compteCommeInvocation, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -68,9 +68,9 @@ class EffetDouble(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetDouble, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetDouble(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

@@ -9,9 +9,9 @@ class EffetTue(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetTue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetTue(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

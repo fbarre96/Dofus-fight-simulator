@@ -22,9 +22,9 @@ class EtatModSoinPer(Etat):
         @type: string"""
         self.pourcentage = pourcentage
         self.provenance = provenance
-        super(EtatModSoinPer, self).__init__(nom, debDans,duree, lanceur,desc)
+        super().__init__(nom, debDans,duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatModSoinPer(self.nom, self.debuteDans,self.duree,  self.pourcentage,self.provenance, self.lanceur,self.desc)

@@ -9,9 +9,9 @@ class EffetDevoilePiege(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetDevoilePiege, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetDevoilePiege(**self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

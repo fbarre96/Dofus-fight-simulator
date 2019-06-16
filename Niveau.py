@@ -765,14 +765,18 @@ class Niveau:
         @type: int
         @case_y: la coordonnée y de la case sur laquelle le joueur sera invoqué.
         @type: int"""
-        print("Invocation "+invoc.nomPerso)
-        invoc.bouge(self, case_x, case_y, False)
-
+        found = False
         for i in range(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
                 invoc.LancerSortsDebutCombat(self)
+                found = True
                 break
+        if not found:
+            raise Exception("Impossible d'invoquer si ce n'est pas votre tour.")
+        else:
+            print("Invocation "+invoc.nomPerso)
+            invoc.bouge(self, case_x, case_y, False)
 
     def getZoneEffet(self, effet, case_x, case_y):
         """@summary: Retourne un tableau des cases présentes dans la zone de l'effet donné.
@@ -1058,7 +1062,6 @@ class Niveau:
         @type: booléen, True par défaut
 
         @return: Renvoie le joueur qui a été impliqué dans le téléfrag s'il existe, None sinon"""
-
         # Test hors-map
         if posAtteinte[1] < 0 or posAtteinte[1] >= constantes.taille_carte or posAtteinte[0] < 0 or posAtteinte[0] >= constantes.taille_carte:
             return None
@@ -1075,8 +1078,8 @@ class Niveau:
             else:
                 reelLanceur = lanceur
 
-            joueurSwap = joueurASwap = self.getJoueurSur(
-                posAtteinte[0], posAtteinte[1])
+            joueurASwap = self.getJoueurSur(posAtteinte[0], posAtteinte[1])
+            
             if joueurASwap != joueurBougeant:
                 self.__deplacementTFVersCaseOccupee(
                     joueurASwap, joueurBougeant, posAtteinte, reelLanceur, nomSort, AjouteHistorique, genereTF)
@@ -1106,7 +1109,7 @@ class Niveau:
 
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
         if isinstance(effet, EffetGlyphe):
-            effetALancer = effet.deepcopy()
+            effetALancer = deepcopy(effet)
             effetALancer.appliquerEffet(self, None, joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y,
                                         nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
             return True
@@ -1149,7 +1152,7 @@ class Niveau:
             # récupération du joueur sur la case
             joueurCaseEffet = self.getJoueurSur(case_x, case_y)
             # Test si un joeuur est sur la case
-            effetALancer = effet.deepcopy()
+            effetALancer = deepcopy(effet)
             if joueurCaseEffet != None:
 
                 # Si le joueur sur la case est une cible valide

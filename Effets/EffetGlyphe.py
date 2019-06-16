@@ -28,9 +28,9 @@ class EffetGlyphe(Effet):
         self.duree = int_duree
         self.nom = str_nom
         self.couleur = tuple_couleur
-        super(EffetGlyphe, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetGlyphe(self.sort, self.sort_deplacement, self.sort_sortie, self.duree, self.nom, self.couleur, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -61,9 +61,9 @@ class EffetActiveGlyphe(Effet):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.str_nomGlyphe = str_nomGlyphe
-        super(EffetActiveGlyphe, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetActiveGlyphe(self.str_nomGlyphe, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

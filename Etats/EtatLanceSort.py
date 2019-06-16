@@ -23,9 +23,9 @@ class EtatLanceSortSiSubit(Etat):
         @type: string"""
         self.sort = sort
         self.lanceurDuSort = lanceurDuSort
-        super(EtatLanceSortSiSubit, self).__init__(nom, debDans,duree, lanceur,desc)
+        super().__init__(nom, debDans,duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatLanceSortSiSubit(self.nom, self.debuteDans,self.duree,  self.sort,self.lanceurDuSort, self.lanceur,self.desc)

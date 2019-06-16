@@ -16,9 +16,9 @@ class EffetPropage(Effet):
         self.kwargs = kwargs
         self.zone = zone_zone
         self.sort = sort_sort
-        super(EffetPropage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetPropage(self.sort, self.zone, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):

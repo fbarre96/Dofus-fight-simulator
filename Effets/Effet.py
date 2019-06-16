@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*
-
+"""
+@summary: Décrit un Effet de sort générique, déclare les fonctions stub
+"""
 import Zones
+
 
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -8,13 +11,16 @@ class Effet(object):
 
     def __init__(self, **kwargs):
         """@summary: Initialise un Effet.
-        @kwargs: Options de l'effets, possibilitées: etat_requis (string séparé par |, aucun par défaut),
-                                                     etat_requis_cibles (string séparé par |, aucun par défaut),
-                                                     consomme_etat (booléen, Faux par défaut),
-                                                     cibles_possibles (string, "Allies|Ennemis|Lanceur" par défaut)
-                                                     cibles_exclues (string, aucune par défaut)
-                                                     cible_requise (booléen, Faux par défaut). Indique si l'effet peut être lancé s'il n'a pas de cible direct (autrement dit si le sort est lancé sur une case vide).
-                                                     zone (Zone, Zones.TypeZoneCercle(0) par défaut = sort mono cible)
+        @kwargs: Options de l'effets
+        , possibilitées: etat_requis (string séparé par |, aucun par défaut),
+                        etat_requis_cibles (string séparé par |, aucun par défaut),
+                        consomme_etat (booléen, Faux par défaut),
+                        cibles_possibles (string, "Allies|Ennemis|Lanceur" par défaut)
+                        cibles_exclues (string, aucune par défaut)
+                        cible_requise (booléen, Faux par défaut).
+                                    Indique si l'effet peut être lancé s'il n'a pas de cible direct
+                                    (autrement dit si le sort est lancé sur une case vide).
+                        zone (Zone, Zones.TypeZoneCercle(0) par défaut = sort mono cible)
         @type: **kwargs"""
         self.etatRequisCibleDirect = kwargs.get('etat_requis', "").split("|")
         if self.etatRequisCibleDirect[-1] == "":
@@ -31,27 +37,59 @@ class Effet(object):
         self.kwargs = kwargs
 
     def setCritique(self, val):
+        """
+        @summary: indique à l'effet qu'il a été lancé avec un sort qui a été critique
+        @val: la nouvelle valeur pour le booléen critique
+        @type: bool
+        """
         self.kwargs["isCC"] = val
 
     def isCC(self):
+        """
+        @summary: demance à l'effet s'il a été lancé avec un sort qui a été critique
+        @return: bool
+        """
         return self.kwargs.get("isCC", False)
 
     def setPrevisu(self, val):
+        """
+        @summary: indique à l'effet qu'il est lancé dans le cadre d'une prévisualisation
+        @val: la nouvelle valeur pour le booléen isPrevisu
+        @type: bool
+        """
         self.kwargs["isPrevisu"] = val
 
     def isPrevisu(self):
+        """
+        @summary: demance à l'effet s'il a été lancé pour une prévisualisation
+        @return: bool
+        """
         return self.kwargs.get("isPrevisu", False)
 
     def setNomSortTF(self, val):
+        """
+        @summary: indique à l'effet le nom du sort a l'origine du téléfrag
+        @val: la nouvelle valeur pour le nom du sort
+        @type: string
+        """
         self.kwargs["nomSortTF"] = val
 
     def getNomSortTF(self):
+        """
+        @summary: demance à l'effet le nom du sort à l'origine du téléfrag
+        @return: le nom du sort
+        """
         return self.kwargs.get("nomSortTF", "")
 
     def isReverseTreatmentOrder(self):
+        """
+        @summary: demande à l'effet s'il doit rechercher ses cibles dans le sens inverse.
+                  Depuis l'extérieur vers l'intérieur.
+        @return: un booléen
+        """
         return self.kwargs.get("reversedTreatmentOrder", False)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return Effet(**self.kwargs)
 
     def setDegatsSubits(self, valPerdu, typeDegats):
@@ -62,6 +100,7 @@ class Effet(object):
         return self.kwargs.get("degatsSubits", 0), self.kwargs.get("typeDegats", "")
 
     def estLancable(self, joueurLanceur, joueurCible):
+        # pylint: disable=unused-argument
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
         @type: Personnage
@@ -146,6 +185,7 @@ class Effet(object):
         return self.typeZone.testCaseEstDedans([departZone_x, departZone_y], [testDansZone_x, testDansZone_y], [j_x, j_y])
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        # pylint: disable=unused-argument
         """@summary: Applique les modifications sur le jeu créées par l'effet.
         @niveau: la grille de simulation de combat.
         @type: Niveau
@@ -160,6 +200,7 @@ class Effet(object):
         niveau.ajoutFileEffets(self)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        # pylint: disable=unused-argument
         print("Activation non définie")
 
     def afficher(self):

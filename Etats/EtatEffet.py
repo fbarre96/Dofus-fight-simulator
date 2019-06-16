@@ -27,9 +27,9 @@ class EtatEffetFinTour(Etat):
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
-        super(EtatEffetFinTour, self).__init__(nom,  debDans,duree,lanceur,desc)
+        super().__init__(nom,  debDans,duree,lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetFinTour(self.nom, self.debuteDans,self.duree,  self.effet,self.nomSort,self.quiLancera, self.lanceur,self.desc)
@@ -73,9 +73,9 @@ class EtatEffetDebutTour(Etat):
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
-        super(EtatEffetDebutTour, self).__init__(nom, debDans,duree, lanceur,desc)
+        super().__init__(nom, debDans,duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetDebutTour(self.nom, self.debuteDans,self.duree,  self.effet,self.nomSort,self.quiLancera, self.lanceur,self.desc)
@@ -122,9 +122,9 @@ class EtatEffetSiSubit(Etat):
         self.quiLancera = quiLancera
         self.cible = cible
         self.typeDeg = typeDeg
-        super(EtatEffetSiSubit, self).__init__(nom,debDans, duree, lanceur,desc)
+        super().__init__(nom,debDans, duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiSubit(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.typeDeg,self.lanceur,self.desc)
@@ -180,9 +180,9 @@ class EtatEffetSiPousse(Etat):
         self.effet = effet
         self.nomSort = nomSort
         self.quiLancera = quiLancera
-        super(EtatEffetSiPousse, self).__init__(nom,debDans, duree, lanceur,desc)
+        super().__init__(nom,debDans, duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiPousse(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.lanceur,self.desc)
@@ -235,9 +235,9 @@ class EtatEffetSiPiegeDeclenche(Etat):
         self.nomSort = nomSort
         self.quiLancera = quiLancera
         self.cible = cible
-        super(EtatEffetSiPiegeDeclenche, self).__init__(nom,debDans, duree, lanceur,desc)
+        super().__init__(nom,debDans, duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.lanceur,self.desc)
@@ -284,9 +284,9 @@ class EtatEffetSiTFGenere(Etat):
         self.quiLancera = quiLancera
         self.cible = cible
         self.sortInterdit = sortInterdit
-        super(EtatEffetSiTFGenere, self).__init__(nom,debDans, duree, lanceur,desc)
+        super().__init__(nom,debDans, duree, lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiTFGenere(self.nom, self.debuteDans,self.duree,  self.effet, self.nomSort,self.quiLancera,self.cible,self.porteurEstTF,self.sortInterdit,self.lanceur,self.desc)

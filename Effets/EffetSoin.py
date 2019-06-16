@@ -12,9 +12,9 @@ class EffetSoin(Effet):
         @type: **kwargs"""
         self.valSoin = valSoin
         self.kwargs = kwargs
-        super(EffetSoin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         cpy = EffetSoin(self.valSoin, **self.kwargs)
         return cpy
 
@@ -22,8 +22,8 @@ class EffetSoin(Effet):
         if joueurCaseEffet == None:
             return None
         self.valSoin += joueurLanceur.soins
-        if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet._vie:
-            self.valSoin = joueurCaseEffet._vie - joueurCaseEffet.vie
+        if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet.vieMax:
+            self.valSoin = joueurCaseEffet.vieMax - joueurCaseEffet.vie
         return self.valSoin
 
     def appliquerSoin(self, niveau, joueurCaseEffet, joueurLanceur):
@@ -74,9 +74,9 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super(EffetSoinPerPVMax, self).__init__(0, **kwargs)
+        super().__init__(0, **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         cpy = EffetSoinPerPVMax(self.pourcentage, **self.kwargs)
         return cpy
 
@@ -91,7 +91,7 @@ class EffetSoinPerPVMax(EffetSoin):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            self.valSoin = int((self.pourcentage/100.0) * joueurCaseEffet._vie)
+            self.valSoin = int((self.pourcentage/100.0) * joueurCaseEffet.vieMax)
             self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
                 "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             if self.isPrevisu():
@@ -112,9 +112,9 @@ class EffetSoinSelonSubit(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super(EffetSoinSelonSubit, self).__init__(0, **kwargs)
+        super().__init__(0, **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         cpy = EffetSoinSelonSubit(self.pourcentage, **self.kwargs)
         return cpy
 

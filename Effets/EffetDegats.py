@@ -21,14 +21,15 @@ class EffetDegats(Effet):
         self.maxJet = int_maxJet
         self.typeDegats = str_typeDegats.lower()
         self.kwargs = kwargs
-        super(EffetDegats, self).__init__(**kwargs)
+        self.total = 0
+        super().__init__(**kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         cpy = EffetDegats(self.minJet, self.maxJet,
                           self.typeDegats, **self.kwargs)
         return cpy
 
-    def calculDegats(self, niveau, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
+    def calculDegats(self, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
         if joueurCaseEffet == None:
             return None
 
@@ -155,15 +156,15 @@ class EffetDegats(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             if self.isPrevisu():
-                total_min = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                total_min = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                     "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "min")
-                total_max = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                total_max = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                     "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "max")
                 self.total = total_min
                 joueurCaseEffet.msgsPrevisu.append(
                     str(total_min)+"-"+str(total_max))
             else:
-                self.total = self.calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+                self.total = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                     "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
@@ -188,10 +189,10 @@ class EffetVolDeVie(EffetDegats):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetVolDeVie, self).__init__(
+        super().__init__(
             int_minJet, int_maxJet, str_typeDegats, **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetVolDeVie(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -207,7 +208,7 @@ class EffetVolDeVie(EffetDegats):
 
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = super(EffetVolDeVie, self).calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+            self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                 "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
@@ -216,8 +217,8 @@ class EffetVolDeVie(EffetDegats):
 
         if joueurCaseEffet is not None:
             # Le soin est majoré à la vie de début du combat
-            if joueurLanceur.vie > joueurLanceur._vie:
-                joueurLanceur.vie = joueurLanceur._vie
+            if joueurLanceur.vie > joueurLanceur.vieMax:
+                joueurLanceur.vie = joueurLanceur.vieMax
             self.appliquerDegats(niveau, joueurCaseEffet, joueurLanceur)
             # Soin
 
@@ -244,10 +245,10 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        super(EffetDegatsSelonPMUtilises, self).__init__(
+        super().__init__(
             int_minJet, int_maxJet, str_typeDegats, **kwargs)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         return EffetDegatsSelonPMUtilises(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -263,9 +264,9 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
 
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = super(EffetDegatsSelonPMUtilises, self).calculDegats(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
+            self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                 "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
-            ratioPM = abs(float(joueurLanceur.PM) / float(joueurLanceur._PM))
+            ratioPM = abs(float(joueurLanceur.PM) / float(joueurLanceur.PMBase))
             ratioPM = max(ratioPM, 0)
             self.total = int(ratioPM * self.total)
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)

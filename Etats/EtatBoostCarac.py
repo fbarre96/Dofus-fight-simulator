@@ -23,9 +23,9 @@ class EtatBoostCaracFixe(Etat):
         @type: string"""
         self.nomAttributCarac = nomAttributCarac
         self.boostCarac = boostCarac
-        super(EtatBoostCaracFixe, self).__init__(nom,  debDans,duree,lanceur,desc)
+        super().__init__(nom,  debDans,duree,lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostCaracFixe(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCarac, self.lanceur,self.desc)
@@ -92,9 +92,9 @@ class EtatBoostCaracPer(Etat):
         @type: string"""
         self.nomAttributCarac = nomAttributCarac
         self.boostCaracPer = boostCaracPer
-        super(EtatBoostCaracPer, self).__init__(nom,  debDans,duree,lanceur,desc)
+        super().__init__(nom,  debDans,duree,lanceur,desc)
 
-    def deepcopy(self):
+    def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostCaracPer(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCaracPer, self.lanceur,self.desc)
@@ -119,7 +119,7 @@ class EtatBoostCaracPer(Etat):
         self.boostCarac = int(caracValue * (pourcentageBoost/100.0))
         setattr(personnage,self.nomAttributCarac,caracValue + self.boostCarac)
         if self.nomAttributCarac == "vie":
-            personnage._vie += self.boostCarac
+            personnage.vieMax += self.boostCarac
         print("Modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue + self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")
     
     def triggerAvantRetrait(self,personnage):
@@ -130,5 +130,5 @@ class EtatBoostCaracPer(Etat):
         caracValue = getattr(personnage,self.nomAttributCarac)
         setattr(personnage,self.nomAttributCarac,caracValue - self.boostCarac)
         if self.nomAttributCarac == "vie":
-            personnage._vie -= self.boostCarac
+            personnage.vieMax -= self.boostCarac
         print("Fin de modification de "+self.nomAttributCarac+":"+str(caracValue)+" -> "+str(caracValue - self.boostCarac) +" ("+str(self.boostCaracPer)+"%)")

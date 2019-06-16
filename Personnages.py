@@ -6,7 +6,7 @@ from Effets.EffetInvoque import EffetInvoque
 import constantes
 import Overlays
 import pygame
-from pygame.locals import *
+from pygame.locals import QUIT, K_F1, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9, K_ESCAPE
 import json
 from copy import deepcopy
 import copy
@@ -97,8 +97,8 @@ class Personnage(object):
         self.reMelee = int(resistances.get("Melee", 0))
         self.resistances = resistances
 
-        self._vie = self.vie
-        self._PM = int(self.PM)
+        self.vieMax = self.vie
+        self.PMBase = int(self.PM)
         self._PA = int(self.PA)
         self.nomPerso = nomPerso
         self.erosion = 10  # Erosion de base
@@ -147,8 +147,8 @@ class Personnage(object):
         toReturn.posX = self.posX
         toReturn.posY = self.posY
         toReturn._PA = self._PA
-        toReturn._PM = self._PM
-        toReturn._vie = self._vie
+        toReturn.PMBase = self.PMBase
+        toReturn.vieMax = self.vieMax
         toReturn.uid = self.uid
         toReturn.sorts = deepcopy(self.sorts)
         toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
@@ -492,13 +492,13 @@ class Personnage(object):
             erosion = 50
         elif erosion < 10:  # L'érosion est capé mini à 10% dans le jeu
             erosion = 10
-        self._vie -= int(totalPerdu * (erosion/100))
-        if self._vie < 0:
-            self._vie = 0
-        if self.vie > self._vie:
-            self.vie = self._vie
+        self.vieMax -= int(totalPerdu * (erosion/100))
+        if self.vieMax < 0:
+            self.vieMax = 0
+        if self.vie > self.vieMax:
+            self.vie = self.vieMax
         toprint = ""
-        toprint = self.nomPerso+" a "+str(self.vie) + "/"+str(self._vie)+" PV"
+        toprint = self.nomPerso+" a "+str(self.vie) + "/"+str(self.vieMax)+" PV"
         if pb_restants > 0:
             toprint += " et "+str(pb_restants)+" PB"
         if shouldprint:
@@ -515,7 +515,7 @@ class Personnage(object):
         """@summary: Termine le tour du personnage, récupération des PA et PM, sorts utilisés, activation du trigger d'état triggerFinTour
         @niveau: La grille de jeu
         @type: Niveau"""
-        self.PM = self._PM
+        self.PM = self.PMBase
         self.PA = self._PA
         for sort in self.sorts:
             sort.compteLancerParTour = 0
@@ -676,16 +676,37 @@ class PersonnageMur(Personnage):
         """@summary: Initialise un personnage Mur, même initialisation que Personange
         @args: les arguments donnés, doivent être les mêmes que Personnage
         @type:*args"""
-        super(PersonnageMur, self).__init__(*args)
+        super().__init__(*args)
 
-    def deepcopy(self):
-        """@summary: Clone le personnageMur
-        @return: le clone"""
-        cp = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team, self.caracsPrimaires,
-                           self.caracsSecondaires, self.dommages, self.resistances, self.icone)
-        cp.sorts, cp.sortsDebutCombat = Personnage.ChargerSorts(
-            cp.classe, cp.lvl)
-        return cp
+    def __deepcopy__(self, memo):
+        toReturn = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team,
+                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
+                                  "Force": self.fo, "Intelligence": self.int, "Puissance": self.pui, "Coups Critiques": self.cc, "Sagesse": self.sagesse},
+                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA, "Retrait PM": self.retPM, "Esquive PM": self.esqPM, "Soins": self.soins,
+                               "Tacle": self.tacle, "Fuite": self.fuite, "Initiative": self.ini, "Invocation": self.invocationLimite, "Prospection": self.prospection},
+                              {"Dommages": self.do, "Dommages critiques": self.doCri, "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
+                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou, "Sorts": self.doSorts, "Armes": self.doArmes, "Distance": self.doDist, "Melee": self.doMelee},
+                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre, "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+                               "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir, "Coups critiques": self.reCc, "Poussee": self.rePou, "Distance": self.reDist, "Melee": self.reMelee},
+                              self.icone)
+        toReturn.sortsDebutCombat = self.sortsDebutCombat
+        toReturn.posX = self.posX
+        toReturn.posY = self.posY
+        toReturn._PA = self._PA
+        toReturn.PMBase = self.PMBase
+        toReturn.vieMax = self.vieMax
+        toReturn.uid = self.uid
+        toReturn.sorts = deepcopy(self.sorts)
+        toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
+        toReturn.etats = deepcopy(self.etats)
+        toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
+        toReturn.posDebTour = self.posDebTour
+        toReturn.posDebCombat = self.posDebCombat
+        toReturn.invocateur = self.invocateur
+        toReturn.invocations = deepcopy(self.invocations)
+        toReturn.invocationLimite = self.invocationLimite
+        toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+        return toReturn
 
     def joue(self, event, niveau, mouse_xy, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageMur d'effectuer ses actions.
@@ -709,16 +730,37 @@ class PersonnageSansPM(Personnage):
         """@summary: Initialise un personnage sans PM, même initialisation que Personange
         @args: les arguments donnés, doivent être les mêmes que Personnage
         @type:*args"""
-        super(PersonnageSansPM, self).__init__(*args)
+        super().__init__(*args)
 
-    def deepcopy(self):
-        """@summary: Clone le PersonnageSansPM
-        @return: le clone"""
-        cp = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team, self.caracsPrimaires,
-                              self.caracsSecondaires, self.dommages, self.resistances, self.icone)
-        cp.sorts, cp.sortsDebutCombat = Personnage.ChargerSorts(
-            cp.classe, cp.lvl)
-        return cp
+    def __deepcopy__(self, memo):
+        toReturn = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team,
+                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
+                                  "Force": self.fo, "Intelligence": self.int, "Puissance": self.pui, "Coups Critiques": self.cc, "Sagesse": self.sagesse},
+                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA, "Retrait PM": self.retPM, "Esquive PM": self.esqPM, "Soins": self.soins,
+                               "Tacle": self.tacle, "Fuite": self.fuite, "Initiative": self.ini, "Invocation": self.invocationLimite, "Prospection": self.prospection},
+                              {"Dommages": self.do, "Dommages critiques": self.doCri, "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
+                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou, "Sorts": self.doSorts, "Armes": self.doArmes, "Distance": self.doDist, "Melee": self.doMelee},
+                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre, "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+                               "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir, "Coups critiques": self.reCc, "Poussee": self.rePou, "Distance": self.reDist, "Melee": self.reMelee},
+                              self.icone)
+        toReturn.sortsDebutCombat = self.sortsDebutCombat
+        toReturn.posX = self.posX
+        toReturn.posY = self.posY
+        toReturn._PA = self._PA
+        toReturn.PMBase = self.PMBase
+        toReturn.vieMax = self.vieMax
+        toReturn.uid = self.uid
+        toReturn.sorts = deepcopy(self.sorts)
+        toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
+        toReturn.etats = deepcopy(self.etats)
+        toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
+        toReturn.posDebTour = self.posDebTour
+        toReturn.posDebCombat = self.posDebCombat
+        toReturn.invocateur = self.invocateur
+        toReturn.invocations = deepcopy(self.invocations)
+        toReturn.invocationLimite = self.invocationLimite
+        toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+        return toReturn
 
     def joue(self, event, niveau, mouse_xy, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageSansPM d'effectuer ses actions.
