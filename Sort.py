@@ -134,7 +134,7 @@ class Sort:
         @type: Personnage (ou None pour prendre le lanceur)"""
         caseCibleX = int(caseCibleX)
         caseCibleY = int(caseCibleY)
-        if self.ldv and not niveau.aLigneDeVue(origineX, origineY, caseCibleX, caseCibleY):
+        if self.ldv and not self.aLigneDeVue(niveau, origineX, origineY, caseCibleX, caseCibleY):
             print("Pas de ligne de vue !")
             return niveau.joueurs
         saveLanceur = None
@@ -210,3 +210,51 @@ class Sort:
         #  réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
         niveau.afficherSorts()
         return toReturn
+
+    def aLigneDeVue(self, niveau, posX0, posY0, posX1, posY1):
+        """@summary: calcul si la pos 0 à la la lidgne de vue sur la pos 1
+           @return: booléen
+        """
+        ldv = True
+        distanceX = abs(posX1 - posX0)
+        distanceY = abs(posY1 - posY0)
+        cumulX = posX0
+        cumulY = posY0
+        cumulN = -1 + distanceX + distanceY
+        xInc = 1 if posX1 > posX0 else -1
+        yInc = 1 if posY1 > posY0 else -1
+        error = distanceX - distanceY
+        distanceX *= 2
+        distanceY *= 2
+
+        if error > 0:
+            cumulX += xInc
+            error -= distanceY
+        elif error < 0:
+            cumulY += yInc
+            error += distanceX
+        else:
+            cumulX += xInc
+            error -= distanceY
+            cumulY += yInc
+            error += distanceX
+            cumulN -= 1
+
+        while cumulN > 0 and ldv:
+            if niveau.structure[cumulY][cumulX].type != "v":
+                ldv = False
+            else:
+                if error > 0:
+                    cumulX += xInc
+                    error -= distanceY
+                elif error < 0:
+                    cumulY += yInc
+                    error += distanceX
+                else:
+                    cumulX += xInc
+                    error -= distanceY
+                    cumulY += yInc
+                    error += distanceX
+                    cumulN -= 1
+                cumulN -= 1
+        return ldv

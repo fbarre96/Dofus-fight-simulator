@@ -1117,7 +1117,8 @@ class Niveau:
                         if sortSelectionne.aPorte(self.tourDe.posX, self.tourDe.posY,
                                                   nCase, nLigne, self.tourDe.PO):
                             if not sortSelectionne.ldv or \
-                               self.aLigneDeVue(self.tourDe.posX, self.tourDe.posY, nCase, nLigne):
+                               sortSelectionne.aLigneDeVue(self, self.tourDe.posX,
+                                                           self.tourDe.posY, nCase, nLigne):
                                 fenetre.blit(previsionSort, (pixelX, pixelY))
                             else:
                                 fenetre.blit(previsionLdv, (pixelX, pixelY))
@@ -1402,51 +1403,3 @@ class Niveau:
                    self.getJoueurSur(posX, posY+1).team != self.tourDe.team:
                     voisins.append(Noeud(posX, posY+1))
         return voisins
-
-    def aLigneDeVue(self, posX0, posY0, posX1, posY1):
-        """@summary: calcul si la pos 0 à la la lidgne de vue sur la pos 1
-           @return: booléen
-        """
-        ldv = True
-        distanceX = abs(posX1 - posX0)
-        distanceY = abs(posY1 - posY0)
-        cumulX = posX0
-        cumulY = posY0
-        cumulN = -1 + distanceX + distanceY
-        xInc = 1 if posX1 > posX0 else -1
-        yInc = 1 if posY1 > posY0 else -1
-        error = distanceX - distanceY
-        distanceX *= 2
-        distanceY *= 2
-
-        if error > 0:
-            cumulX += xInc
-            error -= distanceY
-        elif error < 0:
-            cumulY += yInc
-            error += distanceX
-        else:
-            cumulX += xInc
-            error -= distanceY
-            cumulY += yInc
-            error += distanceX
-            cumulN -= 1
-
-        while cumulN > 0 and ldv:
-            if self.structure[cumulY][cumulX].type != "v":
-                ldv = False
-            else:
-                if error > 0:
-                    cumulX += xInc
-                    error -= distanceY
-                elif error < 0:
-                    cumulY += yInc
-                    error += distanceX
-                else:
-                    cumulX += xInc
-                    error -= distanceY
-                    cumulY += yInc
-                    error += distanceX
-                    cumulN -= 1
-                cumulN -= 1
-        return ldv
