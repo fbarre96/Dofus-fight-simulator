@@ -92,12 +92,13 @@ class EtatBoostCaracPer(Etat):
         @type: string"""
         self.nomAttributCarac = nomAttributCarac
         self.boostCaracPer = boostCaracPer
-        super().__init__(nom,  debDans,duree,lanceur,desc)
+        self.boostCarac = 0
+        super().__init__(nom,  debDans, duree, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatBoostCaracPer(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCaracPer, self.lanceur,self.desc)
+        return EtatBoostCaracPer(self.nom, self.debuteDans, self.duree, self.nomAttributCarac, self.boostCaracPer, self.lanceur, self.desc)
 
     def triggerRafraichissement(self, personnage,niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).

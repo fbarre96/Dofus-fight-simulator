@@ -1,6 +1,5 @@
 import random
 
-import Etats
 from Effets.Effet import Effet
 from Etats.EtatBoostCarac import EtatBoostCaracFixe
 class EffetRetPA(Effet):
@@ -33,9 +32,9 @@ class EffetRetPA(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             totalRet = 0
-            for i in range(self.retrait):
+            for _ in range(self.retrait):
                 esqPa = joueurCaseEffet.esqPA if joueurCaseEffet.esqPA != 0 else 1
-                basePa = joueurCaseEffet._PA if joueurCaseEffet._PA != 0 else 1
+                basePa = joueurCaseEffet.PABase if joueurCaseEffet.PABase != 0 else 1
                 probaRet = 0.5 * (float(joueurLanceur.retPA)/float(esqPa)) * \
                     (float(joueurCaseEffet.PA)/float(basePa))
                 rand = random.random()
@@ -77,7 +76,7 @@ class EffetRetPM(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             totalRet = 0
-            for i in range(self.retrait):
+            for _ in range(self.retrait):
                 esqPm = joueurCaseEffet.esqPM if joueurCaseEffet.esqPM != 0 else 1
                 basePm = joueurCaseEffet.PMBase if joueurCaseEffet.PMBase != 0 else 1
                 probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * \

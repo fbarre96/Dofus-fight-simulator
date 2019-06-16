@@ -35,8 +35,8 @@ class EffetRune(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         nouvelleRune = Niveau.Rune(self.nom, self.duree, self.effets, kwargs.get(
-            "case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur, self.couleur)
+            "caseCibleX"), kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.poseRune(nouvelleRune)

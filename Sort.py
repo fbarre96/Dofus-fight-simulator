@@ -99,7 +99,7 @@ class Sort:
             self.compteLancerParTourParJoueur[joueurCible]+=1
         self.compteTourEntreDeux = 0
 
-    def lance(self, origine_x,origine_y,niveau, case_cible_x, case_cible_y, caraclanceur=None , isPrevisu=False):
+    def lance(self, origine_x,origine_y,niveau, caseCibleX, caseCibleY, caraclanceur=None , isPrevisu=False):
         """@summary: Lance un sort
         @origine_x: la pos x d'où est lancé le sort
         @type: int
@@ -107,15 +107,15 @@ class Sort:
         @type: int
         @niveau: La grille de jeu
         @type: Niveau
-        @case_cible_x: La coordonnée x de la case cible du sort
+        @caseCibleX: La coordonnée x de la case cible du sort
         @type: int
-        @case_cible_y: La coordonnée y de la case cible du sort
+        @caseCibleY: La coordonnée y de la case cible du sort
         @type: int
         @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
         @type: Personnage (ou None pour prendre le lanceur)"""
-        case_cible_x = int(case_cible_x)
-        case_cible_y = int(case_cible_y)
-        if self.ldv == True and not niveau.aLigneDeVue(origine_x, origine_y, case_cible_x, case_cible_y):
+        caseCibleX = int(caseCibleX)
+        caseCibleY = int(caseCibleY)
+        if self.ldv == True and not niveau.aLigneDeVue(origine_x, origine_y, caseCibleX, caseCibleY):
             print("Pas de ligne de vue !")
             return niveau.joueurs
         saveLanceur = None
@@ -130,9 +130,9 @@ class Sort:
         
         caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x, origine_y)
         #Get toutes les cases dans la zone d'effet
-        joueurCible = niveau.getJoueurSur(case_cible_x, case_cible_y)
+        joueurCible = niveau.getJoueurSur(caseCibleX, caseCibleY)
         #Test si la case est bien dans la portée du sort
-        if self.APorte(origine_x, origine_y, case_cible_x, case_cible_y, caraclanceur.PO):
+        if self.APorte(origine_x, origine_y, caseCibleX, caseCibleY, caraclanceur.PO):
             if not isPrevisu:
                 print(caraclanceur.nomPerso+" lance :"+self.nom)
             #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
@@ -163,9 +163,9 @@ class Sort:
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine == True:
                         if sestApplique == True: # Si l'effet a été appliqué, on continue
-                            sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur) 
+                            sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, caseCibleX, caseCibleY,caraclanceur) 
                     else:
-                        sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, case_cible_x, case_cible_y,caraclanceur) 
+                        sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, caseCibleX, caseCibleY,caraclanceur) 
                     #Apres application d'un effet sur toutes les cibles:
             else:
                 if not isPrevisu:

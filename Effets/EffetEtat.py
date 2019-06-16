@@ -1,5 +1,8 @@
-from Effets.Effet import Effet
+"""@summary: Décrit un effet de sort appliquant un état à un joueur. """
+
 from copy import deepcopy
+from Effets.Effet import Effet
+
 
 class EffetEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -28,10 +31,12 @@ class EffetEtat(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        if joueurCaseEffet != None:
+        if joueurCaseEffet is not None:
             # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
             etatCopier = deepcopy(self.etat)
-            return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+            return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur,
+                                                 self.kwargs.get("cumulMax", -1), niveau)
+
 
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -61,26 +66,27 @@ class EffetEtatSelf(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         etatCopier = deepcopy(self.etat)
-        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur,
+                                           self.kwargs.get("cumulMax", -1), niveau)
 
 
 class EffetEtatSelfTF(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur portant le nom du sort à l'origine d'un TF."""
 
-    def __init__(self, etat_etat, sorts_exclus, **kwargs):
+    def __init__(self, etat_etat, sortsExclus, **kwargs):
         """@summary: Initialise un effet placant un état sur le lanceur
         @etat_etat: l'état à placer sur le lanceur
         @type: Etat
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.etat = etat_etat
-        self.sorts_exclus = sorts_exclus
+        self.sortsExclus = sortsExclus
         self.kwargs = kwargs
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetEtatSelfTF(self.etat, self.sorts_exclus, **self.kwargs)
+        return EffetEtatSelfTF(self.etat, self.sortsExclus, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -93,12 +99,14 @@ class EffetEtatSelfTF(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         nomSort = self.getNomSortTF()
-        if nomSort in self.sorts_exclus:
+        if nomSort in self.sortsExclus:
             return False
         etatCopier = deepcopy(self.etat)
         if self.kwargs.get("remplaceNom", True):
             etatCopier.nom = nomSort
-        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur, self.kwargs.get("cumulMax", -1), niveau)
+        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur,
+                                           self.kwargs.get("cumulMax", -1), niveau)
+
 
 class EffetRafraichirEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -106,7 +114,8 @@ class EffetRafraichirEtats(Effet):
 
     def __init__(self, int_deXTours, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
-        @int_deXTours: le nombre de tour qui vont être additionés (dans Z) à chaque état de la cible.
+        @int_deXTours: le nombre de tour qui vont être additionés (dans Z)
+                       à chaque état de la cible.
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -136,7 +145,8 @@ class EffetSetDureeEtat(Effet):
 
     def __init__(self, nomEtat, nouveauDebut, nouvelleDuree, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
-        @int_deXTours: le nombre de tour qui vont être additionés (dans Z) à chaque état de la cible.
+        @int_deXTours: le nombre de tour qui vont être additionés (dans Z)
+                       à chaque état de la cible.
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -192,7 +202,7 @@ class EffetRetireEtat(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        if joueurCaseEffet != None:
+        if joueurCaseEffet is not None:
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):

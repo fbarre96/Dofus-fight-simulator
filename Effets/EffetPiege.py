@@ -1,3 +1,4 @@
+"""@summary: Rassemble les effets de sort en rapport avec les pièges."""
 from Effets.Effet import Effet
 import Niveau
 
@@ -6,9 +7,9 @@ class EffetPiege(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pose un piège sur la grille de jeu."""
 
-    def __init__(self, zone_declenchement, list_effets, str_nom, tuple_couleur, **kwargs):
+    def __init__(self, zoneDeclenchement, list_effets, str_nom, tuple_couleur, **kwargs):
         """@summary: Initialise un effet posant un piège.
-        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
         @sort_sort: le sort lancé sur la case centrale du piège
         @type: Sort
@@ -19,14 +20,15 @@ class EffetPiege(Effet):
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        self.zone_declenchement = zone_declenchement
+        self.zoneDeclenchement = zoneDeclenchement
         self.effets = list_effets
         self.nom = str_nom
         self.couleur = tuple_couleur
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetPiege(self.zone_declenchement, self.effets, self.nom, self.couleur, **self.kwargs)
+        return EffetPiege(self.zoneDeclenchement, self.effets, self.nom,
+                          self.couleur, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -36,8 +38,8 @@ class EffetPiege(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
-        nouveauPiege = Niveau.Piege(self.nom, self.zone_declenchement, self.effets, kwargs.get(
-            "case_cible_x"), kwargs.get("case_cible_y"), joueurLanceur, self.couleur)
+        nouveauPiege = Niveau.Piege(self.nom, self.zoneDeclenchement, self.effets, kwargs.get(
+            "caseCibleX"), kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.posePiege(nouveauPiege)

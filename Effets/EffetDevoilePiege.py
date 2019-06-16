@@ -1,3 +1,7 @@
+"""
+@summary: Décrit un effet qui dévoile les pièges invisibles aux ennemis
+"""
+
 from Effets.Effet import Effet
 
 class EffetDevoilePiege(Effet):
@@ -24,8 +28,9 @@ class EffetDevoilePiege(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        case_effet_x = kwargs.get("case_effet_x")
-        case_effet_y = kwargs.get("case_effet_y")
+        caseEffetX = kwargs.get("caseEffetX")
+        caseEffetY = kwargs.get("caseEffetY")
         for piege in niveau.pieges:
-            if piege.aPorteDeclenchement(case_effet_x, case_effet_y):
+            if piege.aPorteDeclenchement(caseEffetX, caseEffetY):
                 piege.invisible = False
+                

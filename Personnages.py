@@ -99,7 +99,7 @@ class Personnage(object):
 
         self.vieMax = self.vie
         self.PMBase = int(self.PM)
-        self._PA = int(self.PA)
+        self.PABase = int(self.PA)
         self.nomPerso = nomPerso
         self.erosion = 10  # Erosion de base
         self.lvl = int(lvl)
@@ -146,7 +146,7 @@ class Personnage(object):
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
-        toReturn._PA = self._PA
+        toReturn.PABase = self.PABase
         toReturn.PMBase = self.PMBase
         toReturn.vieMax = self.vieMax
         toReturn.uid = self.uid
@@ -516,7 +516,7 @@ class Personnage(object):
         @niveau: La grille de jeu
         @type: Niveau"""
         self.PM = self.PMBase
-        self.PA = self._PA
+        self.PA = self.PABase
         for sort in self.sorts:
             sort.compteLancerParTour = 0
             sort.compteTourEntreDeux += 1
@@ -639,12 +639,12 @@ class Personnage(object):
                 else:
                     # Un sort est selectionne
                     if sortSelectionne != None:
-                        case_cible_x = int(
+                        caseCibleX = int(
                             mouse_xy[0]/constantes.taille_sprite)
-                        case_cible_y = int(
+                        caseCibleY = int(
                             mouse_xy[1]/constantes.taille_sprite)
                         sortSelectionne.lance(
-                            niveau.tourDe.posX, niveau.tourDe.posY, niveau, case_cible_x, case_cible_y)
+                            niveau.tourDe.posX, niveau.tourDe.posY, niveau, caseCibleX, caseCibleY)
                         sortSelectionne = None
                     # Aucun sort n'est selectionne: on pm
                     else:
@@ -692,7 +692,7 @@ class PersonnageMur(Personnage):
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
-        toReturn._PA = self._PA
+        toReturn.PABase = self.PABase
         toReturn.PMBase = self.PMBase
         toReturn.vieMax = self.vieMax
         toReturn.uid = self.uid
@@ -746,7 +746,7 @@ class PersonnageSansPM(Personnage):
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
-        toReturn._PA = self._PA
+        toReturn.PABase = self.PABase
         toReturn.PMBase = self.PMBase
         toReturn.vieMax = self.vieMax
         toReturn.uid = self.uid

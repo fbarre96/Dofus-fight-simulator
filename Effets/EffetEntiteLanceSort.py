@@ -1,3 +1,6 @@
+"""@summary: Décrit un effet de sort faisant lancé un sort à
+             toutes les entités correspondant à une donnée."""
+
 from Effets.Effet import Effet
 
 class EffetEntiteLanceSort(Effet):

@@ -90,13 +90,30 @@ class Effet(object):
         return self.kwargs.get("reversedTreatmentOrder", False)
 
     def __deepcopy__(self, memo):
+        """
+        @summary: implémente une copie profonde de l'état
+        @return: Renvoie une copie profonde exacte de l'effet
+        """
         return Effet(**self.kwargs)
 
     def setDegatsSubits(self, valPerdu, typeDegats):
+        """
+        @summary: indique à l'effet les degats subits et le type de dégats
+        @valPerdu: Le nombre de points de vie perdus
+        @type: int
+        @typeDegats: Le type des dégats
+        @type: str (Air, Terre, Feu, Eau, Arme...)
+        @return: un booléen
+        """
         self.kwargs["degatsSubits"] = valPerdu
         self.kwargs["typeDegats"] = typeDegats
 
     def getDegatsSubits(self):
+        """
+        @summary: retourne la valeur de degats subits et le type de degats
+        @return: renvoie un tuple (degats subits, type de dégats) avec type (int, str)
+                défaut est (0,"")
+        """
         return self.kwargs.get("degatsSubits", 0), self.kwargs.get("typeDegats", "")
 
     def estLancable(self, joueurLanceur, joueurCible):
@@ -106,7 +123,8 @@ class Effet(object):
         @type: Personnage
         @joueurCible: Le joueur dans la zone d'effet testé
         @type: Personnage
-        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé
+                            à la base (peut-être identique à joueurCible.
         @type: Personnage ou None
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
@@ -119,16 +137,29 @@ class Effet(object):
         @type: Personnage
         @joueurCible: Le joueur dans la zone d'effet testé
         @type: Personnage
-        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé
+                            à la base (peut-être identique à joueurCible.
         @type: Personnage ou None
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         # Test si la cible est dans les cibles possibles
-        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur and "Allies" in self.ciblesPossibles) or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur and "Lanceur" in self.ciblesPossibles) or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) or (joueurCible.classe in self.ciblesPossibles) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesPossibles and joueurCible.uid == joueurLanceur.invocateur.uid):
+        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur
+                and "Allies" in self.ciblesPossibles) \
+            or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur
+                and "Lanceur" in self.ciblesPossibles) \
+            or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) \
+            or (joueurCible.classe in self.ciblesPossibles) \
+            or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles) \
+            or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesPossibles
+                and joueurCible.uid == joueurLanceur.invocateur.uid):
             # Test si la cible est exclue
-            if joueurCible.classe in self.ciblesExclues or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues) or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues and joueurCible.uid == joueurLanceur.invocateur.uid):
+            if joueurCible.classe in self.ciblesExclues \
+               or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) \
+               or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues) \
+               or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues
+                       and joueurCible.uid == joueurLanceur.invocateur.uid):
                 print("DEBUG : Invalide : Cible Exclue")
                 return False
             # Test si la cible est déjà traitée
@@ -136,26 +167,29 @@ class Effet(object):
                 print("DEBUG : Invalide : Cible deja traitee")
                 return False
             # Test si un état est requis sur la cible direct et qu'une cible direct existe
-            if (joueurCibleDirect == None and len(self.etatRequisCibleDirect) != 0):
-                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis pour cible direct (" +
+            # une liste est vraie si elle n'est pas vide
+            if (joueurCibleDirect is None and self.etatRequisCibleDirect):
+                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis" +
+                      "pour cible direct (" +
                       str(self.etatRequisCibleDirect)+")")
                 return False
             # Test si une cible direct n'existe pas si l'effet doit être jouée
-            if (joueurCibleDirect == None and not self.faireAuVide):
+            if (joueurCibleDirect is None and not self.faireAuVide):
                 print(
                     "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
                 return False
-            # Test si la cible est une case vide et que l'effet ne nécessite pas d'êtat pour la cible
-            if (joueurCible == None and len(self.etatRequisCibles) != 0):
+            # Test si la cible est une case vide et que l'effet ne nécessite pas d'etat pour la cibl
+            # une liste est vraie si elle n'est pas vide
+            if joueurCible is None and self.etatRequisCibles:
                 print("DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible")
                 return False
             # Test si la cible n'est pas une case vide qu'il a bien les états requis
-            if joueurCible != None:
+            if joueurCible is not None:
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
                     print("DEBUG : Invalide :etatRequis pour cible non present")
                     return False
             # Test si la cible firect n'est pas une case vide qu'il a bien les états requis
-            if joueurCibleDirect != None:
+            if joueurCibleDirect is not None:
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
                     print("DEBUG : Invalide :etatRequis pour cible direct non present")
                     return False
@@ -165,24 +199,32 @@ class Effet(object):
               " pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
         return False
 
-    def APorteZone(self, departZone_x, departZone_y, testDansZone_x, testDansZone_y, j_x, j_y):
-        """@summary: Test si une case appartient à une zone donnée. Wrapper pour la fonction testCaseEstDedans polymorphique.
-        @departZone_x: L'abcisse de la case de départ de la zone, souvent le centre et souvent le centre de l'effet
+    def aPorteZone(self, departZoneX, departZoneY, testDansZoneX, testDansZoneY, joueurX, joueurY):
+        """@summary: Test si une case appartient à une zone donnée.
+                     Wrapper pour la fonction testCaseEstDedans polymorphique.
+        @departZoneX: L'abcisse de la case de départ de la zone,
+                      souvent le centre et souvent le centre de l'effet
         @type: int
-        @departZone_y: L'ordonnée de la case de départ de la zone, souvent le centre et souvent le centre de l'effet
+        @departZoneY: L'ordonnée de la case de départ de la zone,
+                      souvent le centre et souvent le centre de l'effet
         @type: int
-        @testDansZone_x: L'abcisse de la case dont ou souhait savoir si elle est dans la zone'
+        @testDansZoneX: L'abcisse de la case dont ou souhait savoir si elle est dans la zone'
         @type: int
-        @testDansZone_y: L'ordonnée de la case dont ou souhait savoir si elle est dans la zone'
+        @testDansZoneY: L'ordonnée de la case dont ou souhait savoir si elle est dans la zone'
         @type: int
-        @j_x: L'abcisse de la case sur laquelle le joueur lançant l'effet se trouve. Utile pour certaines zones dépendants de la position du lanceur.
+        @joueurX: L'abcisse de la case sur laquelle le joueur lançant l'effet se trouve.
+                  Utile pour certaines zones dépendants de la position du lanceur.
         @type: int
-        @j_y: L'ordonnée de la case sur laquelle le joueur lançant l'effet se trouve. Utile pour certaines zones dépendants de la position du lanceur.
+        @joueurY: L'ordonnée de la case sur laquelle le joueur lançant l'effet se trouve.
+                  Utile pour certaines zones dépendants de la position du lanceur.
         @type: int
         @return: booléen indiquant vrai si la case testée est dans la zone, faux sinon"""
 
         # Le lanceur peut pas etre dans la zone si y a le - a la fin du type zone
-        return self.typeZone.testCaseEstDedans([departZone_x, departZone_y], [testDansZone_x, testDansZone_y], [j_x, j_y])
+        toRet = self.typeZone.testCaseEstDedans([departZoneX, departZoneY],
+                                                [testDansZoneX, testDansZoneY],
+                                                [joueurX, joueurY])
+        return toRet
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         # pylint: disable=unused-argument
@@ -201,9 +243,12 @@ class Effet(object):
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         # pylint: disable=unused-argument
+        """@summary: activer un effet. Appeler dans Niveau.depileEffets"""
         print("Activation non définie")
 
     def afficher(self):
         """@summary: Affiche un effet dans la console (DEBUG)"""
-        print("Effet etatRequis:"+self.etatRequisCibleDirect + " consommeEtat:"+str(self.consommeEtat) +
-              " ciblesPossibles:"+str(self.ciblesPossibles)+" cibles_exclues:"+str(self.ciblesExclues))
+        print("Effet etatRequis:"+self.etatRequisCibleDirect +
+              " consommeEtat:"+str(self.consommeEtat) +
+              " ciblesPossibles:"+str(self.ciblesPossibles) +
+              " cibles_exclues:"+str(self.ciblesExclues))

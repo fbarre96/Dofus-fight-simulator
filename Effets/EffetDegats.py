@@ -1,3 +1,6 @@
+"""
+@summary: Décrit un effet de sort infligeant des dégats
+"""
 import random
 
 from Effets.Effet import Effet
@@ -13,7 +16,8 @@ class EffetDegats(Effet):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés
+                         [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -29,53 +33,68 @@ class EffetDegats(Effet):
                           self.typeDegats, **self.kwargs)
         return cpy
 
-    def calculDegats(self, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y, howToChoose="alea"):
-        if joueurCaseEffet == None:
+    def calculDegats(self, joueurCaseEffet, joueurLanceur, nomSort,
+                     caseCibleX, caseCibleY, howToChoose="alea"):
+        """
+        @summary: Calcul les dégats qui seront infligés
+        @joueurCaseEffet: Le joueur qui doit subir des dégats
+        @type: Personnage
+        @joueurLanceur: Le joueur qui infligera des dégâts
+        @type: Personnage
+        @nomSort: le nom du sort à l'origine de ces dégâts
+        @type: str
+        @caseCibleX: La coordonné X de la case qui a été ciblé pour le sort
+        @type: int
+        @caseCibleY: La coordonné Y de la case qui a été ciblé pour le sort
+        @type: int
+        @howToChoose: Indique si le calcul doit être minimal, maximal ou aléatoire
+        @type: str parmi ("min","max","alea") alea sera choisi par défaut
+        """
+        if joueurCaseEffet is None:
             return None
-
         carac = 0
         dos = 0
         resFixes = 0
         rePer = 0
         if self.typeDegats == "eau":
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.cha
                 dos += joueurLanceur.doEau
             resFixes += joueurCaseEffet.reEau
             rePer = joueurCaseEffet.rePerEau
         elif self.typeDegats == "air":
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.agi
                 dos += joueurLanceur.doAir
             resFixes += joueurCaseEffet.reAir
             rePer = joueurCaseEffet.rePerAir
         elif self.typeDegats == "terre":
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.fo
                 dos += joueurLanceur.doTerre
             resFixes += joueurCaseEffet.reTerre
             rePer = joueurCaseEffet.rePerTerre
         elif self.typeDegats == "feu":
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.int
                 dos += joueurLanceur.doFeu
             resFixes += joueurCaseEffet.reFeu
             rePer = joueurCaseEffet.rePerFeu
         elif self.typeDegats == "neutre":
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.fo
                 dos += joueurLanceur.doNeutre
             resFixes += joueurCaseEffet.reNeutre
             rePer = joueurCaseEffet.rePerNeutre
-        if self.kwargs.get("piege", False) == True:
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+        if self.kwargs.get("piege", False):
+            if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.doPiegesPui
                 dos += joueurLanceur.doPieges
         if self.isCC():
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 dos += joueurLanceur.doCri
             resFixes += joueurCaseEffet.reCc
-        if self.kwargs.get("bypassDmgCalc", False) == False:
+        if not self.kwargs.get("bypassDmgCalc", False):
             if nomSort != "cac":
                 dos += joueurLanceur.doSorts
             else:
@@ -83,8 +102,8 @@ class EffetDegats(Effet):
             dos += joueurLanceur.do
             carac += joueurLanceur.pui
 
-        distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY], [
-                                          joueurLanceur.posX, joueurLanceur.posY])
+        distance = Zones.getDistancePoint([joueurCaseEffet.posX, joueurCaseEffet.posY],
+                                          [joueurLanceur.posX, joueurLanceur.posY])
 
         if howToChoose == "min":
             baseDeg = self.minJet
@@ -101,16 +120,16 @@ class EffetDegats(Effet):
                     dos, baseDeg, carac, nomSort)
         total += baseDeg + (baseDeg * ((carac) / 100)) + dos
         if distance == 1:
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 total += int((joueurLanceur.doMelee/100.0) * total)
                 rePer += joueurCaseEffet.reMelee
         else:
-            if self.kwargs.get("bypassDmgCalc", False) == False:
+            if not self.kwargs.get("bypassDmgCalc", False):
                 total += int((joueurLanceur.doDist/100.0) * total)
                 rePer += joueurCaseEffet.reDist
         # appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint(
-            [joueurCaseEffet.posX, joueurCaseEffet.posY], [case_cible_x, case_cible_y])
+            [joueurCaseEffet.posX, joueurCaseEffet.posY], [caseCibleX, caseCibleY])
         total = total * (10-eloignement)/10
         total = int(total)
 
@@ -145,7 +164,8 @@ class EffetDegats(Effet):
         return self.total
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
-        """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
+        """@summary:
+        Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
@@ -156,16 +176,16 @@ class EffetDegats(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             if self.isPrevisu():
-                total_min = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
-                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "min")
-                total_max = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
-                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"), "max")
-                self.total = total_min
+                totalMin = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"), "min")
+                totalMax = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"), "max")
+                self.total = totalMin
                 joueurCaseEffet.msgsPrevisu.append(
-                    str(total_min)+"-"+str(total_max))
+                    str(totalMin)+"-"+str(totalMax))
             else:
                 self.total = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
-                    "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+                    "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
@@ -176,7 +196,8 @@ class EffetDegats(Effet):
 class EffetVolDeVie(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Hérite de EffetsDegats.
-    Cet effet inflige des dégâts à une cible et soigne le lanceur de la moitié des dégâts infligés."""
+    Cet effet inflige des dégâts à une cible et soigne le lanceur de la moitié des dégâts infligés.
+    """
 
     def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
         """@summary: Initialise un effet de vol de vie.
@@ -184,7 +205,8 @@ class EffetVolDeVie(EffetDegats):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés
+                         parmi [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -209,7 +231,7 @@ class EffetVolDeVie(EffetDegats):
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
             self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
-                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+                "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
@@ -240,7 +262,8 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
         @type: int
         @int_maxJet: le jet maximum possible de dégâts de base de l'effet
         @type: int
-        @str_typeDegats: l'élément dans lequel les dégâts seront infligés [terre,feu,air,chance,neutre]
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés
+                         parmi [terre,feu,air,chance,neutre]
         @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -265,9 +288,9 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
             self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
-                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+                "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
             ratioPM = abs(float(joueurLanceur.PM) / float(joueurLanceur.PMBase))
             ratioPM = max(ratioPM, 0)
             self.total = int(ratioPM * self.total)
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
-
+            

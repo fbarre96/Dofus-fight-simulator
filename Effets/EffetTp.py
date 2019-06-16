@@ -22,17 +22,17 @@ class EffetTp(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
+        @kwargs: options supplémentaires, les options caseCibleX et caseCibleY doivent être mentionnées.
         @type: **kwargs"""
         generer_TF = self.kwargs.get("generer_TF", False)
         if generer_TF:
-            joueurTF = niveau.gereDeplacementTF(joueurLanceur, [kwargs.get("case_cible_x"), kwargs.get(
-                "case_cible_y")], joueurLanceur, kwargs.get("nom_sort"), True, generer_TF)
+            joueurTF = niveau.gereDeplacementTF(joueurLanceur, [kwargs.get("caseCibleX"), kwargs.get(
+                "caseCibleY")], joueurLanceur, kwargs.get("nom_sort"), True, generer_TF)
             if joueurTF != None:
                 kwargs.get("cibles_traitees").append(joueurTF)
         else:
             joueurLanceur.bouge(niveau, kwargs.get(
-                "case_cible_x"), kwargs.get("case_cible_y"))
+                "caseCibleX"), kwargs.get("caseCibleY"))
                 
 class EffetTeleportePosPrec(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -190,10 +190,10 @@ class EffetTpSymSelf(Effet):
 
 class EffetTpSymCentre(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet téléporte la cible symétriquement par rapport au point de symétrie donné par case_cible_x et case_cible_y."""
+    Cet effet téléporte la cible symétriquement par rapport au point de symétrie donné par caseCibleX et caseCibleY."""
 
     def __init__(self, **kwargs):
-        """@summary: Initialise un effet téléportant la cible symétriquement par rapport au point de symétrie donné par case_cible_x et case_cible_y.
+        """@summary: Initialise un effet téléportant la cible symétriquement par rapport au point de symétrie donné par caseCibleX et caseCibleY.
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
@@ -210,13 +210,13 @@ class EffetTpSymCentre(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, l'option nom_sort, case_cible_x et case_cible_y doivent être mentionées
+        @kwargs: options supplémentaires, l'option nom_sort, caseCibleX et caseCibleY doivent être mentionées
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            distanceX = (joueurCaseEffet.posX-kwargs.get("case_cible_x"))
-            distanceY = (joueurCaseEffet.posY-kwargs.get("case_cible_y"))
-            arriveeX = kwargs.get("case_cible_x")-distanceX
-            arriveeY = kwargs.get("case_cible_y")-distanceY
+            distanceX = (joueurCaseEffet.posX-kwargs.get("caseCibleX"))
+            distanceY = (joueurCaseEffet.posY-kwargs.get("caseCibleY"))
+            arriveeX = kwargs.get("caseCibleX")-distanceX
+            arriveeY = kwargs.get("caseCibleY")-distanceY
             joueurTF = niveau.gereDeplacementTF(joueurCaseEffet, [
                                                 arriveeX, arriveeY], joueurLanceur, kwargs.get("nom_sort"), AjouteHistorique=True)
             # Evite de retéléporter les cibles s'étant déplacé après un téléfrags
@@ -254,7 +254,7 @@ class EffetEchangePlace(Effet):
             perso1AEchange = joueurLanceur
         elif self.persoADeplace == "cible":
             perso1AEchange = niveau.getJoueurSur(kwargs.get(
-                "case_cible_x"), kwargs.get("case_cible_y"))
+                "caseCibleX"), kwargs.get("caseCibleY"))
         if perso1AEchange is None:
             return
         genereTF = kwargs.get("generer_TF", False)

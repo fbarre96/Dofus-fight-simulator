@@ -5,7 +5,7 @@ class Etat(object):
                  Cette classe est utile pour les états 'passifs' qui sont seulement là pour vérification de présense.
                   Mais elle doit être héritée par tous les autres types d'états."""
 
-    def __init__(self, nom, debDans, duree, lanceur=None, tabCarac=[], desc=""):
+    def __init__(self, nom, debDans, duree, lanceur=None, tabCarac=None, desc=""):
         """@summary: Initialise un état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -22,7 +22,10 @@ class Etat(object):
         self.nom = nom
         self.duree = duree
         self.debuteDans = debDans
-        self.tabCarac = tabCarac
+        if tabCarac is None:
+            self.tabCarac = []
+        else:
+            self.tabCarac = tabCarac
         self.description = desc
         self.lanceur = lanceur
         self.desc = desc
@@ -38,21 +41,25 @@ class Etat(object):
         return self.debuteDans <= 0 and self.duree != 0
 
     def triggerAvantPiegeDeclenche(self, niveau, piege, joueurDeclencheur, porteur):
-        pass
+        # pylint: disable=unused-argument
+        return
 
     def triggerApresTF(self, niveau, joueurOrigineTF, joueurEchangeTF, porteur, reelLanceur, nomSort):
-        pass
+        # pylint: disable=unused-argument
+        return
 
     def triggerRafraichissement(self, personnage, niveau):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit (au début de chaque tour ou quand sa durée est modifiée).
                      Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: Le personnage dont l'état est en train d'être rafraichit
         @type: Personnage
         @niveau: La grille de jeu en cours
         @type: Niveau"""
-        pass
+        return
 
     def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages sont en train d'être calculés.
                      Utile pour les modifications de données de calcul de sorts (caractéristiques et dégâts de base du sort)
                      Cet état de base ne fait rien d'autres que renvoyées les paramètres (comportement par défaut hérité).
@@ -69,6 +76,7 @@ class Etat(object):
         return dommages, baseDeg, caracs
 
     def triggerApresCalculDegats(self, total, typeDeg, cible, attaquant):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages ont terminé d'être calculé.
                      Utile pour les modifications du total de dégâts calculés.
                      Cet état de base ne fait rien d'autres que renvoyées le même tolal (comportement par défaut hérité).
@@ -81,6 +89,7 @@ class Etat(object):
         return total
 
     def triggerApresCalculSoins(self, total, cible, attaquant):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages ont terminé d'être calculé.
                      Utile pour les modifications du total de dégâts calculés.
                      Cet état de base ne fait rien d'autres que renvoyées le même tolal (comportement par défaut hérité).
@@ -93,6 +102,7 @@ class Etat(object):
         return total
 
     def triggerAvantSubirDegats(self, cibleAttaque, niveau, totalPerdu, typeDegats, attaquant):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages vont être subits.
                      Utile pour la réaction à une attaque. N'est pas censé être utilisé pour modifier les dégâts.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
@@ -106,9 +116,10 @@ class Etat(object):
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        pass
+        return
 
     def triggerApresSubirDegats(self, cibleAttaque, niveau, attaquant, totalPerdu):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états du joueur attaqué lorsque des dommages viennent d'être subits.
                      Utile pour la réaction à une attaque.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
@@ -120,9 +131,10 @@ class Etat(object):
         @type: Personnage
         @totalPerdu: Le total de degats subits par le perso
         @type: int"""
-        pass
+        return
 
     def triggerDebutTour(self, personnage, niveau):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour commence.
                      Utile pour les états déclenchant un effet au début de tour par exemple.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
@@ -130,9 +142,10 @@ class Etat(object):
         @type: Personnage
         @niveau: Personnage grille de jeu
         @type: Niveau"""
-        pass
+        return
 
     def triggerFinTour(self, personnage, niveau):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
                      Utile pour les états déclenchant un effet en fin de tour par exemple.
                      Cet état de base ne fait rien.(comportement par défaut hérité).
@@ -140,9 +153,10 @@ class Etat(object):
         @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
-        pass
+        return
 
     def triggerCoutPA(self, sort, coutPAActuel):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque le coût en PA d'un sort doit être calculé.
                      Utile pour les états réduisant le coût en PA d'un sort par exemple.
                      Cet état de base ne fait rien d'aute que retourner le coût en PA passé en paramètre.(comportement par défaut hérité).
@@ -155,6 +169,7 @@ class Etat(object):
         return coutPAActuel
 
     def triggerCalculPousser(self, doPou, rePou, niveau, pousseur, joueurCible):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états du pousseur qui aura poussé sa cible contre un obstacle.
                      Utile pour les états modifiant la caractéristique nombre de dommage de poussées.
                      Cet état de base ne fait rien d'aute que retourner les dommages de poussés déjà passé en paramètre.(comportement par défaut hérité).
@@ -171,17 +186,19 @@ class Etat(object):
         return doPou, rePou
 
     def triggerInstantane(self, **kwargs):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé au moment ou un état est appliqué.
                      Utile pour les états qui ont un comportement immédiat.
                      Cet état de base ne fait rien (comportement par défaut hérité).
         @kwargs: les options non prévisibles selon les états.
         @type: **kwargs"""
-        pass
+        return
 
     def triggerAvantRetrait(self, personnage):
+        # pylint: disable=unused-argument
         """@summary: Un trigger appelé au moment ou un état va être retirés.
                      Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
                      Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
-        pass
+        return

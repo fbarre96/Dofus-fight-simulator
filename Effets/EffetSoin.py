@@ -18,7 +18,7 @@ class EffetSoin(Effet):
         cpy = EffetSoin(self.valSoin, **self.kwargs)
         return cpy
 
-    def calculSoin(self, niveau, joueurCaseEffet, joueurLanceur, nomSort, case_cible_x, case_cible_y):
+    def calculSoin(self, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet == None:
             return None
         self.valSoin += joueurLanceur.soins
@@ -51,8 +51,7 @@ class EffetSoin(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
-                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
@@ -92,8 +91,7 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             self.valSoin = int((self.pourcentage/100.0) * joueurCaseEffet.vieMax)
-            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
-                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
@@ -130,10 +128,9 @@ class EffetSoinSelonSubit(EffetSoin):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             print("Effet soin selon subit : "+str(self.getDegatsSubits()))
-            subitDegats, subitType = self.getDegatsSubits()
+            subitDegats, _ = self.getDegatsSubits()
             self.valSoin = int((self.pourcentage/100.0) * subitDegats)
-            self.valSoin = self.calculSoin(niveau, joueurCaseEffet, joueurLanceur, kwargs.get(
-                "nom_sort", ""), kwargs.get("case_cible_x"), kwargs.get("case_cible_y"))
+            self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)

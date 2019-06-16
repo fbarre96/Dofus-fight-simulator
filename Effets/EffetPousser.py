@@ -18,6 +18,12 @@ class EffetPousser(Effet):
         self.nbCase = int_nbCase
         self.source = source
         self.cible = cible
+        self.coordonnees = [0, 0]
+        self.caseFromX = None
+        self.caseFromY = None
+        self.caseToX = None
+        self.caseToY = None
+        self.joueurAPousser = None
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
@@ -59,14 +65,14 @@ class EffetPousser(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         if self.source == "CaseCible":
-            self.case_from_x = kwargs.get("case_cible_x")
-            self.case_from_y = kwargs.get("case_cible_y")
+            self.caseFromX = kwargs.get("caseCibleX")
+            self.caseFromY = kwargs.get("caseCibleY")
         elif self.source == "Lanceur":
-            self.case_from_x = joueurLanceur.posX
-            self.case_from_y = joueurLanceur.posY
+            self.caseFromX = joueurLanceur.posX
+            self.caseFromY = joueurLanceur.posY
         if self.cible == "JoueurCaseEffet":
             if joueurCaseEffet is None:
                 return
@@ -75,12 +81,12 @@ class EffetPousser(Effet):
         elif self.cible == "Lanceur":
             self.joueurAPousser = joueurLanceur
         self.determinerSensPousser([
-                                   self.joueurAPousser.posX, self.joueurAPousser.posY], self.case_from_x, self.case_from_y)
+                                   self.joueurAPousser.posX, self.joueurAPousser.posY], self.caseFromX, self.caseFromY)
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         niveau.pousser(self, self.joueurAPousser, joueurLanceur,
-                       True, self.case_from_x, self.case_from_y)
+                       True, self.caseFromX, self.caseFromY)
 
 
 class EffetPousserJusque(EffetPousser):
@@ -140,29 +146,29 @@ class EffetPousserJusque(EffetPousser):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             return
-        self.case_from_x = joueurLanceur.posX
-        self.case_from_y = joueurLanceur.posY
-        self.case_to_x = kwargs.get("case_cible_x")
-        self.case_to_y = kwargs.get("case_cible_y")
+        self.caseFromX = joueurLanceur.posX
+        self.caseFromY = joueurLanceur.posY
+        self.caseToX = kwargs.get("caseCibleX")
+        self.caseToY = kwargs.get("caseCibleY")
         self.determinerSensPousser([
-                                   self.case_to_x, self.case_to_y], self.case_from_x, self.case_from_y)
+                                   self.caseToX, self.caseToY], self.caseFromX, self.caseFromY)
         self.joueurAPousser = niveau.getJoueurSur(
             joueurLanceur.posX + self.coordonnees[0], joueurLanceur.posY + self.coordonnees[1])
         if self.joueurAPousser is None:
             return
         if self.coordonnees[0] != 0:
-            self.nbCase = abs(self.case_to_x - self.joueurAPousser.posX)
+            self.nbCase = abs(self.caseToX - self.joueurAPousser.posX)
         if self.coordonnees[1] != 0:
-            self.nbCase = abs(self.case_to_y - self.joueurAPousser.posY)
+            self.nbCase = abs(self.caseToY - self.joueurAPousser.posY)
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         niveau.pousser(self, self.joueurAPousser, joueurLanceur,
-                       False, self.case_from_x, self.case_from_y)
+                       False, self.caseFromX, self.caseFromY)
 
 
 class EffetAttire(EffetPousser):
@@ -182,6 +188,7 @@ class EffetAttire(EffetPousser):
         self.source = source
         self.cible = cible
         self.kwargs = kwargs
+        self.joueurAAttirer = None
         super().__init__(int_nbCase, source, cible, **kwargs)
 
     def __deepcopy__(self, memo):
@@ -189,7 +196,7 @@ class EffetAttire(EffetPousser):
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         niveau.attire(self, self.joueurAAttirer, joueurLanceur,
-                      self.case_from_x, self.case_from_y)
+                      self.caseFromX, self.caseFromY)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -199,19 +206,19 @@ class EffetAttire(EffetPousser):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, case_cible_x et case_cible_y doivent être mentionés
+        @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         if self.source == "CaseCible":
-            self.case_from_x = kwargs.get("case_cible_x")
-            self.case_from_y = kwargs.get("case_cible_y")
+            self.caseFromX = kwargs.get("caseCibleX")
+            self.caseFromY = kwargs.get("caseCibleY")
         elif self.source == "Lanceur":
-            self.case_from_x = joueurLanceur.posX
-            self.case_from_y = joueurLanceur.posY
+            self.caseFromX = joueurLanceur.posX
+            self.caseFromY = joueurLanceur.posY
         elif self.source == "JoueurCaseEffet":
             if joueurCaseEffet is None:
                 return
-            self.case_from_x = joueurCaseEffet.posX
-            self.case_from_y = joueurCaseEffet.posY
+            self.caseFromX = joueurCaseEffet.posX
+            self.caseFromY = joueurCaseEffet.posY
         if self.cible == "Lanceur":
             self.joueurAAttirer = joueurLanceur
         elif self.cible == "JoueurCaseEffet":
@@ -219,9 +226,9 @@ class EffetAttire(EffetPousser):
                 return
             self.joueurAAttirer = joueurCaseEffet
         if self.joueurAAttirer != None:
-            if self.joueurAAttirer.posX != self.case_from_x or self.joueurAAttirer.posY != self.case_from_y:
+            if self.joueurAAttirer.posX != self.caseFromX or self.joueurAAttirer.posY != self.caseFromY:
                 super().determinerSensPousser([
-                    self.joueurAAttirer.posX, self.joueurAAttirer.posY], self.case_from_x, self.case_from_y)
+                    self.joueurAAttirer.posX, self.joueurAAttirer.posY], self.caseFromX, self.caseFromY)
                 #  changement de sens par rapport au sens de pousser
                 self.coordonnees[0] *= -1
                 self.coordonnees[1] *= -1
@@ -232,6 +239,6 @@ class EffetAttire(EffetPousser):
 
     def determinerAttiranceMax(self):
         if self.coordonnees[0] != 0:
-            return abs(self.joueurAAttirer.posX - self.case_from_x)
+            return abs(self.joueurAAttirer.posX - self.caseFromX)
         else:
-            return abs(self.joueurAAttirer.posY - self.case_from_y)
+            return abs(self.joueurAAttirer.posY - self.caseFromY)

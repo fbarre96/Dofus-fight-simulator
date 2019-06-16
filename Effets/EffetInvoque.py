@@ -1,14 +1,19 @@
-from Effets.Effet import Effet
+"""@summary: Rassemble les effets de sort en rapport avec les invocations."""
 from copy import deepcopy
+
+from Effets.Effet import Effet
 import Personnages
+
+
 class EffetInvoque(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet invoque un personnage"""
     # La liste des invocations disponibles.
-    
+
     def __init__(self, str_nomInvoque, compteCommeInvocation, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
-        @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
+        @str_nomInvoque: le nom de l'invocation
+                        (pré-définies dans le dictionnaire Personnages.INVOCS)
         @type: string
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -28,7 +33,8 @@ class EffetInvoque(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
+        @kwargs: options supplémentaires,
+                 les options caseCibleX et caseCibleY doivent être mentionnées.
         @type: **kwargs"""
 
         invoc = deepcopy(Personnages.INVOCS[self.nomInvoque])
@@ -37,8 +43,8 @@ class EffetInvoque(Effet):
         invoc.lvl = joueurLanceur.lvl
         if self.estLancable(invoc.invocateur, None):
             joueurLanceur.invocations.append(invoc)
-            niveau.invoque(invoc, kwargs.get("case_cible_x"),
-                           kwargs.get("case_cible_y"))
+            niveau.invoque(invoc, kwargs.get("caseCibleX"),
+                           kwargs.get("caseCibleY"))
 
     def estLancable(self, joueurLanceur, joueurCible):
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
@@ -46,7 +52,8 @@ class EffetInvoque(Effet):
         @type: Personnage
         @joueurCible: Le joueur dans la zone d'effet testé
         @type: Personnage
-        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base (peut-être identique à joueurCible.
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé à la base
+                            (peut-être identique à joueurCible).
         @type: Personnage ou None
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
@@ -63,7 +70,8 @@ class EffetDouble(Effet):
 
     def __init__(self, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
-        @str_nomInvoque: le nom de l'invocation (pré-définies dans le dictionnaire Personnages.INVOCS)
+        @str_nomInvoque: le nom de l'invocation
+                         (pré-définies dans le dictionnaire Personnages.INVOCS)
         @type: string
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -81,7 +89,8 @@ class EffetDouble(Effet):
         @type: Personnage
         @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
-        @kwargs: options supplémentaires, les options case_cible_x et case_cible_y doivent être mentionnées.
+        @kwargs: options supplémentaires,
+                 les options caseCibleX et caseCibleY doivent être mentionnées.
         @type: **kwargs"""
         copyJoueurLanceur = deepcopy(joueurLanceur)
         saveJoueurCaseEffet = deepcopy(joueurCaseEffet)

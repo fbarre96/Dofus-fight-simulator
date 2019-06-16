@@ -130,11 +130,11 @@ class Piege:
     """@summary: Classe décrivant un piège dans le jeu Dofus.
      Un piège est une zone au sol qui se déclenche lorsque qu'un joueur marche dessus."""
 
-    def __init__(self, nomSort, zone_declenchement, effets, centre_x, centre_y, lanceur, couleur, icone=None):
+    def __init__(self, nomSort, zoneDeclenchement, effets, centre_x, centre_y, lanceur, couleur, icone=None):
         """@summary: Initialise un piège.
         @nomSort: le nom du sort à l'origine du piège
         @type: string
-        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
         @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la glyphe. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
         @type: Sort
@@ -146,7 +146,7 @@ class Piege:
         @type: Personnage
         @couleur: la coordonnée x du centre de la zone du piège.
         @type: tuple (R,G,B)"""
-        self.zone_declenchement = zone_declenchement
+        self.zoneDeclenchement = zoneDeclenchement
         self.nomSort = nomSort
         self.effets = effets
         self.centre_x = centre_x
@@ -163,7 +163,7 @@ class Piege:
         return abs(self.centre_x - x) + abs(self.centre_y - y)
 
     def aPorteDeclenchement(self, x, y):
-        return self.zone_declenchement.testCaseEstDedans([self.centre_x, self.centre_y], [x, y], None)
+        return self.zoneDeclenchement.testCaseEstDedans([self.centre_x, self.centre_y], [x, y], None)
 
 
 class Rune:
@@ -174,7 +174,7 @@ class Rune:
         """@summary: Initialise une rune.
         @nomSort: le nom du sort à l'origine de la rune
         @type: string
-        @zone_declenchement: la zone où si un joueur marche le piège se déclenche.
+        @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
         @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la rune. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
         @type: Sort
@@ -229,27 +229,27 @@ class PathFinding:
         self.cached_dest_y = None
         self.cached_result = None
 
-    def pathFinding(self, niveau, case_cible_x, case_cible_y, joueur):
+    def pathFinding(self, niveau, caseCibleX, caseCibleY, joueur):
         """@summary: Implémentation de l'algorithme A*. recherche de chemin depuis la position du joueur vers la case_cible
-        @case_cible_x: La coordonnée x à laquelle on veut accéder
+        @caseCibleX: La coordonnée x à laquelle on veut accéder
         @type: int
-        @case_cible_y: La coordonnée y à laquelle on veut accéder
+        @caseCibleY: La coordonnée y à laquelle on veut accéder
         @type: int
         @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
         @type: Personnage
 
         @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
-        if self.cached_dest_x == case_cible_x and self.cached_dest_y == case_cible_y and self.cached_case_x == joueur.posX and self.cached_case_y == joueur.posY:
+        if self.cached_dest_x == caseCibleX and self.cached_dest_y == caseCibleY and self.cached_case_x == joueur.posX and self.cached_case_y == joueur.posY:
             return self.cached_result
         self.cached_case_x = joueur.posX
         self.cached_case_y = joueur.posY
-        self.cached_dest_x = case_cible_x
-        self.cached_dest_y = case_cible_y
+        self.cached_dest_x = caseCibleX
+        self.cached_dest_y = caseCibleY
 
         # VOIR PSEUDO CODE WIKIPEDIA
         listeFermee = []
         listeOuverte = []
-        if niveau.structure[case_cible_y][case_cible_x].type != "v":
+        if niveau.structure[caseCibleY][caseCibleX].type != "v":
             self.cached_result = None
             return None
         depart = Noeud(joueur.posX, joueur.posY)
@@ -257,7 +257,7 @@ class PathFinding:
         while len(listeOuverte) != 0:
             u = listeOuverte[-1]
             del listeOuverte[-1]
-            if u.x == case_cible_x and u.y == case_cible_y:
+            if u.x == caseCibleX and u.y == caseCibleY:
                 # reconstituerChemin(u,listeFermee)
                 tab = []
                 for case in listeFermee:
@@ -278,7 +278,7 @@ class PathFinding:
                 if not(v_existe_cout_inf):
                     v.cout = u.cout+1
                     v.heur = v.cout + \
-                        (abs(v.x-case_cible_x)+abs(v.y-case_cible_y))
+                        (abs(v.x-caseCibleX)+abs(v.y-caseCibleY))
                     ajoutTrie(listeOuverte, v)
             listeFermee.append(u)
         print("Aucun chemin trouvee")
@@ -800,7 +800,7 @@ class Niveau:
                 case_x, case_y, tailleCercle)
             for case in casesAXDistance:
                 # Test si la case trouvée est à porté de l'effet.
-                if effet.APorteZone(case_x, case_y, case[0], case[1], self.tourDe.posX, self.tourDe.posY):
+                if effet.aPorteZone(case_x, case_y, case[0], case[1], self.tourDe.posX, self.tourDe.posY):
                     tab_cases_zone.append(case)
         return tab_cases_zone
 
@@ -957,7 +957,7 @@ class Niveau:
         # else:
         #     self.pousser(effetAttire,joueurCible,attireur,False,joueurCible.posX,joueurCible.posY-1)
         self.pousser(effetAttire, joueurCible, attireur, False,
-                     effetAttire.case_from_x, effetAttire.case_from_y)
+                     effetAttire.caseFromX, effetAttire.caseFromY)
 
     def __deplacementTFVersCaseVide(self, joueurBougeant, posAtteinte, AjouteHistorique):
         """@summary: Déplacement pouvant généré un téléfrag vers une case vide.
@@ -1088,15 +1088,15 @@ class Niveau:
             print("Deplacement pas implemente")
         return None
 
-    def __appliquerEffetSansBoucleSurZone(self, effet, joueurLanceur, case_cible_x, case_cible_y, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
+    def __appliquerEffetSansBoucleSurZone(self, effet, joueurLanceur, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
         """@summary: Fonction qui applique un effet ayant une zone sans la prendre en compte (les glyphes).
         @effet: L'effet qu'il faut appliquer
         @type: Effet
         @joueurLanceur: Le joueur à l'origine de l'effet
         @type: Personnage
-        @case_cible_x: Coordonné x de la case ciblé
+        @caseCibleX: Coordonné x de la case ciblé
         @type: int
-        @case_cible_y: Coordonné y de la case ciblé
+        @caseCibleY: Coordonné y de la case ciblé
         @type: int
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
@@ -1110,12 +1110,12 @@ class Niveau:
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
         if isinstance(effet, EffetGlyphe):
             effetALancer = deepcopy(effet)
-            effetALancer.appliquerEffet(self, None, joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y,
+            effetALancer.appliquerEffet(self, None, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY,
                                         nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)
             return True
         return False
 
-    def __appliquerEffetSurZone(self, zoneEffet, effet, joueurLanceur, joueurCibleDirect, case_cible_x, case_cible_y, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
+    def __appliquerEffetSurZone(self, zoneEffet, effet, joueurLanceur, joueurCibleDirect, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu):
         """@summary: Fonction qui applique un effet ayant une zone.
         @zoneEffet: la zone de l'effet
         @type: Effet
@@ -1125,9 +1125,9 @@ class Niveau:
         @type: Personnage
         @joueurCibleDirect: Le joueur qui s'est fait ciblé pour lancé le sort
         @type: Personnage ou None si l'effet peut être fait au vide.
-        @case_cible_x: Coordonné x de la case ciblé
+        @caseCibleX: Coordonné x de la case ciblé
         @type: int
-        @case_cible_y: Coordonné y de la case ciblé
+        @caseCibleY: Coordonné y de la case ciblé
         @type: int
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
@@ -1159,8 +1159,8 @@ class Niveau:
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet, joueurCibleDirect, ciblesTraitees):
                     # On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
-                    sestApplique = effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y,
-                                                               nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, case_effet_x=case_x, case_effet_y=case_y)
+                    sestApplique = effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY,
+                                                               nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, caseEffetX=case_x, caseEffetY=case_y)
                     if sestApplique is None:
                         sestApplique = True
                     elif isinstance(sestApplique, bool) == False:
@@ -1174,13 +1174,13 @@ class Niveau:
 
             else:
                 if effet.faireAuVide:
-                    effetALancer.appliquerEffet(self, None, joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y, nom_sort=nomSort,
-                                                cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, case_effet_x=case_x, case_effet_y=case_y)
+                    effetALancer.appliquerEffet(self, None, joueurLanceur, caseCibleX=caseCibleX, caseCibleY=caseCibleY, nom_sort=nomSort,
+                                                cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y, caseEffetX=case_x, caseEffetY=case_y)
                     sestApplique = True
 
         return sestApplique, ciblesTraitees
 
-    def lancerEffet(self, effet, prov_x, prov_y, nomSort, case_cible_x, case_cible_y, lanceur=None, isPrevisu=False, previsu=None):
+    def lancerEffet(self, effet, prov_x, prov_y, nomSort, caseCibleX, caseCibleY, lanceur=None, isPrevisu=False, previsu=None):
         """@summary: Fonction qui applique un effet.
         @effet: L'effet qu'il faut appliquer
         @type: Effet
@@ -1190,9 +1190,9 @@ class Niveau:
         @type: int
         @nomSort: Le nom du sort qui a généré le téléfrag
         @type: string
-        @case_cible_x: Coordonné x de la case ciblé
+        @caseCibleX: Coordonné x de la case ciblé
         @type: int
-        @case_cible_y: Coordonné y de la case ciblé
+        @caseCibleY: Coordonné y de la case ciblé
         @type: int
         @lanceur: le lanceur de l'effet, None si le lanceur est sur prov_x;prov_y
         @type: Personnage, ou None
@@ -1210,16 +1210,16 @@ class Niveau:
         joueurLanceur.derniere_action_posY = joueurLanceur.posY
         ciblesTraitees = []  # initialisation des cibles déjà traitées
         # Le joueur cible direct est celui ciblé pour lancer le sort.
-        joueurCibleDirect = self.getJoueurSur(case_cible_x, case_cible_y)
-        zoneEffet = self.getZoneEffet(effet, case_cible_x, case_cible_y)
+        joueurCibleDirect = self.getJoueurSur(caseCibleX, caseCibleY)
+        zoneEffet = self.getZoneEffet(effet, caseCibleX, caseCibleY)
         # Effet non boucles
         sestApplique = self.__appliquerEffetSansBoucleSurZone(
-            effet, joueurLanceur, case_cible_x, case_cible_y, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
+            effet, joueurLanceur, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
         if sestApplique == True:
             self.afficherSorts()
             return sestApplique, ciblesTraitees
         sestApplique, ciblesTraitees = self.__appliquerEffetSurZone(
-            zoneEffet, effet, joueurLanceur, joueurCibleDirect, case_cible_x, case_cible_y, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
+            zoneEffet, effet, joueurLanceur, joueurCibleDirect, caseCibleX, caseCibleY, nomSort, ciblesTraitees, prov_x, prov_y, isPrevisu, previsu)
         return sestApplique, ciblesTraitees
 
     def getJoueurs(self, cibles):
@@ -1338,12 +1338,12 @@ class Niveau:
                                 for effet in tabEffets:
                                     if joueurCibleDirect != None:
                                         if joueurCibleDirect.aEtatsRequis(effet.etatRequisCibleDirect):
-                                            if effet.APorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
+                                            if effet.aPorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
                                                 tab_cases_previ.append(
                                                     [num_case, num_ligne])
                                     else:
                                         if len(effet.etatRequisCibleDirect) == 0:
-                                            if effet.APorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
+                                            if effet.aPorteZone(case_x, case_y, num_case, num_ligne, self.tourDe.posX, self.tourDe.posY):
                                                 tab_cases_previ.append(
                                                     [num_case, num_ligne])
                                 if self.cachedPrevisu[0] == sortSelectionne and self.cachedPrevisu[1] == case_x and self.cachedPrevisu[2] == case_y:
