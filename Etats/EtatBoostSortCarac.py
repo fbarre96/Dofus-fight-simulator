@@ -11,7 +11,7 @@ class EtatBoostSortCarac(Etat):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
-        @debDans: le nombre de début de tour qui devra passé pour que l'état s'active.
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
         @type: int
         @duree: le nombre de début de tour après activation qui devra
                 passé pour que l'état se désactive.
