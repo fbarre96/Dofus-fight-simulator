@@ -1,3 +1,4 @@
+"""@summary: Rassemble les effets de sort en rapport avec les soins."""
 from Effets.Effet import Effet
 
 class EffetSoin(Effet):
@@ -19,7 +20,12 @@ class EffetSoin(Effet):
         return cpy
 
     def calculSoin(self, joueurCaseEffet, joueurLanceur):
-        if joueurCaseEffet == None:
+        """@summary: Calcul les soins qui seront donnés.
+        @joueurCaseEffet: le joueur qui sera soigné
+        @type: Personnage
+        @joueurLanceur: Le joueur à l'origine de l'effet
+        @type: Personnage"""
+        if joueurCaseEffet is None:
             return None
         self.valSoin += joueurLanceur.soins
         if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet.vieMax:
@@ -41,7 +47,8 @@ class EffetSoin(Effet):
         return self.valSoin
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
-        """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
+        """@summary: Appelé lors de l'application de l'effet,
+                     wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
@@ -80,7 +87,8 @@ class EffetSoinPerPVMax(EffetSoin):
         return cpy
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
-        """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
+        """@summary: Appelé lors de l'application de l'effet,
+                     wrapper pour la fonction appliquer dégâts.
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
@@ -103,7 +111,7 @@ class EffetSoinSelonSubit(EffetSoin):
     DOIT AVOIR UN SETTER DEGATS SUBITS ."""
 
     def __init__(self, pourcentage, **kwargs):
-        """@summary: Initialise un effet de dégâts.
+        """@summary: Initialise un effet de soin.
         @pourcentage: le pourcentage de la vie max à soigner
         @type: int (1 à 100)
         @kwargs: Options de l'effets
@@ -117,7 +125,8 @@ class EffetSoinSelonSubit(EffetSoin):
         return cpy
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
-        """@summary: Appelé lors de l'application de l'effet, wrapper pour la fonction appliquer dégâts.
+        """@summary: Appelé lors de l'application de l'effet,
+                    wrapper pour la fonction appliquer soin.
         @niveau: la grille de simulation de combat
         @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet

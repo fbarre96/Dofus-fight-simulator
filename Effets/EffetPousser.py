@@ -1,4 +1,6 @@
+"""@summary: Rassemble les effets de sort en rapport avec les poussées et attirances."""
 from Effets.Effet import Effet
+
 
 class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
@@ -30,30 +32,37 @@ class EffetPousser(Effet):
         return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
 
     def determinerSensPousser(self, cible, sourceX, sourceY):
-        """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
+        """@summary: Retourne des données permettant de calculer le sens
+                    dans lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
-        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé.
+                  Si None est donné, c'est le joueur dont c'est le tour qui sera à
+                  l'origine de la poussée.
         @type: int
-        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé.
+                  Si None est donné, c'est le joueur dont c'est le tour qui sera à
+                  l'origine de la poussée.
         @type: int
 
-        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0). Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut. (1,-1) anti-diagonal vers le bas. 
+        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0).
+                 Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut.
+                 (1,-1) anti-diagonal vers le bas.
         """
 
         # Calcul de la direction de la poussée
-        cible_posX = cible[0]
-        cible_posY = cible[1]
-        dist_lignes = abs(cible_posY - sourceY)
-        dist_colognes = abs(cible_posX - sourceX)
+        ciblePosX = cible[0]
+        ciblePosY = cible[1]
+        distLignes = abs(ciblePosY - sourceY)
+        distColonnes = abs(ciblePosX - sourceX)
         self.coordonnees = [0, 0]
-        if dist_lignes == 0 and dist_colognes == 0:
+        if distLignes == 0 and distColonnes == 0:
             return
-        self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
-        self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
-        if self.coordonnees[0] == 1 and cible_posX < sourceX:
+        self.coordonnees[0] = 1 if (distColonnes >= distLignes) else 0
+        self.coordonnees[1] = 1 if (distColonnes <= distLignes) else 0
+        if self.coordonnees[0] == 1 and ciblePosX < sourceX:
             self.coordonnees[0] = -1
-        if self.coordonnees[1] == 1 and cible_posY < sourceY:
+        if self.coordonnees[1] == 1 and ciblePosY < sourceY:
             self.coordonnees[1] = -1
         return self.coordonnees[1]
 
@@ -80,8 +89,8 @@ class EffetPousser(Effet):
                 joueurCaseEffet.posX, joueurCaseEffet.posY)
         elif self.cible == "Lanceur":
             self.joueurAPousser = joueurLanceur
-        self.determinerSensPousser([
-                                   self.joueurAPousser.posX, self.joueurAPousser.posY], self.caseFromX, self.caseFromY)
+        self.determinerSensPousser([self.joueurAPousser.posX, self.joueurAPousser.posY],
+                                   self.caseFromX, self.caseFromY)
         niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
@@ -111,30 +120,35 @@ class EffetPousserJusque(EffetPousser):
         return EffetPousserJusque(**self.kwargs)
 
     def determinerSensPousser(self, cible, sourceX, sourceY):
-        """@summary: Retourne des données permettant de calculer le sens dans lequel un joueur sera poussé.
+        """@summary: Retourne des données permettant de calculer le sens dans
+                     lequel un joueur sera poussé.
         @joueurCible: le joueur qui va être poussé
         @type: Personnage
-        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceX: la coordonnée x depuis laquelle le joueur se fait poussé. Si None est donné,
+                  c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
-        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné, c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
+        @sourceY: la coordonnée y depuis laquelle le joueur se fait poussé. Si None est donné,
+                  c'est le joueur dont c'est le tour qui sera à l'origine de la poussée.
         @type: int
 
-        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0). Par exemple, (1,0) est horizontal vers la droite. (0,1) vertical haut. (1,-1) anti-diagonal vers le bas. 
+        @return: Retoure un point dans les coordonnées d'un repère normé de centre (0,0).
+                 Par exemple, (1,0) est horizontal vers la droite.
+                 (0,1) vertical haut. (1,-1) anti-diagonal vers le bas.
         """
 
         # Calcul de la direction de la poussée
-        cible_posX = cible[0]
-        cible_posY = cible[1]
-        dist_lignes = abs(cible_posY - sourceY)
-        dist_colognes = abs(cible_posX - sourceX)
+        ciblePosX = cible[0]
+        ciblePosY = cible[1]
+        distLignes = abs(ciblePosY - sourceY)
+        distColonnes = abs(ciblePosX - sourceX)
         self.coordonnees = [0, 0]
-        if dist_lignes == 0 and dist_colognes == 0:
+        if distLignes == 0 and distColonnes == 0:
             return
-        self.coordonnees[0] = 1 if (dist_colognes >= dist_lignes) else 0
-        self.coordonnees[1] = 1 if (dist_colognes <= dist_lignes) else 0
-        if self.coordonnees[0] == 1 and cible_posX < sourceX:
+        self.coordonnees[0] = 1 if (distColonnes >= distLignes) else 0
+        self.coordonnees[1] = 1 if (distColonnes <= distLignes) else 0
+        if self.coordonnees[0] == 1 and ciblePosX < sourceX:
             self.coordonnees[0] = -1
-        if self.coordonnees[1] == 1 and cible_posY < sourceY:
+        if self.coordonnees[1] == 1 and ciblePosY < sourceY:
             self.coordonnees[1] = -1
         return self.coordonnees[1]
 
@@ -154,8 +168,8 @@ class EffetPousserJusque(EffetPousser):
         self.caseFromY = joueurLanceur.posY
         self.caseToX = kwargs.get("caseCibleX")
         self.caseToY = kwargs.get("caseCibleY")
-        self.determinerSensPousser([
-                                   self.caseToX, self.caseToY], self.caseFromX, self.caseFromY)
+        self.determinerSensPousser([self.caseToX, self.caseToY],
+                                   self.caseFromX, self.caseFromY)
         self.joueurAPousser = niveau.getJoueurSur(
             joueurLanceur.posX + self.coordonnees[0], joueurLanceur.posY + self.coordonnees[1])
         if self.joueurAPousser is None:
@@ -176,10 +190,12 @@ class EffetAttire(EffetPousser):
     Cet effet attire un joueur vers la position du lanceur."""
 
     def __init__(self, int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
-        """@summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
+        """
+        @summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
         @int_nbCase: le nombre de case dont le joueur cible va être attiré.
         @type: int
-        @source: string qui définit la provenance de l'attirance parmi CaseCible, Lanceur, JoueurCaseEffet
+        @source: string qui définit la provenance de l'attirance parmi CaseCible,
+                 Lanceur, JoueurCaseEffet
         @type: str
         @cible: string qui définit la cible de l'attirance parmi Lanceur, JoueurCaseEffet
         @type: str
@@ -225,20 +241,25 @@ class EffetAttire(EffetPousser):
             if joueurCaseEffet is None:
                 return
             self.joueurAAttirer = joueurCaseEffet
-        if self.joueurAAttirer != None:
-            if self.joueurAAttirer.posX != self.caseFromX or self.joueurAAttirer.posY != self.caseFromY:
-                super().determinerSensPousser([
-                    self.joueurAAttirer.posX, self.joueurAAttirer.posY], self.caseFromX, self.caseFromY)
+        if self.joueurAAttirer is not None:
+            if self.joueurAAttirer.posX != self.caseFromX \
+               or self.joueurAAttirer.posY != self.caseFromY:
+                super().determinerSensPousser([self.joueurAAttirer.posX, self.joueurAAttirer.posY],
+                                              self.caseFromX, self.caseFromY)
                 #  changement de sens par rapport au sens de pousser
                 self.coordonnees[0] *= -1
                 self.coordonnees[1] *= -1
-                # Pour les attirances en diagonale il faut que je le joueur attirer s'arrête devant l'attireur
+                # Pour les attirances en diagonale
+                # il faut que je le joueur attiré s'arrête devant l'attireur
                 caseMax = self.determinerAttiranceMax()
                 self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
                 niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def determinerAttiranceMax(self):
+        """
+        @summary: Calcul le nombre de case maximal qui seront parcourues
+                  Qui correspondent à la distance à l'attireur
+        """
         if self.coordonnees[0] != 0:
             return abs(self.joueurAAttirer.posX - self.caseFromX)
-        else:
-            return abs(self.joueurAAttirer.posY - self.caseFromY)
+        return abs(self.joueurAAttirer.posY - self.caseFromY)

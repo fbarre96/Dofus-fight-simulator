@@ -1,3 +1,5 @@
+"""@summary: Rassemble les effets de sort en rapport avec les kill instantanés."""
+
 from Effets.Effet import Effet
 
 class EffetTue(Effet):
@@ -25,3 +27,4 @@ class EffetTue(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         niveau.tue(joueurCaseEffet)
+        

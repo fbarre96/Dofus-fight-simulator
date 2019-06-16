@@ -1,9 +1,12 @@
+"""@summary: Rassemble les effets de sort en rapport avec les propagations."""
+
 from Etats.Etat import Etat
 from Effets.Effet import Effet
 
 class EffetPropage(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
-    Cet effet propage un sort à la cible la plus proche dans la portée du sort (Flèche fulminante par exemple)."""
+    Cet effet propage un sort à la cible la plus proche dans la portée du sort
+    (Flèche fulminante par exemple)."""
 
     def __init__(self, sort_sort, zone_zone, **kwargs):
         """@summary: Initialise un effet de propagation de sort.
@@ -35,9 +38,14 @@ class EffetPropage(Effet):
         # Etat temporaire pour marqué la cible comme déjà touché par la propagation
         joueurCaseEffet.appliquerEtat(
             Etat("temporaire", 0, 1), joueurLanceur)
-        # Récupérations des joueurs respectant les critères du sort les plus proches, etat requis = pas temporaire
-        joueursAppliquables = niveau.getJoueurslesPlusProches(
-            joueurCaseEffet.posX, joueurCaseEffet.posY, joueurLanceur, self.zone, ["!temporaire"], self.ciblesPossibles)
-        if len(joueursAppliquables) > 0:
+        # Récupérations des joueurs respectant les critères du sort les plus proches,
+        # etat requis = pas temporaire
+        joueursAppliquables = niveau.getJoueurslesPlusProches(joueurCaseEffet.posX,
+                                                              joueurCaseEffet.posY, joueurLanceur,
+                                                              self.zone, ["!temporaire"],
+                                                              self.ciblesPossibles)
+        # La liste n'est vraie que si elle n'est pas vide
+        if joueursAppliquables:
             self.sort.lance(joueurCaseEffet.posX, joueurCaseEffet.posY, niveau,
                             joueursAppliquables[0].posX, joueursAppliquables[0].posY, joueurLanceur)
+                            

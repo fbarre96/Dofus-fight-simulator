@@ -1,3 +1,5 @@
+"""@summary: Rassemble les effets de sort en rapport avec les retrait PA et PM."""
+
 import random
 
 from Effets.Effet import Effet
@@ -95,4 +97,4 @@ class EffetRetPM(Effet):
                 joueurCaseEffet.PM -= totalRet
                 if not self.isPrevisu():
                     print(joueurCaseEffet.nomPerso+" -" + str(totalRet) + "PM")
-
+                    

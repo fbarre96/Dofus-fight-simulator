@@ -55,16 +55,6 @@ class Sort:
             sortPoMax*=2
         return (distance >= sortPoMin and distance <= sortPoMax)
 
-    def getCoutPA(self,joueurLanceur):
-        coutPA = self.coutPA
-        for etat in joueurLanceur.etats:
-            if etat.actif():
-                coutPA = etat.triggerCoutPA(self,coutPA)
-
-        if coutPA < 0:
-            coutPA = 0
-        return coutPA
-
     def estLancable(self, niveau, joueurLanceur,joueurCible):
         res,msg,coutPA = self.sortEstLancable(niveau, joueurLanceur, joueurCible)
         if res == False:
@@ -76,7 +66,7 @@ class Sort:
         return True, msg, coutPA
 
     def sortEstLancable(self, niveau, joueurLanceur, joueurCible):
-        coutPA = self.getCoutPA(joueurLanceur)
+        coutPA = self.coutPA
         if self.compteTourEntreDeux >= self.nbTourEntreDeux:
             if self.compteLancerParTour < self.nbLancerParTour:
                 if joueurCible != None:

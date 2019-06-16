@@ -1,3 +1,5 @@
+"""@summary: Rassemble les effets de sort en rapport avec les runes."""
+
 from Effets.Effet import Effet
 import Niveau
 

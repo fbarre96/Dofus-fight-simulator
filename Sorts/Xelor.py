@@ -58,7 +58,7 @@ def getSorts(lvl):
         4), cibles_possibles="Allies|Ennemis", cibles_exclues="Lanceur|Xelor|Synchro"), EffetEtatSelf(EtatActiveSort("RetourParadoxe", 1, 1, retourParadoxe), cibles_possibles="Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     activationDesynchro = [EffetTpSymCentre(
         zone=Zones.TypeZoneCercleSansCentre(3))]
-    activationRune = [EffetTp(generer_TF=True, cible_requise=True)]
+    activationRune = [EffetTp(genererTF=True, cible_requise=True)]
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Ralentissement", 1, 2, 1, 4, [EffetDegats(4, 5, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], [EffetDegats(7, 8, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], 5, 4, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau et retire 1 PA à la cible.
     Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
@@ -280,7 +280,7 @@ def getSorts(lvl):
     Fixe le temps de relance de Cadran de Xelor et de Complice à 1.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Faille Temporelle", 170, 3, 0, 0, [EffetEchangePlace(zone=Zones.TypeZoneInfini(), cibles_possibles="Cadran de Xelor|Complice", generer_TF=True), EffetEtat(EtatEffetFinTour("Retour faille temporelle", 0, 1, EffetTeleportePosPrec(1), "Fin faille Temporelle", "cible")), EffetEtat(Etat("Faille_temporelle", 0, 1), zone=Zones.TypeZoneInfini(), cibles_possibles="Xelor")], [], 0, 1, 1, 2, 0, "cercle", False, description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
+        Sort.Sort("Faille Temporelle", 170, 3, 0, 0, [EffetEchangePlace(zone=Zones.TypeZoneInfini(), cibles_possibles="Cadran de Xelor|Complice", genererTF=True), EffetEtat(EtatEffetFinTour("Retour faille temporelle", 0, 1, EffetTeleportePosPrec(1), "Fin faille Temporelle", "cible")), EffetEtat(Etat("Faille_temporelle", 0, 1), zone=Zones.TypeZoneInfini(), cibles_possibles="Xelor")], [], 0, 1, 1, 2, 0, "cercle", False, description="""Le lanceur échange sa position avec celle du Complice (ou du Cadran).
     À la fin du tour, le Complice (ou le Cadran) revient à sa position précédente.
     La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
     ]))

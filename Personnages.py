@@ -585,7 +585,7 @@ class Personnage(object):
 
     def selectionSort(self, sort, niveau):
         sortSelectionne = None
-        coutPA = sort.getCoutPA(self)
+        coutPA = sort.coutPA
         if coutPA < 0:
             coutPA = 0
         if (coutPA <= niveau.tourDe.PA):
