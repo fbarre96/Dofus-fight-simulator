@@ -13,7 +13,7 @@ class EffetInvoque(Effet):
     def __init__(self, str_nomInvoque, compteCommeInvocation, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
         @str_nomInvoque: le nom de l'invocation
-                        (pré-définies dans le dictionnaire Personnages.INVOCS)
+                        (pré-définies dans le dictionnaire Personnages.invocs_liste)
         @type: string
         @kwargs: Options de l'effets
         @type: **kwargs"""
@@ -37,7 +37,7 @@ class EffetInvoque(Effet):
                  les options caseCibleX et caseCibleY doivent être mentionnées.
         @type: **kwargs"""
 
-        invoc = deepcopy(Personnages.INVOCS[self.nomInvoque])
+        invoc = deepcopy(Personnages.invocs_liste[self.nomInvoque])
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
@@ -71,7 +71,7 @@ class EffetDouble(Effet):
     def __init__(self, **kwargs):
         """@summary: Initialise un effet invoquant un personnage.
         @str_nomInvoque: le nom de l'invocation
-                         (pré-définies dans le dictionnaire Personnages.INVOCS)
+                         (pré-définies dans le dictionnaire Personnages.invocs_liste)
         @type: string
         @kwargs: Options de l'effets
         @type: **kwargs"""

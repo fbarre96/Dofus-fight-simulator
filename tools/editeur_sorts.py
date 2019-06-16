@@ -238,9 +238,9 @@ def getNonAutoInfos():
     #                     argsBuff.append("cibles_exclues=\""+"|".join(ciblesExclues)+"\"")
     #                 print("L'effet sera  applique sur les cases vides (o/n)?")
     #                 tmp = input()
-    #                 faireAuVide = tmp == "o"
-    #                 if faireAuVide:
-    #                     argsBuff.append("faire_au_vide="+str(faireAuVide))
+    #                 cibleNonRequise = tmp == "o"
+    #                 if cibleNonRequise:
+    #                     argsBuff.append("faire_au_vide="+str(cibleNonRequise))
     #                 print("L'effet a des etats requis pour la cible direct (o/n)?")
     #                 aEtatsRequisDirect = input()
     #                 etatsRequisDirect = []

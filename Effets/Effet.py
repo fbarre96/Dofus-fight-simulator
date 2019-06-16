@@ -17,7 +17,7 @@ class Effet(object):
                         consomme_etat (booléen, Faux par défaut),
                         cibles_possibles (string, "Allies|Ennemis|Lanceur" par défaut)
                         cibles_exclues (string, aucune par défaut)
-                        cible_requise (booléen, Faux par défaut).
+                        cible_non_requise (booléen, Faux par défaut).
                                     Indique si l'effet peut être lancé s'il n'a pas de cible direct
                                     (autrement dit si le sort est lancé sur une case vide).
                         zone (Zone, Zones.TypeZoneCercle(0) par défaut = sort mono cible)
@@ -32,7 +32,7 @@ class Effet(object):
         self.ciblesPossibles = kwargs.get(
             'cibles_possibles', "Allies|Ennemis|Lanceur").split("|")
         self.ciblesExclues = kwargs.get('cibles_exclues', "").split("|")
-        self.faireAuVide = kwargs.get('cible_requise', False)
+        self.cibleNonRequise = kwargs.get('cible_non_requise', False)
         self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
 
@@ -174,7 +174,7 @@ class Effet(object):
                       str(self.etatRequisCibleDirect)+")")
                 return False
             # Test si une cible direct n'existe pas si l'effet doit être jouée
-            if (joueurCibleDirect is None and not self.faireAuVide):
+            if (joueurCibleDirect is None and not self.cibleNonRequise):
                 print(
                     "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
                 return False

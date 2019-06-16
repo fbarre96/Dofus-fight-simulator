@@ -35,13 +35,13 @@ def getSorts(lvl):
         Sort.Sort("Tannée",110,4,1,7,[EffetDegats(30,34,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],[EffetDegats(36,40,"Air",zone=Zones.TypeZoneLignePerpendiculaire(1)),EffetRetPM(3,zone=Zones.TypeZoneLignePerpendiculaire(1))],5,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone et retire des PM.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Bond",1,5,1,5,[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,2,0,"cercle",False,description="""Téléporte sur la case ciblée.
+        Sort.Sort("Bond",1,5,1,5,[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,2,0,"cercle",False,description="""Téléporte sur la case ciblée.
     Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
 
-        Sort.Sort("Bond",20,5,1,5,[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,1,0,"cercle",False,description="""Téléporte sur la case ciblée.
+        Sort.Sort("Bond",20,5,1,5,[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,1,1,0,"cercle",False,description="""Téléporte sur la case ciblée.
     Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True),
 
-        Sort.Sort("Bond",40,5,1,6,[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,99,0,0,"cercle",False,description="""Téléporte sur la case ciblée.
+        Sort.Sort("Bond",40,5,1,6,[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,115),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],[EffetTp(cibles_possibles="",cible_non_requise=True),EffetEtat(EtatModDegPer("Bond",0,1,118),zone=Zones.TypeZoneCercle(1),cibles_possibles="Ennemis")],15,1,99,0,0,"cercle",False,description="""Téléporte sur la case ciblée.
     Augmente les dommages reçus par les ennemis situés sur les cases adjacentes.""", chaine=True)
     ]))
     
@@ -57,7 +57,7 @@ def getSorts(lvl):
         Sort.Sort("Intimidation",52,2,1,2,[EffetDegats(11,13,"Neutre"),EffetPousser(3)],[EffetDegats(13,15,"Neutre"),EffetPousser(3)],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Neutre sur les ennemis et repousse la cible.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Conquête",105,3,1,6,[EffetInvoque("Stratege Iop",True,cible_possibles="",cible_requise=True),EffetEtat(EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
+        Sort.Sort("Conquête",105,3,1,6,[EffetInvoque("Stratege Iop",True,cible_possibles="",cible_non_requise=True),EffetEtat(EtatRedistribuerPer("Strategie iop",0,-1, 50,"Ennemis|Allies",2))],[],0,1,1,3,0,"cercle",True,description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Déferlement",3,4,0,5,[EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),EffetDegats(24,28,"Eau",cibles_exclues="Lanceur"),EffetEtatSelf(EtatBouclierPerLvl("Déferlement",0,1,100))],[EffetAttire(4,"JoueurCaseEffet","Lanceur",cibles_exclues="Lanceur"),EffetDegats(32,36,"Eau",cibles_exclues="Lanceur"), EffetEtatSelf(EtatBouclierPerLvl("Déferlement",0,1,100))],5,3,2,0,0,"ligne",True,description="""Occasionne des dommages Eau aux ennemis et rapproche le lanceur de la cible.
@@ -85,14 +85,14 @@ def getSorts(lvl):
     Applique des points de bouclier pour chaque ennemi touché.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Epée Destructrice",9,4,1,5,[EffetDegats(24,28,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[EffetDegats(30,34,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
+        Sort.Sort("Epée Destructrice",9,4,1,5,[EffetDegats(24,28,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],[EffetDegats(30,34,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
 
-        Sort.Sort("Epée Destructrice",47,4,1,5,[EffetDegats(28,32,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
+        Sort.Sort("Epée Destructrice",47,4,1,5,[EffetDegats(28,32,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],[EffetDegats(34,38,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False),
 
-        Sort.Sort("Epée Destructrice",87,4,1,5,[EffetDegats(32,36,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],[EffetDegats(38,42,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False)
+        Sort.Sort("Epée Destructrice",87,4,1,5,[EffetDegats(32,36,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],[EffetDegats(38,42,"Feu",zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True),EffetAttire(2,zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Feu aux ennemis et attire les cibles vers le lanceur.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Anneau Destructeur",125,3,0,2,[EffetDegats(26,30,"Air",zone=Zones.TypeZoneAnneau(3),cibles_possibles="Ennemis",cible_requise=True),EffetAttire(1,"CaseCible",zone=Zones.TypeZoneAnneau(3),cible_requise=True)],[EffetDegats(30,34,"Air",zone=Zones.TypeZoneAnneau(3), cibles_possibles="Ennemis",cible_requise=True),EffetAttire(1,"CaseCible", zone=Zones.TypeZoneAnneau(3),cible_requise=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Air en anneau et attire les cibles.""", chaine=False)
+        Sort.Sort("Anneau Destructeur",125,3,0,2,[EffetDegats(26,30,"Air",zone=Zones.TypeZoneAnneau(3),cibles_possibles="Ennemis",cible_non_requise=True),EffetAttire(1,"CaseCible",zone=Zones.TypeZoneAnneau(3),cible_non_requise=True)],[EffetDegats(30,34,"Air",zone=Zones.TypeZoneAnneau(3), cibles_possibles="Ennemis",cible_non_requise=True),EffetAttire(1,"CaseCible", zone=Zones.TypeZoneAnneau(3),cible_non_requise=True)],15,2,99,0,0,"cercle",True,description="""Occasionne des dommages Air en anneau et attire les cibles.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Massacre",13,2,1,3,[EffetEtat(EtatRedistribuerPer("Massacre",0,2,50,"Allies",1))],[],0,1,1,3,0,"cercle",True,description="""Lorsque la cible ennemie reçoit des dommages de sorts, elle occasionne 50% de ces dommages aux ennemis au contact.""", chaine=True),
@@ -106,11 +106,11 @@ def getSorts(lvl):
     Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Souffle",17,2,2,4,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+        Sort.Sort("Souffle",17,2,2,4,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_non_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-        Sort.Sort("Souffle",58,2,2,6,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
+        Sort.Sort("Souffle",58,2,2,6,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_non_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True),
 
-        Sort.Sort("Souffle",102,2,2,8,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
+        Sort.Sort("Souffle",102,2,2,8,[EffetPousser(1,"CaseCible",zone=Zones.TypeZoneCroix(1),cible_non_requise=True)],[],0,1,1,2,0,"cercle",False,description="""Repousse les alliés et les ennemis situés autour de la cellule ciblée.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Violence",135,2,0,0,[EffetAttire(1,zone=Zones.TypeZoneCercle(2)),EffetEtatSelf(EtatBoostCaracFixe("Violence tacle",0,1,"tacle",25),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis"),EffetEtatSelf(EtatBoostCaracFixe("Violence dopou",0,1,"doPou",50),zone=Zones.TypeZoneCercle(2), cibles_possibles="Ennemis")],[],0,1,99,0,0,"cercle",False,description="""Attire les entités é proximité et augmente les dommages de poussée et le Tacle pour chaque ennemi dans la zone d'effet.""", chaine=True)
@@ -130,14 +130,14 @@ def getSorts(lvl):
     Si le sort est lancé sur soi, le sort n'occasionne pas de dommages et ils sont augmentés pour les prochains lancers.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Couper",27,3,1,3,[EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+        Sort.Sort("Couper",27,3,1,3,[EffetDegats(12,16,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],[EffetDegats(19,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
 
-        Sort.Sort("Couper",72,3,1,3,[EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
+        Sort.Sort("Couper",72,3,1,3,[EffetDegats(15,19,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],[EffetDegats(22,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(2,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True),
 
-        Sort.Sort("Couper",118,3,1,4,[EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_requise=True)],[EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3), cible_requise=True),EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
+        Sort.Sort("Couper",118,3,1,4,[EffetDegats(18,22,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],[EffetDegats(25,25,"Feu",zone=Zones.TypeZoneLigne(3), cible_non_requise=True),EffetRetPM(3,zone=Zones.TypeZoneLigne(3), cible_non_requise=True)],5,2,99,0,1,"ligne",True,description="""Occasionne des dommages Feu et retire des PM.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Fracture",145,4,1,4,[EffetEtat(EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(), cible_requise=True),EffetDegats(34,38,"Air", zone=Zones.TypeZoneLigneJusque(), cible_requise=True)],[EffetEtat(EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(), cible_requise=True),EffetDegats(39,43,"Air", zone=Zones.TypeZoneLigneJusque(), cible_requise=True)],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'é la cellule ciblée.
+        Sort.Sort("Fracture",145,4,1,4,[EffetEtat(EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(), cible_non_requise=True),EffetDegats(34,38,"Air", zone=Zones.TypeZoneLigneJusque(), cible_non_requise=True)],[EffetEtat(EtatBoostCaracFixe("Fracture",0,2,"erosion",13), zone=Zones.TypeZoneLigneJusque(), cible_non_requise=True),EffetDegats(39,43,"Air", zone=Zones.TypeZoneLigneJusque(), cible_non_requise=True)],15,2,99,0,0,"ligne",False,description="""Occasionne des dommages Air jusqu'é la cellule ciblée.
     Applique un malus d'érosion.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
@@ -230,7 +230,7 @@ def getSorts(lvl):
         Sort.Sort("Épée Céleste",162,4,0,4,[EffetDegats(36,40,"Air",zone=Zones.TypeZoneCercle(2))],[EffetDegats(42,46,"Air",zone=Zones.TypeZoneCercle(2))],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Zénith",180,5,1,3,[EffetDegatsSelonPMUtilises(86,94,"Air",zone=Zones.TypeZoneLigne(4), cible_requise=True)],[EffetDegatsSelonPMUtilises(104,112,"Air",zone=Zones.TypeZoneLigne(4), cible_requise=True)],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
+        Sort.Sort("Zénith",180,5,1,3,[EffetDegatsSelonPMUtilises(86,94,"Air",zone=Zones.TypeZoneLigne(4), cible_non_requise=True)],[EffetDegatsSelonPMUtilises(104,112,"Air",zone=Zones.TypeZoneLigne(4), cible_non_requise=True)],5,1,99,0,0,"ligne",True,description="""Occasionne des dommages Air en zone.
     Moins le lanceur a utilisé de PM pendant son tour de jeu, plus les dommages occasionnés sont importants.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
@@ -248,11 +248,11 @@ def getSorts(lvl):
     Applique des points de bouclier au lanceur.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Épée de Iop",84,4,1,5,[EffetDegats(27,31,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+        Sort.Sort("Épée de Iop",84,4,1,5,[EffetDegats(27,31,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],[EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
 
-        Sort.Sort("Épée de Iop",134,4,1,5,[EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
+        Sort.Sort("Épée de Iop",134,4,1,5,[EffetDegats(32,36,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],[EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True),
 
-        Sort.Sort("Épée de Iop",178,4,1,6,[EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],[EffetDegats(42,46,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True)
+        Sort.Sort("Épée de Iop",178,4,1,6,[EffetDegats(37,41,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],[EffetDegats(42,46,"Terre",zone=Zones.TypeZoneCroix(3),cibles_possibles="Allies|Ennemis",cibles_exclues="Lanceur",cible_non_requise=True)],15,2,99,0,0,"ligne",True,description="""Occasionne des dommages Terre en croix.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Pugilat",190,2,1,6,[EffetDegats(9,11,"Terre",zone=Zones.TypeZoneCercle(2),cibles_exclues="Lanceur"),EffetEtatSelf(EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",15))],[EffetDegats(11,13,"Terre",cibles_exclues="Lanceur",zone=Zones.TypeZoneCercle(2)), EffetEtatSelf(EtatBoostBaseDeg("Pugilat",0,1,"Pugilat",18))],5,4,1,0,0,"cercle",True,description="""Occasionne des dommages Terre en zone.

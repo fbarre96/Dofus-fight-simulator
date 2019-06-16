@@ -32,18 +32,13 @@ class EffetSoin(Effet):
             self.valSoin = joueurCaseEffet.vieMax - joueurCaseEffet.vie
         return self.valSoin
 
-    def appliquerSoin(self, niveau, joueurCaseEffet, joueurLanceur):
+    def appliquerSoin(self, joueurCaseEffet):
         """@summary: calcul les soi,s à infligés et applique ces soins à la cible.
-        @niveau: la grille de simulation de combat
-        @type: Niveau
         @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
-        @type: Personnage
-        @joueurLanceur: le joueur lançant l'effet
         @type: Personnage
 
         @return: Le total de soins infligés"""
-        joueurCaseEffet.soigne(joueurLanceur, niveau,
-                               self.valSoin, not self.isPrevisu())
+        joueurCaseEffet.soigne(self.valSoin, not self.isPrevisu())
         return self.valSoin
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -65,7 +60,7 @@ class EffetSoin(Effet):
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
-            self.appliquerSoin(niveau, joueurCaseEffet, joueurLanceur)
+            self.appliquerSoin(joueurCaseEffet)
 
 
 class EffetSoinPerPVMax(EffetSoin):

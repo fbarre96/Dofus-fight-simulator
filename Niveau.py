@@ -324,7 +324,7 @@ class Niveau:
                 joueur.posDebTour = [joueur.posX, joueur.posY]
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
             self.structure[joueur.posY][joueur.posX].type = "j"
-            joueur.LancerSortsDebutCombat(self)
+            joueur.lancerSortsDebutCombat(self)
 
     def rafraichirEtats(self, personnageARafraichir, debutTour=True):
         """@summary: met à jour les états du personnage. (diminution de durée restante),
@@ -532,7 +532,7 @@ class Niveau:
         for i in range(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
-                invoc.LancerSortsDebutCombat(self)
+                invoc.lancerSortsDebutCombat(self)
                 found = True
                 break
         if not found:
@@ -953,7 +953,7 @@ class Niveau:
                         joueurCaseEffet.retirerEtats(effet.etatRequisCibles)
 
             else:
-                if effet.faireAuVide:
+                if effet.cibleNonRequise:
                     effetALancer.appliquerEffet(self, None, joueurLanceur,
                                                 caseCibleX=caseCibleX, caseCibleY=caseCibleY,
                                                 nom_sort=nomSort, cibles_traitees=ciblesTraitees,
@@ -1309,7 +1309,7 @@ class Niveau:
         if mouseXY[1] > constantes.y_sorts:
             for sort in self.tourDe.sorts:
                 if sort.vue.isMouseOver(mouseXY):
-                    sort.overlay.afficher(sort.vue.x, constantes.y_sorts)
+                    sort.overlay.afficher(sort.vue.posX, constantes.y_sorts)
         else:
             for joueur in self.joueurs:
                 if joueur.vue.isMouseOver(mouseXY):

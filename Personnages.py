@@ -1,41 +1,52 @@
 # -*- coding: utf-8 -*
-import Sort as Sort
-import Zones as Zones
+"""
+@summary: Rassembles les différents types de Personnages.
+"""
+from copy import deepcopy
+import uuid
+
+import pygame
+from pygame.locals import K_F1, K_1, K_9, K_ESCAPE
+
+import Sort
 from Etats.EtatBouclier import EtatBouclierPerLvl
 from Effets.EffetInvoque import EffetInvoque
 import constantes
 import Overlays
-import pygame
-from pygame.locals import QUIT, K_F1, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9, K_ESCAPE
-import json
-from copy import deepcopy
-import copy
-import uuid
-
 
 
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
 
-    def __init__(self, nomPerso, classe, lvl, team, caracsPrimaires, caracsSecondaires, dommages, resistances, icone=""):
+    def __init__(self, nomPerso, classe, lvl, team, caracsPrimaires,
+                 caracsSecondaires, dommages, resistances, icone=""):
         """@summary: Initialise un personnage.
-        @classe: la classe du personnage (les 18 classes de Dofus). Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
+        @classe: la classe du personnage (les 18 classes de Dofus).
+                 Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
         @type: string
         @lvl: le niveau du personnage
         @type: int
         @team: le numéro d'équipe du personnage
         @type: int
-        @caracsPrimaires: les caractéristiques primaires du perso (PA, PM, PO, vita, agi, chance, force, intel, pui, cc, sasa)
+        @caracsPrimaires: les caractéristiques primaires du perso
+        (PA, PM, PO, vita, agi, chance, force, intel, pui, cc, sasa)
         @type: dict
-        @caracsSecondaires: les caractéristiques secondaires du perso (RetPA, esquive pa, ret pm, esq pm, soins, tacle, fuite, ini, invocations, prospection)
+        @caracsSecondaires: les caractéristiques secondaires du perso
+        (RetPA, esquive pa, ret pm, esq pm, soins, tacle, fuite, ini, invocations, prospection)
         @type: dict
-        @dommages: les dommages du perso (do, do cri, do neutre, do terre, do feu, do eau, do air, renvoi, maitrise d'arme, pièges (fixe), pièges(puissance), poussée, Sorts, Arme, Distance, Mêlée)
+        @dommages: les dommages du perso
+        (do, do cri, do neutre, do terre, do feu, do eau, do air, renvoi, maitrise d'arme,
+                  pièges (fixe), pièges(puissance), poussée, Sorts, Arme, Distance, Mêlée)
         @type: dict
-        @dommages: les résistances du perso (ré neutre, re per neutre, ré terre, ré per terre, ré feu, ré per feu, ré eau, ré per eau, ré air, ré per air, ré cc fixe, ré pou fixe, ré distance, ré mêlée)
+        @dommages: les résistances du perso
+        (ré neutre, re per neutre, ré terre, ré per terre, ré feu, ré per feu, ré eau, ré per eau,
+                                 ré air, ré per air, ré cc fixe, ré pou fixe, ré distance, ré mêlée)
         @type: dict
         @icone: le chemin de l'image pour afficher l'icône du personnage
-        @type: string (nom de l'image. L'image doit faire moins de 30x30 pixels, se situer dans /image et porté le même nom que la classe une fois normalisé)
+        @type: string (nom de l'image. L'image doit faire moins de 30x30 pixels,
+        se situer dans /image et porté le même nom que la classe une fois normalisé)
         """
+        # pylint: disable=invalid-name
         self.PA = int(caracsPrimaires.get("PA", 0))
         self.PM = int(caracsPrimaires.get("PM", 0))
         self.PO = int(caracsPrimaires.get("PO", 0))
@@ -71,7 +82,7 @@ class Personnage(object):
         self.doEau = int(dommages.get("Eau", 0))
         self.doAir = int(dommages.get("Air", 0))
         self.doRenvoi = int(dommages.get("Renvoi", 0))
-        self.doMaitriseArme = int(dommages.get("Maitrise d'arme", 0))  # TODO
+        self.doMaitriseArme = int(dommages.get("Maitrise d'arme", 0))
         self.doPieges = int(dommages.get("Pieges", 0))
         self.doPiegesPui = int(dommages.get("Pieges Puissance", 0))
         self.doPou = int(dommages.get("Poussee", 0))
@@ -106,7 +117,7 @@ class Personnage(object):
         self.classe = classe
         self.uid = uuid.uuid4()
         self.sortsDebutCombat = []
-        self.sorts, self.sortsDebutCombat = Personnage.ChargerSorts(
+        self.sorts, self.sortsDebutCombat = Personnage.chargerSorts(
             self.classe, self.lvl)  # la liste des sorts du personnage
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
@@ -123,25 +134,42 @@ class Personnage(object):
 
         self.msgsPrevisu = []
 
-        if not(icone.startswith("images/")):
+        if not icone.startswith("images/"):
             self.icone = ("images/"+icone)
         else:
             self.icone = (icone)
         self.icone = constantes.normaliser(self.icone)
         # Overlay affichange le nom de classe et sa vie restante
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText(
-            "nomPerso", (210, 105, 30)), Overlays.ColoredText("overlayTexte", (224, 238, 238)), (56, 56, 56))
+            "nomPerso", (210, 105, 30)),
+                                        Overlays.ColoredText("overlayTexte",
+                                                             (224, 238, 238)),
+                                        (56, 56, 56))
 
     def __deepcopy__(self, memo):
         toReturn = Personnage(self.nomPerso, self.classe, self.lvl, self.team,
-                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
-                                  "Force": self.fo, "Intelligence": self.int, "Puissance": self.pui, "Coups Critiques": self.cc, "Sagesse": self.sagesse},
-                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA, "Retrait PM": self.retPM, "Esquive PM": self.esqPM, "Soins": self.soins,
-                               "Tacle": self.tacle, "Fuite": self.fuite, "Initiative": self.ini, "Invocation": self.invocationLimite, "Prospection": self.prospection},
-                              {"Dommages": self.do, "Dommages critiques": self.doCri, "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
-                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou, "Sorts": self.doSorts, "Armes": self.doArmes, "Distance": self.doDist, "Melee": self.doMelee},
-                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre, "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-                               "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir, "Coups critiques": self.reCc, "Poussee": self.rePou, "Distance": self.reDist, "Melee": self.reMelee},
+                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie,
+                               "Agilite": self.agi, "Chance": self.cha, "Force": self.fo,
+                               "Intelligence": self.int, "Puissance": self.pui,
+                               "Coups Critiques": self.cc, "Sagesse": self.sagesse},
+                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
+                               "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
+                               "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
+                               "Initiative": self.ini, "Invocation": self.invocationLimite,
+                               "Prospection": self.prospection},
+                              {"Dommages": self.do, "Dommages critiques": self.doCri,
+                               "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu,
+                               "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
+                               "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges,
+                               "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou,
+                               "Sorts": self.doSorts, "Armes": self.doArmes,
+                               "Distance": self.doDist, "Melee": self.doMelee},
+                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
+                               "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu,
+                               "Feu%": self.rePerFeu, "Eau": self.reEau, "Eau%": self.rePerEau,
+                               "Air": self.reAir, "Air%": self.rePerAir,
+                               "Coups critiques": self.reCc, "Poussee": self.rePou,
+                               "Distance": self.reDist, "Melee": self.reMelee},
                               self.icone)
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
@@ -163,21 +191,28 @@ class Personnage(object):
         return toReturn
 
     def setOverlayText(self):
+        """@summary: Change la valeur du texte dans l'overlay du perso
+                     Ecrit X PV [X PB]
+        """
         self.overlayTexte = str(self.vie) + " PV"
         boubou = self.getBoucliers()
         if boubou > 0:
             self.overlayTexte += " "+str(boubou)+" PB"
 
     def setOverlayTextGenerique(self, text):
+        """@summary: Change la valeur du texte dans l'overlay du perso
+                     Ecrit le texte donné en paramètre
+        """
         self.overlayTexte = text
 
     def aEtatsRequis(self, etatsRequis):
         """@summary: Indique si le personnage possède les états donnés en paramètres.
-        @etatsRequis: la liste des états à tester. si un ! se situe au début de la chaîne, il faut que l'état soit absent.
+        @etatsRequis: la liste des états à tester.
+        si un ! se situe au début de la chaîne, il faut que l'état soit absent.
         @type: tableau de strings (noms d'états préfixé éventuellement par "!")
 
 
-        @return: booléen valant True si tous les états requis sont sur le personnage, False sinon."""
+        @return: booléen valant True si tous les états requis sont sur le personnage, False sinon"""
         for checkEtat in etatsRequis:
             if checkEtat.strip() != "":
                 # calcul du nom de l'état requis
@@ -188,25 +223,30 @@ class Personnage(object):
                 # Est-ce que le personnage possede l'état requis
                 aEtat = self.aEtat(etatRequis)
                 # Si test l'absence qu'on l'a ou si on test la présence et qu'on ne l'a pas
-                if (checkEtat.startswith("!") and aEtat) or (not checkEtat.startswith("!") and not aEtat):
+                if (checkEtat.startswith("!") and aEtat) or \
+                   (not checkEtat.startswith("!") and not aEtat):
                     # print "DEBUG : la cibleDirect n'a pas ou a l'etat requis :"+str(checkEtat)
                     return False
         return True
 
     @staticmethod
-    def getSortRightLvl(lvl, tab_sorts):
-        closest_lvl_sort = None
-        for sort in tab_sorts[0:]:
+    def getSortRightLvl(lvl, tabSorts):
+        """@summary: prend le sort dont le lvl requis est le plus élevé
+                     mais reste inférieur au lvl donné
+                     Méthode statique
+        """
+        closestLvlSort = None
+        for sort in tabSorts[0:]:
             if sort.lvl <= lvl:
-                if closest_lvl_sort is not None:
-                    if closest_lvl_sort.lvl < sort.lvl:
-                        closest_lvl_sort = sort
+                if closestLvlSort is not None:
+                    if closestLvlSort.lvl < sort.lvl:
+                        closestLvlSort = sort
                 else:
-                    closest_lvl_sort = sort
-        return closest_lvl_sort
+                    closestLvlSort = sort
+        return closestLvlSort
 
     @staticmethod
-    def ChargerSorts(classe, lvl):
+    def chargerSorts(classe, lvl):
         """@summary: Méthode statique qui initialise les sorts du personnage selon sa classe.
         @classe: le nom de classe dont on souhaite récupérer les sorts
         @type: string
@@ -214,17 +254,17 @@ class Personnage(object):
         @return: tableau de Sort"""
         sorts = []
         sortsDebutCombat = []
-        if(classe == "Stratege Iop"):
+        if classe == "Stratege Iop":
             import Sorts.StrategeIop
             sortsDebutCombat += Sorts.StrategeIop.getSortsDebutCombat(lvl)
             sorts += Sorts.StrategeIop.getSorts(lvl)
             return sorts, sortsDebutCombat
-        elif(classe == "Cadran de Xelor"):
+        elif classe == "Cadran de Xelor":
             import Sorts.CadranDeXelor
             sortsDebutCombat += Sorts.CadranDeXelor.getSortsDebutCombat(lvl)
             sorts += Sorts.CadranDeXelor.getSorts(lvl)
             return sorts, sortsDebutCombat
-        elif(classe == "Balise de Rappel"):
+        elif classe == "Balise de Rappel":
             import Sorts.BaliseDeRappel
             sortsDebutCombat += Sorts.BaliseDeRappel.getSortsDebutCombat(lvl)
             sorts += Sorts.BaliseDeRappel.getSorts(lvl)
@@ -236,11 +276,11 @@ class Personnage(object):
             sortsDebutCombat += Sorts.Synchro.getSortsDebutCombat(lvl)
             sorts += Sorts.Synchro.getSorts(lvl)
             return sorts, sortsDebutCombat
-        elif(classe == "Xelor"):
+        elif classe == "Xelor":
             import Sorts.Xelor
             sortsDebutCombat += Sorts.Xelor.getSortsDebutCombat(lvl)
             sorts += Sorts.Xelor.getSorts(lvl)
-        elif(classe == "Iop"):
+        elif classe == "Iop":
             import Sorts.Iop
             sortsDebutCombat += Sorts.Iop.getSortsDebutCombat(lvl)
             sorts += Sorts.Iop.getSorts(lvl)
@@ -252,45 +292,55 @@ class Personnage(object):
             import Sorts.Sram
             sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)
             sorts += Sorts.Sram.getSorts(lvl)
-        sorts.append(Sort.Sort("Cawotte",0,4,1,6,[EffetInvoque("Cawotte",False,cibles_possibles="", cible_requise=True)],[],0, 1,1,6,0,"cercle",True,description="Invoque une Cawotte")) 
-        total_nb_sorts = len(sorts)
+        sorts.append(Sort.Sort("Cawotte", 0, 4, 1, 6,
+                               [EffetInvoque("Cawotte", False, cibles_possibles="",
+                                             cible_non_requise=True)],
+                               [], 0, 1, 1, 6, 0, "cercle", True,
+                               description="Invoque une Cawotte"))
+        totalNbSorts = len(sorts)
         i = 0
-        while i < total_nb_sorts:
+        while i < totalNbSorts:
             if sorts[i] is None:
                 sorts.remove(sorts[i])
-                total_nb_sorts -= 1
+                totalNbSorts -= 1
                 i -= 1
             i += 1
         return sorts, sortsDebutCombat
 
-    def LancerSortsDebutCombat(self, niveau):
+    def lancerSortsDebutCombat(self, niveau):
+        """@summary: lance tous les sorts dans sortsDebutCombat
+        """
         for sort in self.sortsDebutCombat:
             sort.lance(self.posX, self.posY, niveau, self.posX, self.posY)
 
     def ajoutHistoriqueDeplacement(self, posX=None, posY=None):
+        """@summary: Ajoute la pos du joueur dans l'historique de déplacement
+                     si posX ou posY est différent de None, l'ajoute à la place
+        """
         if posX is None:
             posX = self.posX
         if posY is None:
             posY = self.posY
         self.historiqueDeplacement.append([posX, posY, 2])
 
-    def bouge(self, niveau, x, y, ajouteHistorique=True, canSwap=False):
-        """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
-        @x: la position d'arrivée en x.
+    def bouge(self, niveau, nouvX, nouvY, ajouteHistorique=True):
+        """@summary: téléporte le joueur sur la carte et stock
+                    le déplacement dans l'historique de déplacement.
+        @nouvX: la position d'arrivée en x.
         @type: int
-        @x: la position d'arrivée en y.
+        @nouvYx: la position d'arrivée en y.
         @type: int"""
         # test si la case d'arrivé est hors-map (compte comme un obstacle)
-        if x >= niveau.taille or x < 0 or y >= niveau.taille or y < 0:
+        if nouvX >= niveau.taille or nouvX < 0 or nouvY >= niveau.taille or nouvY < 0:
             return False, False
-        elif niveau.structure[y][x].type != "v":
+        elif niveau.structure[nouvY][nouvX].type != "v":
             return False, False
         if ajouteHistorique:
             self.ajoutHistoriqueDeplacement()
         niveau.structure[self.posY][self.posX].type = "v"
-        niveau.structure[y][x].type = "j"
-        self.posX = x
-        self.posY = y
+        niveau.structure[nouvY][nouvX].type = "j"
+        self.posX = nouvX
+        self.posY = nouvY
 
         nbPieges = len(niveau.pieges)
         i = 0
@@ -300,7 +350,7 @@ class Personnage(object):
         niveau.fileEffets = []
         while i < nbPieges:
             piege = niveau.pieges[i]
-            if piege.aPorteDeclenchement(x, y):
+            if piege.aPorteDeclenchement(nouvX, nouvY):
                 piegeDeclenche = True
                 for joueur in niveau.joueurs:
                     for etat in joueur.etats:
@@ -309,8 +359,8 @@ class Personnage(object):
                                 niveau, piege, self, joueur)
 
                 for effet in piege.effets:
-                    sestApplique, cibles = niveau.lancerEffet(
-                        effet, piege.centreX, piege.centreY, piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
+                    niveau.lancerEffet(effet, piege.centreX, piege.centreY,
+                                       piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
                 i -= 1
                 niveau.pieges.remove(piege)
             i += 1
@@ -319,7 +369,8 @@ class Personnage(object):
         for glyphe in niveau.glyphes:
             if glyphe.actif():
                 # Test Entre dans la glyphe
-                if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY, self.posX, self.posY, 0):
+                if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY,
+                                                 self.posX, self.posY, 0):
                     for effet in glyphe.sortDeplacement.effets:
                         niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
                                            glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
@@ -327,16 +378,19 @@ class Personnage(object):
                     dernierePos = self.historiqueDeplacement[-1]
                     # Test s'il était dans la glyphe avant
 
-                    if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY, dernierePos[0], dernierePos[1], 0):
+                    if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY,
+                                                     dernierePos[0], dernierePos[1], 0):
                         for effet in glyphe.sortSortie.effets:
                             niveau.lancerEffet(
-                                effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
+                                effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort,
+                                self.posX, self.posY, glyphe.lanceur)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
         niveau.depileEffets()
         return True, piegeDeclenche
 
     def echangePosition(self, niveau, joueurCible, ajouteHistorique=True):
-        """@summary: téléporte le joueur sur la carte et stock le déplacement dans l'historique de déplacement.
+        """@summary: téléporte le joueur sur la carte et stock le déplacement
+         dans l'historique de déplacement.
         @x: la position d'arrivée en x.
         @type: int
         @x: la position d'arrivée en y.
@@ -348,12 +402,12 @@ class Personnage(object):
         if ajouteHistorique:
             self.ajoutHistoriqueDeplacement()
         joueurCible.ajoutHistoriqueDeplacement()
-        x = self.posX
-        y = self.posY
+        depX = self.posX
+        depY = self.posY
         self.posX = joueurCible.posX
         self.posY = joueurCible.posY
-        joueurCible.posX = x
-        joueurCible.posY = y
+        joueurCible.posX = depX
+        joueurCible.posY = depY
         nbPieges = len(niveau.pieges)
         i = 0
         piegeDeclenche = False
@@ -362,13 +416,13 @@ class Personnage(object):
         niveau.fileEffets = []
         while i < nbPieges:
             piege = niveau.pieges[i]
-            if piege.aPorteDeclenchement(x, y):
+            if piege.aPorteDeclenchement(depX, depY):
                 piegeDeclenche = True
                 for effet in piege.effets:
                     niveau.pieges.remove(piege)
                     i -= 1
-                    sestApplique, cibles = niveau.lancerEffet(
-                        effet, piege.centreX, piege.centreY, piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
+                    niveau.lancerEffet(effet, piege.centreX, piege.centreY,
+                                       piege.nomSort, piege.centreX, piege.centreY, piege.lanceur)
             i += 1
             nbPieges = len(niveau.pieges)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
@@ -387,9 +441,9 @@ class Personnage(object):
             i += 1
             longueurListe = len(self.historiqueDeplacement)
 
-    def tpPosPrec(self, nb, niveau, lanceur, nomSort):
-        """@summary: Téléporte le personnage à sa dernière position dans l'historique de déplacement.
-        @nb: Le nombre de retour en arrière à effectuer
+    def tpPosPrec(self, nbFois, niveau, lanceur, nomSort):
+        """@summary: Téléporte le personnage à sa dernière position dans l'historique de déplacement
+        @nbFois: Le nombre de retour en arrière à effectuer
         @type: int
         @niveau: la grille de jeu
         @type: Niveau
@@ -397,8 +451,8 @@ class Personnage(object):
         @type: Personnage
         @nomSort: le nom du sort à l'orginie de cette action
         @type: string"""
-        for i in range(nb):
-            if(len(self.historiqueDeplacement) > 0):
+        for _ in range(nbFois):
+            if self.historiqueDeplacement:
                 pos = self.historiqueDeplacement[-1]
                 del self.historiqueDeplacement[-1]
                 niveau.gereDeplacementTF(
@@ -432,16 +486,19 @@ class Personnage(object):
             i += 1
 
     def getBoucliers(self):
-        pb_restants = 0
+        """@summary: Retourne la somme des points de bouclier
+        """
+        pbRestants = 0
         for etat in self.etats:
             if etat.actif():
                 if isinstance(etat, EtatBouclierPerLvl):
-                    pb_restants += etat.boostBouclier
+                    pbRestants += etat.boostBouclier
 
-        return pb_restants
+        return pbRestants
 
-    def soigne(self, soigneur, niveau, soins, shouldprint=True):
-        """@summary: subit des dégâts de combats. Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
+    def soigne(self, soins, shouldprint=True):
+        """@summary: subit des dégâts de combats.
+        Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
         @soigneur: Le joueur soignant
         @type: Personnage
         @niveau: La grille de jeu
@@ -454,7 +511,8 @@ class Personnage(object):
             print("+"+str(soins)+" PV")
 
     def subit(self, attaquant, niveau, degats, typeDegats, shouldprint=True):
-        """@summary: subit des dégâts de combats. Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
+        """@summary: subit des dégâts de combats.
+        Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
         @attaquant: Le joueur attaquant
         @type: Personnage
         @niveau: La grille de jeu
@@ -469,7 +527,7 @@ class Personnage(object):
                 etat.triggerAvantSubirDegats(
                     self, niveau, totalPerdu, typeDegats, attaquant)
 
-        pb_restants = 0
+        pbRestants = 0
         for etat in self.etats:
             if etat.actif():
                 if isinstance(etat, EtatBouclierPerLvl):
@@ -481,7 +539,7 @@ class Personnage(object):
                     else:
                         etat.boostBouclier -= degats
                         degats = 0
-                        pb_restants += etat.boostBouclier
+                        pbRestants += etat.boostBouclier
         vieAEnlever = degats
         if self.vie - vieAEnlever < 0:
             vieAEnlever = self.vie
@@ -498,9 +556,10 @@ class Personnage(object):
         if self.vie > self.vieMax:
             self.vie = self.vieMax
         toprint = ""
-        toprint = self.nomPerso+" a "+str(self.vie) + "/"+str(self.vieMax)+" PV"
-        if pb_restants > 0:
-            toprint += " et "+str(pb_restants)+" PB"
+        toprint = self.nomPerso+" a " + \
+            str(self.vie) + "/"+str(self.vieMax)+" PV"
+        if pbRestants > 0:
+            toprint += " et "+str(pbRestants)+" PB"
         if shouldprint:
             print("-"+str(totalPerdu)+" PV")
             print(toprint)
@@ -512,7 +571,9 @@ class Personnage(object):
                     self, niveau, attaquant, totalPerdu)
 
     def finTour(self, niveau):
-        """@summary: Termine le tour du personnage, récupération des PA et PM, sorts utilisés, activation du trigger d'état triggerFinTour
+        """@summary: Termine le tour du personnage,
+        récupération des PA et PM, sorts utilisés,
+        activation du trigger d'état triggerFinTour
         @niveau: La grille de jeu
         @type: Niveau"""
         self.PM = self.PMBase
@@ -526,7 +587,8 @@ class Personnage(object):
                 etat.triggerFinTour(self, niveau)
 
     def debutTour(self, niveau):
-        """@summary: Débute le tour du personnage, déclenche glyphe, rafraîchit les états, les glyphes et l'historique de déplacement.
+        """@summary: Débute le tour du personnage, déclenche glyphe,
+        rafraîchit les états, les glyphes et l'historique de déplacement.
         @niveau: La grille de jeu
         @type: Niveau"""
         for glyphe in niveau.glyphes:
@@ -552,7 +614,8 @@ class Personnage(object):
         print("PV : "+str(self.vie))
 
     def appliquerEtat(self, etat, lanceur, cumulMax=-1, niveau=None):
-        """@summary: Applique un nouvel état sur le Personnage. Active le trigger d'état triggerInstantane
+        """@summary: Applique un nouvel état sur le Personnage.
+         Active le trigger d'état triggerInstantane
         @etat: l'état qui va être appliqué
         @type: Etat
         @lanceur: le lanceur de l'état
@@ -574,24 +637,29 @@ class Personnage(object):
             self.etats[-1].triggerInstantane(lanceur=lanceur,
                                              niveau=niveau, joueurCaseEffet=self)
 
-    def changeDureeEffets(self, n, niveau):
+    def changeDureeEffets(self, nbFois, niveau):
         """@summary: Réduit la durée des états sur le personnage
-        @n: le nombre de tours d'état réduit
+        @nbFois: le nombre de tours d'état réduit
         @type: int
         @niveau: La grille de jeu
         @type: Niveau"""
-        for i in range(abs(n)):
+        for _ in range(abs(nbFois)):
             niveau.rafraichirEtats(self, False)
 
     def selectionSort(self, sort, niveau):
+        """@summary: Verifie si le sort donné est selectionnable puis le selectionne.
+        @sort: le sort a sélectionner
+        @type: Sort
+        @niveau: La grille de jeu
+        @type: Niveau"""
         sortSelectionne = None
         coutPA = sort.coutPA
         if coutPA < 0:
             coutPA = 0
-        if (coutPA <= niveau.tourDe.PA):
+        if coutPA <= niveau.tourDe.PA:
             res, explication, coutPA = sort.estLancable(
                 niveau, niveau.tourDe, None)
-            if res == True:
+            if res:
                 sortSelectionne = sort
             else:
                 print(explication)
@@ -602,7 +670,8 @@ class Personnage(object):
         return sortSelectionne
 
     def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour demandé à un Personnage d'effectuer ses actions.
+        """@summary: Fonction appelé par la boucle principale pour demandé
+                     à un Personnage d'effectuer ses actions.
                      Dans la classe Personnage, c'est contrôle par utilisateur clavier/souris.
         @event: les évenements pygames survenus
         @type: Event pygame
@@ -626,7 +695,7 @@ class Personnage(object):
                 aLance = niveau.tourDe.sorts[event.key - K_1]
                 sortSelectionne = self.selectionSort(aLance, niveau)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            clicGauche, clicMilieu, clicDroit = pygame.mouse.get_pressed()
+            clicGauche, _, clicDroit = pygame.mouse.get_pressed()
             # Clic gauche
             if clicGauche:
                 # Clic gauche sort = tentative de sélection de sort
@@ -635,10 +704,11 @@ class Personnage(object):
                         if sort.vue.isMouseOver(mouseXY):
                             sortSelectionne = self.selectionSort(sort, niveau)
                             break
-                # Clic gauche grille de jeu = tentative de lancé un sort si un sort est selectionné ou tentative de déplacement sinon
+                # Clic gauche grille de jeu = tentative de lancé un sort
+                #  si un sort est selectionné ou tentative de déplacement sinon
                 else:
                     # Un sort est selectionne
-                    if sortSelectionne != None:
+                    if sortSelectionne is not None:
                         caseCibleX = int(
                             mouseXY[0]/constantes.taille_sprite)
                         caseCibleY = int(
@@ -656,7 +726,7 @@ class Personnage(object):
                     caseX = int(mouseXY[0]/constantes.taille_sprite)
                     caseY = int(mouseXY[1]/constantes.taille_sprite)
                     joueurInfo = niveau.getJoueurSur(caseX, caseY)
-                    if joueurInfo != None:
+                    if joueurInfo is not None:
                         for etat in joueurInfo.etats:
                             if etat.actif():
                                 print(joueurInfo.nomPerso+" est dans l'etat " +
@@ -664,13 +734,14 @@ class Personnage(object):
                             elif etat.debuteDans > 0:
                                 print(joueurInfo.nomPerso+" sera dans l'etat " +
                                       etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")
-                    if sortSelectionne != None:
+                    if sortSelectionne is not None:
                         sortSelectionne = None
         return sortSelectionne
 
 
 class PersonnageMur(Personnage):
-    """@summary: Classe décrivant un montre de type MUR immobile (cawotte, cadran de Xelor...). hérite de Personnage"""
+    """@summary: Classe décrivant un montre de type MUR immobile
+    (cawotte, cadran de Xelor...). hérite de Personnage"""
 
     def __init__(self, *args):
         """@summary: Initialise un personnage Mur, même initialisation que Personange
@@ -680,15 +751,30 @@ class PersonnageMur(Personnage):
 
     def __deepcopy__(self, memo):
         toReturn = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team,
-                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
-                                  "Force": self.fo, "Intelligence": self.int, "Puissance": self.pui, "Coups Critiques": self.cc, "Sagesse": self.sagesse},
-                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA, "Retrait PM": self.retPM, "Esquive PM": self.esqPM, "Soins": self.soins,
-                               "Tacle": self.tacle, "Fuite": self.fuite, "Initiative": self.ini, "Invocation": self.invocationLimite, "Prospection": self.prospection},
-                              {"Dommages": self.do, "Dommages critiques": self.doCri, "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
-                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou, "Sorts": self.doSorts, "Armes": self.doArmes, "Distance": self.doDist, "Melee": self.doMelee},
-                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre, "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-                               "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir, "Coups critiques": self.reCc, "Poussee": self.rePou, "Distance": self.reDist, "Melee": self.reMelee},
-                              self.icone)
+                                 {"PA": self.PA, "PM": self.PM, "PO": self.PO,
+                                  "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
+                                  "Force": self.fo, "Intelligence": self.int,
+                                  "Puissance": self.pui, "Coups Critiques": self.cc,
+                                  "Sagesse": self.sagesse},
+                                 {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
+                                  "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
+                                  "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
+                                  "Initiative": self.ini, "Invocation": self.invocationLimite,
+                                  "Prospection": self.prospection},
+                                 {"Dommages": self.do, "Dommages critiques": self.doCri,
+                                  "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu,
+                                  "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
+                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges,
+                                  "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou,
+                                  "Sorts": self.doSorts, "Armes": self.doArmes,
+                                  "Distance": self.doDist, "Melee": self.doMelee},
+                                 {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
+                                  "Terre": self.reTerre, "Terre%": self.rePerTerre,
+                                  "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+                                  "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir,
+                                  "Coups critiques": self.reCc, "Poussee": self.rePou,
+                                  "Distance": self.reDist, "Melee": self.reMelee},
+                                 self.icone)
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
@@ -709,8 +795,9 @@ class PersonnageMur(Personnage):
         return toReturn
 
     def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageMur d'effectuer ses actions.
-                     Dans la classe PersonnageMur, c'est fin de tour immédiate sans action.
+        """@summary: Fonction appelé par la boucle principale pour
+        demandé à un PersonnageMur d'effectuer ses actions.
+        Dans la classe PersonnageMur, c'est fin de tour immédiate sans action.
         @event: les évenements pygames survenus
         @type: Event pygame
         @niveau: La grille de jeu
@@ -724,7 +811,8 @@ class PersonnageMur(Personnage):
 
 
 class PersonnageSansPM(Personnage):
-    """@summary: Classe décrivant un personange pouvant faire des actions mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
+    """@summary: Classe décrivant un personange pouvant faire des actions
+    mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
 
     def __init__(self, *args):
         """@summary: Initialise un personnage sans PM, même initialisation que Personange
@@ -734,15 +822,33 @@ class PersonnageSansPM(Personnage):
 
     def __deepcopy__(self, memo):
         toReturn = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team,
-                              {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
-                                  "Force": self.fo, "Intelligence": self.int, "Puissance": self.pui, "Coups Critiques": self.cc, "Sagesse": self.sagesse},
-                              {"Retrait PA": self.retPA, "Esquive PA": self.esqPA, "Retrait PM": self.retPM, "Esquive PM": self.esqPM, "Soins": self.soins,
-                               "Tacle": self.tacle, "Fuite": self.fuite, "Initiative": self.ini, "Invocation": self.invocationLimite, "Prospection": self.prospection},
-                              {"Dommages": self.do, "Dommages critiques": self.doCri, "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
-                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou, "Sorts": self.doSorts, "Armes": self.doArmes, "Distance": self.doDist, "Melee": self.doMelee},
-                              {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre, "Terre": self.reTerre, "Terre%": self.rePerTerre, "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-                               "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir, "Coups critiques": self.reCc, "Poussee": self.rePou, "Distance": self.reDist, "Melee": self.reMelee},
-                              self.icone)
+                                    {"PA": self.PA, "PM": self.PM, "PO": self.PO,
+                                     "Vitalite": self.vie, "Agilite": self.agi,
+                                     "Chance": self.cha, "Force": self.fo,
+                                     "Intelligence": self.int, "Puissance": self.pui,
+                                     "Coups Critiques": self.cc, "Sagesse": self.sagesse},
+                                    {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
+                                     "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
+                                     "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
+                                     "Initiative": self.ini, "Invocation": self.invocationLimite,
+                                     "Prospection": self.prospection},
+                                    {"Dommages": self.do, "Dommages critiques": self.doCri,
+                                     "Neutre": self.doNeutre, "Terre": self.doTerre,
+                                     "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir,
+                                     "Renvoi": self.doRenvoi,
+                                     "Maitrise d'arme": self.doMaitriseArme,
+                                     "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui,
+                                     "Poussee": self.doPou, "Sorts": self.doSorts,
+                                     "Armes": self.doArmes, "Distance": self.doDist,
+                                     "Melee": self.doMelee},
+                                    {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
+                                     "Terre": self.reTerre, "Terre%": self.rePerTerre,
+                                     "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+                                     "Eau%": self.rePerEau, "Air": self.reAir,
+                                     "Air%": self.rePerAir,
+                                     "Coups critiques": self.reCc, "Poussee": self.rePou,
+                                     "Distance": self.reDist, "Melee": self.reMelee},
+                                    self.icone)
         toReturn.sortsDebutCombat = self.sortsDebutCombat
         toReturn.posX = self.posX
         toReturn.posY = self.posY
@@ -763,8 +869,10 @@ class PersonnageSansPM(Personnage):
         return toReturn
 
     def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour demandé à un PersonnageSansPM d'effectuer ses actions.
-                     Dans la classe PersonnageSansPM, lancer son seul sort sur lui-même et terminé son tour (comportement temporaire).
+        """@summary: Fonction appelé par la boucle principale pour demandé à un
+        PersonnageSansPM d'effectuer ses actions.
+        Dans la classe PersonnageSansPM, lancer son seul sort
+        sur lui-même et terminé son tour (comportement temporaire).
         @event: les évenements pygames survenus
         @type: Event pygame
         @niveau: La grille de jeu
@@ -778,15 +886,26 @@ class PersonnageSansPM(Personnage):
         niveau.finTour()
 
 
-
-INVOCS = {
-        "Cadran de Xelor": PersonnageSansPM("Cadran de Xelor", "Cadran de Xelor", 100, 1, {"Vitalite": 1000}, {}, {}, {}, "cadran_de_xelor.png"),
-        "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1, {"Vitalite": 800}, {}, {}, {}, "cawotte.jpg"),
-        "Synchro": PersonnageMur("Synchro", "Synchro", 0, 1, {"Vitalite": 1200}, {}, {}, {}, "synchro.png"),
-        "Complice": PersonnageMur("Complice", "Complice", 0, 1, {"Vitalite": 650}, {}, {}, {}, "complice.png"),
-        "Balise de Rappel": PersonnageSansPM("Balise de Rappel", "Balise de Rappel", 0, 1, {"Vitalite": 1000}, {}, {}, {}, "balise_de_rappel.png"),
-        "Balise Tactique": PersonnageMur("Balise Tactique", "Balise Tactique", 0, 1, {"Vitalite": 1000}, {}, {}, {}, "balise_tactique.png"),
-        "Stratege Iop": PersonnageMur("Stratege Iop", "Stratège Iop", 0, 1, {"Vitalite": 1385}, {}, {}, {}, "conquete.png"),
-        "Double": Personnage("Double", "Double", 0, 1, {"Vitalite": 1}, {}, {}, {}, "sram.png"),
-        "Comploteur": Personnage("Comploteur", "Comploteur", 0, 1, {"Vitalite": 1}, {}, {}, {}, "sram.png"),
-    }
+invocs_liste = {
+    "Cadran de Xelor": PersonnageSansPM("Cadran de Xelor", "Cadran de Xelor",
+                                        100, 1, {"Vitalite": 1000}, {}, {}, {},
+                                        "cadran_de_xelor.png"),
+    "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1,
+                             {"Vitalite": 800}, {}, {}, {}, "cawotte.jpg"),
+    "Synchro": PersonnageMur("Synchro", "Synchro", 0, 1,
+                             {"Vitalite": 1200}, {}, {}, {}, "synchro.png"),
+    "Complice": PersonnageMur("Complice", "Complice", 0, 1,
+                              {"Vitalite": 650}, {}, {}, {}, "complice.png"),
+    "Balise de Rappel": PersonnageSansPM("Balise de Rappel", "Balise de Rappel",
+                                         0, 1, {"Vitalite": 1000}, {}, {}, {},
+                                         "balise_de_rappel.png"),
+    "Balise Tactique": PersonnageMur("Balise Tactique", "Balise Tactique",
+                                     0, 1, {"Vitalite": 1000}, {}, {}, {},
+                                     "balise_tactique.png"),
+    "Stratege Iop": PersonnageMur("Stratege Iop", "Stratège Iop", 0, 1,
+                                  {"Vitalite": 1385}, {}, {}, {}, "conquete.png"),
+    "Double": Personnage("Double", "Double", 0, 1,
+                         {"Vitalite": 1}, {}, {}, {}, "sram.png"),
+    "Comploteur": Personnage("Comploteur", "Comploteur", 0, 1,
+                             {"Vitalite": 1}, {}, {}, {}, "sram.png"),
+}

@@ -37,21 +37,21 @@ def getSortsDebutCombat(lvl):
 
 def getSorts(lvl):
     sorts = []
-    activationPiegeSournois = [EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), cible_requise=True,piege=True),EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_requise=True)]
-    activationPiegePerfide = [EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), cible_requise=True,piege=True)]
-    activationPiegeFangeux = [EffetEtat(EtatEffetSiSubit('Etat temporaire',0,1,EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),EffetDegats(33,37,"Eau",piege=True,cible_requise=True),EffetRetireEtat('Etat temporaire')]
-    activationPiegeDeMasse = [EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
-    activationPiegeEmpoisonne = [EffetEtat(EtatEffetDebutTour("Piège Empoisonné",0,3,EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), cible_requise=True,piege=True)]
-    activationPiegeAFragmentation = [EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), cible_requise=True,piege=True),EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), cible_requise=True,piege=True),EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), cible_requise=True,piege=True),EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), cible_requise=True,piege=True)]
-    activationPiegeDimmobilisation = [EffetRetPM(4, 3, zone=Zones.TypeZoneCercle(3), cible_requise=True,piege=True)]
-    activationPiegeDeDerive = [EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), cible_requise=True,piege=True)]
+    activationPiegeSournois = [EffetDegats(26,28,"feu",zone=Zones.TypeZoneCercle(1), cible_non_requise=True,piege=True),EffetAttire(1,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_non_requise=True)]
+    activationPiegePerfide = [EffetAttire(3,"CaseCible",zone=Zones.TypeZoneCroix(3), cible_non_requise=True,piege=True)]
+    activationPiegeFangeux = [EffetEtat(EtatEffetSiSubit('Etat temporaire',0,1,EffetSoinSelonSubit(50,zone=Zones.TypeZoneCercle(2),cibles_possibles="Allies"),"Piège Fangeux","lanceur","cible")),EffetDegats(33,37,"Eau",piege=True,cible_non_requise=True),EffetRetireEtat('Etat temporaire')]
+    activationPiegeDeMasse = [EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCercle(2), cible_non_requise=True,piege=True)]
+    activationPiegeEmpoisonne = [EffetEtat(EtatEffetDebutTour("Piège Empoisonné",0,3,EffetDegats(10,10,"Air"),"Piège Empoisonné","lanceur"),zone=Zones.TypeZoneCroix(1), cible_non_requise=True,piege=True)]
+    activationPiegeAFragmentation = [EffetDegats(18,22,"feu",zone=Zones.TypeZoneCercle(0), cible_non_requise=True,piege=True),EffetDegats(33,37,"feu",zone=Zones.TypeZoneAnneau(1), cible_non_requise=True,piege=True),EffetDegats(43,47,"feu",zone=Zones.TypeZoneAnneau(2), cible_non_requise=True,piege=True),EffetDegats(58,62,"feu",zone=Zones.TypeZoneAnneau(3), cible_non_requise=True,piege=True)]
+    activationPiegeDimmobilisation = [EffetRetPM(4, 3, zone=Zones.TypeZoneCercle(3), cible_non_requise=True,piege=True)]
+    activationPiegeDeDerive = [EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCroixDiagonale(1), cible_non_requise=True,piege=True)]
     activationGlypheInsidieuse = Sort.Sort("Piège insidieux : poison fin de tour",0,0,0,3,[EffetEtat(EtatEffetFinTour("Piège insidieux : poison fin de tour",0,1,EffetDegats(34,38,"Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")],[],0, 99,99,0,0,"cercle",False)
-    sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", cible_requise=True)],[],0, 99,99,0,0,"cercle",False)
-    activationPiegeInsidieux = [EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), cible_requise=True, piege=True)]
-    activationPiegeRepulsif = [EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), cible_requise=True,piege=True),EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_requise=True)]
-    activationPiegeRepoussant = [EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
-    activationPiegeDeProximite = [EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), cible_requise=True,piege=True)]
-    activationCalamite = [EffetVolDeVie(38,42,"Eau",zone=Zones.TypeZoneCarre(1), cible_requise=True,piege=True), EffetEtat(EtatBoostCaracFixe("Calamité",0,1,"fuite",-30),zone=Zones.TypeZoneCarre(1), cible_requise=True,piege=True)]
+    sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie",0,0,0,99,[EffetRetireEtat("Piège insidieux : poison fin de tour",cibles_possibles="Ennemis", cible_non_requise=True)],[],0, 99,99,0,0,"cercle",False)
+    activationPiegeInsidieux = [EffetGlyphe(activationGlypheInsidieuse,activationGlypheInsidieuse,sortieGlypheInsidieuse,1,"Piège insidieux",(0,200,0),zone=Zones.TypeZoneCercle(2), cible_non_requise=True, piege=True)]
+    activationPiegeRepulsif = [EffetDegats(12,12,"air",zone=Zones.TypeZoneCercle(1), cible_non_requise=True,piege=True),EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(1), cible_non_requise=True)]
+    activationPiegeRepoussant = [EffetPousser(2,"CaseCible",zone=Zones.TypeZoneCercle(2), cible_non_requise=True,piege=True)]
+    activationPiegeDeProximite = [EffetDegats(43,47,"Air",zone=Zones.TypeZoneCercle(2), cible_non_requise=True,piege=True)]
+    activationCalamite = [EffetVolDeVie(38,42,"Eau",zone=Zones.TypeZoneCarre(1), cible_non_requise=True,piege=True), EffetEtat(EtatBoostCaracFixe("Calamité",0,1,"fuite",-30),zone=Zones.TypeZoneCarre(1), cible_non_requise=True,piege=True)]
     activationPiegeFuneste = [EffetEtatSelf(EtatBoostBaseDeg("Etat temporaire piège funeste",0,1,"Piège Funeste",30),zone=Zones.TypeZoneCercle(2),cibles_possibles="Ennemis"), EffetDegats(28,32,"Terre") ,EffetRetireEtat("Etat temporaire piège funeste",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")]
     activationPiegeMortel = [EffetDegats(53,57,"Terre")]
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
@@ -66,14 +66,14 @@ def getSorts(lvl):
     Le bonus de dommages disparaît quand le sort est lancé.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Sournois",1,3,1,4,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+        Sort.Sort("Piège Sournois",1,3,1,4,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_non_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
 
-        Sort.Sort("Piège Sournois",30,3,1,6,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
+        Sort.Sort("Piège Sournois",30,3,1,6,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_non_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True),
 
-        Sort.Sort("Piège Sournois",60,3,1,8,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
+        Sort.Sort("Piège Sournois",60,3,1,8,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeSournois,"Piège sournois",(255,0,0),cible_non_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Occasionne des dommages Feu et attire.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Perfide",105,2,1,7,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegePerfide,"Piège Perfide",(240,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
+        Sort.Sort("Piège Perfide",105,2,1,7,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegePerfide,"Piège Perfide",(240,0,0),cible_non_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui attire en zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Invisibilité",1,2,0,0,[EffetEtat(Etat("Invisible",0,3)),EffetEtat(EtatBoostCaracFixe("Invibilité_PM",0,4,"PM",1))],[],0,1,1,7,0,"cercle",False,description="""Rend invisible.""", chaine=True),
@@ -85,7 +85,7 @@ def getSorts(lvl):
     activationBrume = Sort.Sort("Activation Brume",0,0,0,3,[EffetEtat(Etat("Invisible",0,2),cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
     sortieBrume = Sort.Sort("Brume: Sortie",0,0,0,99,[EffetRetireEtat("Invisible",cibles_possibles="Allies|Lanceur")],[],0, 99,99,0,0,"cercle",False)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Brume",101,3,1,3,[EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),cible_requise=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
+        Sort.Sort("Brume",101,3,1,3,[EffetGlyphe(activationBrume,activationBrume,sortieBrume, 2,"Brume",(255,0,255),zone=Zones.TypeZoneCercle(3),cible_non_requise=True)],[],0,1,1,4,0,"cercle",True,description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Poison insidieux",3,3,1,4,[EffetEtat(EtatEffetDebutTour("Poison insidieux",0,2,EffetDegats(6,7,"Air"),"Poison insidieux","lanceur"))],[EffetEtat(EtatEffetDebutTour("Poison insidieux",0,2,EffetDegats(8,9,"Air"),"Poison insidieux","lanceur"))],15,99,1,0,1,"ligne",False,description="""Empoisonne la cible pendant 2 tours en occasionnant des dommages Air.""", chaine=True),
@@ -191,40 +191,40 @@ def getSorts(lvl):
     activationComploteurComplot2 = Sort.Sort("Complot",0,0,0,99,[EffetDegats(39,41,"Neutre",zone=Zones.TypeZoneCercleSansCentre(1)),EffetTue(zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation", chaine=False)
     activationComploteurComplot = Sort.Sort("Complot",0,0,0,99,[EffetEtatSelf(EtatEffetFinTour("Explosion Comploteur",0,2,EffetEntiteLanceSort("Comploteur",activationComploteurComplot2),"Explosion Comploteur","lanceur"))],[],0,1,1,0,0,"cercle",False,description="Echange de place avec son invocateur, tue l'invocation")
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Double",13,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double",13,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_non_requise=True),EffetDouble()],[],0,1,1,6,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-        Sort.Sort("Double",54,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),EffetDouble()],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double",54,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_non_requise=True),EffetDouble()],[],0,1,1,5,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-        Sort.Sort("Double",94,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_requise=True),EffetDouble(),EffetEtat(EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double",94,3,1,2,[EffetInvoque("Double",True,cibles_possibles="", cible_non_requise=True),EffetDouble(),EffetEtat(EtatActiveSort("Complot",2,1,activationDoubleComplot))],[],0,1,1,4,0,"ligne",True,description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Comploteur",130,3,1,2,[EffetInvoque("Comploteur",True,cibles_possibles="", cible_requise=True),EffetDouble(),EffetEtat(EtatActiveSort("Complot",2,1,activationComploteurComplot)),EffetEtat(EtatEffetSiPiegeDeclenche("Comploteur",0,-1,EffetEtatSelf(EtatBoostBaseDeg("ComplotBoost",0,-1,"Complot",14),cumulMax=4),"Complot","porteur","porteur"))],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
+        Sort.Sort("Comploteur",130,3,1,2,[EffetInvoque("Comploteur",True,cibles_possibles="", cible_non_requise=True),EffetDouble(),EffetEtat(EtatActiveSort("Complot",2,1,activationComploteurComplot)),EffetEtat(EtatEffetSiPiegeDeclenche("Comploteur",0,-1,EffetEtatSelf(EtatBoostBaseDeg("ComplotBoost",0,-1,"Complot",14),cumulMax=4),"Complot","porteur","porteur"))],[],0,1,1,4,0,"cercle",True,description="""Invoque un Double contrôlable.
     Chaque piège déclenché augmente la Puissance du Double.
     Il meurt après 2 tours.
     Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Fangeux",17,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+        Sort.Sort("Piège Fangeux",17,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_non_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
     Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
 
-        Sort.Sort("Piège Fangeux",58,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+        Sort.Sort("Piège Fangeux",58,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_non_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
     Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True),
 
-        Sort.Sort("Piège Fangeux",102,3,1,8,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_requise=True)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
+        Sort.Sort("Piège Fangeux",102,3,1,8,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFangeux,"Piège Fangeux",(0,0,255),cible_non_requise=True)],[],0,2,99,0,1,"cercle",True,description="""Pose un piège qui occasionne des dommages Eau.
     Les alliés à proximité de la cible sont soignés à hauteur de 50% des dommages occasionnés.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Larcin",135,4,0,0,[EffetEtat(EtatBoostCaracFixe("Larcin",0,2,"cha",-80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),EffetEtatSelf(EtatBoostCaracFixe("Larcin",0,2,"cha",80),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),EffetDegats(40,44,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],[EffetEtat(EtatBoostCaracFixe("Larcin",0,2,"cha",-100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),EffetEtatSelf(EtatBoostCaracFixe("Larcin",0,2,"cha",100),cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1)),EffetDegats(44,48,"Eau",cibles_exclues="Lanceur",zone=Zones.TypeZoneCroixDiagonale(1))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Eau et vole de la Chance.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège de Masse",22,4,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+        Sort.Sort("Piège de Masse",22,4,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
 
-        Sort.Sort("Piège de Masse",65,4,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
+        Sort.Sort("Piège de Masse",65,4,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True),
 
-        Sort.Sort("Piège de Masse",108,4,1,5,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
+        Sort.Sort("Piège de Masse",108,4,1,5,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeMasse,"Piège de Masse",(50,50,30),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Terre en zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Traquenard",140,3,1,1,[EffetDegats(30,34,"Terre"),EffetRetireEtat("Traquenard")],[EffetDegats(33,37,"Terre"),EffetRetireEtat("Traquenard")],5,3,2,0,0,"ligne",False,description="""Occasionne des dommages Terre. Chaque piège déclenché augmente la portée de Traquenard.
@@ -243,11 +243,11 @@ def getSorts(lvl):
     ]))
 
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Empoisonné",32,3,1,3,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+        Sort.Sort("Piège Empoisonné",32,3,1,3,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_non_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
 
-        Sort.Sort("Piège Empoisonné",81,3,1,3,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
+        Sort.Sort("Piège Empoisonné",81,3,1,3,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_non_requise=True)],[],0,1,1,3,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True),
 
-        Sort.Sort("Piège Empoisonné",124,3,1,4,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
+        Sort.Sort("Piège Empoisonné",124,3,1,4,[EffetPiege(Zones.TypeZoneCroix(1),activationPiegeEmpoisonne,"Piège Empoisonné",(120,120,120),cible_non_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Empoisonne la cible en occasionnant des dommages Air pendant 3 tours.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Injection Toxique",150,5,1,5,[
@@ -263,25 +263,25 @@ def getSorts(lvl):
         Sort.Sort("Concentration de Chakra",132,2,1,6,[EffetEtat(EtatEffetSiPiegeDeclenche('Concentration de Chakra',0,1,EffetVolDeVie(15,15,"Feu"),"Concentration de Chakra","lanceur","porteur"))],[],0,1,1,2,0,"ligne",True,description="""Vole de la vie dans l'élément Feu lorsque la cible déclenche un piège.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège à Fragmentation",155,4,1,8,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeAFragmentation,"Piège à Fragmentation",(120,0,0),cible_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
+        Sort.Sort("Piège à Fragmentation",155,4,1,8,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeAFragmentation,"Piège à Fragmentation",(120,0,0),cible_non_requise=True)],[],0,1,99,0,1,"cercle",True,description="""Pose un piège mono-cellule qui inflige des dommages Feu.
     Les dommages augmentent en fonction de la distance avec le centre de la zone d'effet.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège d'Immobilisation",44,4,1,4,[EffetPiege(Zones.TypeZoneCercle(2),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+        Sort.Sort("Piège d'Immobilisation",44,4,1,4,[EffetPiege(Zones.TypeZoneCercle(2),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_non_requise=True)],[],0,1,1,7,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-        Sort.Sort("Piège d'Immobilisation",97,4,1,4,[EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
+        Sort.Sort("Piège d'Immobilisation",97,4,1,4,[EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_non_requise=True)],[],0,1,1,6,1,"ligne",False,description="""Retire des PM.""", chaine=True),
 
-        Sort.Sort("Piège d'Immobilisation",137,4,1,5,[EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_requise=True)],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
+        Sort.Sort("Piège d'Immobilisation",137,4,1,5,[EffetPiege(Zones.TypeZoneCercle(3),activationPiegeDimmobilisation,"Piège d'Immobilisation",(120,0,120),cible_non_requise=True)],[],0,1,1,5,1,"ligne",False,description="""Retire des PM.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège de Dérive",160,2,1,6,[EffetPiege(Zones.TypeZoneCroixDiagonale(1),activationPiegeDeDerive,"Piège de Dérive",(0,0,120),cible_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
+        Sort.Sort("Piège de Dérive",160,2,1,6,[EffetPiege(Zones.TypeZoneCroixDiagonale(1),activationPiegeDeDerive,"Piège de Dérive",(0,0,120),cible_non_requise=True)],[],0,1,1,2,1,"cercle",False,description="""Pose un piège qui pousse de 2 cases.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Insidieux",50,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+        Sort.Sort("Piège Insidieux",50,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
 
-        Sort.Sort("Piège Insidieux",103,3,1,5,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
+        Sort.Sort("Piège Insidieux",103,3,1,5,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True),
 
-        Sort.Sort("Piège Insidieux",143,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
+        Sort.Sort("Piège Insidieux",143,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeInsidieux,"Piège Insidieux",(0,200,0),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège. Une fois déclenché, les ennemis qui terminent leur tour dans sa zone d'effet subissent des dommages Air.""", chaine=True)
     ]))
     effetPoisonEpidemie = EffetEtat(EtatEffetFinTour("Poison Épidémie",0,1,EffetDegats(38,42,"Air"),"Poison Épidémie","lanceur"), cibles_possibles="Ennemis")
     etatPropageEpidemie = EtatEffetFinTour("Propagation Épidémie",0,1,EffetEtat(EtatEffetFinTour("Propagation Poison Épidémie",0,1,EffetDegats(38,42,"Air"),"Propagation Poison Épidémie","lanceur"), cibles_possibles="Ennemis",zone=Zones.TypeZoneCercleSansCentre(2)),"Propagation Épidémie","lanceur")
@@ -299,24 +299,24 @@ def getSorts(lvl):
     La cible propage le poison en zone autour d'elle.""", chaine=True)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[epidemie]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège répulsif",56,3,1,3,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+        Sort.Sort("Piège répulsif",56,3,1,3,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_non_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
     Occasionne des dommages Air aux ennemis.""", chaine=True),
 
-        Sort.Sort("Piège répulsif",112,3,1,5,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+        Sort.Sort("Piège répulsif",112,3,1,5,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_non_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
     Occasionne des dommages Air aux ennemis.""", chaine=True),
 
-        Sort.Sort("Piège répulsif",147,3,1,7,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
+        Sort.Sort("Piège répulsif",147,3,1,7,[EffetPiege(Zones.TypeZoneCercle(1),activationPiegeRepulsif,"Piège répulsif",(255,0,255),cible_non_requise=True)],[],0,1,1,1,1,"cercle",False,description="""Repousse les alliés et les ennemis.
     Occasionne des dommages Air aux ennemis.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Repoussant",170,2,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
+        Sort.Sort("Piège Repoussant",170,2,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeRepoussant,"Piège Repoussant",(0,100,20),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Piège mono-cellule qui repousse de 2 cases en zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Peur",62,2,2,3,[EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+        Sort.Sort("Peur",62,2,2,3,[EffetPousserJusque(cible_non_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
-        Sort.Sort("Peur",116,2,2,5,[EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
+        Sort.Sort("Peur",116,2,2,5,[EffetPousserJusque(cible_non_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True),
 
-        Sort.Sort("Peur",153,2,2,7,[EffetPousserJusque(cible_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
+        Sort.Sort("Peur",153,2,2,7,[EffetPousserJusque(cible_non_requise=True)],[],0,99,99,0,0,"ligne",False,description="""Pousse un allié ou un ennemi sur la cellule ciblée.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
     Sort.Sort("Méprise",175,3,1,4,[EffetEchangePlace("cible",zone=Zones.TypeZoneInfini(),cibles_possibles="Double|Comploteur"), EffetRetireEtat("Invisible",zone=Zones.TypeZoneInfini(),cibles_possibles="Lanceur")],[],0,1,99,0,0,"ligne",True,description="""La cible échange de place avec le Double.
@@ -330,7 +330,7 @@ def getSorts(lvl):
         Sort.Sort("Arnaque",162,3,1,6,[EffetDegats(33,37,"Air")],[EffetDegats(40,40,"Air")],5,99,2,0,0,"ligne",True,description="""Occasionne des dommages Air.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège de Proximité",180,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeProximite,"Piège de Proximité",(30,120,30),cible_requise=True)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
+        Sort.Sort("Piège de Proximité",180,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeDeProximite,"Piège de Proximité",(30,120,30),cible_non_requise=True)],[],0,2,99,0,0,"cercle",False,description="""Pose un piège mono-cellule qui occasionne des dommages Air en zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Poisse",77,4,1,4,[EffetVolDeVie(22,26,"Eau"),EffetEtat(EtatBoostCaracFixe("Poisse",0,1,"cc",-15))],[EffetVolDeVie(27,31,"Eau"),EffetEtat(EtatBoostCaracFixe("Poisse",0,1,"cc",-20))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True),
@@ -340,7 +340,7 @@ def getSorts(lvl):
         Sort.Sort("Poisse",172,4,1,4,[EffetVolDeVie(28,32,"Eau"),EffetEtat(EtatBoostCaracFixe("Poisse",0,1,"cc",-25))],[EffetVolDeVie(33,37,"Eau"),EffetEtat(EtatBoostCaracFixe("Poisse",0,1,"cc",-30))],15,3,2,0,0,"cercle",True,description="""Vole de la vie dans l'élément Eau et réduit les chances de Coup critique.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Calamité",185,4,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationCalamite,"Calamité",(30,30,220),cible_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
+        Sort.Sort("Calamité",185,4,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationCalamite,"Calamité",(30,30,220),cible_non_requise=True)],[],0,1,99,0,1,"cercle",False,description="""Pose un piège mono-cellule qui vole de la vie Eau en zone et retire de la fuite.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Fourberie",84,4,0,0,[EffetEtat(EtatBoostCaracFixe("Fourberie",0,3,"int",-40),zone=Zones.TypeZoneCroix(2,3)),EffetEtatSelf(EtatBoostCaracFixe("Fourberie",0,3,"int",40),zone=Zones.TypeZoneCroix(2,3)),EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),EffetDegats(30,34,"Feu",zone=Zones.TypeZoneCroix(2,3))],[EffetEtat(EtatBoostCaracFixe("Fourberie",0,3,"int",-60),zone=Zones.TypeZoneCroix(2,3)),EffetEtatSelf(EtatBoostCaracFixe("Fourberie",0,3,"int",60),zone=Zones.TypeZoneCroix(2,3)),EffetAttire(2,zone=Zones.TypeZoneCroix(2,3)),EffetDegats(36,40,"Feu",zone=Zones.TypeZoneCroix(2,3))],25,2,99,0,0,"cercle",False,description="""Occasionne des dommages Feu en zone.
@@ -366,15 +366,15 @@ def getSorts(lvl):
         Sort.Sort("Attaque Mortelle",187,4,1,2,[EffetDegats(53,57,"Terre")],[EffetDegats(63,67,"Terre")],15,3,2,0,0,"cercle",True,description="""Occasionne des dommages Terre.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Funeste",195,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFuneste,"Piège Funeste",(30,30,50),cible_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège monocible qui occasionne des dommages Terre.
+        Sort.Sort("Piège Funeste",195,3,1,6,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeFuneste,"Piège Funeste",(30,30,50),cible_non_requise=True)],[],0,2,99,0,1,"cercle",False,description="""Pose un piège monocible qui occasionne des dommages Terre.
     Les dommages sont augmentés en fonction du nombre d'ennemis à proximité du piège.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
-        Sort.Sort("Piège Mortel",100,3,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,1,1,2,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+        Sort.Sort("Piège Mortel",100,3,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_non_requise=True)],[],0,1,1,2,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
 
-        Sort.Sort("Piège Mortel",147,3,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,1,1,1,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
+        Sort.Sort("Piège Mortel",147,3,1,3,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_non_requise=True)],[],0,1,1,1,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True),
 
-        Sort.Sort("Piège Mortel",197,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_requise=True)],[],0,2,99,0,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True)
+        Sort.Sort("Piège Mortel",197,3,1,4,[EffetPiege(Zones.TypeZoneCercle(0),activationPiegeMortel,"Piège Mortel",(20,10,10),cible_non_requise=True)],[],0,2,99,0,1,"ligne",False,description="""Occasionne des dommages Terre.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl,[
         Sort.Sort("Perfidie",200,6,1,1,[EffetDegats(58,62,"Terre"),EffetRetireEtat("Perfidie",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur")],[EffetDegats(64,68,"Terre"),EffetRetireEtat("Perfidie",zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur")],25,3,2,0,0,"cercle",False,description="""Occasionne des dommages Terre. Chaque piège déclenché réduit le coût en PA de Perfidie.

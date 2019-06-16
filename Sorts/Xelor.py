@@ -58,7 +58,7 @@ def getSorts(lvl):
         4), cibles_possibles="Allies|Ennemis", cibles_exclues="Lanceur|Xelor|Synchro"), EffetEtatSelf(EtatActiveSort("RetourParadoxe", 1, 1, retourParadoxe), cibles_possibles="Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     activationDesynchro = [EffetTpSymCentre(
         zone=Zones.TypeZoneCercleSansCentre(3))]
-    activationRune = [EffetTp(genererTF=True, cible_requise=True)]
+    activationRune = [EffetTp(genererTF=True, cible_non_requise=True)]
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Ralentissement", 1, 2, 1, 4, [EffetDegats(4, 5, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], [EffetDegats(7, 8, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], 5, 4, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau et retire 1 PA à la cible.
     Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.
@@ -145,21 +145,21 @@ def getSorts(lvl):
     Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Engrenage", 125, 3, 1, 5, [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True), EffetDegats(31, 35, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1),  cible_requise=True)], [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(
-            1), cible_requise=True), EffetDegats(34, 38, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1), cible_requise=True)], 25, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
+        Sort.Sort("Engrenage", 125, 3, 1, 5, [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True), EffetDegats(31, 35, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1),  cible_non_requise=True)], [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(
+            1), cible_non_requise=True), EffetDegats(34, 38, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)], 25, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Complice", 13, 2, 1, 3, [EffetInvoque("Complice", False, cibles_possibles="", cible_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
+        Sort.Sort("Complice", 13, 2, 1, 3, [EffetInvoque("Complice", False, cibles_possibles="", cible_non_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
     Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-        Sort.Sort("Complice", 54, 2, 1, 4, [EffetInvoque("Complice", False, cibles_possibles="", cible_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
+        Sort.Sort("Complice", 54, 2, 1, 4, [EffetInvoque("Complice", False, cibles_possibles="", cible_non_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
     Il est tué si un autre Complice est invoqué.""", chaine=True),
 
-        Sort.Sort("Complice", 94, 2, 1, 5, [EffetInvoque("Complice", False, cibles_possibles="", cible_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
+        Sort.Sort("Complice", 94, 2, 1, 5, [EffetInvoque("Complice", False, cibles_possibles="", cible_non_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Complice statique qui ne possède aucun sort.
     Il est tué si un autre Complice est invoqué.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Cadran de Xelor", 130, 3, 1, 5, [EffetInvoque("Cadran de Xelor", False, cibles_possibles="", cible_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 1, 3, 0, "cercle", True, description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
+        Sort.Sort("Cadran de Xelor", 130, 3, 1, 5, [EffetInvoque("Cadran de Xelor", False, cibles_possibles="", cible_non_requise=True), EffetTue(cibles_possibles="Cadran de Xelor|Complice", zone=Zones.TypeZoneCercleSansCentre(99))], [], 0, 1, 1, 3, 0, "cercle", True, description="""Invoque un Cadran qui occasionne des dommages Feu en zone et retire des PA aux ennemis dans l'état Téléfrag.
     Donne des PA aux alliés autour de lui et dans l'état Téléfrag.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -209,17 +209,17 @@ def getSorts(lvl):
     Si la cible est dans l'état Téléfrag, le coût en PA du sort est réduit pendant 2 tours.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Flou", 32, 2, 1, 1, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_requise=True)], [], 0, 1, 1, 5, 0, "cercle", False, description="""Retire des PA en zone le tour en cours.
+        Sort.Sort("Flou", 32, 2, 1, 1, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 5, 0, "cercle", False, description="""Retire des PA en zone le tour en cours.
     Augmente les PA en zone le tour suivant.""", chaine=True),
 
-        Sort.Sort("Flou", 81, 2, 1, 2, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_requise=True)], [], 0, 1, 1, 4, 0, "cercle", True, description="""Retire des PA en zone le tour en cours.
+        Sort.Sort("Flou", 81, 2, 1, 2, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 4, 0, "cercle", True, description="""Retire des PA en zone le tour en cours.
     Augmente les PA en zone le tour suivant.""", chaine=True),
 
-        Sort.Sort("Flou", 124, 2, 1, 3, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone le tour en cours.
+        Sort.Sort("Flou", 124, 2, 1, 3, [EffetEtat(EtatBoostCaracFixe("Flou", 0, 1, "PA", -2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True, cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Flou", 1, 1, "PA", 2), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone le tour en cours.
     Augmente les PA en zone le tour suivant.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Conservation", 150, 2, 0, 5, [EffetEtat(EtatModDegPer("Conservation", 0, 1, 130), zone=Zones.TypeZoneCercle(2), cible_requise=True, cibles_possibles="Allies|Lanceur"), EffetEtat(EtatModDegPer("Conservation", 1, 1, 70), zone=Zones.TypeZoneCercle(2), cible_requise=True, cibles_possibles="Allies|Lanceur")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
+        Sort.Sort("Conservation", 150, 2, 0, 5, [EffetEtat(EtatModDegPer("Conservation", 0, 1, 130), zone=Zones.TypeZoneCercle(2), cible_non_requise=True, cibles_possibles="Allies|Lanceur"), EffetEtat(EtatModDegPer("Conservation", 1, 1, 70), zone=Zones.TypeZoneCercle(2), cible_non_requise=True, cibles_possibles="Allies|Lanceur")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Augmente les dommages subis par les alliés en zone de 30% pour le tour en cours.
     Au tour suivant, les cibles réduisent les dommages subis de 30%.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -248,7 +248,7 @@ def getSorts(lvl):
         ], 0, 1, 1, 2, 0, "cercle", False, description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Instabilité Temporelle", 160, 3, 0, 7, [EffetGlyphe(activationInstabiliteTemporelle, deplacementInstabiliteTemporelle, sortieInstabiliteTemporelle, 2, "Instabilité Temporelle", (255, 255, 0), zone=Zones.TypeZoneCercle(3), cible_requise=True)], [], 0, 1, 1, 3, 1, "cercle", False, description="""Pose un glyphe qui renvoie les entités à leur position précédente.
+        Sort.Sort("Instabilité Temporelle", 160, 3, 0, 7, [EffetGlyphe(activationInstabiliteTemporelle, deplacementInstabiliteTemporelle, sortieInstabiliteTemporelle, 2, "Instabilité Temporelle", (255, 255, 0), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 1, "cercle", False, description="""Pose un glyphe qui renvoie les entités à leur position précédente.
     Les entités dans le glyphe sont dans l'état Intaclable.
     Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
     ]))
@@ -285,31 +285,31 @@ def getSorts(lvl):
     La Synchro ne peut pas être déclenchée pendant la durée de Faille Temporelle.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Synchro", 62, 2, 1, 2, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+        Sort.Sort("Synchro", 62, 2, 1, 2, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_non_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
     La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
     Elle n'est pas affectée par les effets de Rembobinage.
     À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-        Sort.Sort("Synchro", 116, 2, 1, 3, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+        Sort.Sort("Synchro", 116, 2, 1, 3, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_non_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
     La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
     Elle n'est pas affectée par les effets de Rembobinage.
     À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False),
 
-        Sort.Sort("Synchro", 153, 2, 1, 4, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
+        Sort.Sort("Synchro", 153, 2, 1, 4, [EffetTue(zone=Zones.TypeZoneInfini(), cibles_possibles="Synchro"), EffetInvoque("Synchro", False, cibles_possibles="", cible_non_requise=True), EffetEtatSelf(EtatBoostCaracFixe("Synchro", 1, -1, "PA", -1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Invoque Synchro qui gagne en puissance et se soigne quand un Téléfrag est généré, 1 fois par tour.
     La Synchro meurt en occasionnant des dommages Air en zone de 3 cases si elle subit un Téléfrag.
     Elle n'est pas affectée par les effets de Rembobinage.
     À partir du tour suivant son lancer, son invocateur perd 1 PA.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Désynchronisation", 175, 2, 1, 6, [EffetPiege(Zones.TypeZoneCercle(0), activationDesynchro, "Désynchronisation", (255, 0, 255), cible_requise=True)], [
+        Sort.Sort("Désynchronisation", 175, 2, 1, 6, [EffetPiege(Zones.TypeZoneCercle(0), activationDesynchro, "Désynchronisation", (255, 0, 255), cible_non_requise=True)], [
         ], 0, 2, 99, 0, 1, "cercle", False, description="""Pose un piège qui téléporte symétriquement les entités proches.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Contre", 69, 2, 0, 2, [EffetEtat(EtatContre("Contre", 0, 2, 30, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_requise=True)], [
+        Sort.Sort("Contre", 69, 2, 0, 2, [EffetEtat(EtatContre("Contre", 0, 2, 30, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_non_requise=True)], [
         ], 0, 1, 1, 5, 0, "cercle", True, description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
-        Sort.Sort("Contre", 122, 2, 0, 4, [EffetEtat(EtatContre("Contre", 0, 2, 40, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_requise=True)], [
+        Sort.Sort("Contre", 122, 2, 0, 4, [EffetEtat(EtatContre("Contre", 0, 2, 40, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_non_requise=True)], [
         ], 0, 1, 1, 5, 0, "cercle", True, description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True),
-        Sort.Sort("Contre", 162, 2, 0, 6, [EffetEtat(EtatContre("Contre", 0, 2, 50, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_requise=True)], [
+        Sort.Sort("Contre", 162, 2, 0, 6, [EffetEtat(EtatContre("Contre", 0, 2, 50, 1), zone=Zones.TypeZoneCercle(2), cibles_possibles="Allies|Lanceur", cible_non_requise=True)], [
         ], 0, 1, 1, 5, 0, "cercle", True, description="""Renvoie une partie des dommages subis en mêlée à l'attaquant.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -329,7 +329,7 @@ def getSorts(lvl):
     ]))
 
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Prémonition", 185, 2, 1, 5, [EffetRune(1, activationRune, "Prémonition", (164, 78, 163), cible_requise=True)], [
+        Sort.Sort("Prémonition", 185, 2, 1, 5, [EffetRune(1, activationRune, "Prémonition", (164, 78, 163), cible_non_requise=True)], [
         ], 0, 1, 1, 1, 0, "cercle", False, description="""Au prochain tour, le lanceur se téléporte sur la cellule ciblée.""", chaine=True)
     ]))
 
