@@ -39,8 +39,11 @@ class Piege:
             self.icone = "images/" + \
                 constantes.normaliser(nomSort.lower())+".jpg"
 
-    def getDistanceDuPoint(self, x, y):
-        return abs(self.centreX - x) + abs(self.centreY - y)
+    def getDistanceDuPoint(self, posX, posY):
+        """@summary:Retourne la distance séparant posX;posY du centre de ce piège."""
+        return abs(self.centreX - posX) + abs(self.centreY - posY)
 
-    def aPorteDeclenchement(self, x, y):
-        return self.zoneDeclenchement.testCaseEstDedans([self.centreX, self.centreY], [x, y], None)
+    def aPorteDeclenchement(self, posX, posY):
+        """@summary:Retourne vrai si la posX;posY donné est dans la zone du piège."""
+        return self.zoneDeclenchement.testCaseEstDedans([self.centreX, self.centreY],
+                                                        [posX, posY], None)

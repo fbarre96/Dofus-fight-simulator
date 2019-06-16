@@ -1,10 +1,13 @@
-import Sort as Sort
+"""@summary: Rassemble les sorts du Xélor
+"""
+# pylint: disable=line-too-long
+import Sort
 from Effets.EffetDegats import EffetDegats, EffetVolDeVie
 from Effets.EffetEtat import EffetEtat, EffetEtatSelf, EffetEtatSelfTF
 from Effets.EffetEtat import EffetRetireEtat, EffetRafraichirEtats
 from Effets.EffetEntiteLanceSort import EffetEntiteLanceSort
 from Effets.EffetGlyphe import EffetActiveGlyphe, EffetGlyphe
-from Effets.EffetTp import EffetTeleportePosPrec, EffetTeleporteDebutCombat, EffetTeleporteDebutTour
+from Effets.EffetTp import EffetTeleportePosPrec, EffetTeleporteDebutTour
 from Effets.EffetTp import EffetTpSym, EffetTpSymSelf, EffetTpSymCentre, EffetEchangePlace, EffetTp
 from Effets.EffetRet import EffetRetPA
 from Effets.EffetTue import EffetTue
@@ -23,15 +26,19 @@ from Etats.EtatModDeg import EtatModDegPer
 from Etats.EtatContre import EtatContre
 from Etats.EtatTelefrag import EtatTelefrag
 
-import Zones as Zones
-import Personnages as Personnages
+import Zones
+import Personnages
 
 
 def getSortsDebutCombat(lvl):
+    """@summary: charge les sorts de début de combat
+    @return: List <Sort>
+    """
+    # pylint: disable=unused-argument
     sortsDebutCombat = []
     sortsDebutCombat.append(
         Sort.Sort("Téléfrageur", 0, 0, 0, 0, [EffetEtatSelf(EtatEffetSiTFGenere("Téléfrageur", 0, -1, EffetEtatSelfTF(EtatBoostCaracFixe("toReplace", 0, -1,
-                                                                                                                                                     "PA", 2), "Rembobinage", cumulMax=1), "Téléfrageur", "reelLanceur", "reelLanceur"))], [], 0, 99, 99, 0, 0, "cercle", False, description="""""", chaine=False),
+                                                                                                                                         "PA", 2), "Rembobinage", cumulMax=1), "Téléfrageur", "reelLanceur", "reelLanceur"))], [], 0, 99, 99, 0, 0, "cercle", False, description="""""", chaine=False),
     )
     sortsDebutCombat.append(
         Sort.Sort("Glas Boost", 0, 0, 0, 0, [EffetEtatSelf(EtatEffetSiTFGenere("Glas Boost", 0, -1, EffetEtatSelf(EtatBoostBaseDeg(
@@ -45,13 +52,16 @@ def getSortsDebutCombat(lvl):
 
 
 def getSorts(lvl):
+    """@summary: charge les sorts de combat
+    @return: List <Sort>
+    """
     sorts = []
     retourParadoxe = Sort.Sort("Retour Paradoxe", 0, 0, 0, 0, [EffetTpSymCentre(zone=Zones.TypeZoneInfini(
     ), cibles_possibles="Allies|Ennemis", cibles_exclues="Lanceur", etat_requis_cibles="ParadoxeTemporel", consomme_etat=True)], [], 0, 99, 99, 0, 0, "cercle", False)
     activationInstabiliteTemporelle = Sort.Sort("Activation Instabilité Temporelle", 0, 0, 0, 3, [
-                                                EffetTeleportePosPrec(1)], [], 0, 99, 99, 0, 0, "cercle", False)
+        EffetTeleportePosPrec(1)], [], 0, 99, 99, 0, 0, "cercle", False)
     sortieInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Sortie", 0, 0, 0, 99, [
-                                            EffetRetireEtat("Intaclable")], [], 0, 99, 99, 0, 0, "cercle", False)
+        EffetRetireEtat("Intaclable")], [], 0, 99, 99, 0, 0, "cercle", False)
     deplacementInstabiliteTemporelle = Sort.Sort("Instabilité Temporelle: Intaclabe", 0, 0, 0, 3, [EffetEtat(EtatBoostCaracFixe(
         "Intaclable", 0, 1, "fuite", 999999), etat_requis_cibles="!Intaclable")], [], 0, 99, 99, 0, 0, "cercle", False)
     activationParadoxeTemporel = Sort.Sort("Paradoxe Temporel", 0, 0, 0, 0, [EffetTpSymCentre(zone=Zones.TypeZoneCercle(4), cibles_possibles="Allies|Ennemis", cibles_exclues="Lanceur|Xelor|Synchro"), EffetEtat(Etat("ParadoxeTemporel", 0, 2), zone=Zones.TypeZoneCercleSansCentre(
@@ -145,7 +155,7 @@ def getSorts(lvl):
     Téléporte la cible symétriquement par rapport au lanceur du sort.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Engrenage", 125, 3, 1, 5, [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True), EffetDegats(31, 35, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1),  cible_non_requise=True)], [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(
+        Sort.Sort("Engrenage", 125, 3, 1, 5, [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True), EffetDegats(31, 35, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)], [EffetTpSymCentre(zone=Zones.TypeZoneLignePerpendiculaire(
             1), cible_non_requise=True), EffetDegats(34, 38, "Terre", cibles_possibles="Ennemis", zone=Zones.TypeZoneLignePerpendiculaire(1), cible_non_requise=True)], 25, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre et téléporte les cibles symétriquement par rapport au centre de la zone d'effet.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [

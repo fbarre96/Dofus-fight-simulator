@@ -10,7 +10,8 @@ class Rune:
         @type: string
         @zoneDeclenchement: la zone où si un joueur marche le piège se déclenche.
         @type: Zones.TypeZone
-        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la rune. Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
+        @sortMono: le sort qui va s'activer au début du tour du joueur qui se tient sur la rune.
+         Le sort va être lancé sur le joueur dans la glyphe dont c'est le tour uniquement.
         @type: Sort
         @centreX: la coordonnée x du centre de la zone de la rune.
         @type: int
@@ -35,6 +36,8 @@ class Rune:
         return self.duree > 0
 
     def activation(self, niveau):
+        """@summary: active les effets de cette rune.
+        """
         for effet in self.effets:
             niveau.lancerEffet(effet, self.centreX, self.centreY,
                                self.nom, self.centreX, self.centreY, self.lanceur)

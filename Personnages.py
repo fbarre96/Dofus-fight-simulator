@@ -369,7 +369,7 @@ class Personnage(object):
         for glyphe in niveau.glyphes:
             if glyphe.actif():
                 # Test Entre dans la glyphe
-                if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY,
+                if glyphe.sortDeplacement.aPorte(glyphe.centreX, glyphe.centreY,
                                                  self.posX, self.posY, 0):
                     for effet in glyphe.sortDeplacement.effets:
                         niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
@@ -378,7 +378,7 @@ class Personnage(object):
                     dernierePos = self.historiqueDeplacement[-1]
                     # Test s'il était dans la glyphe avant
 
-                    if glyphe.sortDeplacement.APorte(glyphe.centreX, glyphe.centreY,
+                    if glyphe.sortDeplacement.aPorte(glyphe.centreX, glyphe.centreY,
                                                      dernierePos[0], dernierePos[1], 0):
                         for effet in glyphe.sortSortie.effets:
                             niveau.lancerEffet(
@@ -593,7 +593,7 @@ class Personnage(object):
         @type: Niveau"""
         for glyphe in niveau.glyphes:
             if glyphe.actif():
-                if glyphe.sortMono.APorte(glyphe.centreX, glyphe.centreY, self.posX, self.posY, 0):
+                if glyphe.sortMono.aPorte(glyphe.centreX, glyphe.centreY, self.posX, self.posY, 0):
                     for effet in glyphe.sortMono.effets:
                         niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
                                            glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
@@ -657,8 +657,7 @@ class Personnage(object):
         if coutPA < 0:
             coutPA = 0
         if coutPA <= niveau.tourDe.PA:
-            res, explication, coutPA = sort.estLancable(
-                niveau, niveau.tourDe, None)
+            res, explication, coutPA = sort.estLancable(niveau.tourDe, None)
             if res:
                 sortSelectionne = sort
             else:

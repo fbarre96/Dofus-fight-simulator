@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*
+"""@summary: Regroupe toutes les classes liées aux Sorts.
+"""
+from copy import deepcopy
+
+import random
+
 import constantes
 import Overlays
-import random
-import Niveau
-from copy import deepcopy
+
+
 class Sort:
-    def __init__(self,nom,lvl,coutPA,POMin,POMax, tableauEffets, tableauEffetsCC, probaCC, nbLancerParTour, nbLancerParTourParJoueur, nbTourEntreDeux, POMod,typeLancer,ldv, **kwargs):
+    """@summary: Décrit un sort.
+    """
+
+    def __init__(self, nom, lvl, coutPA, POMin, POMax, tableauEffets, tableauEffetsCC,
+                 probaCC, nbLancerParTour, nbLancerParTourParJoueur, nbTourEntreDeux,
+                 POMod, typeLancer, ldv, **kwargs):
+        # pylint: disable=invalid-name
         self.nom = nom
         self.lvl = lvl
         self.coutPA = coutPA
@@ -19,18 +30,23 @@ class Sort:
         self.ldv = ldv
         self.image = "images/"+constantes.normaliser(nom.lower())+".jpg"
         self.hitbox = None
-        self.chaine = kwargs.get("chaine",True)
+        self.chaine = kwargs.get("chaine", True)
         self.nbLancerParTour = nbLancerParTour
         self.nbLancerParTourParJoueur = nbLancerParTourParJoueur
         self.nbTourEntreDeux = nbTourEntreDeux
         self.compteLancerParTour = 0
         self.compteLancerParTourParJoueur = {}
         self.compteTourEntreDeux = nbTourEntreDeux
-        self.description = kwargs.get("description","")
-        self.overlay = Overlays.Overlay(self, Overlays.ColoredText("nom",(210,105,30)), Overlays.ColoredText("description",(224,238,238)),(56,56,56))
+        self.description = kwargs.get("description", "")
+        self.overlay = Overlays.Overlay(self, Overlays.ColoredText(
+            "nom", (210, 105, 30)), Overlays.ColoredText(
+                "description", (224, 238, 238)), (56, 56, 56))
 
-    def __deepcopy__(self,memo):
-        toReturn = Sort(self.nom,self.lvl,self.coutPA,self.POMin,self.POMax, self.effets, self.effetsCC, self.probaCC, self.nbLancerParTour, self.nbLancerParTourParJoueur, self.nbTourEntreDeux, self.POMod,self.typeLancer,self.ldv)
+    def __deepcopy__(self, memo):
+        toReturn = Sort(self.nom, self.lvl, self.coutPA, self.POMin, self.POMax,
+                        self.effets, self.effetsCC, self.probaCC,
+                        self.nbLancerParTour, self.nbLancerParTourParJoueur,
+                        self.nbTourEntreDeux, self.POMod, self.typeLancer, self.ldv)
         toReturn.description = self.description
         toReturn.compteTourEntreDeux = self.compteTourEntreDeux
         toReturn.compteLancerParTourParJoueur = self.compteLancerParTourParJoueur
@@ -39,61 +55,73 @@ class Sort:
         toReturn.image = self.image
         return toReturn
 
-    def APorte(self, j1x,j1y,ciblex,cibley,PO):
+    def aPorte(self, j1x, j1y, ciblex, cibley, PO):
+        """@summary: calcul si le point j1 et a portée du point cible
+                     avec la portée du sort + les PO du joueurs
+                     si la portée du sort est modifiable uniquement.
+        """
+        # pylint: disable=invalid-name
         distanceX = abs(ciblex-j1x)
         distanceY = abs(cibley-j1y)
         distance = distanceX+distanceY
         sortPoMin = self.POMin
         sortPoMax = self.POMax+(self.POMod*PO)
         if self.typeLancer == "ligne":
-            if distanceX > 0 and distanceY>0:
+            if distanceX > 0 and distanceY > 0:
                 return False
         elif self.typeLancer == "diagonale":
             if distanceY != distanceX:
                 return False
-            sortPoMin*=2
-            sortPoMax*=2
-        return (distance >= sortPoMin and distance <= sortPoMax)
+            sortPoMin *= 2
+            sortPoMax *= 2
+        return sortPoMin <= distance <= sortPoMax
 
-    def estLancable(self, niveau, joueurLanceur,joueurCible):
-        res,msg,coutPA = self.sortEstLancable(niveau, joueurLanceur, joueurCible)
-        if res == False:
-            return res,msg,coutPA
+    def estLancable(self, joueurLanceur, joueurCible):
+        """@summary: vérifie si le sort est lancable
+                     et vérifie si chaque effet est lancable
+        """
+        res, msg, coutPA = self.sortEstLancable(joueurCible)
+        if not res:
+            return res, msg, coutPA
         for effet in self.effets:
             res, msg = effet.estLancable(joueurLanceur, joueurCible)
-            if res == False:
+            if not res:
                 return res, msg, coutPA
         return True, msg, coutPA
 
-    def sortEstLancable(self, niveau, joueurLanceur, joueurCible):
+    def sortEstLancable(self, joueurCible):
+        """@vérifie si le sort est lancable sur la cible.
+                     check cout en PA et les limites de lancer par tour
+        """
         coutPA = self.coutPA
         if self.compteTourEntreDeux >= self.nbTourEntreDeux:
             if self.compteLancerParTour < self.nbLancerParTour:
-                if joueurCible != None:
+                if joueurCible is not None:
                     if not joueurCible in self.compteLancerParTourParJoueur:
                         self.compteLancerParTourParJoueur[joueurCible] = 0
-                    if self.compteLancerParTourParJoueur[joueurCible] < self.nbLancerParTourParJoueur:
-                        return True,"",coutPA
-                    else:
-                        return False,"Ce sort ne peut plus etre utilise sur ce personnage ce tour.",0
-                else:
-                    return True,"",coutPA
-            else:
-                return False,"Ce sort ne peut plus etre utilise ce tour.",0
-        else:
-            return False,"Delai avant prochain lance:"+str(self.nbTourEntreDeux-self.compteTourEntreDeux),0
+                    compte = self.compteLancerParTourParJoueur[joueurCible]
+                    if compte < self.nbLancerParTourParJoueur:
+                        return True, "", coutPA
+                    return False, "Ce sort ne peut plus etre utilise sur ce personnage ce tour.", 0
+                return True, "", coutPA
+            return False, "Ce sort ne peut plus etre utilise ce tour.", 0
+        msg = "Delai avant prochain lance:"+str(self.nbTourEntreDeux-self.compteTourEntreDeux)
+        return False, msg, 0
 
-    def marquerLancer(self,joueurCible):
-        self.compteLancerParTour+=1
-        if joueurCible != None:
-            self.compteLancerParTourParJoueur[joueurCible]+=1
+    def marquerLancer(self, joueurCible):
+        """@summary: compte le sort dans les lancers autorisés par tour.
+        """
+        self.compteLancerParTour += 1
+        if joueurCible is not None:
+            self.compteLancerParTourParJoueur[joueurCible] += 1
         self.compteTourEntreDeux = 0
 
-    def lance(self, origine_x,origine_y,niveau, caseCibleX, caseCibleY, caraclanceur=None , isPrevisu=False):
+    def lance(self, origineX, origineY, niveau, caseCibleX, caseCibleY,
+              caraclanceur=None, isPrevisu=False):
         """@summary: Lance un sort
-        @origine_x: la pos x d'où est lancé le sort
+        @origineX: la pos x d'où est lancé le sort
         @type: int
-        @origine_y: la pos y d'où est lancé le sort
+        @origineY: la pos y d'où est lancé le sort
         @type: int
         @niveau: La grille de jeu
         @type: Niveau
@@ -101,11 +129,12 @@ class Sort:
         @type: int
         @caseCibleY: La coordonnée y de la case cible du sort
         @type: int
-        @caraclanceur: le personnage dont les caractéristiques doivent être prise pour infliger les dégâts de sort. Optionnel : self est pris à la place
+        @caraclanceur: le personnage dont les caractéristiques doivent être prise
+        pour infliger les dégâts de sort. Optionnel : self est pris à la place
         @type: Personnage (ou None pour prendre le lanceur)"""
         caseCibleX = int(caseCibleX)
         caseCibleY = int(caseCibleY)
-        if self.ldv == True and not niveau.aLigneDeVue(origine_x, origine_y, caseCibleX, caseCibleY):
+        if self.ldv and not niveau.aLigneDeVue(origineX, origineY, caseCibleX, caseCibleY):
             print("Pas de ligne de vue !")
             return niveau.joueurs
         saveLanceur = None
@@ -117,30 +146,33 @@ class Sort:
                 for joueur in niveau.joueurs:
                     if joueur.uid == caraclanceur.uid:
                         caraclanceur = joueur
-        
-        caraclanceur = caraclanceur if caraclanceur != None else niveau.getJoueurSur(origine_x, origine_y)
-        #Get toutes les cases dans la zone d'effet
+
+        caraclanceur = caraclanceur if caraclanceur is not None else niveau.getJoueurSur(
+            origineX, origineY)
+        # Get toutes les cases dans la zone d'effet
         joueurCible = niveau.getJoueurSur(caseCibleX, caseCibleY)
-        #Test si la case est bien dans la portée du sort
-        if self.APorte(origine_x, origine_y, caseCibleX, caseCibleY, caraclanceur.PO):
+        # Test si la case est bien dans la portée du sort
+        if self.aPorte(origineX, origineY, caseCibleX, caseCibleY, caraclanceur.PO):
             if not isPrevisu:
                 print(caraclanceur.nomPerso+" lance :"+self.nom)
-            #Test si le sort est lançable (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
-            res, explication, coutPA = self.estLancable(niveau, caraclanceur, joueurCible)
-            if res == True:
-                #Lancer du sort
+            # Test si le sort est lançable
+            # (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
+            res, explication, coutPA = self.estLancable(caraclanceur, joueurCible)
+            if res:
+                # Lancer du sort
                 if not isPrevisu:
                     caraclanceur.PA -= coutPA
                     self.marquerLancer(joueurCible)
-                    print(caraclanceur.nomPerso+": -"+str(coutPA)+" PA (reste "+str(caraclanceur.PA)+"PA)")
+                    print(caraclanceur.nomPerso+": -"+str(coutPA) +
+                          " PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
                 randomVal = round(random.random(), 2)
                 if self.probaCC == 0:
                     isCC = False
                 else:
                     isCC = (randomVal*100 <= chanceCC)
-                
-                if isCC and not isPrevisu: # TOFIX : PREVISUALISATION IMPOSSIBLE POUR CC
+
+                if isCC and not isPrevisu:  # TOFIX : PREVISUALISATION IMPOSSIBLE POUR CC
                     print("Coup Critique !")
                     effetsSort = self.effetsCC
                 else:
@@ -151,12 +183,16 @@ class Sort:
                     effet.setCritique(isCC)
                     effet.setPrevisu(isPrevisu)
                     # Test si les effets sont dépendants les uns à la suite des autres
-                    if self.chaine == True:
-                        if sestApplique == True: # Si l'effet a été appliqué, on continue
-                            sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, caseCibleX, caseCibleY,caraclanceur) 
+                    if self.chaine:
+                        if sestApplique:  # Si l'effet a été appliqué, on continue
+                            sestApplique, _ = niveau.lancerEffet(
+                                effet, origineX, origineY, self.nom,
+                                caseCibleX, caseCibleY, caraclanceur)
                     else:
-                        sestApplique, cibles = niveau.lancerEffet(effet,origine_x,origine_y,self.nom, caseCibleX, caseCibleY,caraclanceur) 
-                    #Apres application d'un effet sur toutes les cibles:
+                        sestApplique, _ = niveau.lancerEffet(
+                            effet, origineX, origineY, self.nom, caseCibleX,
+                            caseCibleY, caraclanceur)
+                    # Apres application d'un effet sur toutes les cibles:
             else:
                 if not isPrevisu:
                     print(explication)
@@ -171,6 +207,6 @@ class Sort:
             niveau = save
             if saveLanceur is not None:
                 caraclanceur = saveLanceur
-        niveau.afficherSorts() # réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
+        #  réaffiche les sorts pour marquer les sorts qui ne sont plus utilisables
+        niveau.afficherSorts()
         return toReturn
-

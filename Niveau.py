@@ -282,8 +282,7 @@ class Niveau:
             # colle l'image sur la zone
             self.fenetre.blit(imageSort, (posSortsX, posSortsY))
             # On récupère si le sort est jouable
-            res, explication, _ = sort.estLancable(
-                self, self.tourDe, None)
+            res, explication, _ = sort.estLancable(self.tourDe, None)
             # Si le sort n'est pas lançable alors:
             if not res:
                 # On le grise
@@ -593,7 +592,7 @@ class Niveau:
         for tailleCercle in range(sort.POMin, sort.POMax*2+1):
             casesAXDistance = Niveau.getCasesAXDistanceDe(posX0, posY0, tailleCercle)
             for case in casesAXDistance:
-                if sort.APorte(posX0, posY0, case[0], case[1], poLanceur):
+                if sort.aPorte(posX0, posY0, case[0], case[1], poLanceur):
                     tabCasesZone.append(case)
         return tabCasesZone
 
@@ -1115,7 +1114,7 @@ class Niveau:
                     # Afficher previsualation portee du sort selectionne
                     if sortSelectionne is not None:
                         # Previsu de la porte du sort, une case teste par tour de double boucle
-                        if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY,
+                        if sortSelectionne.aPorte(self.tourDe.posX, self.tourDe.posY,
                                                   nCase, nLigne, self.tourDe.PO):
                             if not sortSelectionne.ldv or \
                                self.aLigneDeVue(self.tourDe.posX, self.tourDe.posY, nCase, nLigne):
@@ -1127,7 +1126,7 @@ class Niveau:
                             caseX = int(mouseXY[0]/constantes.taille_sprite)
                             caseY = int(mouseXY[1]/constantes.taille_sprite)
                             # Si on cible une case dans la porte du sort il faut afficher la zone
-                            if sortSelectionne.APorte(self.tourDe.posX, self.tourDe.posY,
+                            if sortSelectionne.aPorte(self.tourDe.posX, self.tourDe.posY,
                                                       caseX, caseY, self.tourDe.PO):
                                 joueurCibleDirect = self.getJoueurSur(
                                     caseX, caseY)
@@ -1170,7 +1169,7 @@ class Niveau:
                     # Afficher les cases glyphees
                     for glyphe in self.glyphes:
                         if glyphe.actif():
-                            if glyphe.sortMono.APorte(glyphe.centreX, glyphe.centreY,
+                            if glyphe.sortMono.aPorte(glyphe.centreX, glyphe.centreY,
                                                       nCase, nLigne, 0):
                                 pygame.draw.rect(fenetre, glyphe.couleur,
                                                  Rect(nCase*constantes.taille_sprite+1,
