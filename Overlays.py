@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*
+"""@summary: Rassemble toutes les classes liées aux Overlay
+"""
 import pygame
 from pygame.locals import Rect
 
@@ -24,7 +26,8 @@ class Overlay(object):
 
     def __init__(self, myobject, titre, contenu, couleurFond=(100, 100, 100, 128)):
         """@summary: initialise un overlay.
-        @myobject: l'objet ayant un attribut "titre" de type ColoredText et un attribut "contenu" de type ColoredText
+        @myobject: l'objet ayant un attribut "titre" de type ColoredText
+                    et un attribut "contenu" de type ColoredText
         @type: Object
         @titre: le titre de l'overlay
         @type: string
@@ -41,13 +44,15 @@ class Overlay(object):
 
     def render(self, texte, font, maxWidth):
         """@summary: initialise un overlay.
-        @myobject: l'objet ayant un attribut "titre" de type ColoredText et un attribut "contenu" de type ColoredText
+        @myobject: l'objet ayant un attribut "titre" de type
+                    ColoredText et un attribut "contenu" de type ColoredText
         @type: Object
         @texte: le texte que l'on veut faire rentrer dans l'overlay
         @type: string
         @font: la police dans laquelle on veut afficher le texte
         @type: pygame font
-        @maxWidth: la largeur maximale souhaitée pour le texte finale (des sauts de lignes sotn ajoutés pour réduire la largeur)
+        @maxWidth: la largeur maximale souhaitée pour le texte finale
+                    (des sauts de lignes sotn ajoutés pour réduire la largeur)
         @type: int
 
         @return: -le tableau de ligne de texte qui rentreront dans la largeur demandées.
@@ -60,14 +65,14 @@ class Overlay(object):
         # Pout toutes les lettres dans le texte à affiché
         while i < len(texte):
             # Quel taille fait la lettre dans la police donnée
-            w, _ = font.size(texte[i])
+            width, _ = font.size(texte[i])
             # Si la lettre ne rentre pas, retour à la ligne
-            if w+calcWidth > maxWidth:
+            if width+calcWidth > maxWidth:
                 calcWidth = 0
                 lignesTexte.append(buff)
                 buff = ""
             else:
-                calcWidth += w
+                calcWidth += width
                 buff += texte[i]
                 i += 1
         # Ajout de la dernière ligne qui n'a pas atteint la taille maximale
@@ -75,11 +80,13 @@ class Overlay(object):
         calcWidth, calcHeight = font.size(lignesTexte[0])
         return lignesTexte, calcHeight*len(lignesTexte), calcWidth
 
-    def afficher(self, x, y):
+    def afficher(self, posX, posY):
         """@summary: affiche l'overlay sur la position donnée
-        @x: la coordonnée x du pixel sur lequel se trouvera le coin supérieur gauche de l'overlay.
+        @posX: la coordonnée x du pixel sur lequel se trouvera
+                le coin supérieur gauche de l'overlay.
         @type: int
-        @y: la coordonnée y du pixel sur lequel se trouvera le coin supérieur gauche de l'overlay.
+        @posY: la coordonnée y du pixel sur lequel se trouvera
+                le coin supérieur gauche de l'overlay.
         @type: int
 
         @return: -le tableau de ligne de texte qui rentreront dans la largeur demandées.
@@ -92,9 +99,9 @@ class Overlay(object):
         #  contenu de l'overlay
         contenuTexte = getattr(self.myobject, self.contenu.texte)
         # Conversion en string si ce n'est pas déjà le cas.
-        if not type(titreTexte) is str and not type(titreTexte) is str:
+        if not isinstance(titreTexte, str):
             titreTexte = str(titreTexte)
-        if not type(contenuTexte) is str and not type(contenuTexte) is str:
+        if not isinstance(contenuTexte, str):
             contenuTexte = str(contenuTexte)
         # Découpage du titre pour qu'il rendre dans l'overlay
         lignesTitre, heightTitre, widthTitre = self.render(
@@ -111,42 +118,42 @@ class Overlay(object):
         # notice the alpha value in the color
         background.fill(self.couleurFond)
         # Calcul de la position de l'overlay si la souris est trop à droite de l'écran.
-        pos_to_put_x = x
-        if pos_to_put_x+maxWidth+10 >= self.fenetre.get_width():
-            pos_to_put_x = self.fenetre.get_width() - maxWidth-10
+        posToPutX = posX
+        if posToPutX+maxWidth+10 >= self.fenetre.get_width():
+            posToPutX = self.fenetre.get_width() - maxWidth-10
 
         ###Affichage###
         # collage du fond
-        self.fenetre.blit(background, (pos_to_put_x, (y-height-10)))
+        self.fenetre.blit(background, (posToPutX, (posY-height-10)))
         nextHeight = 0
         # collage du titre découpé
         for ligne in lignesTitre:
             titreSurface = Overlay.fontTitre.render(
                 ligne, 1, self.titre.couleur)
             # +5 et -10 pour avoir un padding
-            self.fenetre.blit(titreSurface, (pos_to_put_x +
-                                             5, (y-height-10)+5+nextHeight))
+            self.fenetre.blit(titreSurface, (posToPutX +
+                                             5, (posY-height-10)+5+nextHeight))
             nextHeight += titreSurface.get_height()
         # collage du contenu découpé
         for ligne in lignesContenu:
             contenuSurface = Overlay.fontTitre.render(
                 ligne, 1, self.contenu.couleur)
             # +5 et -10 spour avoir un padding
-            self.fenetre.blit(contenuSurface, (pos_to_put_x +
-                                               5, (y-height-10)+5+nextHeight))
+            self.fenetre.blit(contenuSurface, (posToPutX +
+                                               5, (posY-height-10)+5+nextHeight))
             nextHeight += titreSurface.get_height()
 
 
 class VueForOverlay(object):
     """@summary: Classe provoquant un affichage d'overlay quand survolé par la souris"""
 
-    def __init__(self, fenetre, x, y, width, height, objectWithOverlay):
+    def __init__(self, fenetre, posX, posY, width, height, objectWithOverlay):
         """@summary: initialise une vue déclenchant un overlay.
         @fenetre: la fenêtre pygame
         @type: pygame fenêtre
-        @x: la position x du composant
+        @posX: la position posX du composant
         @type: int
-        @y: la position y du composant
+        @posY: la position posY du composant
         @type: int
         @width: la largeur du composant
         @type: int
@@ -154,12 +161,12 @@ class VueForOverlay(object):
         @type: int
         @objectWithOverlay: l'object qui a un attribut overlay de type Overlay
         @type: Object"""
-        self.x = x
-        self.y = y
+        self.posX = posX
+        self.posY = posY
         self.width = width
         self.height = height
         self.fenetre = fenetre
-        self.hitbox = Rect(x, y, width, height)
+        self.hitbox = Rect(posX, posY, width, height)
         self.objectWithOverlay = objectWithOverlay
         self.objectWithOverlay.overlay.fenetre = fenetre
 
@@ -168,5 +175,5 @@ class VueForOverlay(object):
         @mouseXY: la position de la souris
         @type: tableau de coordonnée [int x, int y]
 
-        @return: True si les coordonnées passées en paramètres sont sur le composant décrit, False sinon"""
+        @return: True si les coordonnées passées en paramètres sont sur le composant décrit"""
         return self.hitbox.collidepoint(mouseXY)

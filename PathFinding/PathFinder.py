@@ -4,9 +4,11 @@
 from PathFinding.Noeud import Noeud
 
 
-def cmp_to_key(mycmp):
+def cmpToKey(mycmp):
     'Convert a cmp= function into a key= function'
-    class Key(object):
+    class Key():
+        """@summary: Classe servant à déclarer une clé de comparaison
+        """
         def __init__(self, obj, *args):
             # pylint: disable=unused-argument
             self.obj = obj
@@ -31,19 +33,19 @@ def cmp_to_key(mycmp):
     return Key
 
 
-def compare2Noeuds(n1, n2):
+def compare2Noeuds(noeud1, noeud2):
     """@summary: Fonction comparant deux noeuds du graphe.
-        @n1: le premier noeud à comparer
+        @noeud1: le premier noeud à comparer
         @type: Noeud
-        @n2: le second noeud à comparer
+        @noeud2: le second noeud à comparer
         @type: Noeud
         @return: 1 si le premier noeud à la plus petite heuristique,
                 -1 si le second à la plus petite heuristique
                  0 si les deux sont égales"""
 
-    if n1.heur < n2.heur:
+    if noeud1.heur < noeud2.heur:
         return 1
-    elif n1.heur == n2.heur:
+    elif noeud1.heur == noeud2.heur:
         return 0
     else:
         return -1
@@ -56,69 +58,75 @@ def ajoutTrie(liste, noeud):
     @noeud: le noeud à insérer dans la liste triée.
     @type: Noeud"""
     liste.append(noeud)
-    liste.sort(key=cmp_to_key(compare2Noeuds))
+    liste.sort(key=cmpToKey(compare2Noeuds))
 
 
 class PathFinder:
+    """@summary: Classe implémentant l'algorithme A*
+    """
     def __init__(self):
-        self.cached_case_x = None
-        self.cached_case_y = None
-        self.cached_dest_x = None
-        self.cached_dest_y = None
-        self.cached_result = None
+        self.cachedCaseX = None
+        self.cachedCaseY = None
+        self.cachedDestX = None
+        self.cachedDestY = None
+        self.cachedResult = None
 
     def pathFinding(self, niveau, caseCibleX, caseCibleY, joueur):
-        """@summary: Implémentation de l'algorithme A*. recherche de chemin depuis la position du joueur vers la case_cible
-        @caseCibleX: La coordonnée x à laquelle on veut accéder
+        """@summary: Implémentation de l'algorithme A*.
+                    recherche de chemin depuis la position du joueur vers la case_cible
+        @caseCibleX: La coordonnée posX à laquelle on veut accéder
         @type: int
-        @caseCibleY: La coordonnée y à laquelle on veut accéder
+        @caseCibleY: La coordonnée posY à laquelle on veut accéder
         @type: int
         @joueur: Le joueur qui veut se rendre sur la case cible depuis sa position
         @type: Personnage
 
-        @return: la liste des cases composant le chemin pour accéder à la case cible depuis la position du joueur. None si aucun chemin n'a été trouvé"""
-        if self.cached_dest_x == caseCibleX and self.cached_dest_y == caseCibleY and self.cached_case_x == joueur.posX and self.cached_case_y == joueur.posY:
-            return self.cached_result
-        self.cached_case_x = joueur.posX
-        self.cached_case_y = joueur.posY
-        self.cached_dest_x = caseCibleX
-        self.cached_dest_y = caseCibleY
+        @return: la liste des cases composant le chemin pour accéder à la case cible
+         depuis la position du joueur. None si aucun chemin n'a été trouvé"""
+        if self.cachedDestX == caseCibleX and self.cachedDestY == caseCibleY and \
+           self.cachedCaseX == joueur.posX and self.cachedCaseY == joueur.posY:
+            return self.cachedResult
+        self.cachedCaseX = joueur.posX
+        self.cachedCaseY = joueur.posY
+        self.cachedDestX = caseCibleX
+        self.cachedDestY = caseCibleY
 
         # VOIR PSEUDO CODE WIKIPEDIA
         listeFermee = []
         listeOuverte = []
         if niveau.structure[caseCibleY][caseCibleX].type != "v":
-            self.cached_result = None
+            self.cachedResult = None
             return None
         depart = Noeud(joueur.posX, joueur.posY)
         ajoutTrie(listeOuverte, depart)
-        while len(listeOuverte) != 0:
-            u = listeOuverte[-1]
+        while listeOuverte:
+            noeudOuvert = listeOuverte[-1]
             del listeOuverte[-1]
-            if u.x == caseCibleX and u.y == caseCibleY:
-                # reconstituerChemin(u,listeFermee)
+            if noeudOuvert.posX == caseCibleX and noeudOuvert.posY == caseCibleY:
+                # reconstituerChemin(noeudOuvert,listeFermee)
                 tab = []
                 for case in listeFermee:
-                    tab.append([case.x, case.y])
-                if(len(tab) > 0):
+                    tab.append([case.posX, case.posY])
+                if tab:
                     if tab[0][0] == joueur.posX and tab[0][1] == joueur.posY:
                         del tab[0]
-                tab.append([u.x, u.y])
-                self.cached_result = tab
+                tab.append([noeudOuvert.posX, noeudOuvert.posY])
+                self.cachedResult = tab
                 return tab
-            voisins = niveau.getVoisins(u.x, u.y)
-            for v in voisins:
-                v_existe_cout_inf = False
-                for n in listeFermee+listeOuverte:
-                    if n.x == v.x and n.y == v.y and n.cout < v.cout:
-                        v_existe_cout_inf = True
+            voisins = niveau.getVoisins(noeudOuvert.posX, noeudOuvert.posY)
+            for voisin in voisins:
+                vExisteCoutInf = False
+                for noeud2Listes in listeFermee+listeOuverte:
+                    if noeud2Listes.posX == voisin.posX and noeud2Listes.posY == voisin.posY \
+                       and noeud2Listes.cout < voisin.cout:
+                        vExisteCoutInf = True
                         break
-                if not(v_existe_cout_inf):
-                    v.cout = u.cout+1
-                    v.heur = v.cout + \
-                        (abs(v.x-caseCibleX)+abs(v.y-caseCibleY))
-                    ajoutTrie(listeOuverte, v)
-            listeFermee.append(u)
+                if not vExisteCoutInf:
+                    voisin.cout = noeudOuvert.cout+1
+                    voisin.heur = voisin.cout + \
+                        (abs(voisin.posX-caseCibleX)+abs(voisin.posY-caseCibleY))
+                    ajoutTrie(listeOuverte, voisin)
+            listeFermee.append(noeudOuvert)
         print("Aucun chemin trouvee")
-        self.cached_result = None
+        self.cachedResult = None
         return None

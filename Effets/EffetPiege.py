@@ -1,7 +1,6 @@
 """@summary: Rassemble les effets de sort en rapport avec les pièges."""
 from Effets.Effet import Effet
 from Piege import Piege
-import Niveau
 
 
 class EffetPiege(Effet):

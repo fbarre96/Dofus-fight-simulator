@@ -1,7 +1,6 @@
 """@summary: Rassemble les effets de sort en rapport avec les runes."""
 
 from Effets.Effet import Effet
-import Niveau
 from Rune import Rune
 
 class EffetRune(Effet):

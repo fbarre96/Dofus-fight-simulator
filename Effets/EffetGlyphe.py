@@ -1,7 +1,6 @@
 """@summary: Rassemble les effets de sort en rapport avec les glyphes."""
 
 from Effets.Effet import Effet
-import Niveau
 from Glyphe import Glyphe
 
 class EffetGlyphe(Effet):
@@ -49,8 +48,8 @@ class EffetGlyphe(Effet):
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         nouvelleGlyphe = Glyphe(self.nom, self.sort, self.sortDeplacement, self.sortSortie,
-                                       self.duree, kwargs.get("caseCibleX"),
-                                       kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
+                                self.duree, kwargs.get("caseCibleX"),
+                                kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.poseGlyphe(nouvelleGlyphe)
 
 
