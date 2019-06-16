@@ -4,7 +4,7 @@ import Zones
 import constantes
 import pygame
 import Overlays
-import Effets
+from Effets.EffetGlyphe import EffetGlyphe
 import Etats
 import Sort
 from pygame.locals import *
@@ -1104,7 +1104,7 @@ class Niveau:
         @type: int
 
         @return: Renvoie True si l'effet a été appliqué, False sinon"""
-        if isinstance(effet, Effets.EffetGlyphe):
+        if isinstance(effet, EffetGlyphe):
             effetALancer = effet.deepcopy()
             effetALancer.appliquerEffet(self, None, joueurLanceur, case_cible_x=case_cible_x, case_cible_y=case_cible_y,
                                         nom_sort=nomSort, cibles_traitees=ciblesTraitees, prov_x=prov_x, prov_y=prov_y)

@@ -5,7 +5,7 @@
 	"python.linting.pylintArgs": [
         "--extension-pkg-whitelist=pygame",
         "--module-naming-style=any",
-        "--const-naming-style=camelCase",
+        "--const-naming-style=snake_case",
         "--class-naming-style=PascalCase",
         "--function-naming-style=camelCase",
         "--method-naming-style=camelCase",

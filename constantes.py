@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*
-#taille d'un des côté du carré d'un sprite sur la grille de jeu
+"""
+@summary: Définit les constantes pour le simulateur
+"""
+# taille d'un des côté du carré d'un sprite sur la grille de jeu
 taille_sprite = 30
-#Nombre de case sur une ligne et colonne de la carte
+# Nombre de case sur une ligne et colonne de la carte
 taille_carte = 15
-#pixels de début de l'affichage de la grille de jeu
+# pixels de début de l'affichage de la grille de jeu
 x_grille = 0
 y_grille = 0
-#calculs de la largeur et hauteur de la grille de jeu
+# calculs de la largeur et hauteur de la grille de jeu
 width_grille = taille_carte*taille_sprite
 height_grille = taille_carte*taille_sprite
-#pixels de début de l'affichage de la grille des sorts disponibles
+# pixels de début de l'affichage de la grille des sorts disponibles
 x_sorts = 0
 y_sorts = y_grille + height_grille
-#calculs de la largeur et hauteur de la grille des sorts disponibles
+# calculs de la largeur et hauteur de la grille des sorts disponibles
 height_sorts = 200
 width_sorts = width_grille
 
-#Calcul de la taille de la fenetre
+# Calcul de la taille de la fenetre
 width_fenetre = width_sorts
 height_fenetre = height_grille+height_sorts
 
@@ -30,21 +33,23 @@ image_prevision_ldv = "images/prevision_ldv.jpg"
 image_prevision_tacle = "images/prevision_tacle.jpg"
 image_prevision_zone = "images/prevision_zone.jpg"
 
+
 def normaliser(chaine):
-	"""@summary: enlève les accents d'une chaîne de caractère et la met en minuscule. Remplace également les espaces et apostrophes par un underscore.
-	@chaine: chaîne de caractère à normaliser
-	@type: string
-	@return: La chaîne de caractère une fois les remplacements effectués.
-	"""
-	chaine = chaine.lower()
-	chaine = chaine.replace(" ","_")
-	chaine = chaine.replace("'","_")
-	chaine = chaine.replace("é","e")
-	chaine = chaine.replace("è","e")
-	chaine = chaine.replace("ê","e")
-	chaine = chaine.replace("à","a")
-	chaine = chaine.replace("ï","i")
-	chaine = chaine.replace("î","i")
-	chaine = chaine.replace("ç","c")
-	chaine = chaine.replace("â","a")
-	return chaine
+    """@summary: enlève les accents d'une chaîne de caractère et la met en minuscule.
+        Remplace également les espaces et apostrophes par un underscore.
+    @chaine: chaîne de caractère à normaliser
+    @type: string
+    @return: La chaîne de caractère une fois les remplacements effectués.
+    """
+    chaine = chaine.lower()
+    chaine = chaine.replace(" ", "_")
+    chaine = chaine.replace("'", "_")
+    chaine = chaine.replace("é", "e")
+    chaine = chaine.replace("è", "e")
+    chaine = chaine.replace("ê", "e")
+    chaine = chaine.replace("à", "a")
+    chaine = chaine.replace("ï", "i")
+    chaine = chaine.replace("î", "i")
+    chaine = chaine.replace("ç", "c")
+    chaine = chaine.replace("â", "a")
+    return chaine
