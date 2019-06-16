@@ -18,32 +18,32 @@ Le programme:
 ### Sous Windows:
 * Télécharger le zip du dossier github
 * Extraire le zip dans un dossier de votre choix
-* Installer python2.7 (bien ajouter dans l'installeur l'option pour ajouter Python à la variable PATH):
+* Installer python3 (bien ajouter dans l'installeur l'option pour ajouter Python à la variable PATH):
 ![Capture1](https://github.com/fbarre96/Dofuk/raw/master/Documentation/capture_python.png)
 
-https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi
+https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe
 * Ouvrir une console de commande : appuyer sur la touche Windows puis taper cmd et enfin appuyer sur 'entrée'
 * Installer pygame: entrer dans la console de commande : `pip install pygame`.
-* Exécuter Dofuk.py en double cliquant dessus
+* Exécuter Dofus_FS.py en double cliquant dessus
 
 ### Sous Linux (Ubuntu):
 * Cloner le projet github ou télécharger le zip
-* Installer python2.7 : `sudo apt-get install python`
+* Installer python3 : `sudo apt-get install python`
 * Installer tkinter : `sudo apt-get install python-tk`
 * Installer pip python : `sudo apt-get install python-pip`
-* Installer pygame : `pip install pygame`
-* Executer Dofuk avec python : `python Dofuk.py`
+* Installer pygame : `python3 -m pip install pygame`
+* Executer Dofuk avec python : `python Dofus_FS.py`
 
 ## Précisions:
-Ce simulateur ne **remplace pas** Dofus©, il sert à visualiser ce que pourrait donner un stuff complet en jeu pour votre personnage ou bien à tester une autre classe. Le programme a donc peu de fonctionnalités avancées.
-Le moteur de combat a été codé entièrement à vu de nez (je n'ai pas fait de reverse sur Dofus) donc certains comportements peuvent être différents du vrai jeu (ordre de traitements de cibles concurrentes par exemple)
+Ce simulateur ne **remplace pas** Dofus©, il sert à visualiser ce que pourrait donner un stuff complet en jeu pour votre personnage ou bien à tester une autre classe.
+Le moteur de combat a été codé entièrement à vu de nez (je n'ai pas fait de reverse sur Dofus) donc certains comportements peuvent être différents du vrai jeu (ordre de traitements de cibles concurrentes par exemple).
+Ce projet est encore en cours de développement et non officiel, il n'est pas destiné a être stable pour le moment. 
 
 ## Limitations:
-* Pour le moment seul 3 classes sont disponibles: Xélor, Iop et Crâ.
-* Certains états et sorts ne sont tout simplement pas implémentés parce qu'ils apportent peu dans le test de la classe en 1v1 Poutch (Pesanteur, lourd par exemple). Servez vous de votre imagination.
+* Pour le moment seul 4 classes sont disponibles: Xélor, Iop, Sram et Crâ.
 * Plusieurs bugs peuvent être présent, si vous en trouvez, j'apprécierais énormément un retour (voir section Améliorations).
-* Je me réserve le droit de ne pas corriger un bug mineur. Par exemple, l'anneau destructeur des Iops au corps à corps d'une cible ne déplace pas le Poutch.
-* Certains sorts peuvent ne pas correspondre à la réalité, la raison est simple. Le seul personnage dont je dispose est un Xélor 18X. C'est donc la seule classe testée lorsque j'avais des doutes sur un sort. Les autres sorts ont été crée juste avec la description des sorts dans l'encyclopédie Dofus. Cette encyclopédie ne dit clairement pas tout. Notamment les sorts qui boost leur dommages dans certaines conditions. Testez donc les sorts avec les caractéristiques de vos personnages réels et donnez moi vos retours sur la précision des dégâts du simulateur.
+* Certains sorts peuvent ne pas correspondre à la réalité, la raison est simple. Les seuls personnages dont je dispose sont un Xélor 200 et un sram 200 Ce sont donc les seules classes testées lorsque j'avais des doutes sur un sort. Les autres sorts ont été crée juste avec la description des sorts dans l'encyclopédie Dofus. Cette encyclopédie ne dit clairement pas tout. Notamment les sorts qui boost leur dommages dans certaines conditions. Testez donc les sorts avec les caractéristiques de vos personnages réels et donnez moi vos retours sur la précision des dégâts du simulateur.
+* Les effets pièges sont uniquement ceux du piège de niveau max car les valeurs des autres niveaux ne sont pas visiblent une fois ce niveau dépassé. 
 
 
 ## Améliorations:
