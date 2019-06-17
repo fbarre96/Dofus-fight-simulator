@@ -52,7 +52,7 @@ def getSorts(lvl):
         Sort.Sort("Mot Alternatif", 40, 3, 1, 8, [EffetSoin(24, 27, cibles_possibles="Allies"), EffetDegats(16, 19, "Feu", cibles_possibles="Ennemis")], [EffetSoin(28, 28, cibles_possibles="Allies"), EffetDegats(21, 21, "Feu", cibles_possibles="Ennemis")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
     Soigne les alliés.""", chaine=False)
     ]))
-    activationMotMarquant = Sort.Sort("Glyphe Marquant", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Glyphe Marquant", 0, 1, EffetSoin(1, 1), "Glyphe Marquant", "lanceur"), cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
+    activationMotMarquant = Sort.Sort("Glyphe Marquant", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Glyphe Marquant", 0, 1, EffetSoin(43, 47), "Glyphe Marquant", "lanceur"), cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     sortieMotMarquant = Sort.Sort("Sortie Glyphe Marquant", 0, 0, 0, 2, [EffetRetireEtat("Glyphe Marquant", cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Marquant", 101, 4, 1, 5, [EffetGlyphe(Zones.TypeZoneCercleSansCentre(1), activationMotMarquant, activationMotMarquant, sortieMotMarquant, 1, "Mot Marquant", (252, 116, 172), cibles_possibles="Ennemis"), EffetDegats(30, 34, "Feu")], [EffetGlyphe(Zones.TypeZoneCercleSansCentre(1), activationMotMarquant, activationMotMarquant, sortieMotMarquant, 1, "Mot Marquant", (252, 116, 172), cibles_possibles="Ennemis"), EffetDegats(33, 37, "Feu")], 25, 3, 2, 0, 0, "cercle", True, description="""Occasionne des dommages Feu.

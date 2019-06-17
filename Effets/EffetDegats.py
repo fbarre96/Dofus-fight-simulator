@@ -114,7 +114,7 @@ class EffetDegats(Effet):
             if etat.actif():
                 dos, baseDeg, carac = etat.triggerAvantCalculDegats(
                     dos, baseDeg, carac, nomSort)
-        total += baseDeg + (baseDeg * ((carac) / 100.0)) + dos
+        total += baseDeg + (baseDeg * int(carac / 100.0)) + dos
         if not self.kwargs.get("bypassDmgCalc", False):
             if nomSort != "cac":
                 total += int((joueurLanceur.doSorts/100.0) * total)

@@ -39,7 +39,8 @@ class EffetSoin(Effet):
             baseSoin = self.valSoinMax
         else:
             baseSoin = random.randrange(self.valSoinMin, self.valSoinMax+1)
-        self.valSoin = baseSoin + joueurLanceur.soins
+
+        self.valSoin = int(baseSoin * (100.0 + joueurLanceur.int) / 100.0 + joueurLanceur.soins)
         if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet.vieMax:
             self.valSoin = joueurCaseEffet.vieMax - joueurCaseEffet.vie
         return self.valSoin
