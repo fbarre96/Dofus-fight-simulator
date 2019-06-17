@@ -16,7 +16,7 @@ def createChargerSorts(classe):
         classeSorts = json.loads(fichier.read())
         count = 0
         for nomSort, sortValues in classeSorts.items():
-            textFunc += "\nsorts.append(Personnages.Personnage.getSortRightLvl(lvl,["
+            textFunc += "\nsorts.append(Personnages.Personnage.getSortRightLvl(lvl, ["
             isVariante = (count % 2 == 1)
             count += 1
             levels = range(1, 4)
@@ -51,7 +51,7 @@ def createChargerSorts(classe):
                     nbLancerParTourParJoueur = 1
                 textFunc += str(int(sortValues[str(level)]["Autres"].get(
                     "Probabilité de coup critique", "0%").split("%")[0]))+", "
-                textFunc += str(int(nbLancerParTour))+","
+                textFunc += str(int(nbLancerParTour))+", "
                 textFunc += str(int(nbLancerParTourParJoueur))+", "
                 textFunc += str(int(nbTourEntreDeuxLancer))+", "
                 poMod = 1 if sortValues[str(level)]["Autres"].get(
@@ -114,7 +114,7 @@ def getListeEffets(sortValues, tab, desc):
                 # enleve la parenthese de fin d'effet de dommage
                 degType = effetsCaracs[-1][:-1]
             retStr += "EffetDegats("+str(degMin) + \
-                ","+str(degMax)+",\""+degType+"\""
+                ", "+str(degMax)+", \""+degType+"\""
         elif "(vol " in effet:
             effetsCaracs = effet.split(" ")
             degMin = effetsCaracs[0]
@@ -122,11 +122,11 @@ def getListeEffets(sortValues, tab, desc):
             # enleve la parenthese de fin d'effet de dommage
             degType = effetsCaracs[-1][:-1]
             retStr += "EffetVolDeVie("+str(degMin) + \
-                ","+str(degMax)+",\""+degType+"\""
+                ", "+str(degMax)+", \""+degType+"\""
         else:
             retStr += "TODO("+str(effet)+")"
         if nomZone != "":
-            retStr += ",zone=Zones."+nomZone
+            retStr += ", zone=Zones."+nomZone
         # retStr +=",faire_au_vide=False"
         # retStr +=",etat_requis=\"\""
         # retStr +=",etat_requis_cibles=\"\""
@@ -135,7 +135,7 @@ def getListeEffets(sortValues, tab, desc):
         # retStr +=",cibles_exclues=\"\""
         retStr += ")"
         if effet != tabEffets[-1]:
-            retStr += ","
+            retStr += ", "
     return retStr+"]"
 
 if __name__ == "__main__":

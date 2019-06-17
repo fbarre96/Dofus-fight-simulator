@@ -1,25 +1,31 @@
 """@summary: Rassemble les effets de sort en rapport avec les soins."""
+import random
+
 from Effets.Effet import Effet
 
 class EffetSoin(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet soinges une cible."""
 
-    def __init__(self, valSoin, **kwargs):
+    def __init__(self, valSoinMin, valSoinMax, **kwargs):
         """@summary: Initialise un effet de dégâts.
-        @pourcentage: le pourcentage de la vie max à soigner
-        @type: int (1 à 100)
+        @valSoinMin: jet de soin minimum
+        @type: int
+        @valSoinMax: jet de soin maximum
+        @type: int
         @kwargs: Options de l'effets
         @type: **kwargs"""
-        self.valSoin = valSoin
+        self.valSoinMin = valSoinMin
+        self.valSoinMax = valSoinMax
+        self.valSoin = 0
         self.kwargs = kwargs
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        cpy = EffetSoin(self.valSoin, **self.kwargs)
+        cpy = EffetSoin(self.valSoinMin, self.valSoinMax, **self.kwargs)
         return cpy
 
-    def calculSoin(self, joueurCaseEffet, joueurLanceur):
+    def calculSoin(self, joueurCaseEffet, joueurLanceur, howToChoose="alea"):
         """@summary: Calcul les soins qui seront donnés.
         @joueurCaseEffet: le joueur qui sera soigné
         @type: Personnage
@@ -27,7 +33,13 @@ class EffetSoin(Effet):
         @type: Personnage"""
         if joueurCaseEffet is None:
             return None
-        self.valSoin += joueurLanceur.soins
+        if howToChoose == "min":
+            baseSoin = self.valSoinMin
+        elif howToChoose == "max":
+            baseSoin = self.valSoinMax
+        else:
+            baseSoin = random.randrange(self.valSoinMin, self.valSoinMax+1)
+        self.valSoin = baseSoin + joueurLanceur.soins
         if joueurCaseEffet.vie + self.valSoin > joueurCaseEffet.vieMax:
             self.valSoin = joueurCaseEffet.vieMax - joueurCaseEffet.vie
         return self.valSoin
@@ -113,7 +125,7 @@ class EffetSoinSelonSubit(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super().__init__(0, **kwargs)
+        super().__init__(0, 0, **kwargs)
 
     def __deepcopy__(self, memo):
         cpy = EffetSoinSelonSubit(self.pourcentage, **self.kwargs)
@@ -133,7 +145,7 @@ class EffetSoinSelonSubit(EffetSoin):
         if joueurCaseEffet is not None:
             print("Effet soin selon subit : "+str(self.getDegatsSubits()))
             subitDegats, _ = self.getDegatsSubits()
-            self.valSoin = int((self.pourcentage/100.0) * subitDegats)
+            self.valSoinMin = self.valSoinMax = int((self.pourcentage/100.0) * subitDegats)
             self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))

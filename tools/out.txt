@@ -1,277 +1,268 @@
 
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Blessant", 1, 4, 1, 6, [EffetDegats(13,15,"Air"),TODO(Mots d'Air))], [EffetDegats(17,17,"Air"),TODO(Mots d'Air))], 15, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
-Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Blessant", 30, 4, 1, 7, [EffetDegats(16,18,"Air"),TODO(Mots d'Air))], [EffetDegats(20,20,"Air"),TODO(Mots d'Air))], 15, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
-Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
-
-	Sort.Sort("Mot Blessant", 60, 4, 1, 8, [EffetDegats(19,21,"Air"),TODO(Mots d'Air))], [EffetDegats(23,23,"Air"),TODO(Mots d'Air))], 15, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
-Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Vexant", 110, 5, 1, 5, [EffetDegats(48, 52, "Air")], [EffetDegats(58, 62, "Air")], 5, 2, 1, 0, 0, "ligne", True, description="""Occasionne des dommages Air.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Vexant", 110, 5, 1, 5, [EffetDegats(48,52,"Air")], [EffetDegats(58,62,"Air")], 5, 2,1, 0, 0, "ligne", True, description="""Occasionne des dommages Air.""", chaine=True)
-]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Alternatif", 1, 3, 1, 4, [TODO(14 à 17 (PV rendus))),EffetDegats(10,13,"Feu")], [TODO(18 (PV rendus))),EffetDegats(13,13,"Feu")], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Alternatif", 1, 3, 1, 4, [TODO(14 à 17 (PV rendus))), EffetDegats(10, 13, "Feu")], [TODO(18 (PV rendus))), EffetDegats(13, 13, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
 Soigne les alliés.""", chaine=True),
 
-	Sort.Sort("Mot Alternatif", 20, 3, 1, 6, [TODO(19 à 22 (PV rendus))),EffetDegats(13,16,"Feu")], [TODO(23 (PV rendus))),EffetDegats(17,17,"Feu")], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
+	Sort.Sort("Mot Alternatif", 20, 3, 1, 6, [TODO(19 à 22 (PV rendus))), EffetDegats(13, 16, "Feu")], [TODO(23 (PV rendus))), EffetDegats(17, 17, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
 Soigne les alliés.""", chaine=True),
 
-	Sort.Sort("Mot Alternatif", 40, 3, 1, 8, [TODO(24 à 27 (PV rendus))),EffetDegats(16,19,"Feu")], [TODO(28 (PV rendus))),EffetDegats(21,21,"Feu")], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
+	Sort.Sort("Mot Alternatif", 40, 3, 1, 8, [TODO(24 à 27 (PV rendus))), EffetDegats(16, 19, "Feu")], [TODO(28 (PV rendus))), EffetDegats(21, 21, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
 Soigne les alliés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Marquant", 101, 4, 1, 5, [TODO(État 'Mot Marquant' (1 tour))),TODO(Glyphe Marquant)),EffetDegats(30,34,"Feu")], [TODO(État 'Mot Marquant' (1 tour))),TODO(Glyphe Marquant)),EffetDegats(33,37,"Feu")], 25, 3,2, 0, 0, "cercle", True, description="""Occasionne des dommages Feu.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Marquant", 101, 4, 1, 5, [TODO(État 'Mot Marquant' (1 tour))), TODO(Glyphe Marquant)), EffetDegats(30, 34, "Feu")], [TODO(État 'Mot Marquant' (1 tour))), TODO(Glyphe Marquant)), EffetDegats(33, 37, "Feu")], 25, 3, 2, 0, 0, "cercle", True, description="""Occasionne des dommages Feu.
 Pose un glyphe autour de la cible ennemie. Le glyphe soigne les alliés en fin de tour.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [TODO(Invoque :),zone=Zones.TypeZoneCercle(99)),TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)),zone=Zones.TypeZoneCercle(99)),TODO(10711),zone=Zones.TypeZoneCercle(99))], [], 0, 1,1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
 Le Lapino soigne ses alliés.
 Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
 Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True),
 
-	Sort.Sort("Mot d'Amitié", 25, 3, 1, 3, [TODO(Invoque :),zone=Zones.TypeZoneCercle(99)),TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)),zone=Zones.TypeZoneCercle(99)),TODO(10711),zone=Zones.TypeZoneCercle(99))], [], 0, 1,1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+	Sort.Sort("Mot d'Amitié", 25, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
 Le Lapino soigne ses alliés.
 Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
 Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True),
 
-	Sort.Sort("Mot d'Amitié", 52, 3, 1, 3, [TODO(Invoque :),zone=Zones.TypeZoneCercle(99)),TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)),zone=Zones.TypeZoneCercle(99)),TODO(10711),zone=Zones.TypeZoneCercle(99))], [], 0, 1,1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+	Sort.Sort("Mot d'Amitié", 52, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
 Le Lapino soigne ses alliés.
 Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
 Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Affection", 105, 4, 1, 3, [TODO(Invoque : Lapino protecteur),zone=Zones.TypeZoneCercle(99)),TODO(Fixe l'intervalle de relance de Mot d'Affection à 3 tour(s)),zone=Zones.TypeZoneCercle(99)),TODO(10711),zone=Zones.TypeZoneCercle(99))], [], 0, 1,1, 1, 0, "cercle", True, description="""Invoque un Lapino qui applique des points de bouclier sur les alliés et applique l'état Stimulé sur son invocateur.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Affection", 105, 4, 1, 3, [TODO(Invoque : Lapino protecteur), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Affection à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui applique des points de bouclier sur les alliés et applique l'état Stimulé sur son invocateur.
 Lorsque le Lapino meurt, il pose un glyphe de fin de tour qui applique des points de bouclier, et ne peut plus être invoqué pendant 3 tours.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Interdit", 3, 3, 1, 4, [EffetDegats(11,13,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], [EffetDegats(15,17,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Interdit", 3, 3, 1, 4, [EffetDegats(11, 13, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], [EffetDegats(15, 17, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
 Les alliés à proximité de la cible (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Interdit", 35, 3, 1, 5, [EffetDegats(14,16,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], [EffetDegats(18,20,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+	Sort.Sort("Mot Interdit", 35, 3, 1, 5, [EffetDegats(14, 16, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], [EffetDegats(18, 20, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
 Les alliés à proximité de la cible (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Interdit", 67, 3, 1, 6, [EffetDegats(17,19,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], [EffetDegats(21,23,"Eau"),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+	Sort.Sort("Mot Interdit", 67, 3, 1, 6, [EffetDegats(17, 19, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], [EffetDegats(21, 23, "Eau"), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
 Les alliés à proximité de la cible (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Tabou", 115, 4, 1, 7, [EffetDegats(34,38,"Eau")], [EffetDegats(39,43,"Eau")], 15, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.""", chaine=True)
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Tabou", 115, 4, 1, 7, [EffetDegats(34, 38, "Eau")], [EffetDegats(39, 43, "Eau")], 15, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Frayeur", 6, 1, 1, 3, [TODO(Repousse de 1 case(s)))], [], 0, 3,2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Frayeur", 6, 1, 1, 3, [TODO(Repousse de 1 case(s)))], [], 0, 3, 2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True),
 
-	Sort.Sort("Mot de Frayeur", 42, 1, 1, 4, [TODO(Repousse de 1 case(s)))], [], 0, 3,2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True),
+	Sort.Sort("Mot de Frayeur", 42, 1, 1, 4, [TODO(Repousse de 1 case(s)))], [], 0, 3, 2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True),
 
-	Sort.Sort("Mot de Frayeur", 74, 1, 1, 5, [TODO(Repousse de 1 case(s)))], [], 0, 3,2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True)
+	Sort.Sort("Mot de Frayeur", 74, 1, 1, 5, [TODO(Repousse de 1 case(s)))], [], 0, 3, 2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Séduction", 120, 3, 1, 5, [TODO(Invoque : Fiole),zone=Zones.TypeZoneCercle(2)),EffetDegats(22,26,"Terre",zone=Zones.TypeZoneCercle(2))], [TODO(Invoque : Fiole),zone=Zones.TypeZoneCercle(2)),EffetDegats(26,30,"Terre",zone=Zones.TypeZoneCercle(2))], 15, 1,99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et invoque une fiole.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Séduction", 120, 3, 1, 5, [TODO(Invoque : Fiole), zone=Zones.TypeZoneCercle(2)), EffetDegats(22, 26, "Terre", zone=Zones.TypeZoneCercle(2))], [TODO(Invoque : Fiole), zone=Zones.TypeZoneCercle(2)), EffetDegats(26, 30, "Terre", zone=Zones.TypeZoneCercle(2))], 15, 1, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et invoque une fiole.
 Lorsqu''elle est attaquée par un allié, elle subit 2 fois moins de dommages et rend 100% des points de vie perdus à son attaquant.
 Lorsqu'elle meurt, elle occasionne des dommages en zone.
 Elle meurt si elle entre dans l'état Stimulé.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Stimulant", 9, 2, 1, 2, [TODO(2 PA (3 tours))),TODO(État 'Stimulé' (3 tours))),TODO(2 PA (infini))),TODO(État 'Stimulé' (infini))),TODO(État 'Stimulé commun' (3 tours))),TODO(État 'Stimulé commun' (infini)))], [], 0, 1,1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Stimulant", 9, 2, 1, 2, [TODO(2 PA (3 tours))), TODO(État 'Stimulé' (3 tours))), TODO(2 PA (infini))), TODO(État 'Stimulé' (infini))), TODO(État 'Stimulé commun' (3 tours))), TODO(État 'Stimulé commun' (infini)))], [], 0, 1, 1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
 N'affecte pas les Eniripsas.""", chaine=True),
 
-	Sort.Sort("Mot Stimulant", 47, 2, 1, 4, [TODO(2 PA (3 tours))),TODO(État 'Stimulé' (3 tours))),TODO(2 PA (infini))),TODO(État 'Stimulé' (infini))),TODO(État 'Stimulé commun' (3 tours))),TODO(État 'Stimulé commun' (infini)))], [], 0, 1,1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
+	Sort.Sort("Mot Stimulant", 47, 2, 1, 4, [TODO(2 PA (3 tours))), TODO(État 'Stimulé' (3 tours))), TODO(2 PA (infini))), TODO(État 'Stimulé' (infini))), TODO(État 'Stimulé commun' (3 tours))), TODO(État 'Stimulé commun' (infini)))], [], 0, 1, 1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
 N'affecte pas les Eniripsas.""", chaine=True),
 
-	Sort.Sort("Mot Stimulant", 87, 2, 1, 6, [TODO(2 PA (3 tours))),TODO(État 'Stimulé' (3 tours))),TODO(2 PA (infini))),TODO(État 'Stimulé' (infini))),TODO(État 'Stimulé commun' (3 tours))),TODO(État 'Stimulé commun' (infini)))], [], 0, 1,1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
+	Sort.Sort("Mot Stimulant", 87, 2, 1, 6, [TODO(2 PA (3 tours))), TODO(État 'Stimulé' (3 tours))), TODO(2 PA (infini))), TODO(État 'Stimulé' (infini))), TODO(État 'Stimulé commun' (3 tours))), TODO(État 'Stimulé commun' (infini)))], [], 0, 1, 1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
 N'affecte pas les Eniripsas.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Abnégation", 125, 1, 1, 6, [TODO(250 Puissance (2 tours))),TODO(Soins reçus x75%)),TODO(État 'Stimulé' (2 tours))),TODO(État 'Stimulé commun' (2 tours)))], [], 0, 2,1, 0, 0, "cercle", True, description="""Augmente la Puissance de la cible mais réduit les soins qu'elle reçoit.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Abnégation", 125, 1, 1, 6, [TODO(250 Puissance (2 tours))), TODO(Soins reçus x75%)), TODO(État 'Stimulé' (2 tours))), TODO(État 'Stimulé commun' (2 tours)))], [], 0, 2, 1, 0, 0, "cercle", True, description="""Augmente la Puissance de la cible mais réduit les soins qu'elle reçoit.
 Applique l'état Stimulé.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Brutal", 13, 3, 1, 4, [EffetDegats(14,16,"Terre")], [EffetDegats(18,20,"Terre")], 5, 3,2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Brutal", 13, 3, 1, 4, [EffetDegats(14, 16, "Terre")], [EffetDegats(18, 20, "Terre")], 5, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True),
 
-	Sort.Sort("Mot Brutal", 54, 3, 1, 5, [EffetDegats(17,19,"Terre")], [EffetDegats(21,23,"Terre")], 5, 3,2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True),
+	Sort.Sort("Mot Brutal", 54, 3, 1, 5, [EffetDegats(17, 19, "Terre")], [EffetDegats(21, 23, "Terre")], 5, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True),
 
-	Sort.Sort("Mot Brutal", 94, 3, 1, 6, [EffetDegats(20,22,"Terre")], [EffetDegats(24,26,"Terre")], 5, 3,2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True)
+	Sort.Sort("Mot Brutal", 94, 3, 1, 6, [EffetDegats(20, 22, "Terre")], [EffetDegats(24, 26, "Terre")], 5, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Pernicieux", 130, 3, 2, 8, [EffetDegats(9,11,"Terre",zone=Zones.TypeZoneCroix(1)),EffetDegats(28,32,"Terre",zone=Zones.TypeZoneCroix(1))], [EffetDegats(11,13,"Terre",zone=Zones.TypeZoneCroix(1)),EffetDegats(34,38,"Terre",zone=Zones.TypeZoneCroix(1))], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Terre.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Pernicieux", 130, 3, 2, 8, [EffetDegats(9, 11, "Terre", zone=Zones.TypeZoneCroix(1)), EffetDegats(28, 32, "Terre", zone=Zones.TypeZoneCroix(1))], [EffetDegats(11, 13, "Terre", zone=Zones.TypeZoneCroix(1)), EffetDegats(34, 38, "Terre", zone=Zones.TypeZoneCroix(1))], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Terre.
 Les dommages subis sont augmentés et occasionnés aux ennemis autour de la cible.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Jouvence", 17, 2, 0, 2, [TODO(-1 Durée des effets)),TODO(Soin : 6% des PV max))], [], 0, 2,1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Jouvence", 17, 2, 0, 2, [TODO(-1 Durée des effets)), TODO(Soin : 6% des PV max))], [], 0, 2, 1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True),
 
-	Sort.Sort("Mot de Jouvence", 58, 2, 0, 4, [TODO(-1 Durée des effets)),TODO(Soin : 8% des PV max))], [], 0, 2,1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True),
+	Sort.Sort("Mot de Jouvence", 58, 2, 0, 4, [TODO(-1 Durée des effets)), TODO(Soin : 8% des PV max))], [], 0, 2, 1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True),
 
-	Sort.Sort("Mot de Jouvence", 102, 2, 0, 6, [TODO(-1 Durée des effets)),TODO(Soin : 10% des PV max))], [], 0, 2,1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True)
+	Sort.Sort("Mot de Jouvence", 102, 2, 0, 6, [TODO(-1 Durée des effets)), TODO(Soin : 10% des PV max))], [], 0, 2, 1, 0, 1, "ligne", True, description="""Soigne un allié et lui retire 1 tour d'envoûtement.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Défendu", 135, 4, 1, 4, [TODO(-1 Durée des effets)),TODO(20% Érosion (1 tour))),EffetDegats(38,42,"Terre")], [TODO(-1 Durée des effets)),TODO(20% Érosion (1 tour))),EffetDegats(46,50,"Terre")], 5, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Défendu", 135, 4, 1, 4, [TODO(-1 Durée des effets)), TODO(20% Érosion (1 tour))), EffetDegats(38, 42, "Terre")], [TODO(-1 Durée des effets)), TODO(20% Érosion (1 tour))), EffetDegats(46, 50, "Terre")], 5, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre.
 Réduit la durée des effets sur la cible.
 Applique un malus d'Érosion sur le lanceur.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Sélectif", 22, 3, 0, 6, [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(13 à 15 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(9,11,"Feu",zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(16 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(13,13,"Feu",zone=Zones.TypeZoneCroix(3))], 15, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Sélectif", 22, 3, 0, 6, [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(13 à 15 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(9, 11, "Feu", zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(16 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(13, 13, "Feu", zone=Zones.TypeZoneCroix(3))], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True),
 
-	Sort.Sort("Mot Sélectif", 65, 3, 0, 6, [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(18 à 20 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(12,14,"Feu",zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(21 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(16,16,"Feu",zone=Zones.TypeZoneCroix(3))], 15, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True),
+	Sort.Sort("Mot Sélectif", 65, 3, 0, 6, [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(18 à 20 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(12, 14, "Feu", zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(21 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(16, 16, "Feu", zone=Zones.TypeZoneCroix(3))], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True),
 
-	Sort.Sort("Mot Sélectif", 108, 3, 0, 6, [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(23 à 25 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(15,17,"Feu",zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif),zone=Zones.TypeZoneCroix(3)),TODO(26 (PV rendus)),zone=Zones.TypeZoneCroix(3)),EffetDegats(19,19,"Feu",zone=Zones.TypeZoneCroix(3))], 15, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True)
+	Sort.Sort("Mot Sélectif", 108, 3, 0, 6, [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(23 à 25 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(15, 17, "Feu", zone=Zones.TypeZoneCroix(3))], [TODO(Mot Sélectif), zone=Zones.TypeZoneCroix(3)), TODO(26 (PV rendus)), zone=Zones.TypeZoneCroix(3)), EffetDegats(19, 19, "Feu", zone=Zones.TypeZoneCroix(3))], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Impartial", 140, 5, 1, 6, [TODO(Mot Impartial)),EffetDegats(38,42,"Feu"),TODO(Mot Impartial)),TODO(46 à 50 (PV rendus)))], [TODO(Mot Impartial)),EffetDegats(48,52,"Feu"),TODO(Mot Impartial)),TODO(58 à 62 (PV rendus)))], 5, 2,1, 0, 1, "cercle", True, description="""Sur allié : soigne la cible et occasionne des dommages Feu autour de la cible.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Impartial", 140, 5, 1, 6, [TODO(Mot Impartial)), EffetDegats(38, 42, "Feu"), TODO(Mot Impartial)), TODO(46 à 50 (PV rendus)))], [TODO(Mot Impartial)), EffetDegats(48, 52, "Feu"), TODO(Mot Impartial)), TODO(58 à 62 (PV rendus)))], 5, 2, 1, 0, 1, "cercle", True, description="""Sur allié : soigne la cible et occasionne des dommages Feu autour de la cible.
 Sur ennemi : occasionne des dommages Feu et soigne autour de la cible.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Éclatant", 27, 4, 1, 4, [EffetDegats(19,22,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(24,24,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], 15, 2,99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Éclatant", 27, 4, 1, 4, [EffetDegats(19, 22, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(24, 24, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
 Les alliés à proximité des cibles (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Éclatant", 72, 4, 1, 5, [EffetDegats(23,26,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(28,28,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], 15, 2,99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
+	Sort.Sort("Mot Éclatant", 72, 4, 1, 5, [EffetDegats(23, 26, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(28, 28, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
 Les alliés à proximité des cibles (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Éclatant", 118, 4, 1, 6, [EffetDegats(27,30,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(32,32,"Eau",zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau),zone=Zones.TypeZoneDemi-cercle(2)),TODO(Mots d'Eau et d'Air animés),zone=Zones.TypeZoneDemi-cercle(2))], 15, 2,99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
+	Sort.Sort("Mot Éclatant", 118, 4, 1, 6, [EffetDegats(27, 30, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], [EffetDegats(32, 32, "Eau", zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau), zone=Zones.TypeZoneDemi-cercle(2)), TODO(Mots d'Eau et d'Air animés), zone=Zones.TypeZoneDemi-cercle(2))], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Eau en zone.
 Les alliés à proximité des cibles (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Retentissant", 145, 3, 1, 6, [EffetDegats(23,25,"Eau",zone=Zones.TypeZoneCercle(2))], [EffetDegats(26,28,"Eau",zone=Zones.TypeZoneCercle(2))], 25, 3,2, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.""", chaine=True)
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Retentissant", 145, 3, 1, 6, [EffetDegats(23, 25, "Eau", zone=Zones.TypeZoneCercle(2))], [EffetDegats(26, 28, "Eau", zone=Zones.TypeZoneCercle(2))], 25, 3, 2, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Prévention", 32, 2, 0, 2, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1,1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Prévention", 32, 2, 0, 2, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1, 1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True),
 
-	Sort.Sort("Mot de Prévention", 81, 2, 0, 4, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1,1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True),
+	Sort.Sort("Mot de Prévention", 81, 2, 0, 4, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1, 1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True),
 
-	Sort.Sort("Mot de Prévention", 124, 2, 0, 6, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1,1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True)
+	Sort.Sort("Mot de Prévention", 124, 2, 0, 6, [TODO(450% du niveau en bouclier (2 tours)))], [TODO(510% du niveau en bouclier (2 tours)))], 5, 1, 1, 4, 1, "ligne", True, description="""La cible gagne des points de bouclier pendant 2 tours.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Agonie", 150, 2, 2, 5, [EffetDegats(7,9,"Terre",zone=Zones.TypeZoneCroix(1)),EffetDegats(22,26,"Terre",zone=Zones.TypeZoneCroix(1)),TODO(Repousse de 1 case(s)),zone=Zones.TypeZoneCroix(1))], [EffetDegats(9,11,"Terre",zone=Zones.TypeZoneCroix(1)),EffetDegats(28,32,"Terre",zone=Zones.TypeZoneCroix(1)),TODO(Repousse de 1 case(s)),zone=Zones.TypeZoneCroix(1))], 5, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Terre.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Agonie", 150, 2, 2, 5, [EffetDegats(7, 9, "Terre", zone=Zones.TypeZoneCroix(1)), EffetDegats(22, 26, "Terre", zone=Zones.TypeZoneCroix(1)), TODO(Repousse de 1 case(s)), zone=Zones.TypeZoneCroix(1))], [EffetDegats(9, 11, "Terre", zone=Zones.TypeZoneCroix(1)), EffetDegats(28, 32, "Terre", zone=Zones.TypeZoneCroix(1)), TODO(Repousse de 1 case(s)), zone=Zones.TypeZoneCroix(1))], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Terre.
 Les dommages subis sont augmentés et occasionnés aux ennemis autour de la cible.
 Les ennemis affectés sont repoussés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Turbulent", 38, 3, 1, 5, [EffetVolDeVie(18,20,"Air")], [EffetVolDeVie(24,Air),"Air")], 5, 3,2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Turbulent", 38, 3, 1, 5, [EffetVolDeVie(18, 20, "Air")], [EffetVolDeVie(24, Air), "Air")], 5, 3, 2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True),
 
-	Sort.Sort("Mot Turbulent", 90, 3, 1, 5, [EffetVolDeVie(22,24,"Air")], [EffetVolDeVie(28,Air),"Air")], 5, 3,2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True),
+	Sort.Sort("Mot Turbulent", 90, 3, 1, 5, [EffetVolDeVie(22, 24, "Air")], [EffetVolDeVie(28, Air), "Air")], 5, 3, 2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True),
 
-	Sort.Sort("Mot Turbulent", 132, 3, 1, 5, [EffetVolDeVie(26,28,"Air")], [EffetVolDeVie(32,Air),"Air")], 5, 3,2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True)
+	Sort.Sort("Mot Turbulent", 132, 3, 1, 5, [EffetVolDeVie(26, 28, "Air")], [EffetVolDeVie(32, Air), "Air")], 5, 3, 2, 0, 1, "ligne", True, description="""Vole de la vie dans l'élément Air.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Espiègle", 155, 3, 1, 6, [EffetDegats(17,19,"Air"),TODO(Mots d'Air))], [EffetDegats(19,21,"Air"),TODO(Mots d'Air))], 25, 3,2, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Espiègle", 155, 3, 1, 6, [EffetDegats(17, 19, "Air"), TODO(Mots d'Air))], [EffetDegats(19, 21, "Air"), TODO(Mots d'Air))], 25, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
 Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [TODO(-2 PM (1 tour))),TODO(Mot d'Immobilisation)),TODO(Soin : 8% des PV max))], [], 0, 1,1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [TODO(-2 PM (1 tour))), TODO(Mot d'Immobilisation)), TODO(Soin : 8% des PV max))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
 À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True),
 
-	Sort.Sort("Mot d'Immobilisation", 97, 2, 1, 6, [TODO(-2 PM (1 tour))),TODO(Mot d'Immobilisation)),TODO(Soin : 10% des PV max))], [], 0, 1,1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+	Sort.Sort("Mot d'Immobilisation", 97, 2, 1, 6, [TODO(-2 PM (1 tour))), TODO(Mot d'Immobilisation)), TODO(Soin : 10% des PV max))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
 À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True),
 
-	Sort.Sort("Mot d'Immobilisation", 137, 2, 1, 8, [TODO(-3 PM (1 tour))),TODO(Mot d'Immobilisation)),TODO(Soin : 12% des PV max))], [], 0, 1,1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+	Sort.Sort("Mot d'Immobilisation", 137, 2, 1, 8, [TODO(-3 PM (1 tour))), TODO(Mot d'Immobilisation)), TODO(Soin : 12% des PV max))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
 À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Vivifiant", 160, 1, 1, 3, [TODO(2 PM (3 tours))),TODO(Enlève les effets du sort Mot Vivifiant))], [], 0, 1,99, 0, 0, "cercle", True, description="""Augmente les PM pendant 3 tours si la cible est dans l'état Stimulé.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Vivifiant", 160, 1, 1, 3, [TODO(2 PM (3 tours))), TODO(Enlève les effets du sort Mot Vivifiant))], [], 0, 1, 99, 0, 0, "cercle", True, description="""Augmente les PM pendant 3 tours si la cible est dans l'état Stimulé.
 Le bonus de PM est retiré si la cible perd l'état Stimulé.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Déroutant", 50, 4, 1, 4, [TODO(30 à 35 (PV rendus))),EffetDegats(21,26,"Feu")], [TODO(36 à 41 (PV rendus))),EffetDegats(26,31,"Feu")], 25, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Déroutant", 50, 4, 1, 4, [TODO(30 à 35 (PV rendus))), EffetDegats(21, 26, "Feu")], [TODO(36 à 41 (PV rendus))), EffetDegats(26, 31, "Feu")], 25, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True),
 
-	Sort.Sort("Mot Déroutant", 103, 4, 1, 5, [TODO(36 à 41 (PV rendus))),EffetDegats(26,31,"Feu")], [TODO(42 à 47 (PV rendus))),EffetDegats(31,36,"Feu")], 25, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True),
+	Sort.Sort("Mot Déroutant", 103, 4, 1, 5, [TODO(36 à 41 (PV rendus))), EffetDegats(26, 31, "Feu")], [TODO(42 à 47 (PV rendus))), EffetDegats(31, 36, "Feu")], 25, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True),
 
-	Sort.Sort("Mot Déroutant", 143, 4, 1, 6, [TODO(42 à 47 (PV rendus))),EffetDegats(31,36,"Feu")], [TODO(48 à 53 (PV rendus))),EffetDegats(36,41,"Feu")], 25, 2,99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True)
+	Sort.Sort("Mot Déroutant", 143, 4, 1, 6, [TODO(42 à 47 (PV rendus))), EffetDegats(31, 36, "Feu")], [TODO(48 à 53 (PV rendus))), EffetDegats(36, 41, "Feu")], 25, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Furieux", 165, 4, 2, 5, [EffetDegats(14,16,"Terre",zone=Zones.TypeZoneCroix(1)),TODO(Mot Furieux),zone=Zones.TypeZoneCroix(1)),EffetDegats(42,48,"Terre",zone=Zones.TypeZoneCroix(1))], [EffetDegats(16,18,"Terre",zone=Zones.TypeZoneCroix(1)),TODO(Mot Furieux),zone=Zones.TypeZoneCroix(1)),EffetDegats(48,54,"Terre",zone=Zones.TypeZoneCroix(1))], 15, 2,1, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et augmente la Puissance de la cible alliée en fonction du nombre d'ennemis au contact.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Furieux", 165, 4, 2, 5, [EffetDegats(14, 16, "Terre", zone=Zones.TypeZoneCroix(1)), TODO(Mot Furieux), zone=Zones.TypeZoneCroix(1)), EffetDegats(42, 48, "Terre", zone=Zones.TypeZoneCroix(1))], [EffetDegats(16, 18, "Terre", zone=Zones.TypeZoneCroix(1)), TODO(Mot Furieux), zone=Zones.TypeZoneCroix(1)), EffetDegats(48, 54, "Terre", zone=Zones.TypeZoneCroix(1))], 15, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et augmente la Puissance de la cible alliée en fonction du nombre d'ennemis au contact.
 Les dommages subis par la cible sont augmentés et occasionnés autour d'elle.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Tournoyant", 56, 4, 1, 4, [EffetDegats(17,21,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], [EffetDegats(19,23,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], 25, 1,1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Tournoyant", 56, 4, 1, 4, [EffetDegats(17, 21, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], [EffetDegats(19, 23, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], 25, 1, 1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
 Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Tournoyant", 112, 4, 1, 5, [EffetDegats(22,26,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], [EffetDegats(24,28,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], 25, 1,1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
+	Sort.Sort("Mot Tournoyant", 112, 4, 1, 5, [EffetDegats(22, 26, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], [EffetDegats(24, 28, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], 25, 1, 1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
 Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
 
-	Sort.Sort("Mot Tournoyant", 147, 4, 1, 6, [EffetDegats(27,31,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], [EffetDegats(29,33,"Air",zone=Zones.TypeZoneCarré(1)),TODO(Mots d'Air),zone=Zones.TypeZoneCarré(1))], 25, 1,1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
+	Sort.Sort("Mot Tournoyant", 147, 4, 1, 6, [EffetDegats(27, 31, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], [EffetDegats(29, 33, "Air", zone=Zones.TypeZoneCarré(1)), TODO(Mots d'Air), zone=Zones.TypeZoneCarré(1))], 25, 1, 1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
 Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Tourbillonnant", 170, 4, 1, 5, [EffetVolDeVie(30,34,"Air",zone=Zones.TypeZoneCroix(2))], [EffetVolDeVie(35,39,"Air",zone=Zones.TypeZoneCroix(2))], 15, 1,99, 0, 1, "cercle", True, description="""Vole de la vie dans l'élément Air.""", chaine=True)
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Tourbillonnant", 170, 4, 1, 5, [EffetVolDeVie(30, 34, "Air", zone=Zones.TypeZoneCroix(2))], [EffetVolDeVie(35, 39, "Air", zone=Zones.TypeZoneCroix(2))], 15, 1, 99, 0, 1, "cercle", True, description="""Vole de la vie dans l'élément Air.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Fracassant", 62, 5, 1, 4, [EffetDegats(28,33,"Eau"),TODO(-2 PA (1 tour)))], [EffetDegats(34,39,"Eau"),TODO(-2 PA (1 tour)))], 25, 2,1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Fracassant", 62, 5, 1, 4, [EffetDegats(28, 33, "Eau"), TODO(-2 PA (1 tour)))], [EffetDegats(34, 39, "Eau"), TODO(-2 PA (1 tour)))], 25, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True),
 
-	Sort.Sort("Mot Fracassant", 116, 5, 1, 5, [EffetDegats(35,40,"Eau"),TODO(-2 PA (1 tour)))], [EffetDegats(41,46,"Eau"),TODO(-2 PA (1 tour)))], 25, 2,1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True),
+	Sort.Sort("Mot Fracassant", 116, 5, 1, 5, [EffetDegats(35, 40, "Eau"), TODO(-2 PA (1 tour)))], [EffetDegats(41, 46, "Eau"), TODO(-2 PA (1 tour)))], 25, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True),
 
-	Sort.Sort("Mot Fracassant", 153, 5, 1, 6, [EffetDegats(42,47,"Eau"),TODO(-3 PA (1 tour)))], [EffetDegats(48,53,"Eau"),TODO(-3 PA (1 tour)))], 25, 2,1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True)
+	Sort.Sort("Mot Fracassant", 153, 5, 1, 6, [EffetDegats(42, 47, "Eau"), TODO(-3 PA (1 tour)))], [EffetDegats(48, 53, "Eau"), TODO(-3 PA (1 tour)))], 25, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PA aux ennemis.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Accablant", 175, 5, 1, 5, [EffetDegats(36,40,"Eau"),TODO(-3 PM (1 tour))),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], [EffetDegats(44,48,"Eau"),TODO(-3 PM (1 tour))),TODO(Mots d'Eau)),TODO(Mots d'Eau et d'Air animés))], 5, 2,1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PM.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Accablant", 175, 5, 1, 5, [EffetDegats(36, 40, "Eau"), TODO(-3 PM (1 tour))), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], [EffetDegats(44, 48, "Eau"), TODO(-3 PM (1 tour))), TODO(Mots d'Eau)), TODO(Mots d'Eau et d'Air animés))], 5, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Eau et retire des PM.
 Les alliés à proximité de la cible (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Silence", 69, 4, 0, 1, [TODO(-2 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(-2 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(Dévoile tous les objets invisibles),zone=Zones.TypeZoneCercle(3))], [], 0, 1,1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Silence", 69, 4, 0, 1, [TODO(-2 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(-2 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(Dévoile tous les objets invisibles), zone=Zones.TypeZoneCercle(3))], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
 Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=True),
 
-	Sort.Sort("Mot de Silence", 122, 4, 0, 2, [TODO(-3 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(-3 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(Dévoile tous les objets invisibles),zone=Zones.TypeZoneCercle(3))], [], 0, 1,1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
+	Sort.Sort("Mot de Silence", 122, 4, 0, 2, [TODO(-3 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(-3 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(Dévoile tous les objets invisibles), zone=Zones.TypeZoneCercle(3))], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
 Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=True),
 
-	Sort.Sort("Mot de Silence", 162, 4, 0, 3, [TODO(-4 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(-4 PA (1 tour)),zone=Zones.TypeZoneCercle(3)),TODO(Dévoile tous les objets invisibles),zone=Zones.TypeZoneCercle(3))], [], 0, 1,1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
+	Sort.Sort("Mot de Silence", 162, 4, 0, 3, [TODO(-4 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(-4 PA (1 tour)), zone=Zones.TypeZoneCercle(3)), TODO(Dévoile tous les objets invisibles), zone=Zones.TypeZoneCercle(3))], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
 Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Sacrificiel", 180, 2, 1, 3, [TODO(Mot Sacrificiel)),TODO(Soins reçus x125%)),TODO(Soigne 20% des dommages subis. (2 tours)))], [], 0, 1,1, 2, 0, "cercle", True, description="""Les soins reçus par l'allié ciblé sont augmentés pendant 2 tours.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Sacrificiel", 180, 2, 1, 3, [TODO(Mot Sacrificiel)), TODO(Soins reçus x125%)), TODO(Soigne 20% des dommages subis. (2 tours)))], [], 0, 1, 1, 2, 0, "cercle", True, description="""Les soins reçus par l'allié ciblé sont augmentés pendant 2 tours.
 Les dommages reçus par l'allié ciblé soignent les alliés dans l'état Stimulé.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Régénération", 77, 2, 0, 2, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1,1, 3, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Régénération", 77, 2, 0, 2, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1, 1, 3, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True),
 
-	Sort.Sort("Mot de Régénération", 128, 2, 0, 4, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1,1, 2, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True),
+	Sort.Sort("Mot de Régénération", 128, 2, 0, 4, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1, 1, 2, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True),
 
-	Sort.Sort("Mot de Régénération", 172, 2, 0, 6, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1,1, 1, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True)
+	Sort.Sort("Mot de Régénération", 172, 2, 0, 6, [TODO(Soin : 10% des PV max))TODO(Soin : 10% des PV max))], [], 0, 1, 1, 1, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Marque de Régénération", 185, 3, 1, 6, [TODO(Pose un glyphe de rang 1 (1 tour)))], [], 0, 1,99, 0, 1, "cercle", True, description="""Pose un glyphe de fin de tour qui soigne.""", chaine=True)
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Marque de Régénération", 185, 3, 1, 6, [TODO(Pose un glyphe de rang 1 (1 tour)))], [], 0, 1, 99, 0, 1, "cercle", True, description="""Pose un glyphe de fin de tour qui soigne.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot d'Envol", 84, 4, 1, 3, [TODO(Échange de positions)),TODO(Échange de positions)),TODO(Tue la cible)),TODO(Mot d'Envol)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1,1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot d'Envol", 84, 4, 1, 3, [TODO(Échange de positions)), TODO(Échange de positions)), TODO(Tue la cible)), TODO(Mot d'Envol)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
 Retire l'état Stimulé. Applique l'état Insoignable au lanceur si l'allié n'est pas Stimulé.
 Le Lapino peut être ciblé mais il est tué.""", chaine=True),
 
-	Sort.Sort("Mot d'Envol", 134, 4, 1, 5, [TODO(Échange de positions)),TODO(Échange de positions)),TODO(Tue la cible)),TODO(Mot d'Envol)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1,1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
+	Sort.Sort("Mot d'Envol", 134, 4, 1, 5, [TODO(Échange de positions)), TODO(Échange de positions)), TODO(Tue la cible)), TODO(Mot d'Envol)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
 Retire l'état Stimulé. Applique l'état Insoignable au lanceur si l'allié n'est pas Stimulé.
 Le Lapino peut être ciblé mais il est tué.""", chaine=True),
 
-	Sort.Sort("Mot d'Envol", 178, 4, 1, 7, [TODO(Échange de positions)),TODO(Échange de positions)),TODO(Tue la cible)),TODO(Mot d'Envol)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1,1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
+	Sort.Sort("Mot d'Envol", 178, 4, 1, 7, [TODO(Échange de positions)), TODO(Échange de positions)), TODO(Tue la cible)), TODO(Mot d'Envol)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Échange de place avec un allié (hors invocations).
 Retire l'état Stimulé. Applique l'état Insoignable au lanceur si l'allié n'est pas Stimulé.
 Le Lapino peut être ciblé mais il est tué.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [TODO(Avance de 2 case(s))),TODO(Avance de 2 case(s))),TODO(Attire de 2 case(s)))TODO(Attire de 2 case(s)))], [], 0, 1,1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [TODO(Avance de 2 case(s))), TODO(Avance de 2 case(s))), TODO(Attire de 2 case(s)))TODO(Attire de 2 case(s)))], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
 Nécessite l'état Stimulé sur l'allié.
 Peut être lancé sur le Lapino sans qu'il ne soit dans l'état Stimulé.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Revitalisant", 92, 3, 0, 0, [TODO(Soin : 20% des PV max)),TODO(Tue la cible)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation)),TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))),TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1,1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Revitalisant", 92, 3, 0, 0, [TODO(Soin : 20% des PV max)), TODO(Tue la cible)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation)), TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))), TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
 Tue le Lapino s'il était invoqué.
 Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
 
-	Sort.Sort("Mot Revitalisant", 141, 3, 0, 0, [TODO(Soin : 27% des PV max)),TODO(Tue la cible)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation)),TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))),TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1,1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+	Sort.Sort("Mot Revitalisant", 141, 3, 0, 0, [TODO(Soin : 27% des PV max)), TODO(Tue la cible)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation)), TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))), TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
 Tue le Lapino s'il était invoqué.
 Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
 
-	Sort.Sort("Mot Revitalisant", 187, 3, 0, 0, [TODO(Soin : 33% des PV max)),TODO(Tue la cible)),TODO(Enlève les effets du sort Mot Stimulant)),TODO(Enlève les effets du sort Mot d'Abnégation)),TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))),TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1,1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+	Sort.Sort("Mot Revitalisant", 187, 3, 0, 0, [TODO(Soin : 33% des PV max)), TODO(Tue la cible)), TODO(Enlève les effets du sort Mot Stimulant)), TODO(Enlève les effets du sort Mot d'Abnégation)), TODO(Fixe l'intervalle de relance de Mot Stimulant à 1 tour(s))), TODO(Fixe l'intervalle de relance de Mot d'Abnégation à 1 tour(s)))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
 Tue le Lapino s'il était invoqué.
 Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot Galvanisant", 195, 5, 0, 0, [TODO(Mot Stimulant)),TODO(2 PA (3 tours)))], [], 0, 1,1, 5, 0, "cercle", False, description="""Applique les effets de Mot Stimulant à tous les alliés pendant 3 tours.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot Galvanisant", 195, 5, 0, 0, [TODO(Mot Stimulant)), TODO(2 PA (3 tours)))], [], 0, 1, 1, 5, 0, "cercle", False, description="""Applique les effets de Mot Stimulant à tous les alliés pendant 3 tours.
 N'affecte pas le lanceur.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Reconstitution", 100, 4, 0, 3, [TODO(Soin : 100% des PV max)),TODO(État 'Insoignable' (3 tours)))], [], 0, 1,1, 8, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Reconstitution", 100, 4, 0, 3, [TODO(Soin : 100% des PV max)), TODO(État 'Insoignable' (3 tours)))], [], 0, 1, 1, 8, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
 
-	Sort.Sort("Mot de Reconstitution", 149, 4, 0, 5, [TODO(Soin : 100% des PV max)),TODO(État 'Insoignable' (3 tours)))], [], 0, 1,1, 7, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
+	Sort.Sort("Mot de Reconstitution", 149, 4, 0, 5, [TODO(Soin : 100% des PV max)), TODO(État 'Insoignable' (3 tours)))], [], 0, 1, 1, 7, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
 
-	Sort.Sort("Mot de Reconstitution", 197, 4, 0, 7, [TODO(Soin : 100% des PV max)),TODO(État 'Insoignable' (3 tours)))], [], 0, 1,1, 6, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True)
+	Sort.Sort("Mot de Reconstitution", 197, 4, 0, 7, [TODO(Soin : 100% des PV max)), TODO(État 'Insoignable' (3 tours)))], [], 0, 1, 1, 6, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True)
 ]))
-sorts.append(Personnages.getSortRightLvl(lvl,[
-	Sort.Sort("Mot de Solidarité", 200, 1, 0, 6, [TODO(État 'Mot solidaire' (1 tour))),TODO(Mot de Solidarité)),TODO(Mot de Solidarité)),TODO(Enlève l'état Mot solidaire))], [], 0, 2,1, 0, 0, "cercle", False, description="""Sur allié stimulé : tous les autres alliés stimulés lui transfèrent 10% de leurs PV.
+sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+	Sort.Sort("Mot de Solidarité", 200, 1, 0, 6, [TODO(État 'Mot solidaire' (1 tour))), TODO(Mot de Solidarité)), TODO(Mot de Solidarité)), TODO(Enlève l'état Mot solidaire))], [], 0, 2, 1, 0, 0, "cercle", False, description="""Sur allié stimulé : tous les autres alliés stimulés lui transfèrent 10% de leurs PV.
 Sur allié non stimulé : il transfère 10% de ses PV aux autres alliés stimulés.""", chaine=True)
 ]))
