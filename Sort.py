@@ -167,9 +167,8 @@ class Sort:
                           " PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
                 randomVal = round(random.random(), 2)
-                if self.probaCC == 0:
-                    isCC = False
-                else:
+                isCC = False
+                if self.probaCC != 0 and not isPrevisu:
                     isCC = (randomVal*100 <= chanceCC)
 
                 if isCC and not isPrevisu:  # TOFIX : PREVISUALISATION IMPOSSIBLE POUR CC
