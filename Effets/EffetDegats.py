@@ -95,10 +95,6 @@ class EffetDegats(Effet):
                 dos += joueurLanceur.doCri
             resFixes += joueurCaseEffet.reCc
         if not self.kwargs.get("bypassDmgCalc", False):
-            if nomSort != "cac":
-                dos += joueurLanceur.doSorts
-            else:
-                dos += joueurLanceur.doArmes
             dos += joueurLanceur.do
             carac += joueurLanceur.pui
 
@@ -118,15 +114,19 @@ class EffetDegats(Effet):
             if etat.actif():
                 dos, baseDeg, carac = etat.triggerAvantCalculDegats(
                     dos, baseDeg, carac, nomSort)
-        total += baseDeg + (baseDeg * ((carac) / 100)) + dos
-        if distance == 1:
-            if not self.kwargs.get("bypassDmgCalc", False):
+        total += baseDeg + (baseDeg * ((carac) / 100.0)) + dos
+        if not self.kwargs.get("bypassDmgCalc", False):
+            if nomSort != "cac":
+                total += int((joueurLanceur.doSorts/100.0) * total)
+            else:
+                total += int((joueurLanceur.doArmes/100.0) * total)
+            if distance == 1:
                 total += int((joueurLanceur.doMelee/100.0) * total)
                 rePer += joueurCaseEffet.reMelee
-        else:
-            if not self.kwargs.get("bypassDmgCalc", False):
+            else:
                 total += int((joueurLanceur.doDist/100.0) * total)
                 rePer += joueurCaseEffet.reDist
+
         # appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint(
             [joueurCaseEffet.posX, joueurCaseEffet.posY], [caseCibleX, caseCibleY])

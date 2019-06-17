@@ -1,22 +1,4 @@
 
-
-sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-	Sort.Sort("Mot Vexant", 110, 5, 1, 5, [EffetDegats(48, 52, "Air")], [EffetDegats(58, 62, "Air")], 5, 2, 1, 0, 0, "ligne", True, description="""Occasionne des dommages Air.""", chaine=True)
-]))
-sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-	Sort.Sort("Mot Alternatif", 1, 3, 1, 4, [TODO(14 à 17 (PV rendus))), EffetDegats(10, 13, "Feu")], [TODO(18 (PV rendus))), EffetDegats(13, 13, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
-Soigne les alliés.""", chaine=True),
-
-	Sort.Sort("Mot Alternatif", 20, 3, 1, 6, [TODO(19 à 22 (PV rendus))), EffetDegats(13, 16, "Feu")], [TODO(23 (PV rendus))), EffetDegats(17, 17, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
-Soigne les alliés.""", chaine=True),
-
-	Sort.Sort("Mot Alternatif", 40, 3, 1, 8, [TODO(24 à 27 (PV rendus))), EffetDegats(16, 19, "Feu")], [TODO(28 (PV rendus))), EffetDegats(21, 21, "Feu")], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Feu aux ennemis.
-Soigne les alliés.""", chaine=True)
-]))
-sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-	Sort.Sort("Mot Marquant", 101, 4, 1, 5, [TODO(État 'Mot Marquant' (1 tour))), TODO(Glyphe Marquant)), EffetDegats(30, 34, "Feu")], [TODO(État 'Mot Marquant' (1 tour))), TODO(Glyphe Marquant)), EffetDegats(33, 37, "Feu")], 25, 3, 2, 0, 0, "cercle", True, description="""Occasionne des dommages Feu.
-Pose un glyphe autour de la cible ennemie. Le glyphe soigne les alliés en fin de tour.""", chaine=True)
-]))
 sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
 	Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
 Le Lapino soigne ses alliés.

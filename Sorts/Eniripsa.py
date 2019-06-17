@@ -58,4 +58,20 @@ def getSorts(lvl):
         Sort.Sort("Mot Marquant", 101, 4, 1, 5, [EffetGlyphe(Zones.TypeZoneCercleSansCentre(1), activationMotMarquant, activationMotMarquant, sortieMotMarquant, 1, "Mot Marquant", (252, 116, 172), cibles_possibles="Ennemis"), EffetDegats(30, 34, "Feu")], [EffetGlyphe(Zones.TypeZoneCercleSansCentre(1), activationMotMarquant, activationMotMarquant, sortieMotMarquant, 1, "Mot Marquant", (252, 116, 172), cibles_possibles="Ennemis"), EffetDegats(33, 37, "Feu")], 25, 3, 2, 0, 0, "cercle", True, description="""Occasionne des dommages Feu.
     Pose un glyphe autour de la cible ennemie. Le glyphe soigne les alliés en fin de tour.""", chaine=True)
     ]))
+    # sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+    #     Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+    #     Le Lapino soigne ses alliés.
+    #     Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+    #     Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True),
+
+    #         Sort.Sort("Mot d'Amitié", 25, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+    #     Le Lapino soigne ses alliés.
+    #     Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+    #     Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True),
+
+    #         Sort.Sort("Mot d'Amitié", 52, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+    #     Le Lapino soigne ses alliés.
+    #     Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+    #     Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True)
+    # ]))
     return sorts
