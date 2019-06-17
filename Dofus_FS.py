@@ -162,10 +162,11 @@ def main():
             for inputName, inputValue in inputValues.items():
                 inputSelector = str(i)+"|"+inputsCategory+"|"+inputName
                 if inputName == "Classe":
-                    classesDisponibles = Combobox(frameCaracs.subFrame,
-                                                  textvariable=StringVar(),
-                                                  values=["Cra", "Xelor", "Iop", "Sram", "Poutch"],
-                                                  state='readonly')
+                    classesDisponibles = \
+                        Combobox(frameCaracs.subFrame,
+                                 textvariable=StringVar(),
+                                 values=["Cra", "Xelor", "Iop", "Sram", "Poutch", "Eniripsa"],
+                                 state='readonly')
                     inputs[inputSelector] = classesDisponibles
                     inputs[inputSelector].set(inputValue)
                     lblCarac = Label(frameCaracs.subFrame, text=inputName+":")

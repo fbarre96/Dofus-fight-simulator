@@ -181,7 +181,6 @@ class EtatEffetSiSubit(Etat):
                 niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
                                    self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
 
-
 class EtatEffetSiPousse(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
 

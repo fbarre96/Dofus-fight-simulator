@@ -292,6 +292,10 @@ class Personnage(object):
             import Sorts.Sram
             sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)
             sorts += Sorts.Sram.getSorts(lvl)
+        elif classe == "Eniripsa":
+            import Sorts.Eniripsa
+            sortsDebutCombat += Sorts.Eniripsa.getSortsDebutCombat(lvl)
+            sorts += Sorts.Eniripsa.getSorts(lvl)
         sorts.append(Sort.Sort("Cawotte", 0, 4, 1, 6,
                                [EffetInvoque("Cawotte", False, cibles_possibles="",
                                              cible_non_requise=True)],
