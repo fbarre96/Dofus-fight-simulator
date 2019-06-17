@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*
 """@summary: Décrit un état de base qui sera appliqué à un personnage."""
 
-# -*- coding: utf-8 -*
 
 class Etat():
     """@summary: Classe décrivant un état.

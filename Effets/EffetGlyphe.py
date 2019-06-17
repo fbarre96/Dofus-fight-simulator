@@ -7,7 +7,7 @@ class EffetGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pose une glyphe sur la grille de jeu."""
 
-    def __init__(self, sort_sort, sortDeplacement, sortSortie, int_duree,
+    def __init__(self, zoneAction, sort_sort, sortDeplacement, sortSortie, int_duree,
                  str_nom, tuple_couleur, **kwargs):
         """@summary: Initialise un effet posant une glyphe.
         @sort_sort: le sort monocible qui est lancé sur les joueurs restants dans la glyphe
@@ -24,6 +24,7 @@ class EffetGlyphe(Effet):
         @type: tuple de couleur format RGB
         @kwargs: Options de l'effets
         @type: **kwargs"""
+        self.zoneAction = zoneAction
         self.kwargs = kwargs
         self.sort = sort_sort
         self.sortDeplacement = sortDeplacement
@@ -34,7 +35,7 @@ class EffetGlyphe(Effet):
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetGlyphe(self.sort, self.sortDeplacement, self.sortSortie,
+        return EffetGlyphe(self.zoneAction, self.sort, self.sortDeplacement, self.sortSortie,
                            self.duree, self.nom, self.couleur, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -47,8 +48,8 @@ class EffetGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
-        nouvelleGlyphe = Glyphe(self.nom, self.sort, self.sortDeplacement, self.sortSortie,
-                                self.duree, kwargs.get("caseCibleX"),
+        nouvelleGlyphe = Glyphe(self.zoneAction, self.nom, self.sort, self.sortDeplacement,
+                                self.sortSortie, self.duree, kwargs.get("caseCibleX"),
                                 kwargs.get("caseCibleY"), joueurLanceur, self.couleur)
         niveau.poseGlyphe(nouvelleGlyphe)
 

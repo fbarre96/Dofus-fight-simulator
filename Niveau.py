@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*
 """@summary: Décrit la classe Niveau qui orchestre tout se qui se passe dessus et les interactions.
 """
-# -*- coding: utf-8 -*
+
 from copy import deepcopy
 import pygame
 from pygame.locals import Rect
@@ -560,7 +561,7 @@ class Niveau:
         if effet.isReverseTreatmentOrder():
             mrange = range(64, -1, -1)
         else:
-            mrange = range(65)
+            mrange = range(64)
         for tailleCercle in mrange:
             casesAXDistance = Niveau.getCasesAXDistanceDe(
                 caseX, caseY, tailleCercle)
@@ -742,18 +743,19 @@ class Niveau:
                 for effet in glyphe.sortMono.effets:
                     ciblesTraitees = []
                     for caseDansPorte in casesDansPorte:
-                        cibleDansPorte = self.getJoueurSur(
-                            caseDansPorte[0], caseDansPorte[1])
-                        if cibleDansPorte is not None:
-                            if cibleDansPorte not in ciblesTraitees:
-                                _, cibles = self.lancerEffet(effet,
-                                                             glyphe.centreX,
-                                                             glyphe.centreY,
-                                                             glyphe.sortMono.nom,
-                                                             cibleDansPorte.posX,
-                                                             cibleDansPorte.posY,
-                                                             glyphe.lanceur)
-                                ciblesTraitees += cibles
+                        if glyphe.aPorte(caseDansPorte[0], caseDansPorte[1]):
+                            cibleDansPorte = self.getJoueurSur(
+                                caseDansPorte[0], caseDansPorte[1])
+                            if cibleDansPorte is not None:
+                                if cibleDansPorte not in ciblesTraitees:
+                                    _, cibles = self.lancerEffet(effet,
+                                                                 glyphe.centreX,
+                                                                 glyphe.centreY,
+                                                                 glyphe.sortMono.nom,
+                                                                 cibleDansPorte.posX,
+                                                                 cibleDansPorte.posY,
+                                                                 glyphe.lanceur)
+                                    ciblesTraitees += cibles
 
     def deplacementTFVersCaseOccupee(self, joueurASwap, joueurBougeant,
                                      reelLanceur, nomSort, ajouteHistorique, genereTF):
@@ -1170,8 +1172,7 @@ class Niveau:
                     # Afficher les cases glyphees
                     for glyphe in self.glyphes:
                         if glyphe.actif():
-                            if glyphe.sortMono.aPorte(glyphe.centreX, glyphe.centreY,
-                                                      nCase, nLigne, 0):
+                            if glyphe.aPorte(nCase, nLigne):
                                 pygame.draw.rect(fenetre, glyphe.couleur,
                                                  Rect(nCase*constantes.taille_sprite+1,
                                                       nLigne *constantes.taille_sprite+1,
@@ -1327,19 +1328,20 @@ class Niveau:
         self.glyphes.append(glyphe)
         if glyphe.actif():
             casesDansPorte = self.getZonePorteSort(
-                glyphe.sortDeplacement, glyphe.centreX, glyphe.centreY, 0)
-            for effet in glyphe.sortDeplacement.effets:
+                glyphe.sortMono, glyphe.centreX, glyphe.centreY, 0)
+            for effet in glyphe.sortMono.effets:
                 ciblesTraitees = []
                 for caseDansPorte in casesDansPorte:
-                    cibleDansPorte = self.getJoueurSur(
-                        caseDansPorte[0], caseDansPorte[1])
-                    if cibleDansPorte is not None:
-                        if cibleDansPorte not in ciblesTraitees:
-                            _, cibles = self.lancerEffet(
-                                effet, glyphe.centreX, glyphe.centreY,
-                                glyphe.sortDeplacement.nom, cibleDansPorte.posX,
-                                cibleDansPorte.posY, glyphe.lanceur)
-                            ciblesTraitees += cibles
+                    if glyphe.aPorte(caseDansPorte[0], caseDansPorte[1]):
+                        cibleDansPorte = self.getJoueurSur(
+                            caseDansPorte[0], caseDansPorte[1])
+                        if cibleDansPorte is not None:
+                            if cibleDansPorte not in ciblesTraitees:
+                                _, cibles = self.lancerEffet(
+                                    effet, glyphe.centreX, glyphe.centreY,
+                                    glyphe.sortMono.nom, cibleDansPorte.posX,
+                                    cibleDansPorte.posY, glyphe.lanceur)
+                                ciblesTraitees += cibles
         return len(self.glyphes)-1
 
     def posePiege(self, piege):

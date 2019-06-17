@@ -258,7 +258,7 @@ def getSorts(lvl):
         ], 0, 1, 1, 2, 0, "cercle", False, description="""Replace tous les personnages à leurs positions précédentes.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Instabilité Temporelle", 160, 3, 0, 7, [EffetGlyphe(activationInstabiliteTemporelle, deplacementInstabiliteTemporelle, sortieInstabiliteTemporelle, 2, "Instabilité Temporelle", (255, 255, 0), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 1, "cercle", False, description="""Pose un glyphe qui renvoie les entités à leur position précédente.
+        Sort.Sort("Instabilité Temporelle", 160, 3, 0, 7, [EffetGlyphe(Zones.TypeZoneCercle(3), activationInstabiliteTemporelle, deplacementInstabiliteTemporelle, sortieInstabiliteTemporelle, 2, "Instabilité Temporelle", (255, 255, 0), zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 1, "cercle", False, description="""Pose un glyphe qui renvoie les entités à leur position précédente.
     Les entités dans le glyphe sont dans l'état Intaclable.
     Les effets du glyphe sont également exécutés lorsque le lanceur génère un Téléfrag.""", chaine=True)
     ]))

@@ -6,7 +6,7 @@ class Glyphe:
      Une glyphe est une zone au sol qui déclenche un effet sur les joueurs
      se trouvant dessus au début de leur tour."""
 
-    def __init__(self, nomSort, sortMono, sortDeplacement, sortSortie, dureeGlyphe,
+    def __init__(self, zoneAction, nomSort, sortMono, sortDeplacement, sortSortie, dureeGlyphe,
                  centreX, centreY, lanceur, couleur):
         """@summary: Initialise une glyphe.
         @nomSort: le nom du sort à l'origine de la glyphe
@@ -28,6 +28,7 @@ class Glyphe:
         @type: Personnage
         @couleur: la coordonnée x du centre de la zone de la glyphe.
         @type: tuple (R,G,B)"""
+        self.zoneAction = zoneAction
         self.nomSort = nomSort
         self.sortMono = sortMono
         self.sortDeplacement = sortDeplacement
@@ -42,3 +43,8 @@ class Glyphe:
         """@summary: Test si la glyphe est encore active
             @return: Retourne un booléen qui vaut vrai si la glyphe est encore active, faux sinon"""
         return self.duree > 0
+
+    def aPorte(self, posX, posY):
+        """@summary:Retourne vrai si la posX;posY donné est dans la zone du piège."""
+        return self.zoneAction.testCaseEstDedans([self.centreX, self.centreY],
+                                                 [posX, posY], None)

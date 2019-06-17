@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*
 """@summary: Rassemble les états donnant des points de bouclier."""
 
 from Etats.Etat import Etat

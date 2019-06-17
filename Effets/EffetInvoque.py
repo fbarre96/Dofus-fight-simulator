@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*
 """@summary: Rassemble les effets de sort en rapport avec les invocations."""
 from copy import deepcopy
 

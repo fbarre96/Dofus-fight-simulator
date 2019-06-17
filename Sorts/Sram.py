@@ -73,8 +73,8 @@ def getSorts(lvl):
         34, 38, "Air"), "Piège insidieux : poison fin de tour", "lanceur"), cumulMax=1, cibles_possibles="Ennemis")], [], 0, 99, 99, 0, 0, "cercle", False)
     sortieGlypheInsidieuse = Sort.Sort("Piège insidieux: Sortie", 0, 0, 0, 99, [EffetRetireEtat(
         "Piège insidieux : poison fin de tour", cibles_possibles="Ennemis", cible_non_requise=True)], [], 0, 99, 99, 0, 0, "cercle", False)
-    activationPiegeInsidieux = [EffetGlyphe(activationGlypheInsidieuse, activationGlypheInsidieuse, sortieGlypheInsidieuse,
-                                            1, "Piège insidieux", (0, 200, 0), zone=Zones.TypeZoneCercle(2), cible_non_requise=True, piege=True)]
+    activationPiegeInsidieux = [EffetGlyphe(Zones.TypeZoneCercle(2), activationGlypheInsidieuse, activationGlypheInsidieuse, sortieGlypheInsidieuse,
+                                            1, "Piège insidieux", (0, 200, 0), cible_non_requise=True, piege=True)]
     activationPiegeRepulsif = [EffetDegats(12, 12, "air", zone=Zones.TypeZoneCercle(
         1), cible_non_requise=True, piege=True), EffetPousser(2, "CaseCible", zone=Zones.TypeZoneCercle(1), cible_non_requise=True)]
     activationPiegeRepoussant = [EffetPousser(
@@ -129,7 +129,7 @@ def getSorts(lvl):
     sortieBrume = Sort.Sort("Brume: Sortie", 0, 0, 0, 99, [EffetRetireEtat(
         "Invisible", cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Brume", 101, 3, 1, 3, [EffetGlyphe(activationBrume, activationBrume, sortieBrume, 2, "Brume", (255, 0, 255), zone=Zones.TypeZoneCercle(
+        Sort.Sort("Brume", 101, 3, 1, 3, [EffetGlyphe(Zones.TypeZoneCercle(3), activationBrume, activationBrume, sortieBrume, 2, "Brume", (255, 0, 255), zone=Zones.TypeZoneCercle(
             3), cible_non_requise=True)], [], 0, 1, 1, 4, 0, "cercle", True, description="""Pose un glyphe-aura qui rend invisible les alliés présents dans la zone.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
