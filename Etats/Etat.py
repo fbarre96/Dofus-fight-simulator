@@ -238,3 +238,21 @@ class Etat():
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
         return
+
+    def triggerAvantMort(self, niveau, porteur, mouru, meurtrier):
+        # pylint: disable=unused-argument
+        """@summary: Un trigger appelé pour tous les états des joueurs
+                     lorsque un perso meurt.
+                     Active un effet ciblant le meurtier ou la victime ou le porteur avant la mort
+        @cibleAttaque: le joueur qui va subir les dégâts
+        @type: joueur
+        @niveau: La grille de jeu
+        @type: Niveau
+        @totalPerdu: Le total de vie que le joueur va subir.
+        @type: int
+        @typeDeg:  Le type de dégâts qui va être subit
+        @type: string
+        @attaquant:  Le joueur à l'origine de l'attaque
+        @type: Personnage"""
+        return
+        

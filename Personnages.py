@@ -271,6 +271,8 @@ class Personnage(object):
             return sorts, sortsDebutCombat
         elif classe == "Poutch":
             return sorts, sortsDebutCombat
+        elif classe == "Lapino":
+            return sorts, sortsDebutCombat
         elif classe == "Synchro":
             import Sorts.Synchro
             sortsDebutCombat += Sorts.Synchro.getSortsDebutCombat(lvl)
@@ -566,7 +568,7 @@ class Personnage(object):
             print("-"+str(totalPerdu)+" PV")
             print(toprint)
         if self.vie <= 0:
-            niveau.tue(self)
+            niveau.tue(self, attaquant)
         for etat in self.etats:
             if etat.actif():
                 etat.triggerApresSubirDegats(
@@ -892,7 +894,7 @@ invocs_liste = {
                                         100, 1, {"Vitalite": 1000}, {}, {}, {},
                                         "cadran_de_xelor.png"),
     "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1,
-                             {"Vitalite": 800}, {}, {}, {}, "cawotte.jpg"),
+                             {"Vitalite": 660}, {}, {}, {}, "cawotte.jpg"),
     "Synchro": PersonnageMur("Synchro", "Synchro", 0, 1,
                              {"Vitalite": 1200}, {}, {}, {}, "synchro.png"),
     "Complice": PersonnageMur("Complice", "Complice", 0, 1,
@@ -909,4 +911,9 @@ invocs_liste = {
                          {"Vitalite": 1}, {}, {}, {}, "sram.png"),
     "Comploteur": Personnage("Comploteur", "Comploteur", 0, 1,
                              {"Vitalite": 1}, {}, {}, {}, "sram.png"),
+    "Lapino": Personnage("Lapino", "Lapino",
+                         0, 1, {"Vitalite": 1200, "PA":5, "PM":4},
+                         {"Esquive PA":75, "Esquive PM":75}, {},
+                         {"Neutre%":20, "Terre%":20, "Feu%":5, "Eau%":-5, "Air%":30},
+                         "mot_d_amitie.jpg"),
 }

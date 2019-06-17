@@ -420,12 +420,17 @@ class Niveau:
         # On annonce au joueur son début de tour
         self.tourDe.debutTour(self)
 
-    def tue(self, perso):
+    def tue(self, perso, meurtrier):
         """@summary: Tue instantanément le joueur donné en paramètre."""
 
         # Parcours des joueurs
         if perso is None:
             return False
+        for joueur in self.joueurs:
+            if joueur.uid == perso.uid:
+                for etat in joueur.etats:
+                    if etat.actif():
+                        etat.triggerAvantMort(self, joueur, perso, meurtrier)
         print(perso.nomPerso+" est mort!")
         i = 0
         persosJoueursRestants = []

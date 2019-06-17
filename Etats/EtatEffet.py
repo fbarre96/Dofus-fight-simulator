@@ -181,6 +181,73 @@ class EtatEffetSiSubit(Etat):
                 niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
                                    self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
 
+class EtatEffetSiMeurt(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur meurt."""
+
+    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
+                 cible, lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui s'activera lors d'un dégât subit
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui lancera l'effet
+        @type: string ("lanceur" ou "cible")
+        @cible: Le personnage qui subira l'effet
+        @type: string ("attaquant" ou "cible")
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        self.nomSort = nomSort
+        self.quiLancera = quiLancera
+        self.cible = cible
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiMeurt(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
+                                self.quiLancera, self.cible, self.lanceur, self.desc)
+
+    def triggerAvantMort(self, niveau, porteur, mouru, meurtrier):
+        """@summary: Un trigger appelé pour tous les états des joueurs
+                     lorsque un perso meurt.
+                     Active un effet ciblant le meurtier ou la victime ou le porteur avant la mort
+        @cibleAttaque: le joueur qui va subir les dégâts
+        @type: joueur
+        @niveau: La grille de jeu
+        @type: Niveau
+        @totalPerdu: Le total de vie que le joueur va subir.
+        @type: int
+        @typeDeg:  Le type de dégâts qui va être subit
+        @type: string
+        @attaquant:  Le joueur à l'origine de l'attaque
+        @type: Personnage"""
+        joueurCible = porteur
+        if self.cible == "meurtrier":
+            joueurCible = meurtrier
+        elif self.cible == "mouru":
+            joueurCible = mouru
+        celuiQuiLance = porteur
+        if self.quiLancera == "meurtrier":
+            celuiQuiLance = meurtrier
+        elif self.quiLancera == "mouru":
+            celuiQuiLance = mouru
+        niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
+                           self.nomSort, joueurCible.posX, joueurCible.posY, celuiQuiLance)
+
 class EtatEffetSiPousse(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
 

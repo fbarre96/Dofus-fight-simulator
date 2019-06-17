@@ -26,5 +26,5 @@ class EffetTue(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        niveau.tue(joueurCaseEffet)
+        niveau.tue(joueurCaseEffet, joueurLanceur)
         
