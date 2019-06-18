@@ -1,9 +1,8 @@
-"""@summary: Les sorts de stratège iop
+"""@summary: Les sorts de Lapino
 """
 
 import Sort
-from Effets.EffetEtat import EffetEtat
-from Etats.EtatRedistribuerPer import EtatRedistribuerPer
+from Effets.EffetSoin import EffetSoinPerPVMax
 
 
 def getSortsDebutCombat(lvl):
@@ -21,6 +20,6 @@ def getSorts(lvl):
     """
     # pylint: disable=unused-argument
     sorts = []
-    sorts.append(Sort.Sort("Strategie_iop", 0, 0, 0, 0, [EffetEtat(EtatRedistribuerPer(
-        "Stratégie Iop", 0, -1, 50, "Ennemis|Allies", 2))], [], 0, 99, 99, 0, 0, "cercle", False))
+    sorts.append(Sort.Sort("Lapino de vie", 0, 3, 0, 4, [EffetSoinPerPVMax(
+        10, cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False))
     return sorts

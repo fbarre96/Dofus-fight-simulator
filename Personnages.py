@@ -272,6 +272,9 @@ class Personnage(object):
         elif classe == "Poutch":
             return sorts, sortsDebutCombat
         elif classe == "Lapino":
+            import Sorts.Lapino
+            sortsDebutCombat += Sorts.Lapino.getSortsDebutCombat(lvl)
+            sorts += Sorts.Lapino.getSorts(lvl)
             return sorts, sortsDebutCombat
         elif classe == "Synchro":
             import Sorts.Synchro

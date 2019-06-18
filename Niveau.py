@@ -935,8 +935,11 @@ class Niveau:
             if joueurCibleDirect is not None:
 
                 # Si le joueur sur la case est une cible valide
-                if effet.cibleValide(joueurLanceur, joueurCaseEffet,
-                                     joueurCibleDirect, ciblesTraitees):
+                msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
+                                                   joueurCibleDirect, ciblesTraitees)
+                if not estValide:
+                    print(msg)
+                else:
                     # On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
                     sestApplique = effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur,
@@ -961,9 +964,12 @@ class Niveau:
 
             else:
                 if effet.cibleNonRequise:
-                    if effet.cibleValide(joueurLanceur, joueurCaseEffet,
-                                         joueurCibleDirect, ciblesTraitees):
-                        effetALancer.appliquerEffet(self, None, joueurLanceur,
+                    msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
+                                                       joueurCibleDirect, ciblesTraitees)
+                    if not estValide:
+                        print(msg)
+                    else:
+                        effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur,
                                                     caseCibleX=caseCibleX, caseCibleY=caseCibleY,
                                                     nom_sort=nomSort,
                                                     cibles_traitees=ciblesTraitees,

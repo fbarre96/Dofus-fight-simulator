@@ -148,6 +148,7 @@ class Effet(object):
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         # Test si la cible est dans les cibles possibles
+        msg = ""
         if joueurCible is None:
             joueurCibleTeam = -1
             joueurCibleUid = -1
@@ -174,48 +175,48 @@ class Effet(object):
                or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues
                        and joueurCibleUid == joueurLanceur.invocateur.uid):
                 if joueurCibleClasse != "":
-                    print("DEBUG : Invalide : Cible Exclue")
-                    return False
+                    msg = "DEBUG : Invalide : Cible Exclue "+\
+                        str(joueurCibleClasse)+"/"+str(self.ciblesExclues)
+                    return msg, False
             # Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
-                print("DEBUG : Invalide : Cible deja traitee")
-                return False
+                msg = "DEBUG : Invalide : Cible deja traitee "+\
+                    str(joueurCible) + str(ciblesDejaTraitees)
+                return msg, False
             # Test si un état est requis sur la cible direct et qu'une cible direct existe
             # une liste est vraie si elle n'est pas vide
             if (joueurCibleDirect is None and self.etatRequisCibleDirect):
-                print("DEBUG : Invalide : Cible direct non renseigne et etatRequis" +
-                      "pour cible direct (" +
-                      str(self.etatRequisCibleDirect)+")")
-                return False
+                msg = "DEBUG : Invalide : Cible direct non renseigne et etatRequis "+ \
+                    "pour cible direct (" + str(self.etatRequisCibleDirect)+")"
+                return msg, False
             # Test si une cible direct n'existe pas si l'effet doit être jouée
             if (joueurCibleDirect is None and not self.cibleNonRequise):
-                print(
-                    "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide")
-                return False
+                msg = "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
+                return msg, False
             # Test si la cible est une case vide et que l'effet ne nécessite pas d'etat pour la cibl
             # une liste est vraie si elle n'est pas vide
             if joueurCible is None and self.etatRequisCibles:
-                print("DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible")
-                return False
+                msg = "DEBUG : Invalide : Cible  non renseigne et etatRequis pour cible"
+                return msg, False
             # Test si la cible n'est pas une case vide qu'il a bien les états requis
             if joueurCible is not None:
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
-                    print("DEBUG : Invalide :etatRequis pour cible non present")
-                    return False
+                    msg = "DEBUG : Invalide :etatRequis pour cible non present"
+                    return msg, False
             # Test si la cible firect n'est pas une case vide qu'il a bien les états requis
             if joueurCibleDirect is not None:
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
-                    print("DEBUG : Invalide :etatRequis pour cible direct non present")
-                    return False
+                    msg = "DEBUG : Invalide :etatRequis pour cible direct non present"
+                    return msg, False
             if not joueurLanceur.aEtatsRequis(self.etatRequisLanceur):
-                print("DEBUG : Invalide :etatRequis pour lanceur non present" +
-                      str(self.etatRequisLanceur)+" n'est pas présent sur le lanceur")
-                return False
+                msg = "DEBUG : Invalide :etatRequis pour lanceur non present" + \
+                    str(self.etatRequisLanceur)+" n'est pas présent sur le lanceur"
+                return msg, False
             # La cible a passé tous les tests
-            return True
-        print("DEBUG : Invalide : Cible "+ joueurCibleClasse +
-              " pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
-        return False
+            return msg, True
+        msg = "DEBUG : Invalide : Cible "+ joueurCibleClasse + \
+                " pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")"
+        return msg, False
 
     def aPorteZone(self, departZoneX, departZoneY, testDansZoneX, testDansZoneY, joueurX, joueurY):
         """@summary: Test si une case appartient à une zone donnée.

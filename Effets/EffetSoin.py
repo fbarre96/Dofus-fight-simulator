@@ -88,7 +88,7 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         self.pourcentage = pourcentage
         self.kwargs = kwargs
-        super().__init__(0, **kwargs)
+        super().__init__(0, 0, **kwargs)
 
     def __deepcopy__(self, memo):
         cpy = EffetSoinPerPVMax(self.pourcentage, **self.kwargs)

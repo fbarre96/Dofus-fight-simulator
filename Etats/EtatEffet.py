@@ -245,6 +245,8 @@ class EtatEffetSiMeurt(Etat):
             celuiQuiLance = meurtrier
         elif self.quiLancera == "mouru":
             celuiQuiLance = mouru
+        elif self.quiLancera == "lanceur":
+            celuiQuiLance = self.lanceur
         niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
                            self.nomSort, joueurCible.posX, joueurCible.posY, celuiQuiLance)
 

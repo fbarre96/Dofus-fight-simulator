@@ -3,7 +3,7 @@
 # pylint: disable=line-too-long
 import Sort
 from Effets.EffetDegats import EffetDegats
-from Effets.EffetSoin import EffetSoinSelonSubit, EffetSoin
+from Effets.EffetSoin import EffetSoinSelonSubit, EffetSoin, EffetSoinPerPVMax
 from Effets.EffetEtat import EffetEtat, EffetRetireEtat, EffetEtatSelf
 from Effets.EffetInvoque import EffetInvoque
 from Effets.EffetTp import EffetTp
@@ -66,11 +66,11 @@ def getSorts(lvl):
     Pose un glyphe autour de la cible ennemie. Le glyphe soigne les alliés en fin de tour.""", chaine=True)
     ]))
     sortTpLapino = Sort.Sort("Lapino TP", 0, 0, 0, 99, [EffetTp(cible_non_requise=True, cibles_possibles="")], [], 0, 99, 99, 0, 0, "cercle", False)
-    lapinoGlyphe = Sort.Sort("Lapino Glyphe", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Lapino Glyphe", 0, 1, EffetSoin(1, 1), "Lapino Glyphe", "lanceur"), cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
+    lapinoGlyphe = Sort.Sort("Lapino Glyphe", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Lapino Glyphe", 0, 1, EffetSoinPerPVMax(10), "Lapino Glyphe", "lanceur"), cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     sortieLapinoGlyphe = Sort.Sort("Sortie Lapino Marquant", 0, 0, 0, 3, [EffetRetireEtat("Lapino Glyphe", cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [
-            EffetRetireEtat("Lapino mort délai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
+            EffetRetireEtat("Lapino mort delai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
             # Etat pour test si le lapino est deja invoque
             EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
             # S'il ne l'est pas, on l'invoque
@@ -79,22 +79,50 @@ def getSorts(lvl):
             EffetEtatSelf(EtatBoostCaracFixe("Stimulé", 0, -1, "PA", 2), cible_non_requise=True, cumulMax=1, etat_lanceur_requis="!Lapino invoqué"),
             # S'il ne l'était pas on met des états de mort (pose glyphe, délai de 3 tours et retire état stimulant)
             EffetEtat(EtatEffetSiMeurt("Stimulant", 0, -1, EffetRetireEtat("Stimulé", cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Fin de stimulation", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
-            EffetEtat(EtatEffetSiMeurt("Lapino glyphe", 0, -1, EffetGlyphe(Zones.TypeZoneCercle(2), lapinoGlyphe, lapinoGlyphe, sortieLapinoGlyphe, 2, "Lapino Glyphe", (252, 116, 172)), "Lapino glyphe", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
-            EffetEtat(EtatEffetSiMeurt("Lapino délai", 0, -1, EffetEtat(EtatBoostSortCarac("Lapino mort délai", 0, -1, "Mot d'Amitié", "nbTourEntreDeux", 3), cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Lapino délai", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino glyphe", 0, -1, EffetGlyphe(Zones.TypeZoneCercle(2), lapinoGlyphe, lapinoGlyphe, sortieLapinoGlyphe, 3, "Lapino Glyphe", (252, 116, 172)), "Lapino glyphe", "lanceur", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino délai", 0, -1, EffetEtat(EtatBoostSortCarac("Lapino mort delai", 0, -1, "Mot d'Amitié", "nbTourEntreDeux", 3), cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Lapino délai", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
             # S'il était déjà là on le fait se téléporté sur la case ciblé et on enlève l'état temporaire placé sur le lanceur.
             EffetEntiteLanceSort("Lapino", sortTpLapino, "CaseCible", etat_requis_lanceur="Lapino invoqué", consomme_etat=True, cible_non_requise=True),
             ], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
         Le Lapino soigne ses alliés.
         Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
         Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=False),
-        #     Sort.Sort("Mot d'Amitié", 25, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
-        # Le Lapino soigne ses alliés.
-        # Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
-        # Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True),
+        Sort.Sort("Mot d'Amitié", 25, 3, 1, 3, [
+            EffetRetireEtat("Lapino mort delai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
+            # Etat pour test si le lapino est deja invoque
+            EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
+            # S'il ne l'est pas, on l'invoque
+            EffetInvoque("Lapino", 1, cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="!Lapino invoqué"),
+            # S'il ne l'était pas on stimule le lanceur
+            EffetEtatSelf(EtatBoostCaracFixe("Stimulé", 0, -1, "PA", 2), cible_non_requise=True, cumulMax=1, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il ne l'était pas on met des états de mort (pose glyphe, délai de 3 tours et retire état stimulant)
+            EffetEtat(EtatEffetSiMeurt("Stimulant", 0, -1, EffetRetireEtat("Stimulé", cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Fin de stimulation", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino glyphe", 0, -1, EffetGlyphe(Zones.TypeZoneCercle(2), lapinoGlyphe, lapinoGlyphe, sortieLapinoGlyphe, 3, "Lapino Glyphe", (252, 116, 172)), "Lapino glyphe", "lanceur", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino délai", 0, -1, EffetEtat(EtatBoostSortCarac("Lapino mort delai", 0, -1, "Mot d'Amitié", "nbTourEntreDeux", 3), cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Lapino délai", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il était déjà là on le fait se téléporté sur la case ciblé et on enlève l'état temporaire placé sur le lanceur.
+            EffetEntiteLanceSort("Lapino", sortTpLapino, "CaseCible", etat_requis_lanceur="Lapino invoqué", consomme_etat=True, cible_non_requise=True),
+            ], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+        Le Lapino soigne ses alliés.
+        Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+        Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=False),
 
-        #     Sort.Sort("Mot d'Amitié", 52, 3, 1, 3, [TODO(Invoque :), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Amitié à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
-        # Le Lapino soigne ses alliés.
-        # Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
-        # Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=True)
+        Sort.Sort("Mot d'Amitié", 52, 3, 1, 3, [
+            EffetRetireEtat("Lapino mort delai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
+            # Etat pour test si le lapino est deja invoque
+            EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
+            # S'il ne l'est pas, on l'invoque
+            EffetInvoque("Lapino", 1, cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="!Lapino invoqué"),
+            # S'il ne l'était pas on stimule le lanceur
+            EffetEtatSelf(EtatBoostCaracFixe("Stimulé", 0, -1, "PA", 2), cible_non_requise=True, cumulMax=1, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il ne l'était pas on met des états de mort (pose glyphe, délai de 3 tours et retire état stimulant)
+            EffetEtat(EtatEffetSiMeurt("Stimulant", 0, -1, EffetRetireEtat("Stimulé", cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Fin de stimulation", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino glyphe", 0, -1, EffetGlyphe(Zones.TypeZoneCercle(2), lapinoGlyphe, lapinoGlyphe, sortieLapinoGlyphe, 3, "Lapino Glyphe", (252, 116, 172)), "Lapino glyphe", "lanceur", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino délai", 0, -1, EffetEtat(EtatBoostSortCarac("Lapino mort delai", 0, -1, "Mot d'Amitié", "nbTourEntreDeux", 3), cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Lapino délai", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il était déjà là on le fait se téléporté sur la case ciblé et on enlève l'état temporaire placé sur le lanceur.
+            EffetEntiteLanceSort("Lapino", sortTpLapino, "CaseCible", etat_requis_lanceur="Lapino invoqué", consomme_etat=True, cible_non_requise=True),
+            ], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+        Le Lapino soigne ses alliés.
+        Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+        Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=False),
     ]))
     return sorts
