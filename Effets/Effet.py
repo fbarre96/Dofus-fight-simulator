@@ -4,7 +4,6 @@
 """
 import Zones
 
-
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
                  Cette classe est 'abstraite' et doit être héritée."""
@@ -14,6 +13,7 @@ class Effet(object):
         @kwargs: Options de l'effets
         , possibilitées: etat_requis (string séparé par |, aucun par défaut),
                         etat_requis_cibles (string séparé par |, aucun par défaut),
+                        etat_requis_lanceur (string séparé par |, aucun par défaut),
                         consomme_etat (booléen, Faux par défaut),
                         cibles_possibles (string, "Allies|Ennemis|Lanceur" par défaut)
                         cibles_exclues (string, aucune par défaut)
@@ -28,6 +28,9 @@ class Effet(object):
         self.etatRequisCibles = kwargs.get('etat_requis_cibles', "").split("|")
         if self.etatRequisCibles[-1] == "":
             self.etatRequisCibles = []
+        self.etatRequisLanceur = kwargs.get('etat_requis_lanceur', "").split("|")
+        if self.etatRequisLanceur[-1] == "":
+            self.etatRequisLanceur = []
         self.consommeEtat = kwargs.get('consomme_etat', False)
         self.ciblesPossibles = kwargs.get(
             'cibles_possibles', "Allies|Ennemis|Lanceur").split("|")
@@ -145,23 +148,34 @@ class Effet(object):
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
 
         # Test si la cible est dans les cibles possibles
-        if (joueurCible.team == joueurLanceur.team and joueurCible != joueurLanceur
+        if joueurCible is None:
+            joueurCibleTeam = -1
+            joueurCibleUid = -1
+            joueurCibleClasse = ""
+            joueurCibleInvocateur = ""
+        else:
+            joueurCibleTeam = joueurCible.team
+            joueurCibleUid = joueurCible.uid
+            joueurCibleClasse = joueurCible.classe
+            joueurCibleInvocateur = joueurCible.invocateur
+        if (joueurCibleTeam == joueurLanceur.team and joueurCibleUid != joueurLanceur.uid
                 and "Allies" in self.ciblesPossibles) \
-            or (joueurCible.team == joueurLanceur.team and joueurCible == joueurLanceur
+            or (joueurCibleTeam == joueurLanceur.team and joueurCibleUid == joueurLanceur.uid
                 and "Lanceur" in self.ciblesPossibles) \
-            or (joueurCible.team != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) \
-            or (joueurCible.classe in self.ciblesPossibles) \
-            or (joueurCible.invocateur is not None and "Invoc" in self.ciblesPossibles) \
+            or (joueurCibleTeam != joueurLanceur.team and "Ennemis" in self.ciblesPossibles) \
+            or (joueurCibleClasse in self.ciblesPossibles) \
+            or (joueurCibleInvocateur is not None and "Invoc" in self.ciblesPossibles) \
             or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesPossibles
-                and joueurCible.uid == joueurLanceur.invocateur.uid):
+                and joueurCibleUid == joueurLanceur.invocateur.uid):
             # Test si la cible est exclue
-            if joueurCible.classe in self.ciblesExclues \
-               or (joueurCible.uid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) \
-               or (joueurCible.invocateur is not None and "Invoc" in self.ciblesExclues) \
+            if joueurCibleClasse in self.ciblesExclues \
+               or (joueurCibleUid == joueurLanceur.uid and "Lanceur" in self.ciblesExclues) \
+               or (joueurCibleInvocateur is not None and "Invoc" in self.ciblesExclues) \
                or (joueurLanceur.invocateur is not None and "Invocateur" in self.ciblesExclues
-                       and joueurCible.uid == joueurLanceur.invocateur.uid):
-                print("DEBUG : Invalide : Cible Exclue")
-                return False
+                       and joueurCibleUid == joueurLanceur.invocateur.uid):
+                if joueurCibleClasse != "":
+                    print("DEBUG : Invalide : Cible Exclue")
+                    return False
             # Test si la cible est déjà traitée
             if joueurCible in ciblesDejaTraitees:
                 print("DEBUG : Invalide : Cible deja traitee")
@@ -193,9 +207,13 @@ class Effet(object):
                 if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
                     print("DEBUG : Invalide :etatRequis pour cible direct non present")
                     return False
+            if not joueurLanceur.aEtatsRequis(self.etatRequisLanceur):
+                print("DEBUG : Invalide :etatRequis pour lanceur non present" +
+                      str(self.etatRequisLanceur)+" n'est pas présent sur le lanceur")
+                return False
             # La cible a passé tous les tests
             return True
-        print("DEBUG : Invalide : Cible "+joueurCible.nomPerso +
+        print("DEBUG : Invalide : Cible "+ joueurCibleClasse +
               " pas dans la liste des cibles possibles ("+str(self.ciblesPossibles)+")")
         return False
 

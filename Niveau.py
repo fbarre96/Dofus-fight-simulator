@@ -932,7 +932,7 @@ class Niveau:
             joueurCaseEffet = self.getJoueurSur(caseX, caseY)
             # Test si un joeuur est sur la case
             effetALancer = deepcopy(effet)
-            if joueurCaseEffet is not None:
+            if joueurCibleDirect is not None:
 
                 # Si le joueur sur la case est une cible valide
                 if effet.cibleValide(joueurLanceur, joueurCaseEffet,
@@ -957,15 +957,19 @@ class Niveau:
                         joueurCaseEffet.retirerEtats(
                             effet.etatRequisCibleDirect)
                         joueurCaseEffet.retirerEtats(effet.etatRequisCibles)
+                        joueurLanceur.retirerEtats(effet.etatRequisLanceur)
 
             else:
                 if effet.cibleNonRequise:
-                    effetALancer.appliquerEffet(self, None, joueurLanceur,
-                                                caseCibleX=caseCibleX, caseCibleY=caseCibleY,
-                                                nom_sort=nomSort, cibles_traitees=ciblesTraitees,
-                                                provX=provX, provY=provY, caseEffetX=caseX,
-                                                caseEffetY=caseY)
-                    sestApplique = True
+                    if effet.cibleValide(joueurLanceur, joueurCaseEffet,
+                                         joueurCibleDirect, ciblesTraitees):
+                        effetALancer.appliquerEffet(self, None, joueurLanceur,
+                                                    caseCibleX=caseCibleX, caseCibleY=caseCibleY,
+                                                    nom_sort=nomSort,
+                                                    cibles_traitees=ciblesTraitees,
+                                                    provX=provX, provY=provY, caseEffetX=caseX,
+                                                    caseEffetY=caseY)
+                        sestApplique = True
 
         return sestApplique, ciblesTraitees
 

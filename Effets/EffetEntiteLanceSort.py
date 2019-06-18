@@ -7,7 +7,7 @@ class EffetEntiteLanceSort(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet fait lancer un sort à une entité/joueur"""
 
-    def __init__(self, str_nomEntites, sort_sort, **kwargs):
+    def __init__(self, str_nomEntites, sort_sort, caseCible="Entite", **kwargs):
         """@summary: Initialise un effet lançant un sort à une entité/joueur
         @str_nomEntites: les entités devant lancer le sort
         @type: string
@@ -18,10 +18,11 @@ class EffetEntiteLanceSort(Effet):
         self.kwargs = kwargs
         self.nomEntites = str_nomEntites
         self.sort = sort_sort
+        self.caseCible = caseCible
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetEntiteLanceSort(self.nomEntites, self.sort, **self.kwargs)
+        return EffetEntiteLanceSort(self.nomEntites, self.sort, self.caseCible, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -35,5 +36,10 @@ class EffetEntiteLanceSort(Effet):
         @type: **kwargs"""
         joueursLanceurs = niveau.getJoueurs(self.nomEntites)
         for joueur in joueursLanceurs:
+            cibleX = joueur.posX
+            cibleY = joueur.posY
+            if self.caseCible == "CaseCible":
+                cibleX = kwargs.get("caseCibleX")
+                cibleY = kwargs.get("caseCibleY")
             self.sort.lance(joueur.posX, joueur.posY,
-                            niveau, joueur.posX, joueur.posY)
+                            niveau, cibleX, cibleY)

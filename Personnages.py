@@ -380,14 +380,15 @@ class Personnage(object):
                         niveau.lancerEffet(effet, glyphe.centreX, glyphe.centreY,
                                            glyphe.nomSort, self.posX, self.posY, glyphe.lanceur)
                 else:  # n'est pas dans la glyphe
-                    dernierePos = self.historiqueDeplacement[-1]
-                    # Test s'il était dans la glyphe avant
+                    if self.historiqueDeplacement:
+                        dernierePos = self.historiqueDeplacement[-1]
+                        # Test s'il était dans la glyphe avant
 
-                    if glyphe.aPorte(dernierePos[0], dernierePos[1]):
-                        for effet in glyphe.sortSortie.effets:
-                            niveau.lancerEffet(
-                                effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort,
-                                self.posX, self.posY, glyphe.lanceur)
+                        if glyphe.aPorte(dernierePos[0], dernierePos[1]):
+                            for effet in glyphe.sortSortie.effets:
+                                niveau.lancerEffet(
+                                    effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort,
+                                    self.posX, self.posY, glyphe.lanceur)
         niveau.fileEffets = niveau.fileEffets + sauvegardeFile
         niveau.depileEffets()
         return True, piegeDeclenche
@@ -478,6 +479,7 @@ class Personnage(object):
         @nomsEtatCherche: Les noms des états cherchés à supprimer
         @type: tableau de string"""
         i = 0
+        print("Retire état "+str(nomsEtatCherche)+" de "+str(self.classe))
         nbEtats = len(self.etats)
         while i < nbEtats:
             if self.etats[i].nom in nomsEtatCherche:
@@ -585,6 +587,7 @@ class Personnage(object):
         for sort in self.sorts:
             sort.compteLancerParTour = 0
             sort.compteTourEntreDeux += 1
+            sort.compteTourEntreDeux = min(sort.compteTourEntreDeux, sort.nbTourEntreDeux)
             sort.compteLancerParTourParJoueur = {}
         for etat in self.etats:
             if etat.actif():
