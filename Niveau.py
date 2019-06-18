@@ -413,7 +413,8 @@ class Niveau:
     def finTour(self):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
         # On annonce au joueur la fin de son tour
-        self.tourDe.finTour(self)
+        if self is not None:
+            self.tourDe.finTour(self)
         # calcul du prochain joueur
         self.tourIndex = (self.tourIndex + 1) % len(self.joueurs)
         self.tourDe = self.joueurs[self.tourIndex]
@@ -435,11 +436,12 @@ class Niveau:
         i = 0
         persosJoueursRestants = []
         tailleJoueurs = len(self.joueurs)
+        doitPasserTour = False
         while i < tailleJoueurs:
             # Recherche du joueur à tuer
             if isinstance(self.joueurs[i], Personnages.Personnage):
                 persosJoueursRestants.append(self.joueurs[i])
-            if self.joueurs[i] == perso:
+            if self.joueurs[i].uid == perso.uid:
                 # On supprime son existence
                 self.structure[perso.posY][perso.posX].type = "v"
                 # Recherche de l'invocateur si c'est une invocation
@@ -450,6 +452,10 @@ class Niveau:
                             del perso.invocateur.invocations[j]
                             break
                 del self.joueurs[i]
+                if self.tourIndex > i:
+                    self.tourIndex -= 1
+                else:
+                    doitPasserTour = True
                 i -= 1
                 break
             i += 1
@@ -458,6 +464,8 @@ class Niveau:
             print("Gagnant : "+str(persosJoueursRestants[0].nomPerso))
         elif not persosJoueursRestants:
             print("Tous mort ! Egalité.")
+        if doitPasserTour:
+            self.finTour()
         return True
 
     def generer(self):

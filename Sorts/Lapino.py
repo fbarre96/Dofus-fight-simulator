@@ -21,5 +21,6 @@ def getSorts(lvl):
     # pylint: disable=unused-argument
     sorts = []
     sorts.append(Sort.Sort("Lapino de vie", 0, 3, 0, 4, [EffetSoinPerPVMax(
-        10, cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False))
+        10, cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False,
+                           description="""Soigne de 5% de la vie maximale de la cible allié."""))
     return sorts
