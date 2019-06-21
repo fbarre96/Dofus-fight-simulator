@@ -2,7 +2,7 @@
 """
 # pylint: disable=line-too-long
 import Sort
-from Effets.EffetDegats import EffetDegats, EffetVolDeVie
+from Effets.EffetDegats import EffetDegats, EffetVolDeVie, EffetDegatsPerPv
 from Effets.EffetTue import EffetTue
 from Effets.EffetPousser import EffetPousser, EffetAttire
 from Effets.EffetSoin import EffetSoinSelonSubit, EffetSoin, EffetSoinPerPVMax
@@ -14,7 +14,7 @@ from Effets.EffetEntiteLanceSort import EffetEntiteLanceSort
 from Effets.EffetRet import EffetRetPM, EffetRetPA
 from Effets.EffetDevoilePiege import EffetDevoilePiege
 from Etats.Etat import Etat
-from Etats.EtatEffet import EtatEffetSiSubit, EtatEffetFinTour, EtatEffetSiMeurt, EtatEffetDebutTour
+from Etats.EtatEffet import EtatEffetSiSubit, EtatEffetFinTour, EtatEffetSiMeurt, EtatEffetDebutTour, EtatEffetSiNouvelEtat
 from Etats.EtatBoostCarac import EtatBoostCaracFixe
 from Etats.EtatBoostSortCarac import EtatBoostSortCarac
 from Etats.EtatModSoin import EtatModSoinPer
@@ -83,7 +83,7 @@ def getSorts(lvl):
         Sort.Sort("Mot d'Amitié", 1, 3, 1, 2, [
             EffetRetireEtat("Lapino mort delai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
             # Etat pour test si le lapino est deja invoque
-            EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
+            EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino|Lapino protecteur", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
             # S'il ne l'est pas, on l'invoque
             EffetInvoque("Lapino", 1, cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="!Lapino invoqué"),
             # S'il ne l'était pas on stimule le lanceur
@@ -139,10 +139,31 @@ def getSorts(lvl):
         Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
         Quand le Lapino meurt, il pose un glyphe de fin de tour qui soigne les alliés, et ne peut plus être invoqué pendant 3 tours.""", chaine=False),
     ]))
-    # sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-    #     Sort.Sort("Mot d'Affection", 105, 4, 1, 3, [TODO(Invoque : Lapino protecteur), zone=Zones.TypeZoneCercle(99)), TODO(Fixe l'intervalle de relance de Mot d'Affection à 3 tour(s)), zone=Zones.TypeZoneCercle(99)), TODO(10711), zone=Zones.TypeZoneCercle(99))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino qui applique des points de bouclier sur les alliés et applique l'état Stimulé sur son invocateur.
-    # Lorsque le Lapino meurt, il pose un glyphe de fin de tour qui applique des points de bouclier, et ne peut plus être invoqué pendant 3 tours.""", chaine=True)
-    # ]))
+    sortTpLapinoProtecteur = Sort.Sort("Lapino Protecteur TP", 0, 0, 0, 99, [EffetTp(cible_non_requise=True, cibles_possibles="")], [], 0, 99, 99, 0, 0, "cercle", False)
+    lapinoProtecteurGlyphe = Sort.Sort("Lapino protecteur Glyphe", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Lapino Protecteur Glyphe", 0, 1, EffetEtat(EtatBouclierPerLvl("Glyphe de lapino protecteur", 0, 1, 207)), "Lapino Protecteur Glyphe", "lanceur"), cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
+    sortieLapinoProtecteurGlyphe = Sort.Sort("Sortie Lapino protecteur Marquant", 0, 0, 0, 3, [EffetRetireEtat("Lapino Protecteur Glyphe", cibles_possibles="Allies|Lanceur")], [], 0, 99, 99, 0, 0, "cercle", False)
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot d'Affection", 105, 4, 1, 3, [
+            EffetRetireEtat("Lapino mort delai", zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur", cible_non_requise=True),
+            # Etat pour test si le lapino est deja invoque
+            EffetEtatSelf(Etat("Lapino invoqué", 0, 1), cibles_possibles="Lapino", cible_non_requise=True, zone=Zones.TypeZoneInfini()),
+            # S'il ne l'est pas, on l'invoque
+            EffetInvoque("Lapino protecteur", 1, cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="!Lapino invoqué"),
+            # S'il ne l'était pas on stimule le lanceur
+            EffetRetireEtat("Stimulé", zone=Zones.TypeZoneInfini(), cibles_exclues="Lanceur", cible_non_requise=True, cumulMax=1, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtatSelf(EtatBoostCaracFixe("Stimulé", 0, -1, "PA", 2), cible_non_requise=True, cumulMax=1, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il ne l'était pas on met des états de mort (pose glyphe, délai de 3 tours et retire état stimulant)
+            EffetEtat(EtatEffetSiMeurt("Stimulant", 0, -1, EffetRetireEtat("Stimulé", cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Fin de stimulation", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino glyphe", 0, -1, EffetGlyphe(Zones.TypeZoneCercle(2), lapinoProtecteurGlyphe, lapinoProtecteurGlyphe, sortieLapinoProtecteurGlyphe, 3, "Lapino protecteur Glyphe", (148, 21, 239)), "Lapino protecteur glyphe", "lanceur", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            EffetEtat(EtatEffetSiMeurt("Lapino délai", 0, -1, EffetEtat(EtatBoostSortCarac("Lapino mort delai", 0, -1, "Mot d'Affection", "nbTourEntreDeux", 3), cibles_possibles="Invocateur", zone=Zones.TypeZoneInfini()), "Lapino délai", "mouru", "mouru"), cible_non_requise=True, etat_lanceur_requis="!Lapino invoqué"),
+            # S'il était déjà là on le fait se téléporté sur la case ciblé et on enlève l'état temporaire placé sur le lanceur.
+            EffetEntiteLanceSort("Lapino protecteur", sortTpLapinoProtecteur, "CaseCible", etat_requis_lanceur="Lapino invoqué", consomme_etat=True, cible_non_requise=True),
+            ], [], 0, 1, 1, 1, 0, "cercle", True, description="""Invoque un Lapino protecteur qui Stimule le lanceur tant qu'il est en vie : il donne 2 PA.
+        Le Lapino donne des points de bouclier à ses alliés.
+        Si lancé alors que le Lapino est présent sur le terrain, téléporte le Lapino sur la cellule ciblée.
+        Quand le Lapino meurt, il pose un glyphe de fin de tour qui donne des points de boucliers à ses alliés,
+        et ne peut plus être invoqué pendant 3 tours.""", chaine=False)
+    ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Interdit", 3, 3, 1, 4, [motDAirAnimeEffetAvant, EffetDegats(11, 13, "Eau"), motDAirAnimeEffetApres], [motDAirAnimeEffetAvant, EffetDegats(15, 17, "Eau"), motDAirAnimeEffetApres], 5, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
         Les alliés à proximité de la cible (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True),
@@ -163,12 +184,19 @@ def getSorts(lvl):
 
         Sort.Sort("Mot de Frayeur", 74, 1, 1, 5, [EffetPousser(1)], [], 0, 3, 2, 0, 0, "ligne", True, description="""Pousse la cible.""", chaine=True)
     ]))
-    # sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-    #     Sort.Sort("Mot de Séduction", 120, 3, 1, 5, [TODO(Invoque : Fiole), zone=Zones.TypeZoneCercle(2)), EffetDegats(22, 26, "Terre", zone=Zones.TypeZoneCercle(2))], [TODO(Invoque : Fiole), zone=Zones.TypeZoneCercle(2)), EffetDegats(26, 30, "Terre", zone=Zones.TypeZoneCercle(2))], 15, 1, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et invoque une fiole.
-    # Lorsqu''elle est attaquée par un allié, elle subit 2 fois moins de dommages et rend 100% des points de vie perdus à son attaquant.
-    # Lorsqu'elle meurt, elle occasionne des dommages en zone.
-    # Elle meurt si elle entre dans l'état Stimulé.""", chaine=True)
-    # ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot de Séduction", 120, 3, 1, 5,
+                  [
+                      EffetInvoque("Fiole", 1, cibles_possibles="", cible_non_requise=True),
+                      EffetDegats(22, 26, "Terre", zone=Zones.TypeZoneCercleSansCentre(2))],
+                  [
+                      EffetInvoque("Fiole", 1, cibles_possibles="", cible_non_requise=True),
+                      EffetDegats(26, 30, "Terre", zone=Zones.TypeZoneCercleSansCentre(2))
+                  ], 15, 1, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et invoque une fiole.
+    Lorsqu''elle est attaquée par un allié, elle subit 2 fois moins de dommages et rend 100% des points de vie perdus à son attaquant.
+    Lorsqu'elle meurt, elle occasionne des dommages en zone.
+    Elle meurt si elle entre dans l'état Stimulé.""", chaine=True)
+    ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Stimulant", 9, 2, 1, 2, [EffetRetireEtat("Stimulé", zone=Zones.TypeZoneInfini(), cibles_exclues="Lanceur"), EffetEtat(EtatBoostCaracFixe("Stimulé", 0, 3, "PA", 2), cibles_exclues="Eniripsa")], [], 0, 1, 1, 1, 0, "cercle", True, description="""La cible devient Stimulée : elle gagne 2 PA pendant 3 tours.
     N'affecte pas les Eniripsas.""", chaine=True),
@@ -207,11 +235,11 @@ def getSorts(lvl):
     Applique un malus d'Érosion sur le lanceur.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot Sélectif", 22, 3, 0, 6, [EffetSoin(13, 15, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(9, 11, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], [EffetSoin(16, 16, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(13, 13, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False),
+        Sort.Sort("Mot Sélectif", 22, 3, 0, 6, [EffetSoin(13, 15, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(9, 11, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], [EffetSoin(16, 16, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(13, 13, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False),
 
-        Sort.Sort("Mot Sélectif", 65, 3, 0, 6, [EffetSoin(18, 20, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(12, 14, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], [EffetSoin(21, 21, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(16, 16, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False),
+        Sort.Sort("Mot Sélectif", 65, 3, 0, 6, [EffetSoin(18, 20, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(12, 14, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], [EffetSoin(21, 21, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(16, 16, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False),
 
-        Sort.Sort("Mot Sélectif", 108, 3, 0, 6, [EffetSoin(23, 25, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(15, 17, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], [EffetSoin(26, 26, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetDegats(19, 19, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis", cible_non_requise=True)], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False)
+        Sort.Sort("Mot Sélectif", 108, 3, 0, 6, [EffetSoin(23, 25, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(15, 17, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], [EffetSoin(26, 26, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCroix(3)), EffetDegats(19, 19, "Feu", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis")], 15, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés en zone.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Impartial", 140, 5, 1, 6, [EffetEtat(Etat("Mot Impartial", 0, 1), cibles_possibles="Ennemis"), EffetSoin(46, 50, etat_requis="!Mot Impartial"), EffetDegats(38, 42, "Feu", zone=Zones.TypeZoneCercleSansCentre(2), etat_requis="!Mot Impartial"), EffetDegats(38, 42, "Feu", etat_requis="Mot Impartial"), EffetSoin(46, 50, zone=Zones.TypeZoneCercleSansCentre(2), etat_requis="Mot Impartial", consomme_etat=True, cibles_possibles="Allies")], [EffetEtat(Etat("Mot Impartial", 0, 1), cibles_possibles="Ennemis"), EffetSoin(58, 62, etat_requis="!Mot Impartial"), EffetDegats(48, 52, "Feu", zone=Zones.TypeZoneCercleSansCentre(2), etat_requis="!Mot Impartial"), EffetDegats(48, 52, "Feu", etat_requis="Mot Impartial"), EffetSoin(58, 62, zone=Zones.TypeZoneCercleSansCentre(2), etat_requis="Mot Impartial", consomme_etat=True, cibles_possibles="Allies")], 5, 2, 1, 0, 1, "cercle", True, description="""Sur allié : soigne la cible et occasionne des dommages Feu autour de la cible.
@@ -252,13 +280,13 @@ def getSorts(lvl):
     Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [EffetRetPM(2, 1), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(8, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+        Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [EffetEtat(EtatBoostCaracFixe("Mot d'Immobilisation", 0, 1, "PM", -2)), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(8, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies|Lanceur", cibles_possibles_direct="Ennemis|Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
     À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True),
 
-        Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [EffetRetPM(2, 1), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(10, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+        Sort.Sort("Mot d'Immobilisation", 97, 2, 1, 4, [EffetEtat(EtatBoostCaracFixe("Mot d'Immobilisation", 0, 1, "PM", -2)), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(10, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies|Lanceur", cibles_possibles_direct="Ennemis|Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
     À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True),
 
-        Sort.Sort("Mot d'Immobilisation", 44, 2, 1, 4, [EffetRetPM(3, 1), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(12, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
+        Sort.Sort("Mot d'Immobilisation", 137, 2, 1, 4, [EffetEtat(EtatBoostCaracFixe("Mot d'Immobilisation", 0, 1, "PM", -3)), EffetEtat(EtatEffetFinTour("Mot d'Immobilisation", 0, 1, EffetSoinPerPVMax(12, zone=Zones.TypeZoneCercleSansCentre(2), cibles_possibles="Allies|Lanceur", cibles_possibles_direct="Ennemis|Allies"), "Mot d'immobilisation", "lanceur"))], [], 0, 1, 1, 1, 0, "cercle", True, description="""Enlève des PM pendant 1 tour.
     À la fin de son tour, la cible soigne les alliés à proximité (2 cases ou moins).""", chaine=True),
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -272,10 +300,12 @@ def getSorts(lvl):
 
         Sort.Sort("Mot Déroutant", 143, 4, 1, 6, [EffetSoin(42, 47, cibles_possibles="Allies"), EffetDegats(31, 36, "Feu", cibles_possibles="Ennemis")], [EffetSoin(48, 53, cibles_possibles="Allies"), EffetDegats(36, 41, "Feu", cibles_possibles="Ennemis")], 25, 2, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Feu aux ennemis et soigne les alliés.""", chaine=False)
     ]))
-    # sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-    #     Sort.Sort("Mot Furieux", 165, 4, 2, 5, [EffetDegats(14, 16, "Terre"), EffetEtat(EtatBoostCaracFixe("Mot Furieux", 0, 2, "pui", 6969), ) EffetDegats(42, 48, "Terre", zone=Zones.TypeZoneCroix(1))], [EffetDegats(16, 18, "Terre", zone=Zones.TypeZoneCroix(1)), TODO(Mot Furieux), zone=Zones.TypeZoneCroix(1)), EffetDegats(48, 54, "Terre", zone=Zones.TypeZoneCroix(1))], 15, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et augmente la Puissance de la cible alliée en fonction du nombre d'ennemis au contact.
-    # Les dommages subis par la cible sont augmentés et occasionnés autour d'elle.""", chaine=True)
-    # ]))
+    effetBoostPuissance = EffetEtat(EtatBoostCaracFixe("Mot Furieux", 0, 1, "pui", 100))
+    effetBoostPuissanceCC = EffetEtat(EtatBoostCaracFixe("Mot Furieux", 0, 1, "pui", 200))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot Furieux", 165, 4, 2, 5, [EffetDegats(14, 16, "Terre"), EffetEtat(EtatEffetSiNouvelEtat("Boost Mot Furieux", 0, 1, effetBoostPuissance, "Mot Furieux", "lanceur", "Mot Furieux Compteur")), EffetEtat(Etat("Mot Furieux Compteur", 0, 1), cibles_possibles="Ennemis", zone=Zones.TypeZoneCroix(1, 1)), EffetDegats(42, 48, "Terre", zone=Zones.TypeZoneCroix(1)), EffetRetireEtat("Boost Mot Furieux"), EffetRetireEtat("Mot Furieux Compteur", zone=Zones.TypeZoneCroix(1))], [EffetDegats(16, 18, "Terre"), EffetEtat(EtatEffetSiNouvelEtat("Boost Mot Furieux", 0, 1, effetBoostPuissanceCC, "Mot Furieux", "lanceur", "Mot Furieux Compteur")), EffetEtat(Etat("Mot Furieux Compteur", 0, 1), cibles_possibles="Ennemis", zone=Zones.TypeZoneCroix(1, 1)), EffetDegats(48, 54, "Terre", zone=Zones.TypeZoneCroix(1)), EffetRetireEtat("Boost Mot Furieux"), EffetRetireEtat("Mot Furieux Compteur", zone=Zones.TypeZoneCroix(1))], 15, 2, 1, 0, 0, "cercle", True, description="""Occasionne des dommages Terre et augmente la Puissance de la cible alliée en fonction du nombre d'ennemis au contact.
+    Les dommages subis par la cible sont augmentés et occasionnés autour d'elle.""", chaine=True)
+    ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Tournoyant", 56, 4, 1, 4, [motDAirTournoyantEffetAvant, EffetDegats(17, 21, "Air", zone=Zones.TypeZoneCarre(1), cible_non_requise=True), motDAirTournoyantEffetApres], [motDAirTournoyantEffetAvant, EffetDegats(19, 23, "Air", zone=Zones.TypeZoneCarre(1), cible_non_requise=True), motDAirTournoyantEffetApres], 25, 1, 1, 1, 0, "cercle", True, description="""Occasionne des dommages Air en zone.
     Les alliés à proximité du lanceur (2 cases ou moins) sont soignés à hauteur de 100% des dommages occasionnés.""", chaine=False),
@@ -304,10 +334,10 @@ def getSorts(lvl):
         Sort.Sort("Mot de Silence", 69, 4, 0, 1, [EffetRetPA(2, cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetRetPA(2, cibles_possibles="Allies", etat_requis="!Stimulé", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_non_requise=True), EffetRetireEtat("Invisible", zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
     Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=False),
 
-        Sort.Sort("Mot de Silence", 122, 4, 0, 1, [EffetRetPA(3, cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetRetPA(3, cibles_possibles="Allies", etat_requis="!Stimulé", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_non_requise=True), EffetRetireEtat("Invisible", zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
+        Sort.Sort("Mot de Silence", 122, 4, 0, 2, [EffetRetPA(3, cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetRetPA(3, cibles_possibles="Allies", etat_requis="!Stimulé", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_non_requise=True), EffetRetireEtat("Invisible", zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
     Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=False),
 
-        Sort.Sort("Mot de Silence", 162, 4, 0, 1, [EffetRetPA(4, cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetRetPA(4, cibles_possibles="Allies", etat_requis="!Stimulé", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_non_requise=True), EffetRetireEtat("Invisible", zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
+        Sort.Sort("Mot de Silence", 162, 4, 0, 3, [EffetRetPA(4, cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetRetPA(4, cibles_possibles="Allies", etat_requis="!Stimulé", cible_non_requise=True, zone=Zones.TypeZoneCercle(3)), EffetDevoilePiege(zone=Zones.TypeZoneCercle(3), cible_non_requise=True), EffetRetireEtat("Invisible", zone=Zones.TypeZoneCercle(3), cible_non_requise=True)], [], 0, 1, 1, 3, 0, "cercle", True, description="""Retire des PA en zone et dévoile les entités invisibles.
     Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -329,13 +359,13 @@ def getSorts(lvl):
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot d'Envol", 84, 4, 1, 3, [
             # Marque le lapino
-            EffetEtat(Etat("Etat Lapino", 0, 1), cibles_possibles="Lapino"),
+            EffetEtat(Etat("Etat Lapino", 0, 1), cibles_possibles="Lapino|Lapino protecteur"),
             # Si le lapino est cible
             EffetEchangePlace(cibles_possibles="Allies", etat_requis="Etat Lapino"),
             # Si un allie non invoc est ciblé
             EffetEchangePlace(cibles_possibles="Allies", cibles_exclues="Invoc", etat_requis="!Etat Lapino"),
             # Tue le lapino s'il a été ciblé
-            EffetTue(zone=Zones.TypeZoneInfini(), etat_requis="Etat Lapino"),
+            EffetTue(zone=Zones.TypeZoneInfini(), etat_requis_cibles="Etat Lapino"),
             # Etat insoignable au lanceur si l'allié n'est pas stimulé.
             EffetEtatSelf(EtatModSoinPer("Insoignable", 0, 2, 0), etat_requis="!Stimulé"),
             # Retrait stimule
@@ -346,7 +376,7 @@ def getSorts(lvl):
 
         Sort.Sort("Mot d'Envol", 84, 4, 1, 5, [
             # Marque le lapino
-            EffetEtat(Etat("Etat Lapino", 0, 1), cibles_possibles="Lapino"),
+            EffetEtat(Etat("Etat Lapino", 0, 1), cibles_possibles="Lapino|Lapino protecteur"),
             # Si le lapino est cible
             EffetEchangePlace(cibles_possibles="Allies", cibles_exclues="Invoc", etat_requis="Etat Lapino"),
             # Si un allie non invoc est ciblé
@@ -379,9 +409,43 @@ def getSorts(lvl):
     Le Lapino peut être ciblé mais il est tué.""", chaine=False),
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Lapino"), EffetAttire(2, cibles_possibles="Lapino")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
+        Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Lapino|Lapino protecteur"), EffetAttire(2, cibles_possibles="Lapino|Lapino protecteur")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
     Nécessite l'état Stimulé sur l'allié.
     Peut être lancé sur le Lapino sans qu'il ne soit dans l'état Stimulé.""", chaine=False)
     ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot Revitalisant", 92, 3, 0, 0, [EffetSoinPerPVMax(20, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+    Tue le Lapino s'il était invoqué.
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
 
+        Sort.Sort("Mot Revitalisant", 141, 3, 0, 0, [EffetSoinPerPVMax(27, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+    Tue le Lapino s'il était invoqué.
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
+
+        Sort.Sort("Mot Revitalisant", 187, 3, 0, 0, [EffetSoinPerPVMax(33, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+    Tue le Lapino s'il était invoqué.
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot Galvanisant", 195, 5, 0, 0, [EffetEtat(EtatBoostCaracFixe("Stimulé", 0, 3, "PA", 2), cibles_exclues="Lanceur", zone=Zones.TypeZoneInfini())], [], 0, 1, 1, 5, 0, "cercle", False, description="""Applique les effets de Mot Stimulant à tous les alliés pendant 3 tours.
+    N'affecte pas le lanceur.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot de Reconstitution", 100, 4, 0, 3, [EffetSoinPerPVMax(100), EffetEtat(EtatModSoinPer("Insoignable", 0, 3, 0))], [], 0, 1, 1, 8, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
+
+        Sort.Sort("Mot de Reconstitution", 149, 4, 0, 5, [EffetSoinPerPVMax(100), EffetEtat(EtatModSoinPer("Insoignable", 0, 3, 0))], [], 0, 1, 1, 7, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True),
+
+        Sort.Sort("Mot de Reconstitution", 197, 4, 0, 7, [EffetSoinPerPVMax(100), EffetEtat(EtatModSoinPer("Insoignable", 0, 3, 0))], [], 0, 1, 1, 6, 1, "ligne", True, description="""Soigne totalement la cible alliée mais la rend ensuite Insoignable pour 3 tours.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Mot de Solidarité", 200, 1, 0, 6, [
+            #Sur allié non stimulé : il transfère 10% de ses PV aux autres alliés stimulés.
+            EffetEtat(EtatEffetSiSubit("Mot solidaire", 0, 1, EffetSoinSelonSubit(100, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies", cibles_exclues="Lanceur", etat_requis_cibles="Stimulé"), "Mot de Solidarité", "cible", "cible"), cibles_possibles="!Allies", etat_requis="Stimulé"),
+            EffetDegatsPerPv(10, etat_requis="Mot solidaire", consomme_etat=True),
+            # Sur allié stimulé : tous les autres alliés stimulés lui transfèrent 10% de leurs PV.
+            EffetEtat(EtatEffetSiSubit("Mot solidaire", 0, 1, EffetSoinSelonSubit(100), "Mot solidaire", "cible", "attaquant"), cibles_possibles="Allies", etat_requis="Stimulé", etat_requis_cibles="Stimulé"),
+            EffetDegatsPerPv(10, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies", etat_requis_cibles="Mot solidaire", consomme_etat=True)
+        ], [], 0, 2, 1, 0, 0, "cercle", False, description="""Sur allié stimulé : tous les autres alliés stimulés lui transfèrent 10% de leurs PV.
+    Sur allié non stimulé : il transfère 10% de ses PV aux autres alliés stimulés.""", chaine=False)
+    ]))
     return sorts

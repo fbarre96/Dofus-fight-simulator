@@ -255,4 +255,9 @@ class Etat():
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
         return
+    def triggerAvantApplicationEtat(self, niveau, nouvelEtat, joueurLanceur, joueurCible):
+        # pylint: disable=unused-argument
+        """@summary: Un trigger appelé pour le joueur qui obtient un nouvel état.
+                     Active un effet sur le lanceur ou la cible"""
+        return
         

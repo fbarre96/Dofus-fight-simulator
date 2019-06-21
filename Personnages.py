@@ -640,6 +640,10 @@ class Personnage(object):
             if count >= cumulMax:
                 print("DEBUG : Cumul max atteint pour l'état "+etat.nom)
                 return False
+        for etatDejaApplique in self.etats:
+            if etatDejaApplique.actif():
+                etatDejaApplique.triggerAvantApplicationEtat(niveau, etat, lanceur, self)
+
         print(self.nomPerso+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
         etat.lanceur = lanceur
         self.etats.append(etat)
@@ -922,4 +926,14 @@ invocs_liste = {
                          {"Esquive PA":75, "Esquive PM":75}, {},
                          {"Neutre%":20, "Terre%":20, "Feu%":5, "Eau%":-5, "Air%":30},
                          "mot_d_amitie.jpg"),
+    "Lapino protecteur": Personnage("Lapino protecteur", "Lapino protecteur",
+                                    0, 1, {"Vitalite": 1200, "PA":5, "PM":4},
+                                    {"Esquive PA":75, "Esquive PM":75}, {},
+                                    {"Neutre%":10, "Terre%":15, "Feu%":0, "Eau%":-10, "Air%":25},
+                                    "mot_d_affection.jpg"),
+    "Fiole": Personnage("Fiole", "Fiole",
+                        0, 1, {"Vitalite": 600, "PA":6, "PM":0},
+                        {"Esquive PA":90, "Esquive PM":90}, {},
+                        {"Neutre%":0, "Terre%":0, "Feu%":0, "Eau%":0, "Air%":0},
+                        "mot_de_seduction.jpg"),
 }

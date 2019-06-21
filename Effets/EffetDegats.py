@@ -293,4 +293,48 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
             ratioPM = max(ratioPM, 0)
             self.total = int(ratioPM * self.total)
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
+
+class EffetDegatsPerPv(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Hérite de EffetsDegats.
+    Cet effet inflige des dégâts à une cible égal à un pourcentage de sa vie restante."""
+
+    def __init__(self, pourcentage, **kwargs):
+        """@summary: Initialise un effet de dégat fixe.
+        @pourcentage: Le porucentage de la vie qui sera enlevé à la cible
+        @type: int
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.pourcentage = pourcentage
+        self.kwargs = kwargs
+        self.total = 0
+        super().__init__(**kwargs)
+
+    def __deepcopy__(self, memo):
+        return EffetDegatsPerPv(self.pourcentage, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+
+        # Utilisation du parent EffetDegats
+        if joueurCaseEffet is not None:
+            self.total = int((self.pourcentage / 100.0) * joueurCaseEffet)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        if joueurCaseEffet is not None:
+            joueurCaseEffet.subit(joueurLanceur, niveau,
+                                  self.total, "", not self.isPrevisu())
+            if not self.isPrevisu():
+                print(joueurLanceur.nomPerso+" perd " +
+                      str(int(self.total)) + "PV")
             

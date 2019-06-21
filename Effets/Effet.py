@@ -35,6 +35,8 @@ class Effet(object):
         self.ciblesPossibles = kwargs.get(
             'cibles_possibles', "Allies|Ennemis|Lanceur").split("|")
         self.ciblesExclues = kwargs.get('cibles_exclues', "").split("|")
+        self.ciblesPossiblesDirect = kwargs.get('cibles_possibles_direct',
+                                                "|".join(self.ciblesPossibles)).split("|")
         self.cibleNonRequise = kwargs.get('cible_non_requise', False)
         self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
         self.kwargs = kwargs
@@ -159,6 +161,33 @@ class Effet(object):
             joueurCibleUid = joueurCible.uid
             joueurCibleClasse = joueurCible.classe
             joueurCibleInvocateur = joueurCible.invocateur
+        if joueurCibleDirect is not None:
+            if not((joueurCibleDirect.team == joueurLanceur.team and \
+                joueurCibleDirect.uid != joueurLanceur.uid and \
+                "Allies" in self.ciblesPossiblesDirect) \
+                    or \
+                (joueurCibleDirect.team != joueurLanceur.team and \
+                joueurCibleDirect.uid == joueurLanceur.uid and \
+                "Ennemis" in self.ciblesPossiblesDirect) \
+                    or \
+                (joueurCibleDirect.team == joueurLanceur.team and \
+                joueurCibleDirect.uid == joueurLanceur.uid and \
+                "Lanceur" in self.ciblesPossiblesDirect) \
+                    or \
+                (joueurCibleDirect.classe in self.ciblesPossiblesDirect) \
+                    or \
+                (joueurCibleDirect.invocateur is not None and \
+                "Invoc" in self.ciblesPossiblesDirect) \
+                    or \
+                (joueurCibleDirect.invocateur is not None and \
+                joueurCibleDirect.invocateur.uid == joueurCibleDirect.uid and \
+                "Invocateur" in self.ciblesPossiblesDirect)):
+
+                msg = "DEBUG : Invalide : Cible Direct non possible "+\
+                        str(joueurCibleDirect.classe)+"/"+str(self.ciblesPossiblesDirect)
+                return msg, False
+
+
         if (joueurCibleTeam == joueurLanceur.team and joueurCibleUid != joueurLanceur.uid
                 and "Allies" in self.ciblesPossibles) \
             or (joueurCibleTeam == joueurLanceur.team and joueurCibleUid == joueurLanceur.uid

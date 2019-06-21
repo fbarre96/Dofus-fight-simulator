@@ -46,7 +46,7 @@ class EtatEffetFinTour(Etat):
                      Active un effet à la fin du tour du personnage ciblant la position du
                      personnage qui finit son tour,
                      le lanceur peut être lui-même ou le lanceur de l'effet.
-        @personnage: le joueur dont le tour débute
+        @personnage: le joueur dont le tour finit
         @type: Personnage
         @niveau: La grille de jeu
         @type: Niveau"""
@@ -117,7 +117,7 @@ class EtatEffetSiSubit(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
 
     def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
-                 cible, typeDeg="", lanceur=None, desc=""):
+                 cible, typeDeg="", provenance="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -146,13 +146,15 @@ class EtatEffetSiSubit(Etat):
         self.quiLancera = quiLancera
         self.cible = cible
         self.typeDeg = typeDeg
+        self.provenance = provenance
         super().__init__(nom, debDans, duree, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiSubit(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
-                                self.quiLancera, self.cible, self.typeDeg, self.lanceur, self.desc)
+                                self.quiLancera, self.cible, self.typeDeg,
+                                self.provenance, self.lanceur, self.desc)
 
     def triggerAvantSubirDegats(self, cibleAttaque, niveau, totalPerdu, typeDegats, attaquant):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué
@@ -169,7 +171,11 @@ class EtatEffetSiSubit(Etat):
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
         if totalPerdu > 0 and (self.typeDeg == typeDegats or self.typeDeg == ""):
-
+            if self.provenance != "":
+                if self.provenance == "Allies" and cibleAttaque.team != attaquant.team:
+                    return False
+                elif self.provenance == "Ennemis" and cibleAttaque.team == attaquant.team:
+                    return False
             self.effet.setDegatsSubits(totalPerdu, typeDegats)
             joueurCible = cibleAttaque
             if self.cible == "attaquant":
@@ -451,3 +457,57 @@ class EtatEffetSiTFGenere(Etat):
             self.effet.setNomSortTF(nomSort)
             niveau.lancerEffet(self.effet, joueurLanceur.posX, joueurLanceur.posY,
                                self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)
+
+class EtatEffetSiNouvelEtat(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
+
+    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
+                 nomEtatRequis="", lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: in
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet
+        @type: string ("lanceur" ou "cible")
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        self.nomSort = nomSort
+        self.quiLancera = quiLancera
+        self.nomEtatRequis = nomEtatRequis
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiNouvelEtat(self.nom, self.debuteDans, self.duree, self.effet,
+                                     self.nomSort, self.quiLancera, self.nomEtatRequis,
+                                     self.lanceur, self.desc)
+
+    def triggerAvantApplicationEtat(self, niveau, nouvelEtat, joueurLanceur, joueurCible):
+        """@summary: Un trigger appelé pour le joueur qui obtient un nouvel état.
+                     Active un effet sur le lanceur ou la cible"""
+        if self.nomEtatRequis != "" and self.nomEtatRequis != nouvelEtat.nom:
+            return
+        if self.quiLancera == "placeur":
+            joueurQuiLance = joueurLanceur
+        elif self.quiLancera == "cible":
+            joueurQuiLance = joueurCible
+        elif self.quiLancera == "lanceur":
+            joueurQuiLance = self.lanceur
+        cible = joueurCible
+        niveau.lancerEffet(self.effet, cible.posX, cible.posY,
+                           self.nomSort, cible.posX, cible.posY, joueurQuiLance)
