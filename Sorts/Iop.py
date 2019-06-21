@@ -79,7 +79,7 @@ def getSorts(lvl):
             3)], 5, 3, 2, 0, 0, "ligne", True, description="""Occasionne des dommages Neutre sur les ennemis et repousse la cible.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Conquête", 105, 3, 1, 6, [EffetInvoque("Stratege Iop", True, cible_possibles="", cible_non_requise=True), EffetEtat(EtatRedistribuerPer("Strategie iop", 0, -1, 50, "Ennemis|Allies", 2))], [
+        Sort.Sort("Conquête", 105, 3, 1, 6, [EffetInvoque("Stratege Iop", True, cibles_possibles="", cible_non_requise=True), EffetEtat(EtatRedistribuerPer("Strategie iop", 0, -1, 50, "Ennemis|Allies", 2))], [
         ], 0, 1, 1, 3, 0, "cercle", True, description="""Invoque un épouvantail qui redistribue à proximité (2 cases) 50% des dommages de sort qu'il subit.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
@@ -135,7 +135,7 @@ def getSorts(lvl):
                   description="""Lorsque la cible ennemie reçoit des dommages de sorts, elle occasionne 50% de ces dommages aux ennemis au contact.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Rassemblement", 130, 2, 1, 6, [EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"), EffetEtat(EtatLanceSortSiSubit("Rassemblement", 0, 1, activationRassemblement, "Porteur"), cible_possibles="Ennemis")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche les ennemis de la cible.
+        Sort.Sort("Rassemblement", 130, 2, 1, 6, [EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cibles_possibles="Ennemis"), EffetEtat(EtatLanceSortSiSubit("Rassemblement", 0, 1, activationRassemblement, "Porteur"), cibles_possibles="Ennemis")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche les ennemis de la cible.
     Si la cible est un ennemi, elle attire ensuite ses alliés quand elle est attaquée pendant 1 tour.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [

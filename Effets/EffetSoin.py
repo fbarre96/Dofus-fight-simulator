@@ -107,7 +107,7 @@ class EffetSoinPerPVMax(EffetSoin):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             self.valSoin = int((self.pourcentage/100.0) * joueurCaseEffet.vieMax)
-            self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
+            # self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
