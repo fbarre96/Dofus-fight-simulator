@@ -146,8 +146,8 @@ class EffetSoinSelonSubit(EffetSoin):
         if joueurCaseEffet is not None:
             print("Effet soin selon subit : "+str(self.getDegatsSubits()))
             subitDegats, _ = self.getDegatsSubits()
-            self.valSoinMin = self.valSoinMax = int((self.pourcentage/100.0) * subitDegats)
-            self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
+            self.valSoin = int((self.pourcentage/100.0) * subitDegats)
+            # self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)

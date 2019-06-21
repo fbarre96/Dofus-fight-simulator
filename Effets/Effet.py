@@ -167,7 +167,7 @@ class Effet(object):
                 "Allies" in self.ciblesPossiblesDirect) \
                     or \
                 (joueurCibleDirect.team != joueurLanceur.team and \
-                joueurCibleDirect.uid == joueurLanceur.uid and \
+                joueurCibleDirect.uid != joueurLanceur.uid and \
                 "Ennemis" in self.ciblesPossiblesDirect) \
                     or \
                 (joueurCibleDirect.team == joueurLanceur.team and \

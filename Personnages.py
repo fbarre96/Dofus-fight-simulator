@@ -276,6 +276,16 @@ class Personnage(object):
             sortsDebutCombat += Sorts.Lapino.getSortsDebutCombat(lvl)
             sorts += Sorts.Lapino.getSorts(lvl)
             return sorts, sortsDebutCombat
+        elif classe == "Lapino protecteur":
+            import Sorts.Lapino_protecteur
+            sortsDebutCombat += Sorts.Lapino_protecteur.getSortsDebutCombat(lvl)
+            sorts += Sorts.Lapino_protecteur.getSorts(lvl)
+            return sorts, sortsDebutCombat
+        elif classe == "Fiole":
+            import Sorts.Fiole
+            sortsDebutCombat += Sorts.Fiole.getSortsDebutCombat(lvl)
+            sorts += Sorts.Fiole.getSorts(lvl)
+            return sorts, sortsDebutCombat
         elif classe == "Synchro":
             import Sorts.Synchro
             sortsDebutCombat += Sorts.Synchro.getSortsDebutCombat(lvl)
@@ -320,6 +330,7 @@ class Personnage(object):
         """@summary: lance tous les sorts dans sortsDebutCombat
         """
         for sort in self.sortsDebutCombat:
+            print("Sort debut cbt : "+str(sort.nom))
             sort.lance(self.posX, self.posY, niveau, self.posX, self.posY)
 
     def ajoutHistoriqueDeplacement(self, posX=None, posY=None):
