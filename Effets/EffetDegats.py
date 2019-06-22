@@ -327,7 +327,7 @@ class EffetDegatsPerPv(Effet):
 
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
-            self.total = int((self.pourcentage / 100.0) * joueurCaseEffet)
+            self.total = int((self.pourcentage / 100.0) * joueurCaseEffet.vie)
             niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):

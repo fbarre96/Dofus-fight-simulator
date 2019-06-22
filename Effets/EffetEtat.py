@@ -32,11 +32,13 @@ class EffetEtat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
-            etatCopier = deepcopy(self.etat)
-            return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur,
-                                                 self.kwargs.get("cumulMax", -1), niveau)
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
 
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
+        etatCopier = deepcopy(self.etat)
+        return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur,
+                                             self.kwargs.get("cumulMax", -1), niveau)
 
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

@@ -440,8 +440,8 @@ def getSorts(lvl):
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot de Solidarité", 200, 1, 0, 6, [
             #Sur allié non stimulé : il transfère 10% de ses PV aux autres alliés stimulés.
-            EffetEtat(EtatEffetSiSubit("Mot solidaire", 0, 1, EffetSoinSelonSubit(100, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies", cibles_exclues="Lanceur", etat_requis_cibles="Stimulé"), "Mot de Solidarité", "cible", "cible"), cibles_possibles="!Allies", etat_requis="Stimulé"),
-            EffetDegatsPerPv(10, etat_requis="Mot solidaire", consomme_etat=True),
+            EffetEtat(EtatEffetSiSubit("Mot solidaire", 0, 1, EffetSoinSelonSubit(100, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies|Lanceur", cibles_possibles_direct="Lanceur|Allies", etat_requis_cibles="Stimulé"), "Mot de Solidarité", "cible", "cible"), cibles_possibles="Allies", etat_requis="!Stimulé"),
+            EffetDegatsPerPv(10, etat_requis="!Stimulé", cibles_possibles="Allies", consomme_etat=True),
             # Sur allié stimulé : tous les autres alliés stimulés lui transfèrent 10% de leurs PV.
             EffetEtat(EtatEffetSiSubit("Mot solidaire", 0, 1, EffetSoinSelonSubit(100), "Mot solidaire", "cible", "attaquant"), cibles_possibles="Allies", etat_requis="Stimulé", etat_requis_cibles="Stimulé"),
             EffetDegatsPerPv(10, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies", etat_requis_cibles="Mot solidaire", consomme_etat=True)
