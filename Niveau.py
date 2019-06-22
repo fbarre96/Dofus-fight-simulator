@@ -454,7 +454,7 @@ class Niveau:
                 del self.joueurs[i]
                 if self.tourIndex > i:
                     self.tourIndex -= 1
-                else:
+                elif self.tourIndex == i:
                     doitPasserTour = True
                 i -= 1
                 break

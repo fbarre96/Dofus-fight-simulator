@@ -351,10 +351,10 @@ def getSorts(lvl):
 
         Sort.Sort("Mot de Régénération", 172, 2, 0, 6, [EffetEtat(EtatEffetDebutTour("Mot de Régénération", 0, 1, EffetSoinPerPVMax(10), "Mot de Régénération", "lanceur")), EffetEtat(EtatEffetDebutTour("Mot de Régénération", 1, 1, EffetSoinPerPVMax(10), "Mot de Régénération", "lanceur"))], [], 0, 1, 1, 1, 0, "ligne", True, description="""La cible est soignée à retardement : au début du prochain tour du lanceur, et au tour suivant.""", chaine=True)
     ]))
-    activationMarqueDeRegeneration = Sort.Sort("Marque de Régénération", 0, 0, 0, 1, [EffetEtat(EtatEffetFinTour("Marque de Régénération", 0, 1, EffetSoin(43, 47), "Marque de Régénération", "lanceur"))], [], 0, 99, 99, 0, 0, "cercle", False)
-    sortieMarqueDeRegeneration = Sort.Sort("Sortie Marque de Régénération", 0, 0, 0, 2, [EffetRetireEtat("Marque de Régénération")], [], 0, 99, 99, 0, 0, "cercle", False)
+    activationMarqueDeRegeneration = Sort.Sort("Marque de Régénération", 0, 0, 0, 0, [EffetEtat(EtatEffetFinTour("Marque de Régénération", 0, 1, EffetSoinPerPVMax(15), "Marque de Régénération", "lanceur"))], [], 0, 99, 99, 0, 0, "cercle", False)
+    sortieMarqueDeRegeneration = Sort.Sort("Sortie Marque de Régénération", 0, 0, 0, 1, [EffetRetireEtat("Marque de Régénération")], [], 0, 99, 99, 0, 0, "cercle", False)
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Marque de Régénération", 185, 3, 1, 6, [EffetGlyphe(Zones.TypeZoneCercle(1), activationMarqueDeRegeneration, activationMarqueDeRegeneration, sortieMarqueDeRegeneration, 2, "Marque de Régénération", (206, 22, 123))], [], 0, 1, 99, 0, 1, "cercle", True, description="""Pose un glyphe de fin de tour qui soigne.""", chaine=True)
+        Sort.Sort("Marque de Régénération", 185, 3, 1, 6, [EffetGlyphe(Zones.TypeZoneCercle(0), activationMarqueDeRegeneration, activationMarqueDeRegeneration, sortieMarqueDeRegeneration, 1, "Marque de Régénération", (206, 22, 123))], [], 0, 1, 99, 0, 1, "cercle", True, description="""Pose un glyphe de fin de tour qui soigne.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot d'Envol", 84, 4, 1, 3, [
@@ -409,22 +409,22 @@ def getSorts(lvl):
     Le Lapino peut être ciblé mais il est tué.""", chaine=False),
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, source="cible", cible="lanceur", cibles_possibles="Lapino|Lapino protecteur"), EffetAttire(2, cibles_possibles="Lapino|Lapino protecteur")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
+        Sort.Sort("Mot de Ralliement", 190, 2, 1, 5, [EffetAttire(2, source="JoueurCaseEffet", cible="Lanceur", cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, cibles_possibles="Allies", etat_requis="Stimulé"), EffetAttire(2, source="JoueurCaseEffet", cible="Lanceur", cibles_possibles="Lapino|Lapino protecteur"), EffetAttire(2, cibles_possibles="Lapino|Lapino protecteur")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Rapproche le lanceur d'un allié puis l'attire.
     Nécessite l'état Stimulé sur l'allié.
     Peut être lancé sur le Lapino sans qu'il ne soit dans l'état Stimulé.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot Revitalisant", 92, 3, 0, 0, [EffetSoinPerPVMax(20, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+        Sort.Sort("Mot Revitalisant", 92, 3, 0, 0, [EffetSoinPerPVMax(20, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", cibles_possibles_direct="Lanceur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
     Tue le Lapino s'il était invoqué.
-    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=False),
 
-        Sort.Sort("Mot Revitalisant", 141, 3, 0, 0, [EffetSoinPerPVMax(27, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+        Sort.Sort("Mot Revitalisant", 141, 3, 0, 0, [EffetSoinPerPVMax(27, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", cibles_possibles_direct="Lanceur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
     Tue le Lapino s'il était invoqué.
-    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True),
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=False),
 
-        Sort.Sort("Mot Revitalisant", 187, 3, 0, 0, [EffetSoinPerPVMax(33, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
+        Sort.Sort("Mot Revitalisant", 187, 3, 0, 0, [EffetSoinPerPVMax(33, zone=Zones.TypeZoneInfini(), etat_requis_cibles="Stimulé", consomme_etat=True), EffetTue(cibles_possibles="Lapino|Lapino protecteur", cibles_possibles_direct="Lanceur", zone=Zones.TypeZoneInfini()), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot Stimulant", "nbTourEntreDeux", 1)), EffetEtatSelf(EtatBoostSortCarac("Mot Revitalisant", 0, 1, "Mot d'Abnégation", "nbTourEntreDeux", 1))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les alliés Stimulés sont soignés, mais l'état Stimulé est retiré.
     Tue le Lapino s'il était invoqué.
-    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=True)
+    Passe l'intervalle de relance des sorts Mot Stimulant et Mot d'Abnégation à 1 tour.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Mot Galvanisant", 195, 5, 0, 0, [EffetEtat(EtatBoostCaracFixe("Stimulé", 0, 3, "PA", 2), cibles_exclues="Lanceur", zone=Zones.TypeZoneInfini())], [], 0, 1, 1, 5, 0, "cercle", False, description="""Applique les effets de Mot Stimulant à tous les alliés pendant 3 tours.
