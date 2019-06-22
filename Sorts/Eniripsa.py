@@ -341,7 +341,7 @@ def getSorts(lvl):
     Les alliés Stimulés ainsi que le lanceur ne sont pas affectés.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Mot Sacrificiel", 180, 2, 1, 3, [EffetEtat(EtatModSoinPer("Mot Sacrificiel", 0, 2, 125), cibles_possibles="Allies"), EffetEtat(EtatEffetSiSubit("Mot Sacrificiel", 0, 2, EffetSoinPerPVMax(20, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies", etat_requis="Stimulé"), "Mot Sacrificiel", "lanceur", "cible"), cibles_possibles="Allies")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Les soins reçus par l'allié ciblé sont augmentés pendant 2 tours.
+        Sort.Sort("Mot Sacrificiel", 180, 2, 1, 3, [EffetEtat(EtatModSoinPer("Mot Sacrificiel", 0, 2, 125), cibles_possibles="Allies"), EffetEtat(EtatEffetSiSubit("Mot Sacrificiel", 0, 2, EffetSoinSelonSubit(20, zone=Zones.TypeZoneInfini(), cibles_possibles="Allies|Lanceur", etat_requis_cibles="Stimulé"), "Mot Sacrificiel", "lanceur", "cible"), cibles_possibles="Allies")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Les soins reçus par l'allié ciblé sont augmentés pendant 2 tours.
     Les dommages reçus par l'allié ciblé soignent les alliés dans l'état Stimulé.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [

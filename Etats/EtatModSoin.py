@@ -48,5 +48,4 @@ class EtatModSoinPer(Etat):
             return total
         if self.provenance == "Ennemis" and cible.team == attaquant.team:
             return total
-
         return int((total * self.pourcentage)/100)

@@ -516,7 +516,7 @@ class Personnage(object):
 
         return pbRestants
 
-    def soigne(self, soins, shouldprint=True):
+    def soigne(self, soins, soigneur, shouldprint=True):
         """@summary: subit des dégâts de combats.
         Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
         @soigneur: Le joueur soignant
@@ -526,6 +526,10 @@ class Personnage(object):
         @soins: Le nombre de points de soins calculés
         @type: int
         """
+        for etat in self.etats:
+            if etat.actif():
+                soins = etat.triggerApresCalculSoins(soins, self, soigneur)
+        soins = min(soins, self.vieMax-self.vie)
         self.vie += soins
         if shouldprint:
             print("+"+str(soins)+" PV")
