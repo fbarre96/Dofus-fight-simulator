@@ -165,7 +165,8 @@ def main():
                     classesDisponibles = \
                         Combobox(frameCaracs.subFrame,
                                  textvariable=StringVar(),
-                                 values=["Cra", "Xelor", "Iop", "Sram", "Poutch", "Eniripsa"],
+                                 values=["Cra", "Xelor", "Iop",
+                                         "Sram", "Poutch", "Eniripsa", "Pandawa"],
                                  state='readonly')
                     inputs[inputSelector] = classesDisponibles
                     inputs[inputSelector].set(inputValue)

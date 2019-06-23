@@ -131,7 +131,9 @@ class Personnage(object):
         self.invocations = []
         self.overlayTexte = ""
         self.team = int(team)
-
+        self.porteUid = None
+        self.porteurUid = None
+        self.checkLdv = True
         self.msgsPrevisu = []
 
         if not icone.startswith("images/"):
@@ -185,6 +187,9 @@ class Personnage(object):
         toReturn.posDebTour = self.posDebTour
         toReturn.posDebCombat = self.posDebCombat
         toReturn.invocateur = self.invocateur
+        toReturn.porteUid = self.porteUid
+        toReturn.porteurUid = self.porteurUid
+        toReturn.checkLdv = self.checkLdv
         toReturn.invocations = deepcopy(self.invocations)
         toReturn.invocationLimite = self.invocationLimite
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
@@ -311,6 +316,10 @@ class Personnage(object):
             import Sorts.Eniripsa
             sortsDebutCombat += Sorts.Eniripsa.getSortsDebutCombat(lvl)
             sorts += Sorts.Eniripsa.getSorts(lvl)
+        elif classe == "Pandawa":
+            import Sorts.Pandawa
+            sortsDebutCombat += Sorts.Pandawa.getSortsDebutCombat(lvl)
+            sorts += Sorts.Pandawa.getSorts(lvl)
         sorts.append(Sort.Sort("Cawotte", 0, 4, 1, 6,
                                [EffetInvoque("Cawotte", False, cibles_possibles="",
                                              cible_non_requise=True)],
@@ -355,13 +364,23 @@ class Personnage(object):
             return False, False
         elif niveau.structure[nouvY][nouvX].type != "v":
             return False, False
+        joueurSurDestination = niveau.getJoueurSur(nouvX, nouvY)
+        if joueurSurDestination is not None:
+            return False, False
         if ajouteHistorique:
             self.ajoutHistoriqueDeplacement()
-        niveau.structure[self.posY][self.posX].type = "v"
-        niveau.structure[nouvY][nouvX].type = "j"
         self.posX = nouvX
         self.posY = nouvY
-
+        if self.porteUid is not None:
+            jPorte = niveau.getJoueurAvecUid(self.porteUid)
+            jPorte.posX = nouvX
+            jPorte.posY = nouvY
+        if self.porteurUid is not None:
+            jPorteur = niveau.getJoueurAvecUid(self.porteurUid)
+            jPorteur.retirerEtats(niveau, ["Karcham", "Chamrak"])
+            self.retirerEtats(niveau, ["Karcham", "Chamrak"])
+            jPorteur.porteUid = None
+            self.porteurUid = None
         nbPieges = len(niveau.pieges)
         i = 0
         piegeDeclenche = False
@@ -415,7 +434,7 @@ class Personnage(object):
         @x: la position d'arrivée en y.
         @type: int"""
         # test si la case d'arrivé est hors-map (compte comme un obstacle)
-        if niveau.structure[joueurCible.posY][joueurCible.posX].type != "j":
+        if niveau.getJoueurSur(joueurCible.posX, joueurCible.posY) is None:
             print("DEBUG : THIS SHOULD NOT BE POSSIBLE")
             return False, False
         if ajouteHistorique:
@@ -488,7 +507,7 @@ class Personnage(object):
                 return True
         return False
 
-    def retirerEtats(self, nomsEtatCherche):
+    def retirerEtats(self, niveau, nomsEtatCherche):
         """@summary: retire les états donné en paramètres
         @nomsEtatCherche: Les noms des états cherchés à supprimer
         @type: tableau de string"""
@@ -500,9 +519,13 @@ class Personnage(object):
                 # Appliquer les fin de bonus et malus des do, pm, pa, po, pui et carac ici
                 print(self.nomPerso+" sort de l'etat "+self.etats[i].nom)
                 self.etats[i].triggerAvantRetrait(self)
+                copyEtat = deepcopy(self.etats[i])
                 del self.etats[i]
                 i -= 1
                 nbEtats = len(self.etats)
+                for etat in self.etats:
+                    if etat.actif():
+                        etat.triggerApresRetrait(niveau, self, copyEtat)
             i += 1
 
     def getBoucliers(self):
@@ -697,6 +720,32 @@ class Personnage(object):
                   " mais "+str(niveau.tourDe.PA) + " restant.")
         return sortSelectionne
 
+    def faitPorter(self, joueurPorte):
+        """@summary: le joueur joueurPorteur porte joueurPorte
+        """
+        joueurPorte.ajoutHistoriqueDeplacement()
+        joueurPorte.posX = self.posX
+        joueurPorte.posY = self.posY
+        self.porteUid = joueurPorte.uid
+        joueurPorte.porteurUid = self.uid
+
+    def faitLancer(self, niveau, cibleX, cibleY):
+        """@summary: le joueur joueurPorteur lance joueurPorte
+        """
+        joueurSurCible = niveau.getJoueurSur(cibleX, cibleY)
+        if niveau.structure[cibleY][cibleX].type == "v" and joueurSurCible is None:
+            if self.porteUid is None:
+                raise(Exception("IMPOSSIBLE pour "+str(self)+
+                                " DE JETER UN JOUEUR S'IL N'EN PORTE PAS."))
+            print("LANCER ! ")
+            joueurPorte = niveau.getJoueurAvecUid(self.porteUid)
+            res, _ = joueurPorte.bouge(niveau, cibleX, cibleY, False)
+            print("RES : "+str(res))
+            joueurPorte.retirerEtats(niveau, ["Karcham", "Chamrak"])
+            self.retirerEtats(niveau, ["Karcham", "Chamrak"])
+            joueurPorte.porteurUid = None
+            self.porteUid = None
+
     def joue(self, event, niveau, mouseXY, sortSelectionne):
         """@summary: Fonction appelé par la boucle principale pour demandé
                      à un Personnage d'effectuer ses actions.
@@ -817,6 +866,9 @@ class PersonnageMur(Personnage):
         toReturn.posDebTour = self.posDebTour
         toReturn.posDebCombat = self.posDebCombat
         toReturn.invocateur = self.invocateur
+        toReturn.porteUid = self.porteUid
+        toReturn.porteurUid = self.porteurUid
+        toReturn.checkLdv = self.checkLdv
         toReturn.invocations = deepcopy(self.invocations)
         toReturn.invocationLimite = self.invocationLimite
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
@@ -891,6 +943,9 @@ class PersonnageSansPM(Personnage):
         toReturn.posDebTour = self.posDebTour
         toReturn.posDebCombat = self.posDebCombat
         toReturn.invocateur = self.invocateur
+        toReturn.porteUid = self.porteUid
+        toReturn.porteurUid = self.porteurUid
+        toReturn.checkLdv = self.checkLdv
         toReturn.invocations = deepcopy(self.invocations)
         toReturn.invocationLimite = self.invocationLimite
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)

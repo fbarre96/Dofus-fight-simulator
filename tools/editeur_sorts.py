@@ -90,6 +90,7 @@ def getListeEffets(sortValues, tab, desc):
         if zone.strip() != "":
             if "jusqu'à la cellule ciblée" in desc:
                 zone = "ligne jusque de 0 cases"
+                tailleZone = "0"
             elif "Tout le monde" in zone:
                 nomZone = "Cercle"
                 tailleZone = "99"

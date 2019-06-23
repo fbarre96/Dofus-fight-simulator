@@ -239,6 +239,16 @@ class Etat():
         @type: Personnage"""
         return
 
+    def triggerApresRetrait(self, niveau, personnage, etatRetire):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un état va être retirés.
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        return
+
     def triggerAvantMort(self, niveau, porteur, mouru, meurtrier):
         # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états des joueurs

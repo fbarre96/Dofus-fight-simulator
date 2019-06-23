@@ -94,7 +94,8 @@ class PathFinder:
         # VOIR PSEUDO CODE WIKIPEDIA
         listeFermee = []
         listeOuverte = []
-        if niveau.structure[caseCibleY][caseCibleX].type != "v":
+        joueurSurCase = niveau.getJoueurSur(caseCibleX, caseCibleY)
+        if niveau.structure[caseCibleY][caseCibleX].type != "v" or joueurSurCase is not None:
             self.cachedResult = None
             return None
         depart = Noeud(joueur.posX, joueur.posY)

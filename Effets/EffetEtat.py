@@ -209,4 +209,4 @@ class EffetRetireEtat(Effet):
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
-            joueurCaseEffet.retirerEtats(self.nomEtat)
+            joueurCaseEffet.retirerEtats(niveau, self.nomEtat)

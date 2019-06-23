@@ -130,7 +130,10 @@ class Niveau:
                 for case in cases:
                     # Le joueur se déplace case par case et non pas en téléportation
                     if self.structure[case[1]][case[0]].type != "v":
-                        print("Un obstacle bloque ce chemin.")
+                        print("La case ciblée est un mur")
+                        break
+                    elif self.getJoueurSur(case[0], case[1]) is not None:
+                        print("La case ciblée est occupé")
                         break
                     nbPAPerdus, nbPMPerdus = self.calculTacle(joueur)
                     if joueur.PM - nbPMPerdus >= 1 and joueur.PA - nbPAPerdus >= 0:
@@ -323,7 +326,6 @@ class Niveau:
                 placeT2 += 1
                 joueur.posDebTour = [joueur.posX, joueur.posY]
                 joueur.posDebCombat = [joueur.posX, joueur.posY]
-            self.structure[joueur.posY][joueur.posX].type = "j"
             joueur.lancerSortsDebutCombat(self)
 
     def rafraichirEtats(self, personnageARafraichir, debutTour=True):
@@ -358,9 +360,13 @@ class Niveau:
                         print(personnage.nomPerso+" sort de l'etat " +
                               personnage.etats[i].nom)
                         personnage.etats[i].triggerAvantRetrait(personnage)
+                        copyEtat = deepcopy(personnage.etats[i])
                         del personnage.etats[i]
                         i -= 1
                         nbEtats = len(personnage.etats)
+                        for etat in personnage.etats:
+                            if etat.actif():
+                                etat.triggerApresRetrait(self, personnage, copyEtat)
                 i += 1
 
     def rafraichirGlyphes(self, duPersonnage):
@@ -442,8 +448,6 @@ class Niveau:
             if isinstance(self.joueurs[i], Personnages.Personnage):
                 persosJoueursRestants.append(self.joueurs[i])
             if self.joueurs[i].uid == perso.uid:
-                # On supprime son existence
-                self.structure[perso.posY][perso.posX].type = "v"
                 # Recherche de l'invocateur si c'est une invocation
                 if perso.invocateur is not None:
                     # Supression de l'invoc dans la liste d'invoc du perso
@@ -628,10 +632,10 @@ class Niveau:
                 casesAXDistance = Niveau.getCasesAXDistanceDe(
                     joueur.posX, joueur.posY, tailleCercle)
             for case in casesAXDistance:
-                if self.structure[case[1]][case[0]].type == "v":
+                joueurSurCase = self.getJoueurSur(case[0], case[1])
+                if (self.structure[case[1]][case[0]].type == "v" and joueurSurCase is None):
                     tabCasesZone.append(case)
-                elif self.structure[case[1]][case[0]].type == "j":
-                    joueurSurCase = self.getJoueurSur(case[0], case[1])
+                if joueurSurCase is not None:
                     if joueurSurCase.team != self.tourDe.team and joueurSurCase.aEtat("Invisible"):
                         tabCasesZone.append(case)
         return tabCasesZone
@@ -819,8 +823,8 @@ class Niveau:
         #joueurASwap.bouge(self,joueurBougeant.posX, joueurBougeant.posY,True)
         joueurBougeant.echangePosition(self, joueurASwap, ajouteHistorique)
         if genereTF:
-            joueurBougeant.retirerEtats("Telefrag")
-            joueurASwap.retirerEtats("Telefrag")
+            joueurBougeant.retirerEtats(self, "Telefrag")
+            joueurASwap.retirerEtats(self, "Telefrag")
             joueurBougeant.appliquerEtat(Etat(
                 "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
             joueurASwap.appliquerEtat(Etat(
@@ -849,19 +853,20 @@ class Niveau:
            posAtteinte[0] < 0 or posAtteinte[0] >= constantes.taille_carte:
             return None
         # Test déplacement case vers vide
-        if self.structure[posAtteinte[1]][posAtteinte[0]].type == "v":
+        joueurASwap = self.getJoueurSur(posAtteinte[0], posAtteinte[1])
+        if self.structure[posAtteinte[1]][posAtteinte[0]].type == "v" \
+           and joueurASwap is None:
             self.deplacementTFVersCaseVide(
                 joueurBougeant, posAtteinte, ajouteHistorique)
             return None
         # Test si sa case d'arrivé est occupé par un joueur
-        elif self.structure[posAtteinte[1]][posAtteinte[0]].type == "j":
-            # Si C'est une invoccation, c'est l'invocateur le réel lanceur
+        elif joueurASwap is not None:
+            # Si C'est une invocation, c'est l'invocateur le réel lanceur
             if lanceur.invocateur is not None:
                 reelLanceur = lanceur.invocateur
             else:
                 reelLanceur = lanceur
 
-            joueurASwap = self.getJoueurSur(posAtteinte[0], posAtteinte[1])
             if joueurASwap != joueurBougeant:
                 self.deplacementTFVersCaseOccupee(
                     joueurASwap, joueurBougeant, reelLanceur, nomSort, ajouteHistorique, genereTF)
@@ -965,10 +970,10 @@ class Niveau:
                             "Retour d'effet inattendu : "+str(sestApplique))
                     # Peu import le type, l'etat requis est retire s'il est consomme
                     if effet.consommeEtat:
-                        joueurCaseEffet.retirerEtats(
-                            effet.etatRequisCibleDirect)
-                        joueurCaseEffet.retirerEtats(effet.etatRequisCibles)
-                        joueurLanceur.retirerEtats(effet.etatRequisLanceur)
+                        joueurCaseEffet.retirerEtats(self,
+                                                     effet.etatRequisCibleDirect)
+                        joueurCaseEffet.retirerEtats(self, effet.etatRequisCibles)
+                        joueurLanceur.retirerEtats(self, effet.etatRequisLanceur)
 
             else:
                 if effet.cibleNonRequise:
@@ -1129,8 +1134,7 @@ class Niveau:
                 # On calcule la position réelle en pixels
                 pixelX = nCase * constantes.taille_sprite
                 pixelY = nLigne * constantes.taille_sprite
-                if sprite.type == 'v' or sprite.type == 'j':  # v = Vide, j = joueur
-
+                if sprite.type == 'v':  # v = Vide
                     if (nCase+(nLigne*len(ligne))) % 2 == 0:
                         fenetre.blit(vide1, (pixelX, pixelY))
                     else:
@@ -1142,6 +1146,7 @@ class Niveau:
                         if sortSelectionne.aPorte(self.tourDe.posX, self.tourDe.posY,
                                                   nCase, nLigne, self.tourDe.PO):
                             if not sortSelectionne.ldv or \
+                               not self.tourDe.checkLdv or \
                                sortSelectionne.aLigneDeVue(self, self.tourDe.posX,
                                                            self.tourDe.posY, nCase, nLigne):
                                 fenetre.blit(previsionSort, (pixelX, pixelY))
@@ -1220,15 +1225,13 @@ class Niveau:
                                                   constantes.taille_sprite+1,
                                                   constantes.taille_sprite-4,
                                                   constantes.taille_sprite-4))
-
-                if sprite.type == 'j':
-                    joueurOnCase = self.getJoueurSur(nCase, nLigne)
-                    if joueurOnCase is not None:
-                        if joueurOnCase.aEtat("Invisible"):
-                            if joueurOnCase.team == self.tourDe.team:
-                                fenetre.blit(team1, (pixelX, pixelY))
-                        else:
+                joueurOnCase = self.getJoueurSur(nCase, nLigne)
+                if joueurOnCase is not None:
+                    if joueurOnCase.aEtat("Invisible"):
+                        if joueurOnCase.team == self.tourDe.team:
                             fenetre.blit(team1, (pixelX, pixelY))
+                    else:
+                        fenetre.blit(team1, (pixelX, pixelY))
                 nCase += 1
             nLigne += 1
 
@@ -1399,32 +1402,30 @@ class Niveau:
 
         @return: la liste des cases voisines vides à celle donnée"""
         voisins = []
+        posToTest = []
         if posX > 0:
-            if self.structure[posY][posX-1].type == "v":
-                voisins.append(Noeud(posX-1, posY))
-            elif self.structure[posY][posX-1].type == "j":
-                if self.getJoueurSur(posX-1, posY).aEtat("Invisible") and \
-                   self.getJoueurSur(posX-1, posY).team != self.tourDe.team:
-                    voisins.append(Noeud(posX-1, posY))
+            posToTest.append([posX-1, posY])
         if posX < constantes.taille_carte-1:
-            if self.structure[posY][posX+1].type == "v":
-                voisins.append(Noeud(posX+1, posY))
-            elif self.structure[posY][posX+1].type == "j":
-                if self.getJoueurSur(posX+1, posY).aEtat("Invisible") and \
-                   self.getJoueurSur(posX+1, posY).team != self.tourDe.team:
-                    voisins.append(Noeud(posX+1, posY))
+            posToTest.append([posX+1, posY])
         if posY > 0:
-            if self.structure[posY-1][posX].type == "v":
-                voisins.append(Noeud(posX, posY-1))
-            elif self.structure[posY-1][posX].type == "j":
-                if self.getJoueurSur(posX, posY-1).aEtat("Invisible") and \
-                   self.getJoueurSur(posX, posY-1).team != self.tourDe.team:
-                    voisins.append(Noeud(posX, posY-1))
+            posToTest.append([posX, posY-1])
         if posY < constantes.taille_carte-1:
-            if self.structure[posY+1][posX].type == "v":
-                voisins.append(Noeud(posX, posY+1))
-            elif self.structure[posY+1][posX].type == "j":
-                if self.getJoueurSur(posX, posY+1).aEtat("Invisible") and \
-                   self.getJoueurSur(posX, posY+1).team != self.tourDe.team:
-                    voisins.append(Noeud(posX, posY+1))
+            posToTest.append([posX, posY+1])
+        for pos in posToTest:
+            if self.structure[pos[1]][pos[0]].type == "v":
+                joueurSur = self.getJoueurSur(pos[0], pos[1])
+                if joueurSur is None:
+                    voisins.append(Noeud(pos[0], pos[1]))
+                else:
+                    if joueurSur.aEtat("Invisible") and \
+                    joueurSur.team != self.tourDe.team:
+                        voisins.append(Noeud(pos[0], pos[1]))
         return voisins
+
+    def getJoueurAvecUid(self, uid):
+        """@summary: retourne le joueur avvec l'uid donné"""
+        for joueur in self.joueurs:
+            if joueur.uid == uid:
+                return joueur
+        return None
+        

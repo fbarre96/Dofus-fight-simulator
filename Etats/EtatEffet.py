@@ -511,3 +511,60 @@ class EtatEffetSiNouvelEtat(Etat):
         cible = joueurCible
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
+
+
+class EtatEffetSiRetraitEtat(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
+
+    def __init__(self, nom, debDans, duree, effet, etatAccepte, nomSort, quiLancera,
+                 nomEtatRequis="", lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: in
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @quiLancera: le personnage qui subira l'effet
+        @type: string ("lanceur" ou "cible")
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        self.etatAccepte = etatAccepte
+        self.nomSort = nomSort
+        self.quiLancera = quiLancera
+        self.nomEtatRequis = nomEtatRequis
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiRetraitEtat(self.nom, self.debuteDans, self.duree, self.effet,
+                                      self.etatAccepte, self.nomSort, self.quiLancera,
+                                      self.nomEtatRequis,
+                                      self.lanceur, self.desc)
+
+    def triggerApresRetrait(self, niveau, personnage, etatRetire):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un état va être retirés.
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        if self.etatAccepte != "" and self.etatAccepte != etatRetire.nom:
+            return
+        cible = personnage
+        joueurQuiLance = personnage
+        niveau.lancerEffet(self.effet, cible.posX, cible.posY,
+                           self.nomSort, cible.posX, cible.posY, joueurQuiLance)

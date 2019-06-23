@@ -134,9 +134,6 @@ class Sort:
         @type: Personnage (ou None pour prendre le lanceur)"""
         caseCibleX = int(caseCibleX)
         caseCibleY = int(caseCibleY)
-        if self.ldv and not self.aLigneDeVue(niveau, origineX, origineY, caseCibleX, caseCibleY):
-            print("Pas de ligne de vue !")
-            return niveau.joueurs
         saveLanceur = None
         if isPrevisu:
             save = niveau
@@ -149,6 +146,17 @@ class Sort:
 
         caraclanceur = caraclanceur if caraclanceur is not None else niveau.getJoueurSur(
             origineX, origineY)
+        if caraclanceur.porteurUid is not None:
+            if niveau.tourDe.uid == caraclanceur.porteurUid:
+                caraclanceur = niveau.getJoueurAvecUid(caraclanceur.porteurUid)
+        elif caraclanceur.porteUid is not None:
+            if niveau.tourDe.uid == caraclanceur.porteUid:
+                caraclanceur = niveau.getJoueurAvecUid(caraclanceur.porteUid)
+
+        if self.ldv and not self.aLigneDeVue(niveau, origineX, origineY, caseCibleX, caseCibleY):
+            if caraclanceur.checkLdv:
+                print("Pas de ligne de vue !")
+                return niveau.joueurs
         # Get toutes les cases dans la zone d'effet
         joueurCible = niveau.getJoueurSur(caseCibleX, caseCibleY)
         # Test si la case est bien dans la portée du sort
@@ -240,7 +248,8 @@ class Sort:
             cumulN -= 1
 
         while cumulN > 0 and ldv:
-            if niveau.structure[cumulY][cumulX].type != "v":
+            if niveau.structure[cumulY][cumulX].type != "v" or \
+                   niveau.getJoueurSur(cumulX, cumulY) is not None:
                 ldv = False
             else:
                 if error > 0:

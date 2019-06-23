@@ -43,10 +43,16 @@ class EtatBoostCaracFixe(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         caracValue = getattr(personnage, self.nomAttributCarac)
-        setattr(personnage, self.nomAttributCarac,
-                caracValue + self.boostCarac)
-        print("Modification de "+self.nomAttributCarac+":" +
-              str(caracValue)+" -> "+str(caracValue + self.boostCarac))
+        if isinstance(self.boostCarac, bool):
+            setattr(personnage, self.nomAttributCarac,
+                    self.boostCarac)
+            print("Modification de "+self.nomAttributCarac+":" +
+                  str(caracValue)+" -> "+str(self.boostCarac))
+        else:
+            setattr(personnage, self.nomAttributCarac,
+                    caracValue + self.boostCarac)
+            print("Modification de "+self.nomAttributCarac+":" +
+                  str(caracValue)+" -> "+str(caracValue + self.boostCarac))
 
     def triggerRafraichissement(self, personnage, niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états
@@ -64,24 +70,17 @@ class EtatBoostCaracFixe(Etat):
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
         caracValue = getattr(personnage, self.nomAttributCarac)
-        setattr(personnage, self.nomAttributCarac,
-                caracValue - self.boostCarac)
-        print("Fin de modification de "+self.nomAttributCarac+":" +
-              str(caracValue)+" -> "+str(caracValue - self.boostCarac))
-
-    def triggerFinTour(self, personnage, niveau):
-        """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour termine.
-                     Active un effet à la fin du tour du personnage
-                     ciblant la position du personnage qui finit son tour,
-                     le lanceur peut être lui-même ou le lanceur de l'effet.
-        @personnage: le joueur dont le tour débute
-        @type: Personnage
-        @niveau: La grille de jeu
-        @type: Niveau"""
-        if self.nomAttributCarac in ["PA", "PM"]:
-            caracValue = getattr(personnage, self.nomAttributCarac)
+        if isinstance(self.boostCarac, bool):
             setattr(personnage, self.nomAttributCarac,
-                    caracValue + self.boostCarac)
+                    not self.boostCarac)
+            print("Fin de modification de "+self.nomAttributCarac+":" +
+                  str(caracValue)+" -> "+str(not self.boostCarac))
+        else:
+            setattr(personnage, self.nomAttributCarac,
+                    caracValue - self.boostCarac)
+            print("Fin de modification de "+self.nomAttributCarac+":" +
+                  str(caracValue)+" -> "+str(caracValue - self.boostCarac))
+
 
 
 class EtatBoostCaracPer(Etat):

@@ -118,8 +118,8 @@ def getSorts(lvl):
             "Tir_eloigne", 0, 4, "PO", 7), zone=Zones.TypeZoneCercle(3))], 25, 1, 1, 5, 0, "cercle", False, description="""Augmente la port�e des cibles pr�sentes dans la zone d'effet.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Acuité Absolue", 125, 4, 0, 0, [EffetEtat(Etat("Desactive_ligne_de_vue", 0, 1))], [
-        ], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les sorts du Cr� peuvent �tre lanc�s au travers des obstacles pendant 1 tour.""", chaine=True)
+        Sort.Sort("Acuité Absolue", 125, 4, 0, 0, [EffetEtat(EtatBoostCaracFixe("Acuité Absolue", 0, 1, "checkLdv", False))], [
+        ], 0, 1, 1, 3, 0, "cercle", False, description="""Tous les sorts du Crâ peuvent être lancés au travers des obstacles pendant 1 tour.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Flèche d'Expiation", 13, 4, 6, 10, [EffetDegats(19, 21, "Eau"), EffetEtatSelf(EtatBoostBaseDeg("Flèche d'Expiation", 0, -1, "Flèche d'Expiation", 22))], [EffetDegats(25, 27, "Eau"), EffetEtatSelf(
