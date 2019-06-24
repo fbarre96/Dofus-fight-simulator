@@ -2,16 +2,7 @@
 
 
 
-sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-	Sort.Sort("Ivresse", 22, 4, 1, 1, [TODO(Invoque :))], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire �galement les alli�s s'ils sont dans l'�tat Saoul.
-S'il est port� ou jet� : soigne autour de lui.""", chaine=True),
 
-	Sort.Sort("Ivresse", 65, 4, 1, 1, [TODO(Invoque :))], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire �galement les alli�s s'ils sont dans l'�tat Saoul.
-S'il est port� ou jet� : soigne autour de lui.""", chaine=True),
-
-	Sort.Sort("Ivresse", 108, 4, 1, 1, [TODO(Invoque :))], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire �galement les alli�s s'ils sont dans l'�tat Saoul.
-S'il est port� ou jet� : soigne autour de lui.""", chaine=True)
-]))
 sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
 	Sort.Sort("Ebri�t�", 140, 3, 1, 1, [TODO(Invoque :))], [], 0, 1, 1, 4, 0, "cercle", False, description="""Invoque un Tonneau qui augmente la Puissance en zone autour de lui.
 Quand il est jet�, il retire des PM en zone aux ennemis autour du point d'impact.""", chaine=True)

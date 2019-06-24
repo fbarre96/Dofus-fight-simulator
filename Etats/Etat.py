@@ -270,4 +270,23 @@ class Etat():
         """@summary: Un trigger appelé pour le joueur qui obtient un nouvel état.
                      Active un effet sur le lanceur ou la cible"""
         return
-        
+
+    def triggerApresPorte(self, niveau, porteur, porte):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        return
+
+    def triggerApresLance(self, niveau, lanceur, celuiLance):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        return

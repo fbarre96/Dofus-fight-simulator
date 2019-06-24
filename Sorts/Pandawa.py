@@ -8,6 +8,7 @@ from Effets.EffetSoin import EffetSoinPerPVMax
 from Effets.EffetPousser import EffetPousser, EffetAttire
 from Effets.EffetRet import EffetRetPM
 from Effets.EffetPorte import EffetPorte, EffetLance
+from Effets.EffetInvoque import EffetInvoque
 import Zones
 from Etats.Etat import Etat
 from Etats.EtatBoostCarac import EtatBoostCaracFixe
@@ -137,8 +138,16 @@ def getSorts(lvl):
         Sort.Sort("Propulsion", 102, 3, 1, 5, [EffetLance(cible_non_requise=True), EffetDegats(47, 53, "Feu", zone=Zones.TypeZoneCroix(1), cibles_possibles="Ennemis", cible_non_requise=True), EffetPousser(1, "CaseCible", cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCroix(1))], [EffetLance(cible_non_requise=True), EffetDegats(52, 58, "Feu", zone=Zones.TypeZoneCroix(1), cibles_possibles="Ennemis", cible_non_requise=True), EffetPousser(1, "CaseCible", cibles_possibles="Ennemis", zone=Zones.TypeZoneCroix(1), cible_non_requise=True)], 15, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée.
     Occasionne des dommages Feu aux ennemis et repousse autour de la cellule ciblée.""", chaine=True)
     ]))
+    # Attire de 8 cases max, porté de 15, pas de ldv. Soigne 53,81quand porté à 1 case autour
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Ivresse", 22, 4, 1, 1, [EffetInvoque("Tonneau Attractif", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire également les alliés s'ils sont dans l'état Saoul.
+    S'il est porté ou jeté : soigne autour de lui.""", chaine=True),
 
+        Sort.Sort("Ivresse", 65, 4, 1, 1, [EffetInvoque("Tonneau Attractif", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire également les alliés s'ils sont dans l'état Saoul.
+    S'il est porté ou jeté : soigne autour de lui.""", chaine=True),
 
+        Sort.Sort("Ivresse", 108, 4, 1, 1, [EffetInvoque("Tonneau Attractif", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire également les alliés s'ils sont dans l'état Saoul.
+    S'il est porté ou jeté : soigne autour de lui.""", chaine=True)
+    ]))
     return sorts
     

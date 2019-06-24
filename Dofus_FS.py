@@ -36,12 +36,12 @@ def boucleEvenement(niveau, mouseXY, sortSelectionne):
         if event.type == QUIT:  # Si un de ces événements est de type QUIT
             continuer = 0  # On arrête la boucle
         # Envoie de l'event au personnage en cours de jeu.
-        sortSelectionne = niveau.tourDe.joue(
-            event, niveau, mouseXY, sortSelectionne)
+        sortSelectionne = niveau.tourDe.myIA.joue(
+            event, niveau.tourDe, niveau, mouseXY, sortSelectionne)
     # Si le personnage actif n'est pas un joueur mais une IA, on n'envoie pas d'event.
     if not isinstance(niveau.tourDe, Personnages.Personnage):
-        sortSelectionne = niveau.tourDe.joue(
-            None, niveau, mouseXY, sortSelectionne)
+        sortSelectionne = niveau.tourDe.myIA.joue(
+            None, niveau.tourDe, niveau, mouseXY, sortSelectionne)
     return continuer, sortSelectionne
 
 

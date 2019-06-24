@@ -27,7 +27,7 @@ class EffetPorte(Effet):
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            joueurLanceur.faitPorter(joueurCaseEffet)
+            joueurLanceur.faitPorter(niveau, joueurCaseEffet)
 
 class EffetLance(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

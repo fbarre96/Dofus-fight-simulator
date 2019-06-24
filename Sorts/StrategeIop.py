@@ -12,6 +12,8 @@ def getSortsDebutCombat(lvl):
     """
     # pylint: disable=unused-argument
     sortsDebutCombat = []
+    sortsDebutCombat.append(Sort.Sort("Strategie_iop", 0, 0, 0, 0, [EffetEtat(EtatRedistribuerPer(
+        "Stratégie Iop", 0, -1, 50, "Ennemis|Allies", 2))], [], 0, 99, 99, 0, 0, "cercle", False))
     return sortsDebutCombat
 
 
@@ -21,6 +23,4 @@ def getSorts(lvl):
     """
     # pylint: disable=unused-argument
     sorts = []
-    sorts.append(Sort.Sort("Strategie_iop", 0, 0, 0, 0, [EffetEtat(EtatRedistribuerPer(
-        "Stratégie Iop", 0, -1, 50, "Ennemis|Allies", 2))], [], 0, 99, 99, 0, 0, "cercle", False))
     return sorts

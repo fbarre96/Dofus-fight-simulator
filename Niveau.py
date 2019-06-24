@@ -262,6 +262,8 @@ class Niveau:
         # Réinitialisation de la zone des sorts en noir
         if self.fenetre is None:
             return  # Pendant certaines prévisu (genre EffetPropage)
+        if not self.tourDe.myIA.interactif:
+            return
         pygame.draw.rect(self.fenetre, pygame.Color(0, 0, 0),
                          pygame.Rect(constantes.x_sorts, constantes.y_sorts,
                                      constantes.width_sorts, constantes.height_sorts))

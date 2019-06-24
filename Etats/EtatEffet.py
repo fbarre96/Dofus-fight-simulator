@@ -568,3 +568,87 @@ class EtatEffetSiRetraitEtat(Etat):
         joueurQuiLance = personnage
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
+
+class EtatEffetSiPorte(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
+
+    def __init__(self, nom, debDans, duree, effet, nomSort, lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: in
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        self.nomSort = nomSort
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiPorte(self.nom, self.debuteDans, self.duree, self.effet,
+                                self.nomSort,
+                                self.lanceur, self.desc)
+
+    def triggerApresPorte(self, niveau, porteur, porte):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        niveau.lancerEffet(self.effet, porte.posX, porte.posY,
+                           self.nomSort, porte.posX, porte.posY)
+
+class EtatEffetSiLance(Etat):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
+    def __init__(self, nom, debDans, duree, effet, nomSort, lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: in
+        @effet: l'effet qui s'activera lors d'une poussé
+        @type: Effet
+        @nomSort: le nom du sort qui inflige les dégâts
+        @type: string
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.effet = effet
+        self.nomSort = nomSort
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatEffetSiLance(self.nom, self.debuteDans, self.duree, self.effet,
+                                self.nomSort,
+                                self.lanceur, self.desc)
+
+    def triggerApresLance(self, niveau, lanceur, celuiLance):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
+        niveau.lancerEffet(self.effet, celuiLance.posX, celuiLance.posY,
+                           self.nomSort, celuiLance.posX, celuiLance.posY)
+                           

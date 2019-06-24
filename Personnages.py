@@ -5,12 +5,12 @@
 from copy import deepcopy
 import uuid
 
-import pygame
-from pygame.locals import K_F1, K_1, K_9, K_ESCAPE
-
 import Sort
 from Etats.EtatBouclier import EtatBouclierPerLvl
 from Effets.EffetInvoque import EffetInvoque
+from IAs.DumbIA import DumbIA
+from IAs.PasseIA import PasseIA
+from IAs.JoueurIA import JoueurIA
 import constantes
 import Overlays
 
@@ -19,7 +19,7 @@ class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
 
     def __init__(self, nomPerso, classe, lvl, team, caracsPrimaires,
-                 caracsSecondaires, dommages, resistances, icone=""):
+                 caracsSecondaires, dommages, resistances, icone="", objIA=None):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus).
                  Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
@@ -135,6 +135,9 @@ class Personnage(object):
         self.porteurUid = None
         self.checkLdv = True
         self.msgsPrevisu = []
+        if objIA is None:
+            objIA = JoueurIA()
+        self.myIA = objIA
 
         if not icone.startswith("images/"):
             self.icone = ("images/"+icone)
@@ -193,6 +196,7 @@ class Personnage(object):
         toReturn.invocations = deepcopy(self.invocations)
         toReturn.invocationLimite = self.invocationLimite
         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+        toReturn.myIA = self.myIA
         return toReturn
 
     def setOverlayText(self):
@@ -273,6 +277,11 @@ class Personnage(object):
             import Sorts.BaliseDeRappel
             sortsDebutCombat += Sorts.BaliseDeRappel.getSortsDebutCombat(lvl)
             sorts += Sorts.BaliseDeRappel.getSorts(lvl)
+            return sorts, sortsDebutCombat
+        elif classe == "Tonneau Attractif":
+            import Sorts.TonneauAttractif
+            sortsDebutCombat += Sorts.TonneauAttractif.getSortsDebutCombat(lvl)
+            sorts += Sorts.TonneauAttractif.getSorts(lvl)
             return sorts, sortsDebutCombat
         elif classe == "Poutch":
             return sorts, sortsDebutCombat
@@ -720,7 +729,7 @@ class Personnage(object):
                   " mais "+str(niveau.tourDe.PA) + " restant.")
         return sortSelectionne
 
-    def faitPorter(self, joueurPorte):
+    def faitPorter(self, niveau, joueurPorte):
         """@summary: le joueur joueurPorteur porte joueurPorte
         """
         joueurPorte.ajoutHistoriqueDeplacement()
@@ -728,6 +737,9 @@ class Personnage(object):
         joueurPorte.posY = self.posY
         self.porteUid = joueurPorte.uid
         joueurPorte.porteurUid = self.uid
+        for etat in joueurPorte.etats:
+            if etat.actif():
+                etat.triggerApresPorte(niveau, self, joueurPorte)
 
     def faitLancer(self, niveau, cibleX, cibleY):
         """@summary: le joueur joueurPorteur lance joueurPorte
@@ -737,256 +749,156 @@ class Personnage(object):
             if self.porteUid is None:
                 raise(Exception("IMPOSSIBLE pour "+str(self)+
                                 " DE JETER UN JOUEUR S'IL N'EN PORTE PAS."))
-            print("LANCER ! ")
             joueurPorte = niveau.getJoueurAvecUid(self.porteUid)
-            res, _ = joueurPorte.bouge(niveau, cibleX, cibleY, False)
-            print("RES : "+str(res))
+            joueurPorte.bouge(niveau, cibleX, cibleY, False)
             joueurPorte.retirerEtats(niveau, ["Karcham", "Chamrak"])
             self.retirerEtats(niveau, ["Karcham", "Chamrak"])
             joueurPorte.porteurUid = None
             self.porteUid = None
+            for etat in joueurPorte.etats:
+                if etat.actif():
+                    etat.triggerApresLance(niveau, self, joueurPorte)
 
-    def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour demandé
-                     à un Personnage d'effectuer ses actions.
-                     Dans la classe Personnage, c'est contrôle par utilisateur clavier/souris.
-        @event: les évenements pygames survenus
-        @type: Event pygame
-        @niveau: La grille de jeu
-        @type: Niveau
-        @mouseXY: Les coordonnées de la souris
-        @type: int
-        @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
-        @type: Sort
+# class PersonnageMur(Personnage):
+#     """@summary: Classe décrivant un montre de type MUR immobile
+#     (cawotte, cadran de Xelor...). hérite de Personnage"""
 
-        @return: Le nouveau sortSelectionne éventuel"""
+#     def __init__(self, *args):
+#         """@summary: Initialise un personnage Mur, même initialisation que Personange
+#         @args: les arguments donnés, doivent être les mêmes que Personnage
+#         @type:*args"""
+#         super().__init__(*args)
 
-        # Clic souris
-        if event.type == pygame.KEYDOWN:
-            if event.key == K_F1:  # touche F1 = fin du tour
-                sortSelectionne = None
-                niveau.finTour()
-            if event.key == K_ESCAPE:  # touche échap = déselection de sort.
-                sortSelectionne = None
-            if event.key >= K_1 and event.key <= K_9:
-                aLance = niveau.tourDe.sorts[event.key - K_1]
-                sortSelectionne = self.selectionSort(aLance, niveau)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            clicGauche, _, clicDroit = pygame.mouse.get_pressed()
-            # Clic gauche
-            if clicGauche:
-                # Clic gauche sort = tentative de sélection de sort
-                if mouseXY[1] > constantes.y_sorts:
-                    for sort in niveau.tourDe.sorts:
-                        if sort.vue.isMouseOver(mouseXY):
-                            sortSelectionne = self.selectionSort(sort, niveau)
-                            break
-                # Clic gauche grille de jeu = tentative de lancé un sort
-                #  si un sort est selectionné ou tentative de déplacement sinon
-                else:
-                    # Un sort est selectionne
-                    if sortSelectionne is not None:
-                        caseCibleX = int(
-                            mouseXY[0]/constantes.taille_sprite)
-                        caseCibleY = int(
-                            mouseXY[1]/constantes.taille_sprite)
-                        sortSelectionne.lance(
-                            niveau.tourDe.posX, niveau.tourDe.posY, niveau, caseCibleX, caseCibleY)
-                        sortSelectionne = None
-                    # Aucun sort n'est selectionne: on pm
-                    else:
-                        niveau.deplacement(mouseXY)
-            # Clic droit
-            elif clicDroit:
-                # Clic droit grille de jeu = affichage détaillé de l'état d'un personnage.
-                if mouseXY[1] < constantes.y_sorts:
-                    caseX = int(mouseXY[0]/constantes.taille_sprite)
-                    caseY = int(mouseXY[1]/constantes.taille_sprite)
-                    joueurInfo = niveau.getJoueurSur(caseX, caseY)
-                    if joueurInfo is not None:
-                        for etat in joueurInfo.etats:
-                            if etat.actif():
-                                print(joueurInfo.nomPerso+" est dans l'etat " +
-                                      etat.nom+" ("+str(etat.duree)+")")
-                            elif etat.debuteDans > 0:
-                                print(joueurInfo.nomPerso+" sera dans l'etat " +
-                                      etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")
-                    if sortSelectionne is not None:
-                        sortSelectionne = None
-        return sortSelectionne
+#     def __deepcopy__(self, memo):
+#         toReturn = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team,
+#                                  {"PA": self.PA, "PM": self.PM, "PO": self.PO,
+#                                   "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
+#                                   "Force": self.fo, "Intelligence": self.int,
+#                                   "Puissance": self.pui, "Coups Critiques": self.cc,
+#                                   "Sagesse": self.sagesse},
+#                                  {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
+#                                   "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
+#                                   "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
+#                                   "Initiative": self.ini, "Invocation": self.invocationLimite,
+#                                   "Prospection": self.prospection},
+#                                  {"Dommages": self.do, "Dommages critiques": self.doCri,
+#                                   "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu,
+#                                   "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
+#                                   "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges,
+#                                   "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou,
+#                                   "Sorts": self.doSorts, "Armes": self.doArmes,
+#                                   "Distance": self.doDist, "Melee": self.doMelee},
+#                                  {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
+#                                   "Terre": self.reTerre, "Terre%": self.rePerTerre,
+#                                   "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+#                                   "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir,
+#                                   "Coups critiques": self.reCc, "Poussee": self.rePou,
+#                                   "Distance": self.reDist, "Melee": self.reMelee},
+#                                  self.icone)
+#         toReturn.sortsDebutCombat = self.sortsDebutCombat
+#         toReturn.posX = self.posX
+#         toReturn.posY = self.posY
+#         toReturn.PABase = self.PABase
+#         toReturn.PMBase = self.PMBase
+#         toReturn.vieMax = self.vieMax
+#         toReturn.uid = self.uid
+#         toReturn.sorts = deepcopy(self.sorts)
+#         toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
+#         toReturn.etats = deepcopy(self.etats)
+#         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
+#         toReturn.posDebTour = self.posDebTour
+#         toReturn.posDebCombat = self.posDebCombat
+#         toReturn.invocateur = self.invocateur
+#         toReturn.porteUid = self.porteUid
+#         toReturn.porteurUid = self.porteurUid
+#         toReturn.checkLdv = self.checkLdv
+#         toReturn.invocations = deepcopy(self.invocations)
+#         toReturn.invocationLimite = self.invocationLimite
+#         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+#         toReturn.myIA = self.myIA
+#         return toReturn
 
+# class PersonnageSansPM(Personnage):
+#     """@summary: Classe décrivant un personange pouvant faire des actions
+#     mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
 
-class PersonnageMur(Personnage):
-    """@summary: Classe décrivant un montre de type MUR immobile
-    (cawotte, cadran de Xelor...). hérite de Personnage"""
+#     def __init__(self, *args):
+#         """@summary: Initialise un personnage sans PM, même initialisation que Personange
+#         @args: les arguments donnés, doivent être les mêmes que Personnage
+#         @type:*args"""
+#         super().__init__(*args)
+#         self.myIA = DumbIA()
 
-    def __init__(self, *args):
-        """@summary: Initialise un personnage Mur, même initialisation que Personange
-        @args: les arguments donnés, doivent être les mêmes que Personnage
-        @type:*args"""
-        super().__init__(*args)
-
-    def __deepcopy__(self, memo):
-        toReturn = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team,
-                                 {"PA": self.PA, "PM": self.PM, "PO": self.PO,
-                                  "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
-                                  "Force": self.fo, "Intelligence": self.int,
-                                  "Puissance": self.pui, "Coups Critiques": self.cc,
-                                  "Sagesse": self.sagesse},
-                                 {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
-                                  "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
-                                  "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
-                                  "Initiative": self.ini, "Invocation": self.invocationLimite,
-                                  "Prospection": self.prospection},
-                                 {"Dommages": self.do, "Dommages critiques": self.doCri,
-                                  "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu,
-                                  "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
-                                  "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges,
-                                  "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou,
-                                  "Sorts": self.doSorts, "Armes": self.doArmes,
-                                  "Distance": self.doDist, "Melee": self.doMelee},
-                                 {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
-                                  "Terre": self.reTerre, "Terre%": self.rePerTerre,
-                                  "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-                                  "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir,
-                                  "Coups critiques": self.reCc, "Poussee": self.rePou,
-                                  "Distance": self.reDist, "Melee": self.reMelee},
-                                 self.icone)
-        toReturn.sortsDebutCombat = self.sortsDebutCombat
-        toReturn.posX = self.posX
-        toReturn.posY = self.posY
-        toReturn.PABase = self.PABase
-        toReturn.PMBase = self.PMBase
-        toReturn.vieMax = self.vieMax
-        toReturn.uid = self.uid
-        toReturn.sorts = deepcopy(self.sorts)
-        toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
-        toReturn.etats = deepcopy(self.etats)
-        toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
-        toReturn.posDebTour = self.posDebTour
-        toReturn.posDebCombat = self.posDebCombat
-        toReturn.invocateur = self.invocateur
-        toReturn.porteUid = self.porteUid
-        toReturn.porteurUid = self.porteurUid
-        toReturn.checkLdv = self.checkLdv
-        toReturn.invocations = deepcopy(self.invocations)
-        toReturn.invocationLimite = self.invocationLimite
-        toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
-        return toReturn
-
-    def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour
-        demandé à un PersonnageMur d'effectuer ses actions.
-        Dans la classe PersonnageMur, c'est fin de tour immédiate sans action.
-        @event: les évenements pygames survenus
-        @type: Event pygame
-        @niveau: La grille de jeu
-        @type: Niveau
-        @mouseXY: Les coordonnées de la souris
-        @type: int
-        @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
-        @type: Sort"""
-        print("Tour de "+(niveau.tourDe.nomPerso))
-        niveau.finTour()
-
-
-class PersonnageSansPM(Personnage):
-    """@summary: Classe décrivant un personange pouvant faire des actions
-    mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
-
-    def __init__(self, *args):
-        """@summary: Initialise un personnage sans PM, même initialisation que Personange
-        @args: les arguments donnés, doivent être les mêmes que Personnage
-        @type:*args"""
-        super().__init__(*args)
-
-    def __deepcopy__(self, memo):
-        toReturn = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team,
-                                    {"PA": self.PA, "PM": self.PM, "PO": self.PO,
-                                     "Vitalite": self.vie, "Agilite": self.agi,
-                                     "Chance": self.cha, "Force": self.fo,
-                                     "Intelligence": self.int, "Puissance": self.pui,
-                                     "Coups Critiques": self.cc, "Sagesse": self.sagesse},
-                                    {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
-                                     "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
-                                     "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
-                                     "Initiative": self.ini, "Invocation": self.invocationLimite,
-                                     "Prospection": self.prospection},
-                                    {"Dommages": self.do, "Dommages critiques": self.doCri,
-                                     "Neutre": self.doNeutre, "Terre": self.doTerre,
-                                     "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir,
-                                     "Renvoi": self.doRenvoi,
-                                     "Maitrise d'arme": self.doMaitriseArme,
-                                     "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui,
-                                     "Poussee": self.doPou, "Sorts": self.doSorts,
-                                     "Armes": self.doArmes, "Distance": self.doDist,
-                                     "Melee": self.doMelee},
-                                    {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
-                                     "Terre": self.reTerre, "Terre%": self.rePerTerre,
-                                     "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-                                     "Eau%": self.rePerEau, "Air": self.reAir,
-                                     "Air%": self.rePerAir,
-                                     "Coups critiques": self.reCc, "Poussee": self.rePou,
-                                     "Distance": self.reDist, "Melee": self.reMelee},
-                                    self.icone)
-        toReturn.sortsDebutCombat = self.sortsDebutCombat
-        toReturn.posX = self.posX
-        toReturn.posY = self.posY
-        toReturn.PABase = self.PABase
-        toReturn.PMBase = self.PMBase
-        toReturn.vieMax = self.vieMax
-        toReturn.uid = self.uid
-        toReturn.sorts = deepcopy(self.sorts)
-        toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
-        toReturn.etats = deepcopy(self.etats)
-        toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
-        toReturn.posDebTour = self.posDebTour
-        toReturn.posDebCombat = self.posDebCombat
-        toReturn.invocateur = self.invocateur
-        toReturn.porteUid = self.porteUid
-        toReturn.porteurUid = self.porteurUid
-        toReturn.checkLdv = self.checkLdv
-        toReturn.invocations = deepcopy(self.invocations)
-        toReturn.invocationLimite = self.invocationLimite
-        toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
-        return toReturn
-
-    def joue(self, event, niveau, mouseXY, sortSelectionne):
-        """@summary: Fonction appelé par la boucle principale pour demandé à un
-        PersonnageSansPM d'effectuer ses actions.
-        Dans la classe PersonnageSansPM, lancer son seul sort
-        sur lui-même et terminé son tour (comportement temporaire).
-        @event: les évenements pygames survenus
-        @type: Event pygame
-        @niveau: La grille de jeu
-        @type: Niveau
-        @mouseXY: Les coordonnées de la souris
-        @type: int
-        @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
-        @type: Sort"""
-        self.sorts[0].lance(niveau.tourDe.posX,
-                            niveau.tourDe.posY, niveau, self.posX, self.posY)
-        niveau.finTour()
-
+#     def __deepcopy__(self, memo):
+#         toReturn = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team,
+#                                     {"PA": self.PA, "PM": self.PM, "PO": self.PO,
+#                                      "Vitalite": self.vie, "Agilite": self.agi,
+#                                      "Chance": self.cha, "Force": self.fo,
+#                                      "Intelligence": self.int, "Puissance": self.pui,
+#                                      "Coups Critiques": self.cc, "Sagesse": self.sagesse},
+#                                     {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
+#                                      "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
+#                                      "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
+#                                      "Initiative": self.ini, "Invocation": self.invocationLimite,
+#                                      "Prospection": self.prospection},
+#                                     {"Dommages": self.do, "Dommages critiques": self.doCri,
+#                                      "Neutre": self.doNeutre, "Terre": self.doTerre,
+#                                      "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir,
+#                                      "Renvoi": self.doRenvoi,
+#                                      "Maitrise d'arme": self.doMaitriseArme,
+#                                      "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui,
+#                                      "Poussee": self.doPou, "Sorts": self.doSorts,
+#                                      "Armes": self.doArmes, "Distance": self.doDist,
+#                                      "Melee": self.doMelee},
+#                                     {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
+#                                      "Terre": self.reTerre, "Terre%": self.rePerTerre,
+#                                      "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
+#                                      "Eau%": self.rePerEau, "Air": self.reAir,
+#                                      "Air%": self.rePerAir,
+#                                      "Coups critiques": self.reCc, "Poussee": self.rePou,
+#                                      "Distance": self.reDist, "Melee": self.reMelee},
+#                                     self.icone)
+#         toReturn.sortsDebutCombat = self.sortsDebutCombat
+#         toReturn.posX = self.posX
+#         toReturn.posY = self.posY
+#         toReturn.PABase = self.PABase
+#         toReturn.PMBase = self.PMBase
+#         toReturn.vieMax = self.vieMax
+#         toReturn.uid = self.uid
+#         toReturn.sorts = deepcopy(self.sorts)
+#         toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
+#         toReturn.etats = deepcopy(self.etats)
+#         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
+#         toReturn.posDebTour = self.posDebTour
+#         toReturn.posDebCombat = self.posDebCombat
+#         toReturn.invocateur = self.invocateur
+#         toReturn.porteUid = self.porteUid
+#         toReturn.porteurUid = self.porteurUid
+#         toReturn.checkLdv = self.checkLdv
+#         toReturn.invocations = deepcopy(self.invocations)
+#         toReturn.invocationLimite = self.invocationLimite
+#         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
+#         toReturn.myIA = self.myIA
+#         return toReturn
 
 invocs_liste = {
-    "Cadran de Xelor": PersonnageSansPM("Cadran de Xelor", "Cadran de Xelor",
-                                        100, 1, {"Vitalite": 1000}, {}, {}, {},
-                                        "cadran_de_xelor.png"),
-    "Cawotte": PersonnageMur("Cawotte", "Cawotte", 0, 1,
-                             {"Vitalite": 660}, {}, {}, {}, "cawotte.jpg"),
-    "Synchro": PersonnageMur("Synchro", "Synchro", 0, 1,
-                             {"Vitalite": 1200}, {}, {}, {}, "synchro.png"),
-    "Complice": PersonnageMur("Complice", "Complice", 0, 1,
-                              {"Vitalite": 650}, {}, {}, {}, "complice.png"),
-    "Balise de Rappel": PersonnageSansPM("Balise de Rappel", "Balise de Rappel",
-                                         0, 1, {"Vitalite": 1000}, {}, {}, {},
-                                         "balise_de_rappel.png"),
-    "Balise Tactique": PersonnageMur("Balise Tactique", "Balise Tactique",
-                                     0, 1, {"Vitalite": 1000}, {}, {}, {},
-                                     "balise_tactique.png"),
-    "Stratege Iop": PersonnageMur("Stratege Iop", "Stratège Iop", 0, 1,
-                                  {"Vitalite": 1385}, {}, {}, {}, "conquete.png"),
+    "Cadran de Xelor": Personnage("Cadran de Xelor", "Cadran de Xelor",
+                                  100, 1, {"Vitalite": 1000}, {}, {}, {},
+                                  "cadran_de_xelor.png", DumbIA()),
+    "Cawotte": Personnage("Cawotte", "Cawotte", 0, 1,
+                          {"Vitalite": 660}, {}, {}, {}, "cawotte.jpg", PasseIA()),
+    "Synchro": Personnage("Synchro", "Synchro", 0, 1,
+                          {"Vitalite": 1200}, {}, {}, {}, "synchro.png", PasseIA()),
+    "Complice": Personnage("Complice", "Complice", 0, 1,
+                           {"Vitalite": 650}, {}, {}, {}, "complice.png", PasseIA()),
+    "Balise de Rappel": Personnage("Balise de Rappel", "Balise de Rappel",
+                                   0, 1, {"Vitalite": 1000}, {}, {}, {},
+                                   "balise_de_rappel.png", DumbIA()),
+    "Balise Tactique": Personnage("Balise Tactique", "Balise Tactique",
+                                  0, 1, {"Vitalite": 1000}, {}, {}, {},
+                                  "balise_tactique.png", PasseIA()),
+    "Stratege Iop": Personnage("Stratege Iop", "Stratège Iop", 0, 1,
+                               {"Vitalite": 1385}, {}, {}, {}, "conquete.png", PasseIA()),
     "Double": Personnage("Double", "Double", 0, 1,
                          {"Vitalite": 1}, {}, {}, {}, "sram.png"),
     "Comploteur": Personnage("Comploteur", "Comploteur", 0, 1,
@@ -1005,5 +917,11 @@ invocs_liste = {
                         0, 1, {"Vitalite": 600, "PA":6, "PM":0},
                         {"Esquive PA":90, "Esquive PM":90}, {},
                         {"Neutre%":0, "Terre%":0, "Feu%":0, "Eau%":0, "Air%":0},
-                        "mot_de_seduction.jpg"),
+                        "mot_de_seduction.jpg", DumbIA()),
+    "Tonneau Attractif": Personnage("Tonneau Attractif", "Tonneau Attractif",
+                                    0, 1, {"Vitalite": 1315, "PA":8, "PM":-1},
+                                    {"Esquive PA":52, "Esquive PM":52}, {},
+                                    {"Neutre%":20, "Terre%":-10, "Feu%":20,
+                                     "Eau%":-10, "Air%":30},
+                                    "ivresse.jpg", DumbIA())
 }
