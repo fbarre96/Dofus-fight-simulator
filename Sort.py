@@ -76,37 +76,80 @@ class Sort:
             sortPoMax *= 2
         return sortPoMin <= distance <= sortPoMax
 
-    def estLancable(self, joueurLanceur, joueurCible):
-        """@summary: vérifie si le sort est lancable
-                     et vérifie si chaque effet est lancable
+    def testLancableParJoueur(self, joueurLanceur):
+        """@summary: vérifie si les conditions de lancabilité du joueur. Sans cible
         """
-        res, msg, coutPA = self.sortEstLancable(joueurCible)
+        res = self.testLancablePA(joueurLanceur)
         if not res:
-            return res, msg, coutPA
-        for effet in self.effets:
-            res, msg = effet.estLancable(joueurLanceur, joueurCible)
-            if not res:
-                return res, msg, coutPA
-        return True, msg, coutPA
+            return False, "Pa insuffisant"
+        res = self.testLancableCeTour()
+        if not res:
+            return False, "Ce sort ne peut plus etre utilise ce tour."
+        res, delaiRestant = self.testLancableDelai()
+        if not res:
+            return False, "Delai avant prochain lance:"+str(delaiRestant)
+        return True, ""
 
-    def sortEstLancable(self, joueurCible):
-        """@vérifie si le sort est lancable sur la cible.
-                     check cout en PA et les limites de lancer par tour
+    def estLancableSurCible(self, niveau, joueurLanceur, cibleX, cibleY):
+        """@summary: vérifie si les conditions de lancabilité du joueur. Sans cible et avec cible
+        """
+        res, msg = self.testLancableParJoueur(joueurLanceur)
+        if not res:
+            return False, msg
+        res = self.aPorte(joueurLanceur.posX, joueurLanceur.posY, cibleX, cibleY, joueurLanceur.PO)
+        if not res:
+            return False, "Pas la porté requise"
+        joueurCible = niveau.getJoueurSur(cibleX, cibleY)
+        if self.ldv and not self.aLigneDeVue(niveau, joueurLanceur.posX, joueurLanceur.posY,
+                                             cibleX, cibleY):
+            if joueurLanceur.checkLdv:
+                return False, "Pas de ligne de vue."
+        if joueurCible is not None:
+            if not self.testLancableCeTourSurJoueur(joueurCible):
+                return False, "Ce sort ne peut plus etre utilise sur ce personnage ce tour."
+        res, msg = self.testLancableForEffets(joueurLanceur, cibleX, cibleY)
+        if not res:
+            return False, msg
+        return True, ""
+
+    def testLancablePA(self, lanceur):
+        """@summary: Renvoie True si le cout en PA du sort est inférieur au nb de PA du lanceur
         """
         coutPA = self.coutPA
-        if self.compteTourEntreDeux >= self.nbTourEntreDeux:
-            if self.compteLancerParTour < self.nbLancerParTour:
-                if joueurCible is not None:
-                    if not joueurCible in self.compteLancerParTourParJoueur:
-                        self.compteLancerParTourParJoueur[joueurCible] = 0
-                    compte = self.compteLancerParTourParJoueur[joueurCible]
-                    if compte < self.nbLancerParTourParJoueur:
-                        return True, "", coutPA
-                    return False, "Ce sort ne peut plus etre utilise sur ce personnage ce tour.", 0
-                return True, "", coutPA
-            return False, "Ce sort ne peut plus etre utilise ce tour.", 0
-        msg = "Delai avant prochain lance:"+str(self.nbTourEntreDeux-self.compteTourEntreDeux)
-        return False, msg, 0
+        if coutPA < 0:
+            coutPA = 0
+        return coutPA <= lanceur.PA
+
+    def testLancableCeTour(self):
+        """@summary: Renvoie True si le sort n'a pas atteint sa limite de lancer par tour
+        """
+        return self.compteLancerParTour < self.nbLancerParTour
+
+    def testLancableCeTourSurJoueur(self, joueurCible):
+        """@summary: Renvoie True si le sort n'a pas atteint sa limite de lancer par tour par joueur
+        """
+        if joueurCible is not None:
+            if not joueurCible in self.compteLancerParTourParJoueur:
+                self.compteLancerParTourParJoueur[joueurCible] = 0
+            compte = self.compteLancerParTourParJoueur[joueurCible]
+            return compte < self.nbLancerParTourParJoueur
+        return True
+
+    def testLancableDelai(self):
+        """@summary: Renvoie True si le sort a dépassé son délai de cooldown
+        """
+        calcul = self.nbTourEntreDeux-self.compteTourEntreDeux
+        res = calcul >= 0
+        return res, calcul
+
+    def testLancableForEffets(self, joueurLanceur, cibleX, cibleY):
+        """@summary: Renvoie True si les effets du sort ont validé la cible.
+        """
+        for effet in self.effets:
+            res, msg = effet.estLancable(joueurLanceur, cibleX, cibleY)
+            if not res:
+                return res, msg
+        return True, ""
 
     def marquerLancer(self, joueurCible):
         """@summary: compte le sort dans les lancers autorisés par tour.
@@ -165,13 +208,14 @@ class Sort:
                 print(caraclanceur.nomPerso+" lance :"+self.nom)
             # Test si le sort est lançable
             # (cout PA suffisant, délai et nombre d'utilisations par tour et par cible)
-            res, explication, coutPA = self.estLancable(caraclanceur, joueurCible)
+            res, explication = self.estLancableSurCible(niveau, caraclanceur,
+                                                        caseCibleX, caseCibleY)
             if res:
                 # Lancer du sort
                 if not isPrevisu:
-                    caraclanceur.PA -= coutPA
+                    caraclanceur.PA -= self.coutPA
                     self.marquerLancer(joueurCible)
-                    print(caraclanceur.nomPerso+": -"+str(coutPA) +
+                    print(caraclanceur.nomPerso+": -"+str(self.coutPA) +
                           " PA (reste "+str(caraclanceur.PA)+"PA)")
                 chanceCC = caraclanceur.cc + self.probaCC
                 randomVal = round(random.random(), 2)

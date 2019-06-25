@@ -718,7 +718,7 @@ class Personnage(object):
         if coutPA < 0:
             coutPA = 0
         if coutPA <= niveau.tourDe.PA:
-            res, explication, coutPA = sort.estLancable(niveau.tourDe, None)
+            res, explication = sort.testLancableParJoueur(niveau.tourDe)
             if res:
                 sortSelectionne = sort
             else:

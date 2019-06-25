@@ -42,12 +42,13 @@ class EffetInvoque(Effet):
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
-        if self.estLancable(invoc.invocateur, None):
+        if self.estLancable(invoc.invocateur, kwargs.get("caseCibleX"),
+                            kwargs.get("caseCibleY")):
             joueurLanceur.invocations.append(invoc)
             niveau.invoque(invoc, kwargs.get("caseCibleX"),
                            kwargs.get("caseCibleY"))
 
-    def estLancable(self, joueurLanceur, joueurCible):
+    def estLancable(self, joueurLanceur, cibleX, cibleY):
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
         @type: Personnage

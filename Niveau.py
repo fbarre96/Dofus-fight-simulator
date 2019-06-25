@@ -288,7 +288,7 @@ class Niveau:
             # colle l'image sur la zone
             self.fenetre.blit(imageSort, (posSortsX, posSortsY))
             # On récupère si le sort est jouable
-            res, explication, _ = sort.estLancable(self.tourDe, None)
+            res, explication = sort.testLancableParJoueur(self.tourDe)
             # Si le sort n'est pas lançable alors:
             if not res:
                 # On le grise

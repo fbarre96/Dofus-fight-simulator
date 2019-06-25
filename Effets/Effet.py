@@ -121,7 +121,7 @@ class Effet(object):
         """
         return self.kwargs.get("degatsSubits", 0), self.kwargs.get("typeDegats", "")
 
-    def estLancable(self, joueurLanceur, joueurCible):
+    def estLancable(self, joueurLanceur, cibleX, cibleY):
         # pylint: disable=unused-argument
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet

@@ -210,3 +210,37 @@ class EffetRetireEtat(Effet):
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
             joueurCaseEffet.retirerEtats(niveau, self.nomEtat)
+
+class EffetRetireEtatSelf(Effet):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Cet effet retire les états de la cible qui portent un nom donné."""
+
+    def __init__(self, str_nomEtat, **kwargs):
+        """@summary: Initialise un effet retirant les états de la cible selon un paramètre donné.
+        @str_nomEtat: le nom de l'état qui va être retiré de la cible.
+        @type: str
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        self.nomEtat = str_nomEtat
+        super().__init__(**kwargs)
+
+    def __deepcopy__(self, memo):
+        return EffetRetireEtatSelf(self.nomEtat, **self.kwargs)
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        if joueurLanceur is not None:
+            niveau.ajoutFileEffets(self, joueurLanceur, joueurLanceur)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        if joueurCaseEffet is not None:
+            joueurCaseEffet.retirerEtats(niveau, self.nomEtat)

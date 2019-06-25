@@ -2,7 +2,7 @@
 """
 # pylint: disable=line-too-long
 import Sort
-from Effets.EffetEtat import EffetEtat, EffetEtatSelf, EffetRetireEtat, EffetRafraichirEtats
+from Effets.EffetEtat import EffetEtat, EffetEtatSelf, EffetRetireEtat, EffetRafraichirEtats, EffetRetireEtatSelf
 from Effets.EffetDegats import EffetDegats, EffetVolDeVie
 from Effets.EffetSoin import EffetSoinPerPVMax
 from Effets.EffetPousser import EffetPousser, EffetAttire
@@ -108,11 +108,44 @@ def getSorts(lvl):
     Nécessite l'état Sobre.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Karcham", 9, 1, 1, 1, [EffetLance(etat_requis_lanceur="Karcham|Sobre", consomme_etat=True, cible_non_requise=True), EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Karcham|Sobre"), EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="Karcham|Sobre"), EffetPorte(etat_requis_lanceur="Karcham|Sobre")], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
+        Sort.Sort("Karcham", 9, 1, 1, 1, [
+            # Indique qu'on doit lancer
+            EffetEtatSelf(Etat("Doit Lancer", 0, 1), etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Retire Karcham au lanceur
+            EffetRetireEtatSelf("Karcham", etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Lance et consomme etat Doit Lancer au Lanceur.
+            EffetLance(etat_requis_lanceur="Doit Lancer", consomme_etat=True, cible_non_requise=True),
+            # Si on n'a pas lancer, on porte
+            EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetPorte(etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetRetireEtatSelf("Doit Lancer", cible_non_requise=True)], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
     Désactive les lignes de vue des sorts de la cible portée.""", chaine=False),
-        Sort.Sort("Karcham", 9, 1, 1, 1, [EffetLance(etat_requis_lanceur="Karcham|Sobre", consomme_etat=True, cible_non_requise=True), EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Karcham|Sobre"), EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="Karcham|Sobre"), EffetPorte(etat_requis_lanceur="Karcham|Sobre")], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
+        Sort.Sort("Karcham", 9, 1, 1, 1, [
+            # Indique qu'on doit lancer
+            EffetEtatSelf(Etat("Doit Lancer", 0, 1), etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Retire Karcham au lanceur
+            EffetRetireEtatSelf("Karcham", etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Lance et consomme etat Doit Lancer au Lanceur.
+            EffetLance(etat_requis_lanceur="Doit Lancer", consomme_etat=True, cible_non_requise=True),
+            # Si on n'a pas lancer, on porte
+            EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetPorte(etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetRetireEtatSelf("Doit Lancer", cible_non_requise=True)], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
     Désactive les lignes de vue des sorts de la cible portée.""", chaine=False),
-        Sort.Sort("Karcham", 9, 1, 1, 1, [EffetLance(etat_requis_lanceur="Karcham|Sobre", consomme_etat=True, cible_non_requise=True), EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Karcham|Sobre"), EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="Karcham|Sobre"), EffetPorte(etat_requis_lanceur="Karcham|Sobre")], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
+        Sort.Sort("Karcham", 9, 1, 1, 1, [
+            # Indique qu'on doit lancer
+            EffetEtatSelf(Etat("Doit Lancer", 0, 1), etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Retire Karcham au lanceur
+            EffetRetireEtatSelf("Karcham", etat_requis_lanceur="Karcham|Sobre", cible_non_requise=True),
+            # Lance et consomme etat Doit Lancer au Lanceur.
+            EffetLance(etat_requis_lanceur="Doit Lancer", consomme_etat=True, cible_non_requise=True),
+            # Si on n'a pas lancer, on porte
+            EffetEtatSelf(EtatBoostSortCarac("Karcham", 0, -1, "Karcham", "POMax", 5), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetEtat(EtatBoostCaracFixe("Karcham", 0, -1, "checkLdv", False), etat_requis="!Karcham", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetPorte(etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetRetireEtatSelf("Doit Lancer", cible_non_requise=True)], [], 0, 6, 1, 0, 0, "ligne", True, description="""Porte la cible. Au second lancer, jette la cible à 6 cellules maximum.
     Désactive les lignes de vue des sorts de la cible portée.""", chaine=False),
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [

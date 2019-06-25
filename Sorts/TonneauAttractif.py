@@ -33,6 +33,6 @@ def getSorts(lvl):
         Sort.Sort("Beuverie", 0, 0, 0, 15, [
             EffetAttire(8, cibles_possibles="Ennemis"),
             EffetAttire(8, cibles_possibles="Allies", etat_requis_cibles="Saoul")
-        ], [], 0, 99, 1, 0, 0, "cercle", True, chaine=False)
+        ], [], 0, 99, 1, 0, 0, "ligne", True, chaine=False)
     )
     return sorts

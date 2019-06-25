@@ -16,12 +16,10 @@ class DumbIA():
         casesPOSort = niveau.getZonePorteSort(sort, joueurLanceur.posX, joueurLanceur.posY,
                                               joueurLanceur.PO)
         for case in casesPOSort:
-            joueurSur = niveau.getJoueurSur(case[0], case[1])
-            if joueurSur is not None:
-                res, _, _ = sort.estLancable(joueurLanceur, joueurSur)
-                if res:
-                    return joueurSur
-        return None
+            res, _ = sort.estLancableSurCible(niveau, joueurLanceur, case[0], case[1])
+            if res:
+                return case[0], case[1]
+        return None, None
 
     def joue(self, event, joueur, niveau, mouseXY, sortSelectionne):
         # pylint: disable=unused-argument
@@ -38,10 +36,9 @@ class DumbIA():
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
         for sort in joueur.sorts:
-            cible = self.getCible(niveau, sort, joueur)
-            if cible is not None:
-                res, _, _ = sort.estLancable(joueur, cible)
-                if res:
-                    sort.lance(niveau.tourDe.posX,
-                               niveau.tourDe.posY, niveau, cible.posX, cible.posY)
+            cibleX, cibleY = self.getCible(niveau, sort, joueur)
+            while cibleX is not None:
+                sort.lance(niveau.tourDe.posX,
+                           niveau.tourDe.posY, niveau, cibleX, cibleY)
+                cibleX, cibleY = self.getCible(niveau, sort, joueur)
         niveau.finTour()
