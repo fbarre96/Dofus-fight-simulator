@@ -23,5 +23,6 @@ class PasseIA():
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
+        print("--------------------------------")
         print("Tour de "+(niveau.tourDe.nomPerso))
         niveau.finTour()

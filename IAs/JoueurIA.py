@@ -69,6 +69,7 @@ class JoueurIA:
                     caseY = int(mouseXY[1]/constantes.taille_sprite)
                     joueurInfo = niveau.getJoueurSur(caseX, caseY)
                     if joueurInfo is not None:
+                        print("--------------------------------")
                         for etat in joueurInfo.etats:
                             if etat.actif():
                                 print(joueurInfo.nomPerso+" est dans l'etat " +
@@ -76,6 +77,21 @@ class JoueurIA:
                             elif etat.debuteDans > 0:
                                 print(joueurInfo.nomPerso+" sera dans l'etat " +
                                       etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")
+                        print("--------------------------------")
+                        if joueurInfo.porteUid is not None or joueurInfo.porteurUid is not None:
+                            joueurInfoBisUid = joueurInfo.porteUid if joueurInfo.porteUid \
+                                                                        is not None \
+                                                                   else joueurInfo.porteurUid
+                            joueurInfo = niveau.getJoueurAvecUid(joueurInfoBisUid)
+                            print("--------------------------------")
+                            for etat in joueurInfo.etats:
+                                if etat.actif():
+                                    print(joueurInfo.nomPerso+" est dans l'etat " +
+                                          etat.nom+" ("+str(etat.duree)+")")
+                                elif etat.debuteDans > 0:
+                                    print(joueurInfo.nomPerso+" sera dans l'etat " +
+                                          etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")
+                            print("--------------------------------")
                     if sortSelectionne is not None:
                         sortSelectionne = None
         return sortSelectionne

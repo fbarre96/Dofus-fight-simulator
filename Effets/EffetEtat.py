@@ -67,8 +67,8 @@ class EffetEtatSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        etatCopier = deepcopy(self.etat)
-        return joueurLanceur.appliquerEtat(etatCopier, joueurLanceur,
+        etatCopie = deepcopy(self.etat)
+        return joueurLanceur.appliquerEtat(etatCopie, joueurLanceur,
                                            self.kwargs.get("cumulMax", -1), niveau)
 
 

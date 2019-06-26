@@ -37,18 +37,17 @@ class EffetInvoque(Effet):
         @kwargs: options supplémentaires,
                  les options caseCibleX et caseCibleY doivent être mentionnées.
         @type: **kwargs"""
-
         invoc = deepcopy(Personnages.invocs_liste[self.nomInvoque])
         invoc.invocateur = joueurLanceur
         invoc.team = joueurLanceur.team
         invoc.lvl = joueurLanceur.lvl
-        if self.estLancable(invoc.invocateur, kwargs.get("caseCibleX"),
-                            kwargs.get("caseCibleY")):
+        _, res = self.estLancable(invoc.invocateur, None)
+        if res:
             joueurLanceur.invocations.append(invoc)
             niveau.invoque(invoc, kwargs.get("caseCibleX"),
                            kwargs.get("caseCibleY"))
 
-    def estLancable(self, joueurLanceur, cibleX, cibleY):
+    def estLancable(self, joueurLanceur, joueurCibleDirect):
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
         @type: Personnage
@@ -60,10 +59,13 @@ class EffetInvoque(Effet):
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
+        msg, res = super().estLancable(joueurLanceur, joueurCibleDirect)
+        if not res:
+            return msg, res
         if self.compteCommeInvocation:
             if len(joueurLanceur.invocations) + 1 > joueurLanceur.invocationLimite:
-                return False, "Limite d'invocation atteinte"
-        return True, ""
+                return "Limite d'invocation atteinte", False
+        return "", True
 
 
 class EffetDouble(Effet):

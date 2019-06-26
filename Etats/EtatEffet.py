@@ -572,7 +572,7 @@ class EtatEffetSiRetraitEtat(Etat):
 class EtatEffetSiPorte(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -591,13 +591,14 @@ class EtatEffetSiPorte(Etat):
         @type: string"""
         self.effet = effet
         self.nomSort = nomSort
+        self.quiLancera = quiLancera
         super().__init__(nom, debDans, duree, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiPorte(self.nom, self.debuteDans, self.duree, self.effet,
-                                self.nomSort,
+                                self.nomSort, self.quiLancera,
                                 self.lanceur, self.desc)
 
     def triggerApresPorte(self, niveau, porteur, porte):
@@ -608,8 +609,12 @@ class EtatEffetSiPorte(Etat):
         Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
-        niveau.lancerEffet(self.effet, porte.posX, porte.posY,
-                           self.nomSort, porte.posX, porte.posY)
+        if self.quiLancera == "porteur":
+            celuiQuiLancera = porteur
+        else:
+            celuiQuiLancera = porte
+        niveau.lancerEffet(self.effet, celuiQuiLancera.posX, celuiQuiLancera.posY,
+                           self.nomSort, porte.posX, porte.posY, celuiQuiLancera)
 
 class EtatEffetSiLance(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""

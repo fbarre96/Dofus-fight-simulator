@@ -107,7 +107,7 @@ class Sort:
         if joueurCible is not None:
             if not self.testLancableCeTourSurJoueur(joueurCible):
                 return False, "Ce sort ne peut plus etre utilise sur ce personnage ce tour."
-        res, msg = self.testLancableForEffets(joueurLanceur, cibleX, cibleY)
+        res, msg = self.testLancableForEffets(joueurLanceur, joueurCible)
         if not res:
             return False, msg
         return True, ""
@@ -142,14 +142,20 @@ class Sort:
         res = calcul >= 0
         return res, calcul
 
-    def testLancableForEffets(self, joueurLanceur, cibleX, cibleY):
+    def testLancableForEffets(self, joueurLanceur, joueurCibleDirect):
         """@summary: Renvoie True si les effets du sort ont validé la cible.
         """
         for effet in self.effets:
-            res, msg = effet.estLancable(joueurLanceur, cibleX, cibleY)
+            _, res = effet.estLancable(joueurLanceur, joueurCibleDirect)
             if not res:
-                return res, msg
-        return True, ""
+                if self.chaine:
+                    return False, "Un effet a échoué et le sort est chainé"
+            else:
+                if not self.chaine:
+                    return True, "Un effet a réussi et le sort n'est pas chainé"
+        if self.chaine:
+            return True, "Tous les effets ont réussi et le sort est chainé"
+        return False, "Aucun effet n'a réussi et le sort n'est pas chainé."
 
     def marquerLancer(self, joueurCible):
         """@summary: compte le sort dans les lancers autorisés par tour.

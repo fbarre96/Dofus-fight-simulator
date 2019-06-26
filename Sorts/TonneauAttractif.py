@@ -16,8 +16,8 @@ def getSortsDebutCombat(lvl):
     # pylint: disable=unused-argument
     sortsDebutCombat = []
     sortsDebutCombat.append(Sort.Sort("Ivresse", 0, 0, 0, 0, [
-        EffetEtatSelf(EtatEffetSiPorte("Tournée Générale si porté", 0, -1, EffetEtatSelf(EtatEffetDebutTour("Tournée Générale", 0, 1, EffetSoin(53, 81, cibles_possibles="Allies", zone=Zones.TypeZoneCercle(1)), "Tournée Générale", "cible")), "Tournée Générale")),
-        EffetEtatSelf(EtatEffetSiLance("Tournée Générale si lancé", 0, -1, EffetSoin(53, 81, cibles_possibles="Allies", zone=Zones.TypeZoneCercle(1)), "Tournée Générale")),
+        EffetEtatSelf(EtatEffetSiPorte("Tournée Générale si porté", 0, -1, EffetEtatSelf(EtatEffetDebutTour("Tournée Générale", 1, 1, EffetSoin(53, 81, cibles_possibles="Allies", zone=Zones.TypeZoneCercle(1)), "Tournée Générale", "cible")), "Tournée Générale", "porte")),
+        EffetEtatSelf(EtatEffetSiLance("Tournée Générale si lancé", 0, -1, EffetSoin(53, 81, cibles_possibles="Allies|Lanceur", zone=Zones.TypeZoneCercle(1)), "Tournée Générale")),
         EffetEtatSelf(EtatEffetSiLance("Tournée Générale annulé", 0, -1, EffetRetireEtat("Tournée Générale"), "Tournée Générale annulé"))
     ], [], 0, 99, 99, 0, 0, "cercle", False, chaine=False))
     return sortsDebutCombat

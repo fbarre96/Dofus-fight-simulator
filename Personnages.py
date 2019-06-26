@@ -348,7 +348,6 @@ class Personnage(object):
         """@summary: lance tous les sorts dans sortsDebutCombat
         """
         for sort in self.sortsDebutCombat:
-            print("Sort debut cbt : "+str(sort.nom))
             sort.lance(self.posX, self.posY, niveau, self.posX, self.posY)
 
     def ajoutHistoriqueDeplacement(self, posX=None, posY=None):
@@ -665,6 +664,7 @@ class Personnage(object):
         self.posDebTour = [self.posX, self.posY]
         niveau.depileEffets()
         niveau.afficherSorts()
+        print("--------------------------------")
         print("Debut de tour de "+str(self.nomPerso)+".")
         print("PA : "+str(self.PA))
         print("PM : "+str(self.PM))

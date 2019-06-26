@@ -121,7 +121,7 @@ class Effet(object):
         """
         return self.kwargs.get("degatsSubits", 0), self.kwargs.get("typeDegats", "")
 
-    def estLancable(self, joueurLanceur, cibleX, cibleY):
+    def estLancable(self, joueurLanceur, joueurCibleDirect):
         # pylint: disable=unused-argument
         """@summary: Test si un effet peut etre lance selon les options de l'effets.
         @joueurLanceur: Le joueur lançant l'effet
@@ -134,33 +134,21 @@ class Effet(object):
         @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
         @type: tableau de Personnage
         @return: booléen indiquant vrai si la cible est valide, faux sinon"""
-        return True, ""
-
-    def cibleValide(self, joueurLanceur, joueurCible, joueurCibleDirect, ciblesDejaTraitees):
-        """@summary: Test si un joueur cible est un cible valide selon les options de l'effets.
-        @joueurLanceur: Le joueur lançant l'effet
-        @type: Personnage
-        @joueurCible: Le joueur dans la zone d'effet testé
-        @type: Personnage
-        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé
-                            à la base (peut-être identique à joueurCible.
-        @type: Personnage ou None
-        @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
-        @type: tableau de Personnage
-        @return: booléen indiquant vrai si la cible est valide, faux sinon"""
-
-        # Test si la cible est dans les cibles possibles
         msg = ""
-        if joueurCible is None:
-            joueurCibleTeam = -1
-            joueurCibleUid = -1
-            joueurCibleClasse = ""
-            joueurCibleInvocateur = ""
-        else:
-            joueurCibleTeam = joueurCible.team
-            joueurCibleUid = joueurCible.uid
-            joueurCibleClasse = joueurCible.classe
-            joueurCibleInvocateur = joueurCible.invocateur
+        # Test si une cible direct n'existe pas si l'effet doit être jouée
+        if (joueurCibleDirect is None and not self.cibleNonRequise):
+            msg = "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
+            return msg, False
+        # Test si un état est requis sur la cible direct et qu'une cible direct existe
+        # une liste est vraie si elle n'est pas vide
+        if (joueurCibleDirect is None and self.etatRequisCibleDirect):
+            msg = "DEBUG : Invalide : Cible direct non renseigne et etatRequis "+ \
+                "pour cible direct (" + str(self.etatRequisCibleDirect)+")"
+            return msg, False
+        if not joueurLanceur.aEtatsRequis(self.etatRequisLanceur):
+            msg = "DEBUG : Invalide :etatRequis pour lanceur non present" + \
+                str(self.etatRequisLanceur)+" n'est pas présent sur le lanceur"
+            return msg, False
         if joueurCibleDirect is not None:
             if not((joueurCibleDirect.team == joueurLanceur.team and \
                 joueurCibleDirect.uid != joueurLanceur.uid and \
@@ -186,7 +174,38 @@ class Effet(object):
                 msg = "DEBUG : Invalide : Cible Direct non possible "+\
                         str(joueurCibleDirect.classe)+"/"+str(self.ciblesPossiblesDirect)
                 return msg, False
+            
+            # Test si la cible firect n'est pas une case vide qu'il a bien les états requis
+            if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
+                msg = "DEBUG : Invalide :etatRequis pour cible direct non present"
+                return msg, False
+        return msg, True
 
+    def cibleValide(self, joueurLanceur, joueurCible, ciblesDejaTraitees):
+        """@summary: Test si un joueur cible est un cible valide selon les options de l'effets.
+        @joueurLanceur: Le joueur lançant l'effet
+        @type: Personnage
+        @joueurCible: Le joueur dans la zone d'effet testé
+        @type: Personnage
+        @joueurCibleDirect: Le joueur sur lequel l'effet est lancé
+                            à la base (peut-être identique à joueurCible.
+        @type: Personnage ou None
+        @ciblesDejaTraitees: Les cibles déjà touchées par l'effet
+        @type: tableau de Personnage
+        @return: booléen indiquant vrai si la cible est valide, faux sinon"""
+
+        # Test si la cible est dans les cibles possibles
+        msg = ""
+        if joueurCible is None:
+            joueurCibleTeam = -1
+            joueurCibleUid = -1
+            joueurCibleClasse = ""
+            joueurCibleInvocateur = ""
+        else:
+            joueurCibleTeam = joueurCible.team
+            joueurCibleUid = joueurCible.uid
+            joueurCibleClasse = joueurCible.classe
+            joueurCibleInvocateur = joueurCible.invocateur
 
         if (joueurCibleTeam == joueurLanceur.team and joueurCibleUid != joueurLanceur.uid
                 and "Allies" in self.ciblesPossibles) \
@@ -212,16 +231,6 @@ class Effet(object):
                 msg = "DEBUG : Invalide : Cible deja traitee "+\
                     str(joueurCible) + str(ciblesDejaTraitees)
                 return msg, False
-            # Test si un état est requis sur la cible direct et qu'une cible direct existe
-            # une liste est vraie si elle n'est pas vide
-            if (joueurCibleDirect is None and self.etatRequisCibleDirect):
-                msg = "DEBUG : Invalide : Cible direct non renseigne et etatRequis "+ \
-                    "pour cible direct (" + str(self.etatRequisCibleDirect)+")"
-                return msg, False
-            # Test si une cible direct n'existe pas si l'effet doit être jouée
-            if (joueurCibleDirect is None and not self.cibleNonRequise):
-                msg = "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
-                return msg, False
             # Test si la cible est une case vide et que l'effet ne nécessite pas d'etat pour la cibl
             # une liste est vraie si elle n'est pas vide
             if joueurCible is None and self.etatRequisCibles:
@@ -232,15 +241,7 @@ class Effet(object):
                 if not joueurCible.aEtatsRequis(self.etatRequisCibles):
                     msg = "DEBUG : Invalide :etatRequis pour cible non present"
                     return msg, False
-            # Test si la cible firect n'est pas une case vide qu'il a bien les états requis
-            if joueurCibleDirect is not None:
-                if not joueurCibleDirect.aEtatsRequis(self.etatRequisCibleDirect):
-                    msg = "DEBUG : Invalide :etatRequis pour cible direct non present"
-                    return msg, False
-            if not joueurLanceur.aEtatsRequis(self.etatRequisLanceur):
-                msg = "DEBUG : Invalide :etatRequis pour lanceur non present" + \
-                    str(self.etatRequisLanceur)+" n'est pas présent sur le lanceur"
-                return msg, False
+
             # La cible a passé tous les tests
             return msg, True
         msg = "DEBUG : Invalide : Cible "+ joueurCibleClasse + \

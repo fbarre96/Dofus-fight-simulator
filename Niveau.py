@@ -467,8 +467,10 @@ class Niveau:
             i += 1
             tailleJoueurs = len(self.joueurs)
         if len(persosJoueursRestants) == 1:
+            print("--------------------------------")
             print("Gagnant : "+str(persosJoueursRestants[0].nomPerso))
         elif not persosJoueursRestants:
+            print("--------------------------------")
             print("Tous mort ! Egalité.")
         if doitPasserTour:
             self.finTour()
@@ -947,11 +949,14 @@ class Niveau:
             joueurCaseEffet = self.getJoueurSur(caseX, caseY)
             # Test si un joeuur est sur la case
             effetALancer = deepcopy(effet)
+            msg, res = effet.estLancable(joueurLanceur, joueurCibleDirect)
+            if not res:
+                return False, ciblesTraitees
             if joueurCibleDirect is not None:
 
                 # Si le joueur sur la case est une cible valide
                 msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
-                                                   joueurCibleDirect, ciblesTraitees)
+                                                   ciblesTraitees)
                 if not estValide:
                     print(msg)
                 else:
@@ -978,19 +983,13 @@ class Niveau:
                         joueurLanceur.retirerEtats(self, effet.etatRequisLanceur)
 
             else:
-                if effet.cibleNonRequise:
-                    msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
-                                                       joueurCibleDirect, ciblesTraitees)
-                    if not estValide:
-                        print(msg)
-                    else:
-                        effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur,
-                                                    caseCibleX=caseCibleX, caseCibleY=caseCibleY,
-                                                    nom_sort=nomSort,
-                                                    cibles_traitees=ciblesTraitees,
-                                                    provX=provX, provY=provY, caseEffetX=caseX,
-                                                    caseEffetY=caseY)
-                        sestApplique = True
+                effetALancer.appliquerEffet(self, joueurCaseEffet, joueurLanceur,
+                                            caseCibleX=caseCibleX, caseCibleY=caseCibleY,
+                                            nom_sort=nomSort,
+                                            cibles_traitees=ciblesTraitees,
+                                            provX=provX, provY=provY, caseEffetX=caseX,
+                                            caseEffetY=caseY)
+                sestApplique = True
 
         return sestApplique, ciblesTraitees
 
@@ -1337,8 +1336,12 @@ class Niveau:
         # AfficherOverlays
         if mouseXY[1] > constantes.y_sorts:
             for sort in self.tourDe.sorts:
-                if sort.vue.isMouseOver(mouseXY):
-                    sort.overlay.afficher(sort.vue.posX, constantes.y_sorts)
+                try:
+                    if sort.vue.isMouseOver(mouseXY):
+                        sort.overlay.afficher(sort.vue.posX, constantes.y_sorts)
+                except AttributeError as exception:
+                    print("Erreur Overlay de sort pour le sort :"+str(sort.nomSort)+\
+                        " du joueur "+str(self.tourDe.classe)+" / "+str(exception))
         else:
             for joueur in self.joueurs:
                 if joueur.vue.isMouseOver(mouseXY):
