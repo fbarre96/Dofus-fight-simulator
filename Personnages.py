@@ -283,6 +283,11 @@ class Personnage(object):
             sortsDebutCombat += Sorts.TonneauAttractif.getSortsDebutCombat(lvl)
             sorts += Sorts.TonneauAttractif.getSorts(lvl)
             return sorts, sortsDebutCombat
+        elif classe == "Tonneau Incapacitant":
+            import Sorts.TonneauIncapacitant
+            sortsDebutCombat += Sorts.TonneauIncapacitant.getSortsDebutCombat(lvl)
+            sorts += Sorts.TonneauIncapacitant.getSorts(lvl)
+            return sorts, sortsDebutCombat
         elif classe == "Poutch":
             return sorts, sortsDebutCombat
         elif classe == "Lapino":
@@ -759,128 +764,6 @@ class Personnage(object):
                 if etat.actif():
                     etat.triggerApresLance(niveau, self, joueurPorte)
 
-# class PersonnageMur(Personnage):
-#     """@summary: Classe décrivant un montre de type MUR immobile
-#     (cawotte, cadran de Xelor...). hérite de Personnage"""
-
-#     def __init__(self, *args):
-#         """@summary: Initialise un personnage Mur, même initialisation que Personange
-#         @args: les arguments donnés, doivent être les mêmes que Personnage
-#         @type:*args"""
-#         super().__init__(*args)
-
-#     def __deepcopy__(self, memo):
-#         toReturn = PersonnageMur(self.nomPerso, self.classe, self.lvl, self.team,
-#                                  {"PA": self.PA, "PM": self.PM, "PO": self.PO,
-#                                   "Vitalite": self.vie, "Agilite": self.agi, "Chance": self.cha,
-#                                   "Force": self.fo, "Intelligence": self.int,
-#                                   "Puissance": self.pui, "Coups Critiques": self.cc,
-#                                   "Sagesse": self.sagesse},
-#                                  {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
-#                                   "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
-#                                   "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
-#                                   "Initiative": self.ini, "Invocation": self.invocationLimite,
-#                                   "Prospection": self.prospection},
-#                                  {"Dommages": self.do, "Dommages critiques": self.doCri,
-#                                   "Neutre": self.doNeutre, "Terre": self.doTerre, "Feu": self.doFeu,
-#                                   "Eau": self.doEau, "Air": self.doAir, "Renvoi": self.doRenvoi,
-#                                   "Maitrise d'arme": self.doMaitriseArme, "Pieges": self.doPieges,
-#                                   "Pieges Puissance": self.doPiegesPui, "Poussee": self.doPou,
-#                                   "Sorts": self.doSorts, "Armes": self.doArmes,
-#                                   "Distance": self.doDist, "Melee": self.doMelee},
-#                                  {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
-#                                   "Terre": self.reTerre, "Terre%": self.rePerTerre,
-#                                   "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-#                                   "Eau%": self.rePerEau, "Air": self.reAir, "Air%": self.rePerAir,
-#                                   "Coups critiques": self.reCc, "Poussee": self.rePou,
-#                                   "Distance": self.reDist, "Melee": self.reMelee},
-#                                  self.icone)
-#         toReturn.sortsDebutCombat = self.sortsDebutCombat
-#         toReturn.posX = self.posX
-#         toReturn.posY = self.posY
-#         toReturn.PABase = self.PABase
-#         toReturn.PMBase = self.PMBase
-#         toReturn.vieMax = self.vieMax
-#         toReturn.uid = self.uid
-#         toReturn.sorts = deepcopy(self.sorts)
-#         toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
-#         toReturn.etats = deepcopy(self.etats)
-#         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
-#         toReturn.posDebTour = self.posDebTour
-#         toReturn.posDebCombat = self.posDebCombat
-#         toReturn.invocateur = self.invocateur
-#         toReturn.porteUid = self.porteUid
-#         toReturn.porteurUid = self.porteurUid
-#         toReturn.checkLdv = self.checkLdv
-#         toReturn.invocations = deepcopy(self.invocations)
-#         toReturn.invocationLimite = self.invocationLimite
-#         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
-#         toReturn.myIA = self.myIA
-#         return toReturn
-
-# class PersonnageSansPM(Personnage):
-#     """@summary: Classe décrivant un personange pouvant faire des actions
-#     mais sans chercher à se déplacer (Stratege iop). hérite de Personnage"""
-
-#     def __init__(self, *args):
-#         """@summary: Initialise un personnage sans PM, même initialisation que Personange
-#         @args: les arguments donnés, doivent être les mêmes que Personnage
-#         @type:*args"""
-#         super().__init__(*args)
-#         self.myIA = DumbIA()
-
-#     def __deepcopy__(self, memo):
-#         toReturn = PersonnageSansPM(self.nomPerso, self.classe, self.lvl, self.team,
-#                                     {"PA": self.PA, "PM": self.PM, "PO": self.PO,
-#                                      "Vitalite": self.vie, "Agilite": self.agi,
-#                                      "Chance": self.cha, "Force": self.fo,
-#                                      "Intelligence": self.int, "Puissance": self.pui,
-#                                      "Coups Critiques": self.cc, "Sagesse": self.sagesse},
-#                                     {"Retrait PA": self.retPA, "Esquive PA": self.esqPA,
-#                                      "Retrait PM": self.retPM, "Esquive PM": self.esqPM,
-#                                      "Soins": self.soins, "Tacle": self.tacle, "Fuite": self.fuite,
-#                                      "Initiative": self.ini, "Invocation": self.invocationLimite,
-#                                      "Prospection": self.prospection},
-#                                     {"Dommages": self.do, "Dommages critiques": self.doCri,
-#                                      "Neutre": self.doNeutre, "Terre": self.doTerre,
-#                                      "Feu": self.doFeu, "Eau": self.doEau, "Air": self.doAir,
-#                                      "Renvoi": self.doRenvoi,
-#                                      "Maitrise d'arme": self.doMaitriseArme,
-#                                      "Pieges": self.doPieges, "Pieges Puissance": self.doPiegesPui,
-#                                      "Poussee": self.doPou, "Sorts": self.doSorts,
-#                                      "Armes": self.doArmes, "Distance": self.doDist,
-#                                      "Melee": self.doMelee},
-#                                     {"Neutre": self.reNeutre, "Neutre%": self.rePerNeutre,
-#                                      "Terre": self.reTerre, "Terre%": self.rePerTerre,
-#                                      "Feu": self.reFeu, "Feu%": self.rePerFeu, "Eau": self.reEau,
-#                                      "Eau%": self.rePerEau, "Air": self.reAir,
-#                                      "Air%": self.rePerAir,
-#                                      "Coups critiques": self.reCc, "Poussee": self.rePou,
-#                                      "Distance": self.reDist, "Melee": self.reMelee},
-#                                     self.icone)
-#         toReturn.sortsDebutCombat = self.sortsDebutCombat
-#         toReturn.posX = self.posX
-#         toReturn.posY = self.posY
-#         toReturn.PABase = self.PABase
-#         toReturn.PMBase = self.PMBase
-#         toReturn.vieMax = self.vieMax
-#         toReturn.uid = self.uid
-#         toReturn.sorts = deepcopy(self.sorts)
-#         toReturn.sortsDebutCombat = deepcopy(self.sortsDebutCombat)
-#         toReturn.etats = deepcopy(self.etats)
-#         toReturn.historiqueDeplacement = deepcopy(self.historiqueDeplacement)
-#         toReturn.posDebTour = self.posDebTour
-#         toReturn.posDebCombat = self.posDebCombat
-#         toReturn.invocateur = self.invocateur
-#         toReturn.porteUid = self.porteUid
-#         toReturn.porteurUid = self.porteurUid
-#         toReturn.checkLdv = self.checkLdv
-#         toReturn.invocations = deepcopy(self.invocations)
-#         toReturn.invocationLimite = self.invocationLimite
-#         toReturn.msgsPrevisu = deepcopy(self.msgsPrevisu)
-#         toReturn.myIA = self.myIA
-#         return toReturn
-
 invocs_liste = {
     "Cadran de Xelor": Personnage("Cadran de Xelor", "Cadran de Xelor",
                                   100, 1, {"Vitalite": 1000}, {}, {}, {},
@@ -923,5 +806,11 @@ invocs_liste = {
                                     {"Esquive PA":52, "Esquive PM":52}, {},
                                     {"Neutre%":20, "Terre%":-10, "Feu%":20,
                                      "Eau%":-10, "Air%":30},
-                                    "ivresse.jpg", DumbIA())
+                                    "ivresse.jpg", DumbIA()),
+    "Tonneau Incapacitant": Personnage("Tonneau Incapacitant", "Tonneau Incapacitant",
+                                       0, 1, {"Vitalite": 1052, "PA":4, "PM":0},
+                                       {"Esquive PA":0, "Esquive PM":0}, {},
+                                       {"Neutre%":20, "Terre%":30, "Feu%":-10,
+                                        "Eau%":20, "Air%":-10},
+                                       "ebriete.jpg", DumbIA()),
 }

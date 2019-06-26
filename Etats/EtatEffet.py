@@ -655,5 +655,5 @@ class EtatEffetSiLance(Etat):
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
         niveau.lancerEffet(self.effet, celuiLance.posX, celuiLance.posY,
-                           self.nomSort, celuiLance.posX, celuiLance.posY)
+                           self.nomSort, celuiLance.posX, celuiLance.posY, lanceur)
                            

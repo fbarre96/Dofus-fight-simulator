@@ -182,6 +182,10 @@ def getSorts(lvl):
         Sort.Sort("Propulsion", 102, 3, 1, 5, [EffetLance(cible_non_requise=True), EffetDegats(47, 53, "Feu", zone=Zones.TypeZoneCroix(1), cibles_possibles="Ennemis", cible_non_requise=True), EffetPousser(1, "CaseCible", cibles_possibles="Ennemis", cible_non_requise=True, zone=Zones.TypeZoneCroix(1))], [EffetLance(cible_non_requise=True), EffetDegats(52, 58, "Feu", zone=Zones.TypeZoneCroix(1), cibles_possibles="Ennemis", cible_non_requise=True), EffetPousser(1, "CaseCible", cibles_possibles="Ennemis", zone=Zones.TypeZoneCroix(1), cible_non_requise=True)], 15, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée.
     Occasionne des dommages Feu aux ennemis et repousse autour de la cellule ciblée.""", chaine=True)
     ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Eau-de-vie", 135, 4, 1, 3, [EffetLance(cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetSoinPerPVMax(15, zone=Zones.TypeZoneCroix(1), cibles_possibles="Ennemis", cible_non_requise=True, etat_requis_lanceur="Sobre")], [], 15, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée.
+    Occasionne des dommages Feu aux ennemis et repousse autour de la cellule ciblée.""", chaine=True)
+    ]))
     # Attire de 8 cases max, porté de 15, pas de ldv. Soigne 53,81quand porté à 1 case autour
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Ivresse", 22, 4, 1, 1, [EffetInvoque("Tonneau Attractif", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire également les alliés s'ils sont dans l'état Saoul.
@@ -192,6 +196,10 @@ def getSorts(lvl):
 
         Sort.Sort("Ivresse", 108, 4, 1, 1, [EffetInvoque("Tonneau Attractif", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un tonneau qui attire les ennemis. Il attire également les alliés s'ils sont dans l'état Saoul.
     S'il est porté ou jeté : soigne autour de lui.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Ebriété", 140, 3, 1, 1, [EffetInvoque("Tonneau Incapacitant", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 4, 0, "cercle", False, description="""Invoque un Tonneau qui augmente la Puissance en zone autour de lui.
+    Quand il est jeté, il retire des PM en zone aux ennemis autour du point d'impact.""", chaine=True)
     ]))
     return sorts
     

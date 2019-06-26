@@ -1340,7 +1340,7 @@ class Niveau:
                     if sort.vue.isMouseOver(mouseXY):
                         sort.overlay.afficher(sort.vue.posX, constantes.y_sorts)
                 except AttributeError as exception:
-                    print("Erreur Overlay de sort pour le sort :"+str(sort.nomSort)+\
+                    print("Erreur Overlay de sort pour le sort :"+str(sort.nom)+\
                         " du joueur "+str(self.tourDe.classe)+" / "+str(exception))
         else:
             for joueur in self.joueurs:

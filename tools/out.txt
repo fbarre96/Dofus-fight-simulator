@@ -3,10 +3,7 @@
 
 
 
-sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-	Sort.Sort("Ebri�t�", 140, 3, 1, 1, [TODO(Invoque :))], [], 0, 1, 1, 4, 0, "cercle", False, description="""Invoque un Tonneau qui augmente la Puissance en zone autour de lui.
-Quand il est jet�, il retire des PM en zone aux ennemis autour du point d'impact.""", chaine=True)
-]))
+
 sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
 	Sort.Sort("Stabilisation", 27, 1, 0, 2, [TODO(�tat 'Enracin�' (1 tour))), TODO(20 Esquive PM (1 tour)))], [], 0, 1, 1, 4, 1, "ligne", False, description="""Emp�che la cible d'�tre d�plac�e.
 Augmente les r�sistances aux pertes de PM.""", chaine=True),
