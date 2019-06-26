@@ -149,7 +149,18 @@ def getSorts(lvl):
     Désactive les lignes de vue des sorts de la cible portée.""", chaine=False),
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Chamrak", 125, 1, 1, 1, [EffetLance(etat_requis_lanceur="Chamrak|Sobre", consomme_etat=True, cible_non_requise=True), EffetEtatSelf(EtatBoostSortCarac("Chamrak", 0, -1, "Chamrak", "POMax", 3), etat_requis="!Chamrak", etat_requis_lanceur="!Chamrak|Sobre"), EffetEtat(EtatBoostCaracFixe("Chamrak", 0, -1, "checkLdv", False), etat_requis="!Chamrak", etat_requis_lanceur="Chamrak|Sobre"), EffetPorte(etat_requis_lanceur="Chamrak|Sobre")], [], 0, 6, 1, 0, 0, "ligne", False, description="""Porte la cible. Au second lancer, jette la cible à 4 cellules maximum sans ligne de vue.
+        Sort.Sort("Chamrak", 125, 1, 1, 1, [
+            # Indique qu'on doit lancer
+            EffetEtatSelf(Etat("Doit Lancer", 0, 1), etat_requis_lanceur="Chamrak|Sobre", cible_non_requise=True),
+            # Retire Chamrak au lanceur
+            EffetRetireEtatSelf("Chamrak", etat_requis_lanceur="Chamrak|Sobre", cible_non_requise=True),
+            # Lance et consomme etat Doit Lancer au Lanceur.
+            EffetLance(etat_requis_lanceur="Doit Lancer", consomme_etat=True, cible_non_requise=True),
+            # Si on n'a pas lancer, on porte
+            EffetEtatSelf(EtatBoostSortCarac("Chamrak", 0, -1, "Chamrak", "POMax", 3), etat_requis="!Chamrak", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetEtat(EtatBoostCaracFixe("Chamrak", 0, -1, "checkLdv", False), etat_requis="!Chamrak", etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetPorte(etat_requis_lanceur="!Doit Lancer|Sobre"),
+            EffetRetireEtatSelf("Doit Lancer", cible_non_requise=True)], [], 0, 6, 1, 0, 0, "ligne", False, description="""Porte la cible. Au second lancer, jette la cible à 4 cellules maximum sans ligne de vue.
     Désactive les lignes de vue des sorts de la cible portée.""", chaine=False)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
