@@ -536,9 +536,10 @@ class Personnage(object):
                 del self.etats[i]
                 i -= 1
                 nbEtats = len(self.etats)
-                for etat in self.etats:
-                    if etat.actif():
-                        etat.triggerApresRetrait(niveau, self, copyEtat)
+                for joueur in niveau.joueurs:
+                    for etat in joueur.etats:
+                        if etat.actif():
+                            etat.triggerApresRetrait(niveau, self, joueur, copyEtat)
             i += 1
 
     def getBoucliers(self):

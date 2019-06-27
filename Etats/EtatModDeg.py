@@ -51,6 +51,9 @@ class EtatModDegPer(Etat):
             return total
         if self.provenance == "Ennemis" and cible.team == attaquant.team:
             return total
+        if self.provenance == "melee" and \
+           abs(cible.posX - attaquant.posX) + abs(cible.posY - attaquant.posY) != 1:
+            return total
         if typeDeg != "doPou":
             return int((total * self.pourcentage)/100)
         return total

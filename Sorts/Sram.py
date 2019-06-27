@@ -277,17 +277,17 @@ def getSorts(lvl):
     activationComploteurComplot = Sort.Sort("Complot", 0, 0, 0, 99, [EffetEtatSelf(EtatEffetFinTour("Explosion Comploteur", 0, 2, EffetEntiteLanceSort(
         "Comploteur", activationComploteurComplot2), "Explosion Comploteur", "lanceur"))], [], 0, 1, 1, 0, 0, "cercle", False, description="Echange de place avec son invocateur, tue l'invocation")
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Double", 13, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble()], [], 0, 1, 1, 6, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double", 13, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble(cible_non_requise=True), EffetEtat(EtatActiveSort("Complot", 2, 1, activationDoubleComplot), cible_non_requise=True)], [], 0, 1, 1, 6, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-        Sort.Sort("Double", 54, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble()], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double", 54, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble(cible_non_requise=True), EffetEtat(EtatActiveSort("Complot", 2, 1, activationDoubleComplot), cible_non_requise=True)], [], 0, 1, 1, 5, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True),
 
-        Sort.Sort("Double", 94, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble(), EffetEtat(EtatActiveSort("Complot", 2, 1, activationDoubleComplot))], [], 0, 1, 1, 4, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
+        Sort.Sort("Double", 94, 3, 1, 2, [EffetInvoque("Double", True, cibles_possibles="", cible_non_requise=True), EffetDouble(cible_non_requise=True), EffetEtat(EtatActiveSort("Complot", 2, 1, activationDoubleComplot), cible_non_requise=True)], [], 0, 1, 1, 4, 0, "ligne", True, description="""Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.
     N'attaque pas et meurt au bout de 2 tours en échangeant de place avec son invocateur.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Comploteur", 130, 3, 1, 2, [EffetInvoque("Comploteur", True, cibles_possibles="", cible_non_requise=True), EffetDouble(), EffetEtat(EtatActiveSort("Complot", 2, 1, activationComploteurComplot)), EffetEtat(EtatEffetSiPiegeDeclenche("Comploteur", 0, -1, EffetEtatSelf(EtatBoostBaseDeg("ComplotBoost", 0, -1, "Complot", 14), cumulMax=4), "Complot", "porteur", "porteur"))], [], 0, 1, 1, 4, 0, "cercle", True, description="""Invoque un Double contrôlable.
+        Sort.Sort("Comploteur", 130, 3, 1, 2, [EffetInvoque("Comploteur", True, cibles_possibles="", cible_non_requise=True), EffetDouble(cible_non_requise=True), EffetEtat(EtatActiveSort("Complot", 2, 1, activationComploteurComplot), cible_non_requise=True), EffetEtat(EtatEffetSiPiegeDeclenche("Comploteur", 0, -1, EffetEtatSelf(EtatBoostBaseDeg("ComplotBoost", 0, -1, "Complot", 14), cumulMax=4), "Complot", "porteur", "porteur"), cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 4, 0, "cercle", True, description="""Invoque un Double contrôlable.
     Chaque piège déclenché augmente la Puissance du Double.
     Il meurt après 2 tours.
     Il occasionne des dommages Neutre en zone autour de lui lorsqu'il meurt.""", chaine=True)

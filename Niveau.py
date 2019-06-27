@@ -366,9 +366,11 @@ class Niveau:
                         del personnage.etats[i]
                         i -= 1
                         nbEtats = len(personnage.etats)
-                        for etat in personnage.etats:
-                            if etat.actif():
-                                etat.triggerApresRetrait(self, personnage, copyEtat)
+                        for personnagePorteur in self.joueurs:
+                            for etat in personnagePorteur.etats:
+                                if etat.actif():
+                                    etat.triggerApresRetrait(self, personnage,
+                                                             personnagePorteur, copyEtat)
                 i += 1
 
     def rafraichirGlyphes(self, duPersonnage):

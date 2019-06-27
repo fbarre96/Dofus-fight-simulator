@@ -239,7 +239,7 @@ class Etat():
         @type: Personnage"""
         return
 
-    def triggerApresRetrait(self, niveau, personnage, etatRetire):
+    def triggerApresRetrait(self, niveau, personnage, porteur, etatRetire):
         # pylint: disable=unused-argument
         """@summary:
         Un trigger appelé au moment ou un état va être retirés.

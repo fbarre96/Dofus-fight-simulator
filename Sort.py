@@ -145,17 +145,20 @@ class Sort:
     def testLancableForEffets(self, joueurLanceur, joueurCibleDirect):
         """@summary: Renvoie True si les effets du sort ont validé la cible.
         """
+        raisons = []
         for effet in self.effets:
-            _, res = effet.estLancable(joueurLanceur, joueurCibleDirect)
+            msg, res = effet.estLancable(joueurLanceur, joueurCibleDirect)
             if not res:
                 if self.chaine:
-                    return False, "Un effet a échoué et le sort est chainé"
+                    return False, "Un effet a échoué et le sort est chainé. Raison :"+str(msg)
+                else:
+                    raisons.append(msg)
             else:
                 if not self.chaine:
                     return True, "Un effet a réussi et le sort n'est pas chainé"
         if self.chaine:
             return True, "Tous les effets ont réussi et le sort est chainé"
-        return False, "Aucun effet n'a réussi et le sort n'est pas chainé."
+        return False, "Aucun effet n'a réussi et le sort n'est pas chainé. Raisons :"+str(msg)
 
     def marquerLancer(self, joueurCible):
         """@summary: compte le sort dans les lancers autorisés par tour.

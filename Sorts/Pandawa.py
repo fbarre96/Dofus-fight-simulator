@@ -3,19 +3,22 @@
 # pylint: disable=line-too-long
 import Sort
 from Effets.EffetEtat import EffetEtat, EffetEtatSelf, EffetRetireEtat, EffetRafraichirEtats, EffetRetireEtatSelf
-from Effets.EffetDegats import EffetDegats, EffetVolDeVie
+from Effets.EffetDegats import EffetDegats, EffetVolDeVie, EffetDegatsSelonPMUtilises
 from Effets.EffetSoin import EffetSoinPerPVMax
 from Effets.EffetPousser import EffetPousser, EffetAttire
 from Effets.EffetRet import EffetRetPM
 from Effets.EffetPorte import EffetPorte, EffetLance
 from Effets.EffetInvoque import EffetInvoque
+from Effets.EffetTp import EffetTpSymSelf
 import Zones
 from Etats.Etat import Etat
 from Etats.EtatBoostCarac import EtatBoostCaracFixe
 from Etats.EtatBoostBaseDeg import EtatBoostBaseDeg
 from Etats.EtatBoostSortCarac import EtatBoostSortCarac
 from Etats.EtatModDeg import EtatModDegPer
-from Etats.EtatEffet import EtatEffetDebutTour, EtatEffetSiRetraitEtat
+from Etats.EtatModSoin import EtatModSoinPer
+from Etats.EtatBouclier import EtatBouclierPerLvl
+from Etats.EtatEffet import EtatEffetDebutTour, EtatEffetSiRetraitEtat, EtatEffetSiSubit
 import Personnages
 
 
@@ -72,7 +75,7 @@ def getSorts(lvl):
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Picole", 101, 1, 0, 0,
                   [
-                      EffetEtat(Etat('Saoul', 0, 4), etat_requis_lanceur="Sobre|Sobre|!Picole"),
+                      EffetEtat(Etat('Saoul', 0, 4), etat_requis_lanceur="Sobre|!Picole"),
                       EffetEtat(EtatBoostCaracFixe("Picole", 0, 4, "PM", -1), etat_requis_lanceur="Sobre|Sobre|!Picole"),
                       EffetEtat(EtatModDegPer("Picole", 0, 4, 75), etat_requis_lanceur="Sobre|Sobre|!Picole"),
                       EffetRetireEtat("Sobre", etat_requis_lanceur="Sobre|Sobre|!Picole"),
@@ -200,6 +203,155 @@ def getSorts(lvl):
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Ebriété", 140, 3, 1, 1, [EffetInvoque("Tonneau Incapacitant", True, etat_requis_lanceur="Sobre", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 4, 0, "cercle", False, description="""Invoque un Tonneau qui augmente la Puissance en zone autour de lui.
     Quand il est jeté, il retire des PM en zone aux ennemis autour du point d'impact.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Stabilisation", 27, 1, 0, 2, [EffetEtat(Etat('Enraciné', 0, 1), etat_requis_lanceur="Sobre"), EffetEtat(EtatBoostCaracFixe("Enraciné", 0, 1, "esqPM", 20), etat_requis_lanceur="Sobre")], [], 0, 1, 1, 4, 1, "ligne", False, description="""Empéche la cible d'étre déplacée.
+    Augmente les résistances aux pertes de PM.""", chaine=True),
+
+        Sort.Sort("Stabilisation", 72, 1, 0, 4, [EffetEtat(Etat('Enraciné', 0, 1), etat_requis_lanceur="Sobre"), EffetEtat(EtatBoostCaracFixe("Enraciné", 0, 1, "esqPM", 30), etat_requis_lanceur="Sobre")], [], 0, 1, 1, 3, 1, "ligne", False, description="""Empéche la cible d'étre déplacée.
+    Augmente les résistances aux pertes de PM.""", chaine=True),
+
+        Sort.Sort("Stabilisation", 118, 1, 0, 6, [EffetEtat(Etat('Enraciné', 0, 1), etat_requis_lanceur="Sobre"), EffetEtat(EtatBoostCaracFixe("Enraciné", 0, 1, "esqPM", 40), etat_requis_lanceur="Sobre")], [], 0, 1, 1, 2, 1, "ligne", False, description="""Empéche la cible d'étre déplacée.
+    Augmente les résistances aux pertes de PM.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Varappe", 145, 2, 0, 0, [EffetEtat(EtatBoostCaracFixe("Varappe", 0, 1, "tacle", 50), etat_requis_lanceur="Sobre"), EffetEtat(EtatEffetSiSubit("Varappe", 0, 1, EffetPorte(), "Varappe", "lanceur", "attaquant", "melee"))], [], 0, 1, 1, 2, 0, "cercle", False, description="""Donne du tacle et si le lanceur subit une attaque de mélée, il porte son attaquant.
+    Nécessite l'état Sobre.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Eviction", 32, 2, 1, 1, [EffetDegats(12, 16, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], [EffetDegats(15, 19, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], 25, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre aux ennemis.
+    La cible est téléportée derrière le lanceur.""", chaine=True),
+
+        Sort.Sort("Eviction", 81, 2, 1, 1, [EffetDegats(15, 19, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], [EffetDegats(18, 22, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], 25, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre aux ennemis.
+    La cible est téléportée derrière le lanceur.""", chaine=True),
+
+        Sort.Sort("Eviction", 124, 2, 1, 1, [EffetDegats(18, 22, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], [EffetDegats(21, 25, "Terre", etat_requis_lanceur="Saoul"), EffetTpSymSelf(etat_requis_lanceur="Saoul")], 25, 3, 2, 0, 0, "cercle", False, description="""Occasionne des dommages Terre aux ennemis.
+    La cible est téléportée derrière le lanceur.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Nausée", 150, 2, 2, 6, [EffetDegats(7, 9, "Air", etat_requis_lanceur="Saoul"), EffetPousser(2, source="CaseCible", cible="Lanceur", etat_requis_lanceur="Saoul")], [EffetDegats(9, 11, "Air", etat_requis_lanceur="Saoul"), EffetPousser(2, source="CaseCible", cible="Lanceur", etat_requis_lanceur="Saoul")], 5, 3, 2, 0, 1, "ligne", True, description="""Occasionne des dommages Air et repousse le lanceur de la cible.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Ethylo", 38, 3, 2, 5, [EffetDegats(16, 20, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -10), etat_requis_lanceur="Saoul")], [EffetDegats(20, 24, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -15), etat_requis_lanceur="Saoul")], 15, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+    Applique un malus au retrait de PA.""", chaine=True),
+
+        Sort.Sort("Ethylo", 90, 3, 2, 5, [EffetDegats(19, 23, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -20), etat_requis_lanceur="Saoul")], [EffetDegats(23, 27, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -25), etat_requis_lanceur="Saoul")], 15, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+    Applique un malus au retrait de PA.""", chaine=True),
+
+        Sort.Sort("Ethylo", 132, 3, 2, 6, [EffetDegats(22, 26, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -30), etat_requis_lanceur="Saoul")], [EffetDegats(26, 30, "Eau", etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Ethylo", 0, 2, "retPA", -35), etat_requis_lanceur="Saoul")], 15, 3, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau.
+    Applique un malus au retrait de PA.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Distillation", 155, 5, 3, 6, [EffetDegats(38, 42, "Eau", zone=Zones.TypeZoneCarre(1), etat_requis_lanceur="Sobre", cible_non_requise=True), EffetEtat(EtatBoostCaracFixe("Distillation", 0, 1, "PO", -5), etat_requis_lanceur="Sobre", zone=Zones.TypeZoneCarre(1), cible_non_requise=True)], [EffetDegats(42, 46, "Eau", cible_non_requise=True, zone=Zones.TypeZoneCarre(1), etat_requis_lanceur="Sobre"), EffetEtat(EtatBoostCaracFixe("Distillation", 0, 1, "PO", -5), etat_requis_lanceur="Sobre", cible_non_requise=True, zone=Zones.TypeZoneCarre(1))], 25, 1, 99, 0, 0, "cercle", True, description="""Occasionne des dommages Eau en zone et retire de la portée.
+    Nécessite l'état Sobre.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Souillure", 44, 2, 1, 2, [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -70), etat_requis_lanceur="Saoul")], [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -100), etat_requis_lanceur="Saoul")], 15, 1, 1, 2, 0, "ligne", True, description="""Réduit la durée des effets sur la cible de 1 tour.
+    Applique un malus de Puissance.
+    L'état Saoul est nécessaire.""", chaine=True),
+
+        Sort.Sort("Souillure", 97, 2, 1, 2, [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -110), etat_requis_lanceur="Saoul")], [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -140), etat_requis_lanceur="Saoul")], 15, 1, 1, 1, 0, "ligne", True, description="""Réduit la durée des effets sur la cible de 1 tour.
+    Applique un malus de Puissance.
+    L'état Saoul est nécessaire.""", chaine=True),
+
+        Sort.Sort("Souillure", 137, 2, 1, 2, [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -150), etat_requis_lanceur="Saoul")], [EffetRafraichirEtats(1, etat_requis_lanceur="Saoul"), EffetEtat(EtatBoostCaracFixe("Souillure", 0, 1, "pui", -180), etat_requis_lanceur="Saoul")], 15, 2, 1, 0, 0, "ligne", True, description="""Réduit la durée des effets sur la cible de 1 tour.
+    Applique un malus de Puissance.
+    L'état Saoul est nécessaire.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Brassage", 160, 2, 0, 3, [EffetEtat(Etat("Pesanteur", 0, 1), etat_requis_lanceur="Saoul")], [], 0, 1, 1, 2, 0, "cercle", True, description="""Applique l'état Pesanteur.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Vulnérabilité", 50, 3, 1, 3, [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 115), etat_requis_lanceur="Saoul")], [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 117), etat_requis_lanceur="Saoul")], 5, 4, 2, 0, 1, "ligne", True, description="""Augmente les dommages reçus par la cible pendant 2 tours.
+    L'état Saoul est nécessaire.""", chaine=True),
+
+        Sort.Sort("Vulnérabilité", 103, 3, 1, 5, [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 115), etat_requis_lanceur="Saoul")], [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 117), etat_requis_lanceur="Saoul")], 5, 4, 2, 0, 1, "ligne", True, description="""Augmente les dommages reçus par la cible pendant 2 tours.
+    L'état Saoul est nécessaire.""", chaine=True),
+
+        Sort.Sort("Vulnérabilité", 143, 3, 1, 7, [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 115), etat_requis_lanceur="Saoul")], [EffetEtat(EtatModDegPer("Vulnérabilité", 0, 2, 117), etat_requis_lanceur="Saoul")], 5, 4, 2, 0, 1, "ligne", True, description="""Augmente les dommages reçus par la cible pendant 2 tours.
+    L'état Saoul est nécessaire.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Prohibition", 165, 2, 0, 5, [EffetEtat(EtatModSoinPer('Insoignable', 0, 1, 0), etat_requis_lanceur="Saoul"), EffetEtat(EtatModDegPer("Prohibition", 0, 1, 0, "melee"))], [], 0, 1, 1, 3, 0, "ligne", True, description="""Applique l'état Insoignable sur la cible et la rend invulnérable aux dommages de mélée.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Vague à Lame", 56, 4, 1, 3, [EffetDegats(31, 33, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(37, 39, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], 25, 2, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.""", chaine=True),
+
+        Sort.Sort("Vague à Lame", 112, 4, 1, 4, [EffetDegats(36, 38, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(42, 44, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], 25, 2, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.""", chaine=True),
+
+        Sort.Sort("Vague à Lame", 147, 4, 1, 5, [EffetDegats(41, 43, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(47, 49, "Eau", zone=Zones.TypeZoneLignePerpendiculaire(1), etat_requis_lanceur="Sobre", cible_non_requise=True)], 25, 2, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Gnôle", 170, 4, 1, 5, [EffetDegatsSelonPMUtilises(53, 57, "Eau")], [EffetDegatsSelonPMUtilises(61, 65, "Eau")], 15, 3, 2, 0, 1, "ligne", True, description="""Occasionne des dommages Eau.
+    Moins le lanceur a utilisé de PM pendant son tour de jeu, plus les dommages occasionnés sont importants.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Colère de Zatoïshwan", 62, 3, 0, 0, [EffetEtatSelf(Etat("Saoul", 0, 2), etat_requis="!Saoul|!Karcham|!Chamrak"), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "pui", 100)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "do", 5)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "PA", 2))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Applique l'état Saoul.
+    Augmente les dommages et les PA du lanceur.""", chaine=True),
+
+        Sort.Sort("Colère de Zatoïshwan", 116, 3, 0, 0, [EffetEtatSelf(Etat("Saoul", 0, 2), etat_requis="!Saoul|!Karcham|!Chamrak"), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "pui", 150)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "do", 10)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "PA", 2))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Applique l'état Saoul.
+    Augmente les dommages et les PA du lanceur.""", chaine=True),
+
+        Sort.Sort("Colère de Zatoïshwan", 153, 3, 0, 0, [EffetEtatSelf(Etat("Saoul", 0, 2), etat_requis="!Saoul|!Karcham|!Chamrak"), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "pui", 200)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "do", 15)), EffetEtat(EtatBoostCaracFixe("Colère de Zatoïshwan", 0, 2, "PA", 2))], [], 0, 1, 1, 3, 0, "cercle", False, description="""Applique l'état Saoul.
+    Augmente les dommages et les PA du lanceur.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Fermentation", 175, 3, 0, 0, [EffetEtat(EtatBouclierPerLvl("Fermentation", 0, 1, 240), etat_requis_lanceur="Saoul"), EffetEtat(EtatBouclierPerLvl("Fermentation", 1, 1, 240), etat_requis_lanceur="Saoul")], [], 0, 1, 1, 2, 0, "cercle", False, description="""Applique un bouclier pour le tour en cours et un second au tour suivant.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Flasque Explosive", 69, 2, 2, 4, [EffetDegats(24, 28, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], [EffetDegats(29, 33, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], 25, 1, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Feu en zone.""", chaine=True),
+
+        Sort.Sort("Flasque Explosive", 122, 2, 2, 4, [EffetDegats(29, 33, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], [EffetDegats(34, 38, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], 25, 1, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Feu en zone.""", chaine=True),
+
+        Sort.Sort("Flasque Explosive", 162, 2, 2, 5, [EffetDegats(34, 38, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], [EffetDegats(39, 43, "Feu", zone=Zones.TypeZoneCercle(2), cible_non_requise=True, etat_requis_lanceur="Sobre")], 25, 1, 99, 0, 1, "ligne", True, description="""Occasionne des dommages Feu en zone.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Absinthe", 180, 3, 1, 6, [EffetDegats(25, 29, "Feu", etat_requis_lanceur="Saoul")], [EffetDegats(30, 34, "Feu", etat_requis_lanceur="Saoul")], 5, 3, 2, 0, 0, "ligne", False, description="""Occasionne des dommages Feu sans ligne de vue.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Vertige", 77, 2, 1, 4, [EffetLance(cible_non_requise=True, cibles_possibles=""), EffetAttire(2, source="CaseCible", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetEtat(EtatBoostCaracFixe("Vertige", 0, 1, "tacle", 30), cible_non_requise=True)], [], 0, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée et augmente son tacle.
+    Attire les entités alignées avec la cellule ciblée.""", chaine=True),
+
+        Sort.Sort("Vertige", 128, 2, 1, 5, [EffetLance(cible_non_requise=True, cibles_possibles=""), EffetAttire(3, source="CaseCible", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetEtat(EtatBoostCaracFixe("Vertige", 0, 1, "tacle", 40), cible_non_requise=True)], [], 0, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée et augmente son tacle.
+    Attire les entités alignées avec la cellule ciblée.""", chaine=True),
+
+        Sort.Sort("Vertige", 172, 2, 1, 6, [EffetLance(cible_non_requise=True, cibles_possibles=""), EffetAttire(3, source="CaseCible", zone=Zones.TypeZoneCroix(3), cible_non_requise=True), EffetEtat(EtatBoostCaracFixe("Vertige", 0, 1, "tacle", 50), cible_non_requise=True)], [], 0, 2, 99, 0, 0, "ligne", True, description="""Lance l'entité portée et augmente son tacle.
+    Attire les entités alignées avec la cellule ciblée.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Cascade", 185, 2, 1, 5, [EffetLance(cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="Sobre"), EffetAttire(2, source="CaseCible", cible="Lanceur", etat_requis_lanceur="Sobre")], [], 0, 2, 99, 0, 0, "ligne", True, description="""Le lanceur jette la cible et s'en rapproche.
+    Nécessite l'état Sobre.""", chaine=False)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Pandatak", 84, 4, 1, 6, [EffetDegats(36, 40, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(43, 47, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre sur plusieurs cases en ligne.""", chaine=True),
+
+        Sort.Sort("Pandatak", 134, 4, 1, 6, [EffetDegats(42, 46, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(49, 53, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre sur plusieurs cases en ligne.""", chaine=True),
+
+        Sort.Sort("Pandatak", 178, 4, 1, 6, [EffetDegats(48, 52, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], [EffetDegats(55, 59, "Terre", zone=Zones.TypeZoneLigne(3), etat_requis_lanceur="Sobre", cible_non_requise=True)], 15, 2, 99, 0, 0, "ligne", True, description="""Occasionne des dommages Terre sur plusieurs cases en ligne.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Bistouille", 190, 4, 0, 0, [EffetVolDeVie(38, 42, "Terre", zone=Zones.TypeZoneCroix(1, 1), etat_requis_lanceur="Saoul")], [EffetVolDeVie(42, 46, "Terre", zone=Zones.TypeZoneCroix(1, 1), etat_requis_lanceur="Saoul")], 25, 2, 99, 0, 0, "cercle", False, description="""Vole de la vie dans l'élément Terre en zone autour du lanceur.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Pandanlku", 92, 2, 0, 2, [EffetEtat(EtatBoostCaracFixe("Pandanlku", 0, 2, "PM", 3), etat_requis_lanceur="Saoul")], [], 0, 1, 1, 6, 1, "cercle", True, description="""Augmente les PM de la cible.
+    Nécessite l'état Saoul.""", chaine=True),
+
+        Sort.Sort("Pandanlku", 141, 2, 0, 4, [EffetEtat(EtatBoostCaracFixe("Pandanlku", 0, 2, "PM", 3), etat_requis_lanceur="Saoul")], [], 0, 1, 1, 5, 1, "cercle", True, description="""Augmente les PM de la cible.
+    Nécessite l'état Saoul.""", chaine=True),
+
+        Sort.Sort("Pandanlku", 187, 2, 0, 6, [EffetEtat(EtatBoostCaracFixe("Pandanlku", 0, 2, "PM", 4), etat_requis_lanceur="Saoul")], [], 0, 1, 1, 4, 1, "cercle", True, description="""Augmente les PM de la cible.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Brancard", 195, 2, 1, 4, [EffetEtat(EtatEffetSiRetraitEtat("Brancard", 0, 1, EffetSoinPerPVMax(10), "Brancard", "Brancard", "porteur"), zone=Zones.TypeZoneLigneJusque(), cibles_possibles="Allies|Ennemis", cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetRetireEtat("Brancard", zone=Zones.TypeZoneInfini(), cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetLance(cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="Sobre")], [], 0, 2, 99, 0, 0, "ligne", False, description="""Jette la cible jusqu'à la cellule ciblée. La cible est soignée en fonction du nombre d'entités survolées.
+    Nécessite l'état Sobre.""", chaine=False)
     ]))
     return sorts
     

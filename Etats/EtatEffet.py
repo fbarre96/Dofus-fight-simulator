@@ -170,22 +170,32 @@ class EtatEffetSiSubit(Etat):
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
+        print("Effet si subit entree")
+        validate = False
         if totalPerdu > 0 and (self.typeDeg == typeDegats or self.typeDeg == ""):
-            if self.provenance != "":
-                if self.provenance == "Allies" and cibleAttaque.team != attaquant.team:
-                    return False
-                elif self.provenance == "Ennemis" and cibleAttaque.team == attaquant.team:
-                    return False
-            self.effet.setDegatsSubits(totalPerdu, typeDegats)
-            joueurCible = cibleAttaque
-            if self.cible == "attaquant":
-                joueurCible = attaquant
-            if self.quiLancera == "lanceur":
-                niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
-                                   self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
-            elif self.quiLancera == "cible":
-                niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
-                                   self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
+            validate = True
+        elif self.typeDeg == "melee" and \
+         (abs(attaquant.posX - cibleAttaque.posX) + abs(attaquant.posY - cibleAttaque.posY) == 1):
+            validate = True
+        if not validate:
+            return
+        print("Effet si subit check provenance")
+        if self.provenance != "":
+            if self.provenance == "Allies" and cibleAttaque.team != attaquant.team:
+                return False
+            elif self.provenance == "Ennemis" and cibleAttaque.team == attaquant.team:
+                return False
+        print("Effet si subit avant cible")
+        self.effet.setDegatsSubits(totalPerdu, typeDegats)
+        joueurCible = cibleAttaque
+        if self.cible == "attaquant":
+            joueurCible = attaquant
+        if self.quiLancera == "lanceur":
+            niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
+                               self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
+        elif self.quiLancera == "cible":
+            niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
+                               self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
 
 class EtatEffetSiMeurt(Etat):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur meurt."""
@@ -554,7 +564,7 @@ class EtatEffetSiRetraitEtat(Etat):
                                       self.nomEtatRequis,
                                       self.lanceur, self.desc)
 
-    def triggerApresRetrait(self, niveau, personnage, etatRetire):
+    def triggerApresRetrait(self, niveau, personnage, porteur, etatRetire):
         # pylint: disable=unused-argument
         """@summary:
         Un trigger appelé au moment ou un état va être retirés.
@@ -564,8 +574,9 @@ class EtatEffetSiRetraitEtat(Etat):
         @type: Personnage"""
         if self.etatAccepte != "" and self.etatAccepte != etatRetire.nom:
             return
-        cible = personnage
-        joueurQuiLance = personnage
+        print("TRIGGERED APRES RETRAIT DE "+str(etatRetire.nom))
+        cible = porteur
+        joueurQuiLance = porteur
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
 
