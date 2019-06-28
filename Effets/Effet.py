@@ -138,7 +138,6 @@ class Effet(object):
         msg = ""
         # Test si une cible direct n'existe pas si l'effet doit être jouée
         if (joueurCibleDirect is None and not self.cibleNonRequise):
-            print("Effet : "+str(type(self)))
             msg = "DEBUG : Invalide : Cible direct non renseigne et pas faire au vide"
             return msg, False
         # Test si un état est requis sur la cible direct et qu'une cible direct existe
