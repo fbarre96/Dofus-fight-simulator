@@ -322,17 +322,17 @@ def getSorts(lvl):
             ],
                   [
                       EffetDegats(81, 85, "Air", zone=Zones.TypeZoneInfini(), etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1",
-                        etat_requis_cibles="Flèche dévorante lancer 3", consomme_etat=True, pile=False),
-            EffetDegats(60, 64, "Air", zone=Zones.TypeZoneInfini(), etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1",
-                        etat_requis_cibles="Flèche dévorante lancer 2", consomme_etat=True, pile=False),
-            EffetDegats(39, 43, "Air", zone=Zones.TypeZoneInfini(), etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1",
-                        etat_requis_cibles="Flèche dévorante lancer 1", consomme_etat=True, pile=False),
-            EffetEtat(Etat("Flèche dévorante lancer 3", 0, -1),
-                      etat_requis="Flèche dévorante lancer 2", consomme_etat=True, pile=False),
-            EffetEtat(Etat("Flèche dévorante lancer 2", 0, -1),
-                      etat_requis="Flèche dévorante lancer 1", consomme_etat=True, pile=False),
-            EffetEtat(Etat("Flèche dévorante lancer 1", 0, -1),
-                      etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1", consomme_etat=True, pile=False)],
+                                  etat_requis_cibles="Flèche dévorante lancer 3", consomme_etat=True, pile=False),
+                      EffetDegats(60, 64, "Air", zone=Zones.TypeZoneInfini(), etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1",
+                                  etat_requis_cibles="Flèche dévorante lancer 2", consomme_etat=True, pile=False),
+                      EffetDegats(39, 43, "Air", zone=Zones.TypeZoneInfini(), etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1",
+                                  etat_requis_cibles="Flèche dévorante lancer 1", consomme_etat=True, pile=False),
+                      EffetEtat(Etat("Flèche dévorante lancer 3", 0, -1),
+                                etat_requis="Flèche dévorante lancer 2", consomme_etat=True, pile=False),
+                      EffetEtat(Etat("Flèche dévorante lancer 2", 0, -1),
+                                etat_requis="Flèche dévorante lancer 1", consomme_etat=True, pile=False),
+                      EffetEtat(Etat("Flèche dévorante lancer 1", 0, -1),
+                                etat_requis="!Flèche dévorante lancer 3|!Flèche dévorante lancer 2|!Flèche dévorante lancer 1", consomme_etat=True, pile=False)],
                   15, 2, 1, 0, 1, "cercle", True, description="""Occasionne des dommages Air.
     Les dommages sont appliqués lorsque le sort est lancé sur une autre cible.
     Peut se cumuler 3 fois sur une même cible.""", chaine=False)
