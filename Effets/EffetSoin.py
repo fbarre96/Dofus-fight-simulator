@@ -69,7 +69,10 @@ class EffetSoin(Effet):
             self.valSoin = self.calculSoin(joueurCaseEffet, joueurLanceur)
             if self.isPrevisu():
                 joueurCaseEffet.msgsPrevisu.append("Soin "+str(self.valSoin))
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:

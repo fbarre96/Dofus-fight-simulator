@@ -186,7 +186,10 @@ class EffetDegats(Effet):
             else:
                 self.total = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                     "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
@@ -232,7 +235,10 @@ class EffetVolDeVie(EffetDegats):
         if joueurCaseEffet is not None:
             self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                 "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         # Et enfin le vol de  vie
@@ -328,7 +334,10 @@ class EffetDegatsPerPv(Effet):
         # Utilisation du parent EffetDegats
         if joueurCaseEffet is not None:
             self.total = int((self.pourcentage / 100.0) * joueurCaseEffet.vie)
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:

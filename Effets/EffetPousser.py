@@ -91,7 +91,10 @@ class EffetPousser(Effet):
             self.joueurAPousser = joueurLanceur
         self.determinerSensPousser([self.joueurAPousser.posX, self.joueurAPousser.posY],
                                    self.caseFromX, self.caseFromY)
-        niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+        if self.pile:
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+        else:
+            self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         niveau.pousser(self, self.joueurAPousser, joueurLanceur)
@@ -177,7 +180,10 @@ class EffetPousserJusque(EffetPousser):
             self.nbCase = abs(self.caseToX - self.joueurAPousser.posX)
         if self.coordonnees[1] != 0:
             self.nbCase = abs(self.caseToY - self.joueurAPousser.posY)
-        niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+        if self.pile:
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+        else:
+            self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         niveau.pousser(self, self.joueurAPousser, joueurLanceur, False)
@@ -250,7 +256,10 @@ class EffetAttire(EffetPousser):
                 # il faut que je le joueur attiré s'arrête devant l'attireur
                 caseMax = self.determinerAttiranceMax()
                 self.nbCase = caseMax if self.nbCase > caseMax else self.nbCase
-                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+                if self.pile:
+                    niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+                else:
+                    self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def determinerAttiranceMax(self):
         """

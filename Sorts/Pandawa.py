@@ -350,7 +350,7 @@ def getSorts(lvl):
     Nécessite l'état Saoul.""", chaine=True)
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
-        Sort.Sort("Brancard", 195, 2, 1, 4, [EffetEtat(EtatEffetSiRetraitEtat("Brancard", 0, 1, EffetSoinPerPVMax(10), "Brancard", "Brancard", "porteur"), zone=Zones.TypeZoneLigneJusque(), cibles_possibles="Allies|Ennemis", cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetRetireEtat("Brancard", zone=Zones.TypeZoneInfini(), cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetLance(cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="Sobre")], [], 0, 2, 99, 0, 0, "ligne", False, description="""Jette la cible jusqu'à la cellule ciblée. La cible est soignée en fonction du nombre d'entités survolées.
+        Sort.Sort("Brancard", 195, 2, 1, 4, [EffetEtat(EtatEffetSiRetraitEtat("Brancard", 0, 1, EffetSoinPerPVMax(10), "Brancard", "Brancard", "porteur"), pile=False, zone=Zones.TypeZoneLigneJusque(), cibles_possibles="Allies|Ennemis", cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetRetireEtat("Brancard", zone=Zones.TypeZoneInfini(), cible_non_requise=True, etat_requis_lanceur="Sobre", etat_requis_cibles="Brancard"), EffetLance(cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="Sobre")], [], 0, 2, 99, 0, 0, "ligne", False, description="""Jette la cible jusqu'à la cellule ciblée. La cible est soignée en fonction du nombre d'entités survolées.
     Nécessite l'état Sobre.""", chaine=False)
     ]))
     return sorts

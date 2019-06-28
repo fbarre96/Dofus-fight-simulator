@@ -574,7 +574,7 @@ class EtatEffetSiRetraitEtat(Etat):
         @type: Personnage"""
         if self.etatAccepte != "" and self.etatAccepte != etatRetire.nom:
             return
-        print("TRIGGERED APRES RETRAIT DE "+str(etatRetire.nom))
+        print("TRIGGERED APRES RETRAIT DE "+str(etatRetire.nom)+" sur "+str(porteur.nomPerso))
         cible = porteur
         joueurQuiLance = porteur
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,

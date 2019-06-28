@@ -540,6 +540,8 @@ class Personnage(object):
                     for etat in joueur.etats:
                         if etat.actif():
                             etat.triggerApresRetrait(niveau, self, joueur, copyEtat)
+                if copyEtat.nom in nomsEtatCherche:
+                    copyEtat.triggerApresRetrait(niveau, self, self, copyEtat)
             i += 1
 
     def getBoucliers(self):
@@ -569,7 +571,7 @@ class Personnage(object):
         soins = min(soins, self.vieMax-self.vie)
         self.vie += soins
         if shouldprint:
-            print("+"+str(soins)+" PV")
+            print(self.nomPerso+": +"+str(soins)+" PV")
 
     def subit(self, attaquant, niveau, degats, typeDegats, shouldprint=True):
         """@summary: subit des dégâts de combats.

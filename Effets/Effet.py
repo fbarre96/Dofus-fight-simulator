@@ -39,6 +39,7 @@ class Effet(object):
                                                 "|".join(self.ciblesPossibles)).split("|")
         self.cibleNonRequise = kwargs.get('cible_non_requise', False)
         self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
+        self.pile = kwargs.get("pile", True)
         self.kwargs = kwargs
 
     def setCritique(self, val):

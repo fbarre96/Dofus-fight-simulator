@@ -32,7 +32,10 @@ class EffetEtat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
@@ -205,7 +208,10 @@ class EffetRetireEtat(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
@@ -239,7 +245,10 @@ class EffetRetireEtatSelf(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurLanceur is not None:
-            niveau.ajoutFileEffets(self, joueurLanceur, joueurLanceur)
+            if self.pile:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            else:
+                self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
 
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
