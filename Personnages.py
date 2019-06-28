@@ -334,6 +334,16 @@ class Personnage(object):
             import Sorts.Pandawa
             sortsDebutCombat += Sorts.Pandawa.getSortsDebutCombat(lvl)
             sorts += Sorts.Pandawa.getSorts(lvl)
+        elif classe == "Pandawasta":
+            import Sorts.Pandawasta
+            sorts += Sorts.Pandawasta.getSorts(lvl)
+            return sorts, sortsDebutCombat
+        elif classe == "Bambou":
+            import Sorts.Bambou
+            sortsDebutCombat += Sorts.Bambou.getSortsDebutCombat(lvl)
+            sorts += Sorts.Bambou.getSorts(lvl)
+        elif classe == "Double":
+            return sorts, sortsDebutCombat
         sorts.append(Sort.Sort("Cawotte", 0, 4, 1, 6,
                                [EffetInvoque("Cawotte", False, cibles_possibles="",
                                              cible_non_requise=True)],
@@ -740,6 +750,9 @@ class Personnage(object):
     def faitPorter(self, niveau, joueurPorte):
         """@summary: le joueur joueurPorteur porte joueurPorte
         """
+        if self.porteurUid is not None:
+            print("Vous être porté, et ne pouvez donc pas porter à votre tour.")
+            return
         joueurPorte.ajoutHistoriqueDeplacement()
         joueurPorte.posX = self.posX
         joueurPorte.posY = self.posY
@@ -816,4 +829,16 @@ invocs_liste = {
                                        {"Neutre%":20, "Terre%":30, "Feu%":-10,
                                         "Eau%":20, "Air%":-10},
                                        "ebriete.jpg", DumbIA()),
+    "Pandawasta": Personnage("Pandawasta", "Pandawasta",
+                             0, 1, {"Vitalite": 1025, "PA":6, "PM":5},
+                             {"Esquive PA":10, "Esquive PM":10, "Tacle":35}, {},
+                             {"Neutre%":25, "Terre%":25, "Feu%":25,
+                              "Eau%":25, "Air%":25},
+                             "lien_spiritueux.jpg", JoueurIA()),
+    "Bambou": Personnage("Bambou", "Bambou",
+                         0, 1, {"Vitalite": 657, "PA":0, "PM":0},
+                         {"Esquive PA":0, "Esquive PM":0, "Tacle":0}, {},
+                         {"Neutre%":0, "Terre%":0, "Feu%":0,
+                          "Eau%":0, "Air%":0},
+                         "bambou.jpg", PasseIA()),
 }

@@ -353,5 +353,21 @@ def getSorts(lvl):
         Sort.Sort("Brancard", 195, 2, 1, 4, [EffetEtat(EtatEffetSiRetraitEtat("Brancard", 0, 1, EffetSoinPerPVMax(10), "Brancard", "Brancard", "porteur"), pile=False, zone=Zones.TypeZoneLigneJusque(), cibles_possibles="Allies|Ennemis", cible_non_requise=True, etat_requis_lanceur="Sobre"), EffetRetireEtat("Brancard", zone=Zones.TypeZoneInfini(), cible_non_requise=True, etat_requis_lanceur="Sobre", etat_requis_cibles="Brancard"), EffetLance(cible_non_requise=True, cibles_possibles="", etat_requis_lanceur="Sobre")], [], 0, 2, 99, 0, 0, "ligne", False, description="""Jette la cible jusqu'à la cellule ciblée. La cible est soignée en fonction du nombre d'entités survolées.
     Nécessite l'état Sobre.""", chaine=False)
     ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Lien Spiritueux", 100, 3, 1, 4, [EffetInvoque("Pandawasta", True, etat_requis_lanceur="Saoul", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 6, 1, "ligne", False, description="""Invoque un Pandawasta qui bloque les déplacements des adversaires.
+    Nécessite l'état Saoul.""", chaine=True),
+
+        Sort.Sort("Lien Spiritueux", 147, 3, 1, 4, [EffetInvoque("Pandawasta", True, etat_requis_lanceur="Saoul", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 6, 1, "ligne", False, description="""Invoque un Pandawasta qui bloque les déplacements des adversaires.
+    Nécessite l'état Saoul.""", chaine=True),
+
+        Sort.Sort("Lien Spiritueux", 197, 3, 1, 5, [EffetInvoque("Pandawasta", True, etat_requis_lanceur="Saoul", cibles_possibles="", cible_non_requise=True)], [], 0, 1, 1, 6, 1, "ligne", False, description="""Invoque un Pandawasta qui bloque les déplacements des adversaires.
+    Nécessite l'état Saoul.""", chaine=True)
+    ]))
+    sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
+        Sort.Sort("Bambou", 200, 2, 1, 4, [EffetInvoque("Bambou", True, cibles_possibles="", etat_requis_lanceur="Sobre", cible_non_requise=True)], [], 0, 1, 99, 0, 0, "cercle", True, description="""Invoque un Bambou.
+    Le lanceur monte sur le Bambou s'il l'attaque en mêlée en étant dans l'état Sobre.
+    Désactive les lignes de vue des sorts du lanceur s'il est porté par un Bambou.
+    Un Pandawa porté par un Bambou ne peut pas porter d'autres entités.""", chaine=True)
+    ]))
     return sorts
     
