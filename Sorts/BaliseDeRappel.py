@@ -23,7 +23,7 @@ def getSorts(lvl):
     # pylint: disable=unused-argument
     sorts = []
     sorts.append(Sort.Sort("Rappel", 0, 0, 0, 0, [
-        EffetEchangePlace(zone=Zones.TypeZoneInfini(), cibles_possibles="Cra"), EffetTue(
-            zone=Zones.TypeZoneInfini(), cibles_possibles="Lanceur")
-        ], [], 0, 99, 99, 0, 0, "cercle", False))
+        EffetEchangePlace(zone=Zones.TypeZoneInfini(), cibles_possibles_direct="Lanceur", cibles_possibles="Cra", pile=False), EffetTue(
+            zone=Zones.TypeZoneInfini(), cibles_possibles_direct="Cra", cibles_possibles="Lanceur", pile=False)
+        ], [], 0, 99, 99, 0, 0, "cercle", False, chaine=False))
     return sorts
