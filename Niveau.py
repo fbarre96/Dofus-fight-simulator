@@ -49,9 +49,9 @@ class Niveau:
         # le nombre de case sur un côté de la carte (carré)
         self.taille = constantes.taille_carte
         # Un tableau des cordonnées de départs possibles pour la team 1
-        self.departT1 = [[6, 6]]
+        self.departT1 = [[6, 6], [5, 6]]
         # Un tableau des cordonnées de départs possibles pour la team 2
-        self.departT2 = [[8, 8]]
+        self.departT2 = [[8, 8], [9, 8]]
         self.joueurs = sorted(joueurs, key=lambda x: x.ini, reverse=True)
         # Le joueur qui commence est à la position 0 du tableau des joueurs
         self.tourIndex = 0
