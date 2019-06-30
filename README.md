@@ -1,4 +1,4 @@
-# Dofuk - Simulateur de combat Dofus© d'Ankama
+﻿# Dofuk - Simulateur de combat Dofus© d'Ankama
 
 ## /!\\/!\\/!\\DISCLAIMER/!\\/!\\/!\\
 **Ceci est simulateur de combat du jeu de la société Ankama 'Dofus'© 1v1. Ce simulateur ne vise en aucun cas à remplacé le jeu réel.
@@ -7,17 +7,18 @@ C'est pourquoi cette simulation est limitée dans ses fonctionnalitées et dans 
 **Ce jeu étant souvent la cible de piratage, je vais maintenant décrire le comportement attendu du programme:**
 
 Le programme:
-1. Lit **uniquement** les fichiers images contenues dans le dossier 'sorts' et dans le dossier 'images'
-2. Lit et écrit **uniquement** un fichier 'save.txt' dans le dossier de l'exécution. Ce fichier contient simplement les paramètres du programmes, séparés par un saut de ligne.
-3. N'accède **jamais** à une connexion internet.
-4. Ne modifie **jamais** le contenu des registres.
-5. N'exécute **jamais** de programmes externes.
-
+1. Lit **uniquement** les fichiers images contenues dans le dossier d'installation
+2. N'accède **jamais** à une connexion internet.
+3. Ne modifie **jamais** le contenu des registres.
+4. N'exécute **jamais** de programmes externes.
+5. Ne demande pas d'authentifiants à l'utilisateur
 
 ## Installation
 ### Sous Windows:
 * Télécharger le zip du dossier github
 * Extraire le zip dans un dossier de votre choix
+* Exécuter Dofus_FS.exe dans le dossier d'installation
+* OU
 * Installer python3 (bien ajouter dans l'installeur l'option pour ajouter Python à la variable PATH):
 ![Capture1](https://github.com/fbarre96/Dofuk/raw/master/Documentation/capture_python.png)
 
