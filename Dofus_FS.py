@@ -178,6 +178,9 @@ class PersoView():
 
 
 class OpeningPage():
+    """@summary: Widget servant à lancer la simulation après
+                 avoir renseigné les persos
+        """
     def __init__(self, fenetre):
         self.notebk = Notebook(fenetre)
         self.fenetre = fenetre
@@ -185,26 +188,33 @@ class OpeningPage():
         self.caracsNotebk = []
         self.framesPersos = []
 
-    def formSubmission(self, evt):
-        # evt est obligatoire car tkinter le donne comme argument
-        # pylint: disable=unused-argument
+    def formSubmission(self, _):
+        """@summary: Lance la simulation de combat avec les persos du notebook
+        """
         persos = []
         for persoVw in self.persoViews:
             persoVw.inputsToPerso()
             persos.append(persoVw.perso)
             writeSaveFile("save.json", persos)
         launchSimu(self.persoViews)
-    
-    def addEmptyPage(self, evt=None):
+
+    def addEmptyPage(self, _):
+        """@summary: Ajoute un onglet avec un stub perso dans le notebook0
+        """
         self.addPage(readSaveFile("./persos/empty.json"))
 
     def deleteActiveNotePage(self):
+        """@summary: Supprime l'onglet actif et les valeurs de personnages
+                     associés.
+        """
         nomPanneau = self.notebk.tab(self.notebk.select())["text"]
         indPanneau = int(nomPanneau.split(" ")[1])
         self.notebk.forget(self.notebk.select())
         del self.persoViews[indPanneau]
 
     def addPage(self, values):
+        """@summary: Ajoute un onglet avec les valeurs de personnages données.
+        """
         self.framesPersos.append(Frame(self.notebk))
         framePerso = self.framesPersos[-1]
         self.persoViews.append(PersoView(values))
@@ -221,10 +231,10 @@ class OpeningPage():
                 if inputName == "Classe":
                     classesDisponibles = \
                         Combobox(frameCaracs,
-                                    textvariable=StringVar(),
-                                    values=["Cra", "Xelor", "Iop",
-                                            "Sram", "Poutch", "Eniripsa", "Pandawa"],
-                                    state='readonly')
+                                 textvariable=StringVar(),
+                                 values=["Cra", "Xelor", "Iop",
+                                         "Sram", "Poutch", "Eniripsa", "Pandawa"],
+                                 state='readonly')
                     persoVw.inputs[inputsCategory][inputName] = classesDisponibles
                     persoVw.inputs[inputsCategory][inputName].set(inputValue)
 
@@ -233,7 +243,7 @@ class OpeningPage():
                         Entry(frameCaracs, textvariable=StringVar(), width=10)
                     persoVw.inputs[inputsCategory][inputName].insert(END, inputValue)
                 lblCarac = Label(frameCaracs,
-                                    text=inputName+":")
+                                 text=inputName+":")
                 lblCarac.grid(row=j, column=0)
                 persoVw.inputs[inputsCategory][inputName].grid(row=j, column=1)
                 j += 1
@@ -244,7 +254,7 @@ class OpeningPage():
         saveBtn = Button(framePerso, text='Sauvegarder ce perso', command=persoVw.save)
         loadBtn = Button(framePerso, text='Charger un perso', command=persoVw.load)
         deleteThisBtn = Button(framePerso, text="Supprimer ce perso",
-                                command=self.deleteActiveNotePage)
+                               command=self.deleteActiveNotePage)
         # Mise du bouton sur la droite de la fenetre
         saveBtn.pack(side="left")
         # Mise du bouton sur la droite de la fenetre
@@ -263,7 +273,6 @@ class OpeningPage():
 
         self.notebk.enable_traversal()
         # Ajout du bouton pour lancer la simulation
-        
         submit = Button(self.fenetre, text='Lancer la simulation')
         # Permet au gestionnaire d'événement d'ajouter des paramètres
         # Gestionnaire d'événement pour le clic du bouton
