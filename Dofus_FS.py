@@ -210,7 +210,7 @@ class OpeningPage():
         nomPanneau = self.notebk.tab(self.notebk.select())["text"]
         indPanneau = int(nomPanneau.split(" ")[1])
         self.notebk.forget(self.notebk.select())
-        del self.persoViews[indPanneau]
+        del self.persoViews[indPanneau-1]
 
     def addPage(self, values):
         """@summary: Ajoute un onglet avec les valeurs de personnages données.
