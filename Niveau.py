@@ -1428,7 +1428,7 @@ class Niveau:
                 else:
                     if joueurSur.aEtat("Invisible") and \
                     joueurSur.team != self.tourDe.team:
-                        voisins.append(Noeud(pos[0], pos[1], noeud))
+                        voisins.append(Noeud(pos[0], pos[1], 0, 0, noeud))
         return voisins
 
     def getJoueurAvecUid(self, uid):
