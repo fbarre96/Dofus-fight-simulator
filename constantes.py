@@ -53,3 +53,5 @@ def normaliser(chaine):
     chaine = chaine.replace("ç", "c")
     chaine = chaine.replace("â", "a")
     return chaine
+
+

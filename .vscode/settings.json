@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "D:\\Python37\\python37.exe",
+    "python.pythonPath": "/home/barre/anaconda3/envs/deepdofus/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
 	"python.linting.pylintArgs": [

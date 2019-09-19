@@ -57,9 +57,11 @@ def ajoutTrie(liste, noeud):
     @type: liste [Noeuds]
     @noeud: le noeud à insérer dans la liste triée.
     @type: Noeud"""
+    for i,noeud_in_liste in enumerate(liste):
+        if compare2Noeuds(noeud, noeud_in_liste) != -1:
+            liste.insert(i, noeud)
+            return
     liste.append(noeud)
-    liste.sort(key=cmpToKey(compare2Noeuds))
-
 
 class PathFinder:
     """@summary: Classe implémentant l'algorithme A*
@@ -100,21 +102,22 @@ class PathFinder:
             return None
         depart = Noeud(joueur.posX, joueur.posY)
         ajoutTrie(listeOuverte, depart)
+        noeudOuvert = None
         while listeOuverte:
-            noeudOuvert = listeOuverte[-1]
-            del listeOuverte[-1]
+            if noeudOuvert is not None:
+                listeOuverte.remove(noeudOuvert)
+            noeudOuvert = listeOuverte[0]
+
             if noeudOuvert.posX == caseCibleX and noeudOuvert.posY == caseCibleY:
-                # reconstituerChemin(noeudOuvert,listeFermee)
-                tab = []
-                for case in listeFermee:
-                    tab.append([case.posX, case.posY])
-                if tab:
-                    if tab[0][0] == joueur.posX and tab[0][1] == joueur.posY:
-                        del tab[0]
-                tab.append([noeudOuvert.posX, noeudOuvert.posY])
-                self.cachedResult = tab
-                return tab
-            voisins = niveau.getVoisins(noeudOuvert.posX, noeudOuvert.posY)
+                path = []
+                current = noeudOuvert
+                while current is not None:
+                    path.append([current.posX, current.posY])
+                    current = current.parent
+                path.remove(path[-1])
+                self.cachedResult = path[::-1]
+                return path[::-1] # Return reversed path
+            voisins = niveau.getVoisins(noeudOuvert)
             for voisin in voisins:
                 vExisteCoutInf = False
                 for noeud2Listes in listeFermee+listeOuverte:
