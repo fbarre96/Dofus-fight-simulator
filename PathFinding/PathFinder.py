@@ -120,15 +120,15 @@ class PathFinder:
             voisins = niveau.getVoisins(noeudOuvert)
             for voisin in voisins:
                 vExisteCoutInf = False
+                voisin.cout = noeudOuvert.cout+1
+                voisin.heur = voisin.cout + \
+                    (abs(voisin.posX-caseCibleX)+abs(voisin.posY-caseCibleY))
                 for noeud2Listes in listeFermee+listeOuverte:
                     if noeud2Listes.posX == voisin.posX and noeud2Listes.posY == voisin.posY \
-                       and noeud2Listes.cout < voisin.cout:
+                       and noeud2Listes.cout <= voisin.cout:
                         vExisteCoutInf = True
                         break
                 if not vExisteCoutInf:
-                    voisin.cout = noeudOuvert.cout+1
-                    voisin.heur = voisin.cout + \
-                        (abs(voisin.posX-caseCibleX)+abs(voisin.posY-caseCibleY))
                     ajoutTrie(listeOuverte, voisin)
             listeFermee.append(noeudOuvert)
         print("Aucun chemin trouvee")
