@@ -119,6 +119,9 @@ class Niveau:
             @type: tableau [int,int] cordonnées x,y de la souris."""
         caseX = int(mouseXY[0]/constantes.taille_sprite)
         caseY = int(mouseXY[1]/constantes.taille_sprite)
+        if caseX >= constantes.taille_carte or caseY >= constantes.taille_carte or \
+            caseY < 0 or caseX < 0:
+            return False
         joueur = self.tourDe
         cases = self.pathfinder.pathFinding(self, caseX, caseY, joueur)
         # cases vaut None si aucun chemin n'a été trouvé par l'algorithme A*
