@@ -1415,7 +1415,7 @@ class Niveau:
         self.runes.append(rune)
         return len(self.runes)-1
 
-    def getVoisins(self, posX, posY):
+    def getVoisins(self, noeud):
         """@summary: Retourne les cases vides existantes adjacentes à une case donnée
         @posX: La coordonnée x de la case dont on veut les voisins
         @type: int
@@ -1425,6 +1425,8 @@ class Niveau:
         @return: la liste des cases voisines vides à celle donnée"""
         voisins = []
         posToTest = []
+        posX = noeud.posX
+        posY = noeud.posY
         if posX > 0:
             posToTest.append([posX-1, posY])
         if posX < constantes.taille_carte-1:
@@ -1437,11 +1439,11 @@ class Niveau:
             if self.structure[pos[1]][pos[0]].type == "v":
                 joueurSur = self.getJoueurSur(pos[0], pos[1])
                 if joueurSur is None:
-                    voisins.append(Noeud(pos[0], pos[1]))
+                    voisins.append(Noeud(pos[0], pos[1], 0, 0, noeud))
                 else:
                     if joueurSur.aEtat("Invisible") and \
                     joueurSur.team != self.tourDe.team:
-                        voisins.append(Noeud(pos[0], pos[1]))
+                        voisins.append(Noeud(pos[0], pos[1], 0, 0, noeud))
         return voisins
 
     def getJoueurAvecUid(self, uid):
