@@ -5,18 +5,27 @@
 from copy import deepcopy
 import uuid
 
-import Sort
 from Etats.EtatBouclier import EtatBouclierPerLvl
-from Effets.EffetInvoque import EffetInvoque
-from IAs.DumbIA import DumbIA
-from IAs.PasseIA import PasseIA
-from IAs.JoueurIA import JoueurIA
+from Sort import Sort
 import constantes
 import Overlays
+from IAs.JoueurIA import JoueurIA
+import inspect
+import os
+import json
 
 
 class Personnage(object):
     """@summary: Classe décrivant un personnage joueur de dofus."""
+    @classmethod
+    def getAttributesList(cls):
+        dummy_perso = Personnage("", "", 0, 1,
+                                {}, {}, {}, {})
+        ret = []
+        for key, value in dummy_perso.__dict__.items():
+            if(isinstance(value, int) or isinstance(value, bool)):
+                ret.append(key)
+        return ret
 
     def __init__(self, nomPerso, classe, lvl, team, caracsPrimaires,
                  caracsSecondaires, dommages, resistances, icone="", objIA=None):
@@ -117,8 +126,7 @@ class Personnage(object):
         self.classe = classe
         self.uid = uuid.uuid4()
         self.sortsDebutCombat = []
-        self.sorts, self.sortsDebutCombat = Personnage.chargerSorts(
-            self.classe, self.lvl)  # la liste des sorts du personnage
+        
         self.posX = 0                                     # Sa position X sur la carte
         self.posY = 0                                     # Sa position Y sur la carte
         # La liste des états affectant le personange
@@ -150,6 +158,10 @@ class Personnage(object):
                                         Overlays.ColoredText("overlayTexte",
                                                              (224, 238, 238)),
                                         (56, 56, 56))
+
+    def faireChargerSort(self, loadToutPersonnages=True):
+        self.sorts, self.sortsDebutCombat = Personnage.chargerSorts(
+            self.classe, self.lvl, loadToutPersonnages)  # la liste des sorts du personnage
 
     def __deepcopy__(self, memo):
         toReturn = Personnage(self.nomPerso, self.classe, self.lvl, self.team,
@@ -246,16 +258,33 @@ class Personnage(object):
         """
         closestLvlSort = None
         for sort in tabSorts[0:]:
-            if sort.lvl <= lvl:
+            print("Sortlvl  "+str(sort.lvl)+" <= "+str(lvl))
+            if int(sort.lvl) <= int(lvl):
                 if closestLvlSort is not None:
-                    if closestLvlSort.lvl < sort.lvl:
+                    if int(closestLvlSort.lvl) < int(sort.lvl):
                         closestLvlSort = sort
                 else:
                     closestLvlSort = sort
         return closestLvlSort
 
     @staticmethod
-    def chargerSorts(classe, lvl):
+    def loadSorts(sortfile, lvl):
+        with open(sortfile) as f:
+            data = f.read()
+        sortsData = json.loads(data)
+        sorts = []
+        for sortName, sortData in sortsData.items():
+            sortData["nom"] = sortName
+            tabSorts = Sort.craftSort(sortData)
+            rightLvlSort = Personnage.getSortRightLvl(lvl, tabSorts)
+            sorts.append(rightLvlSort)
+        if not sorts:
+            raise ValueError("Sorts non trouvés")
+        return sorts
+
+
+    @staticmethod
+    def chargerSorts(classe, lvl, loadToutPersonnages=True):
         """@summary: Méthode statique qui initialise les sorts du personnage selon sa classe.
         @classe: le nom de classe dont on souhaite récupérer les sorts
         @type: string
@@ -263,92 +292,91 @@ class Personnage(object):
         @return: tableau de Sort"""
         sorts = []
         sortsDebutCombat = []
-        if classe == "Stratege Iop":
-            import Sorts.StrategeIop
-            sortsDebutCombat += Sorts.StrategeIop.getSortsDebutCombat(lvl)
-            sorts += Sorts.StrategeIop.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Cadran de Xelor":
-            import Sorts.CadranDeXelor
-            sortsDebutCombat += Sorts.CadranDeXelor.getSortsDebutCombat(lvl)
-            sorts += Sorts.CadranDeXelor.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Balise de Rappel":
-            import Sorts.BaliseDeRappel
-            sortsDebutCombat += Sorts.BaliseDeRappel.getSortsDebutCombat(lvl)
-            sorts += Sorts.BaliseDeRappel.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Tonneau Attractif":
-            import Sorts.TonneauAttractif
-            sortsDebutCombat += Sorts.TonneauAttractif.getSortsDebutCombat(lvl)
-            sorts += Sorts.TonneauAttractif.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Tonneau Incapacitant":
-            import Sorts.TonneauIncapacitant
-            sortsDebutCombat += Sorts.TonneauIncapacitant.getSortsDebutCombat(lvl)
-            sorts += Sorts.TonneauIncapacitant.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Poutch":
-            return sorts, sortsDebutCombat
-        elif classe == "Lapino":
-            import Sorts.Lapino
-            sortsDebutCombat += Sorts.Lapino.getSortsDebutCombat(lvl)
-            sorts += Sorts.Lapino.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Lapino protecteur":
-            import Sorts.Lapino_protecteur
-            sortsDebutCombat += Sorts.Lapino_protecteur.getSortsDebutCombat(lvl)
-            sorts += Sorts.Lapino_protecteur.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Fiole":
-            import Sorts.Fiole
-            sortsDebutCombat += Sorts.Fiole.getSortsDebutCombat(lvl)
-            sorts += Sorts.Fiole.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Synchro":
-            import Sorts.Synchro
-            sortsDebutCombat += Sorts.Synchro.getSortsDebutCombat(lvl)
-            sorts += Sorts.Synchro.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Xelor":
-            import Sorts.Xelor
-            sortsDebutCombat += Sorts.Xelor.getSortsDebutCombat(lvl)
-            sorts += Sorts.Xelor.getSorts(lvl)
-        elif classe == "Iop":
-            import Sorts.Iop
-            sortsDebutCombat += Sorts.Iop.getSortsDebutCombat(lvl)
-            sorts += Sorts.Iop.getSorts(lvl)
-        elif classe == "Cra":
-            import Sorts.Cra
-            sortsDebutCombat += Sorts.Cra.getSortsDebutCombat(lvl)
-            sorts += Sorts.Cra.getSorts(lvl)
-        elif classe == "Sram":
-            import Sorts.Sram
-            sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)
-            sorts += Sorts.Sram.getSorts(lvl)
-        elif classe == "Eniripsa":
-            import Sorts.Eniripsa
-            sortsDebutCombat += Sorts.Eniripsa.getSortsDebutCombat(lvl)
-            sorts += Sorts.Eniripsa.getSorts(lvl)
-        elif classe == "Pandawa":
-            import Sorts.Pandawa
-            sortsDebutCombat += Sorts.Pandawa.getSortsDebutCombat(lvl)
-            sorts += Sorts.Pandawa.getSorts(lvl)
-        elif classe == "Pandawasta":
-            import Sorts.Pandawasta
-            sorts += Sorts.Pandawasta.getSorts(lvl)
-            return sorts, sortsDebutCombat
-        elif classe == "Bambou":
-            import Sorts.Bambou
-            sortsDebutCombat += Sorts.Bambou.getSortsDebutCombat(lvl)
-            sorts += Sorts.Bambou.getSorts(lvl)
-        elif classe == "Double":
-            return sorts, sortsDebutCombat
-        sorts.append(Sort.Sort("Cawotte", 0, 4, 1, 6,
-                               [EffetInvoque("Cawotte", False, cibles_possibles="",
-                                             cible_non_requise=True)],
-                               [], 0, 1, 1, 6, 0, "cercle", True,
-                               description="Invoque une Cawotte"))
+        # if classe == "Stratege Iop":
+        #     import Sorts.StrategeIop
+        #     sortsDebutCombat += Sorts.StrategeIop.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.StrategeIop.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Cadran de Xelor":
+        #     import Sorts.CadranDeXelor
+        #     sortsDebutCombat += Sorts.CadranDeXelor.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.CadranDeXelor.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Balise de Rappel":
+        #     import Sorts.BaliseDeRappel
+        #     sortsDebutCombat += Sorts.BaliseDeRappel.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.BaliseDeRappel.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Tonneau Attractif":
+        #     import Sorts.TonneauAttractif
+        #     sortsDebutCombat += Sorts.TonneauAttractif.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.TonneauAttractif.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Tonneau Incapacitant":
+        #     import Sorts.TonneauIncapacitant
+        #     sortsDebutCombat += Sorts.TonneauIncapacitant.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.TonneauIncapacitant.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Poutch":
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Lapino":
+        #     import Sorts.Lapino
+        #     sortsDebutCombat += Sorts.Lapino.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Lapino.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Lapino protecteur":
+        #     import Sorts.Lapino_protecteur
+        #     sortsDebutCombat += Sorts.Lapino_protecteur.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Lapino_protecteur.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Fiole":
+        #     import Sorts.Fiole
+        #     sortsDebutCombat += Sorts.Fiole.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Fiole.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Synchro":
+        #     import Sorts.Synchro
+        #     sortsDebutCombat += Sorts.Synchro.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Synchro.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Xelor":
+        #     import Sorts.Xelor
+        #     sortsDebutCombat += Sorts.Xelor.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Xelor.getSorts(lvl)
+        # elif classe == "Iop":
+        #     import Sorts.Iop
+        #     sortsDebutCombat += Sorts.Iop.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Iop.getSorts(lvl)
+    
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        sortfile = os.path.join(dir_path, "Sorts/"+classe.lower().replace(" ", "_") +".json")
+        sorts += Personnage.loadSorts(sortfile, lvl)
+        print("Loaded sorts:"+str(sorts))
+        # elif classe == "Sram":
+        #     import Sorts.Sram
+        #     sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Sram.getSorts(lvl)
+        # elif classe == "Eniripsa":
+        #     import Sorts.Eniripsa
+        #     sortsDebutCombat += Sorts.Eniripsa.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Eniripsa.getSorts(lvl)
+        # elif classe == "Pandawa":
+        #     import Sorts.Pandawa
+        #     sortsDebutCombat += Sorts.Pandawa.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Pandawa.getSorts(lvl)
+        # elif classe == "Pandawasta":
+        #     import Sorts.Pandawasta
+        #     sorts += Sorts.Pandawasta.getSorts(lvl)
+        #     return sorts, sortsDebutCombat
+        # elif classe == "Bambou":
+        #     import Sorts.Bambou
+        #     sortsDebutCombat += Sorts.Bambou.getSortsDebutCombat(lvl)
+        #     sorts += Sorts.Bambou.getSorts(lvl)
+        # elif classe == "Double":
+        #     return sorts, sortsDebutCombat
+        if loadToutPersonnages:
+            import Sorts.ToutPersonnage
+            sorts += Sorts.ToutPersonnage.getSorts(lvl)
         totalNbSorts = len(sorts)
         i = 0
         while i < totalNbSorts:
@@ -583,7 +611,7 @@ class Personnage(object):
         if shouldprint:
             print(self.nomPerso+": +"+str(soins)+" PV")
 
-    def subit(self, attaquant, niveau, degats, typeDegats, shouldprint=True):
+    def subit(self, attaquant, niveau, degats, typeDegats):
         """@summary: subit des dégâts de combats.
         Active les triggers d'états triggerAvantSubirDegats et triggerApresSubirDegats
         @attaquant: Le joueur attaquant
@@ -633,7 +661,7 @@ class Personnage(object):
             str(self.vie) + "/"+str(self.vieMax)+" PV"
         if pbRestants > 0:
             toprint += " et "+str(pbRestants)+" PB"
-        if shouldprint:
+        if not niveau.isPrevisu():
             print("-"+str(totalPerdu)+" PV")
             print(toprint)
         if self.vie <= 0:
@@ -697,6 +725,7 @@ class Personnage(object):
         @type: Personnage
         @niveau: La grille de jeu (optionnel)
         @type: Niveau"""
+        cumulMax = int(cumulMax)
         if cumulMax != -1:
             count = 0
             for etatJoueur in self.etats:
@@ -708,8 +737,8 @@ class Personnage(object):
         for etatDejaApplique in self.etats:
             if etatDejaApplique.actif():
                 etatDejaApplique.triggerAvantApplicationEtat(niveau, etat, lanceur, self)
-
-        print(self.nomPerso+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
+        if not niveau.isPrevisu():
+            print(self.nomPerso+"  etat "+etat.nom+" ("+str(etat.duree)+" tours)")
         etat.lanceur = lanceur
         self.etats.append(etat)
         if self.etats[-1].actif():
@@ -779,66 +808,3 @@ class Personnage(object):
             for etat in joueurPorte.etats:
                 if etat.actif():
                     etat.triggerApresLance(niveau, self, joueurPorte)
-
-invocs_liste = {
-    "Cadran de Xelor": Personnage("Cadran de Xelor", "Cadran de Xelor",
-                                  100, 1, {"Vitalite": 1000}, {}, {}, {},
-                                  "cadran_de_xelor.png", DumbIA()),
-    "Cawotte": Personnage("Cawotte", "Cawotte", 0, 1,
-                          {"Vitalite": 660}, {}, {}, {}, "cawotte.jpg", PasseIA()),
-    "Synchro": Personnage("Synchro", "Synchro", 0, 1,
-                          {"Vitalite": 1200}, {}, {}, {}, "synchro.png", PasseIA()),
-    "Complice": Personnage("Complice", "Complice", 0, 1,
-                           {"Vitalite": 650}, {}, {}, {}, "complice.png", PasseIA()),
-    "Balise de Rappel": Personnage("Balise de Rappel", "Balise de Rappel",
-                                   0, 1, {"Vitalite": 1000}, {}, {}, {},
-                                   "balise_de_rappel.png", DumbIA()),
-    "Balise Tactique": Personnage("Balise Tactique", "Balise Tactique",
-                                  0, 1, {"Vitalite": 1000}, {}, {}, {},
-                                  "balise_tactique.png", PasseIA()),
-    "Stratege Iop": Personnage("Stratege Iop", "Stratège Iop", 0, 1,
-                               {"Vitalite": 1385}, {}, {}, {}, "conquete.png", PasseIA()),
-    "Double": Personnage("Double", "Double", 0, 1,
-                         {"Vitalite": 1}, {}, {}, {}, "sram.png"),
-    "Comploteur": Personnage("Comploteur", "Comploteur", 0, 1,
-                             {"Vitalite": 1}, {}, {}, {}, "sram.png"),
-    "Lapino": Personnage("Lapino", "Lapino",
-                         0, 1, {"Vitalite": 1200, "PA":5, "PM":4},
-                         {"Esquive PA":75, "Esquive PM":75}, {},
-                         {"Neutre%":20, "Terre%":20, "Feu%":5, "Eau%":-5, "Air%":30},
-                         "mot_d_amitie.jpg"),
-    "Lapino protecteur": Personnage("Lapino protecteur", "Lapino protecteur",
-                                    0, 1, {"Vitalite": 1200, "PA":5, "PM":4},
-                                    {"Esquive PA":75, "Esquive PM":75}, {},
-                                    {"Neutre%":10, "Terre%":15, "Feu%":0, "Eau%":-10, "Air%":25},
-                                    "mot_d_affection.jpg"),
-    "Fiole": Personnage("Fiole", "Fiole",
-                        0, 1, {"Vitalite": 600, "PA":6, "PM":0},
-                        {"Esquive PA":90, "Esquive PM":90}, {},
-                        {"Neutre%":0, "Terre%":0, "Feu%":0, "Eau%":0, "Air%":0},
-                        "mot_de_seduction.jpg", DumbIA()),
-    "Tonneau Attractif": Personnage("Tonneau Attractif", "Tonneau Attractif",
-                                    0, 1, {"Vitalite": 1315, "PA":8, "PM":-1},
-                                    {"Esquive PA":52, "Esquive PM":52}, {},
-                                    {"Neutre%":20, "Terre%":-10, "Feu%":20,
-                                     "Eau%":-10, "Air%":30},
-                                    "ivresse.jpg", DumbIA()),
-    "Tonneau Incapacitant": Personnage("Tonneau Incapacitant", "Tonneau Incapacitant",
-                                       0, 1, {"Vitalite": 1052, "PA":4, "PM":0},
-                                       {"Esquive PA":0, "Esquive PM":0}, {},
-                                       {"Neutre%":20, "Terre%":30, "Feu%":-10,
-                                        "Eau%":20, "Air%":-10},
-                                       "ebriete.jpg", DumbIA()),
-    "Pandawasta": Personnage("Pandawasta", "Pandawasta",
-                             0, 1, {"Vitalite": 1025, "PA":6, "PM":5},
-                             {"Esquive PA":10, "Esquive PM":10, "Tacle":35}, {},
-                             {"Neutre%":25, "Terre%":25, "Feu%":25,
-                              "Eau%":25, "Air%":25},
-                             "lien_spiritueux.jpg", JoueurIA()),
-    "Bambou": Personnage("Bambou", "Bambou",
-                         0, 1, {"Vitalite": 657, "PA":0, "PM":0},
-                         {"Esquive PA":0, "Esquive PM":0, "Tacle":0}, {},
-                         {"Neutre%":0, "Terre%":0, "Feu%":0,
-                          "Eau%":0, "Air%":0},
-                         "bambou.jpg", PasseIA()),
-}

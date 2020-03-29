@@ -3,11 +3,60 @@
 @summary: Décrit un Effet de sort générique, déclare les fonctions stub
 """
 import Zones
+from tkinter import ttk
+import tkinter as tk
 
 class Effet(object):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
                  Cette classe est 'abstraite' et doit être héritée."""
+    subclasses = []
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.subclasses.append(cls)
+    
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        return False
 
+    @classmethod
+    def effectFactory(cls, effect_infos, **kwargs):
+        if isinstance(effect_infos, str):
+            for classe in cls.subclasses:
+                if classe.isAffected(effect_infos, **kwargs):
+                    return classe.craftEffect(effect_infos, **kwargs)
+
+            return EffetToDo.craftEffect(str(effect_infos), **kwargs)
+        elif isinstance(effect_infos, dict):
+            for classe in cls.subclasses:
+                if classe.__name__.replace("Effet", "") == effect_infos["effetType"]:
+                    return classe.craftFromInfos(effect_infos)
+        else:
+            raise TypeError("Effect factory expect an effect descrption or a json dict crafted by an effect")
+    @classmethod
+    def getEffectList(cls):
+        return [str(classe.__name__).replace("Effet", '') for classe in cls.subclasses]
+
+    @classmethod
+    def getObjectFromName(cls, name):
+        for classe in cls.subclasses:
+            if str(classe.__name__).replace("Effet", '') == name:
+                return classe()
+        return None
+    @classmethod
+    def standardizeStat(cls, statName):
+        if statName == "Portée":
+            return "PO"
+        if statName == "Érosion":
+            return "erosion"
+        return statName
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(**infos["kwargs"])
+
+    def buildUI(self, topframe, callbackDict):
+        ret = {}
+        return ret
     def __init__(self, **kwargs):
         """@summary: Initialise un Effet.
         @kwargs: Options de l'effets
@@ -38,9 +87,21 @@ class Effet(object):
         self.ciblesPossiblesDirect = kwargs.get('cibles_possibles_direct',
                                                 "|".join(self.ciblesPossibles)).split("|")
         self.cibleNonRequise = kwargs.get('cible_non_requise', False)
-        self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
+        if kwargs.get('zone', None) is not None:
+            self.typeZone = kwargs.get('zone', Zones.TypeZoneCercle(0))
+            del kwargs["zone"]
+            kwargs["typeZone"] = self.typeZone.__class__.__name__.replace("TypeZone", "")
+            kwargs["tailleZone"] = int(self.typeZone.zonePO)
+        else:
+            self.typeZone = Zones.TypeZone.getZoneFromName(kwargs.get("typeZone", "Cercle"), kwargs.get("tailleZone", 0))
         self.pile = kwargs.get("pile", True)
         self.kwargs = kwargs
+
+    def getAllInfos(self):
+        ret = {}
+        ret["kwargs"] = self.kwargs
+        ret["effetType"] = self.__class__.__name__.replace("Effet", "")
+        return ret
 
     def setCritique(self, val):
         """
@@ -57,20 +118,12 @@ class Effet(object):
         """
         return self.kwargs.get("isCC", False)
 
-    def setPrevisu(self, val):
-        """
-        @summary: indique à l'effet qu'il est lancé dans le cadre d'une prévisualisation
-        @val: la nouvelle valeur pour le booléen isPrevisu
-        @type: bool
-        """
-        self.kwargs["isPrevisu"] = val
+    def setSort(self, sort):
+        self.kwargs["sort"] = sort
+    
+    def getSort(self):
+        return self.kwargs.get("sort")
 
-    def isPrevisu(self):
-        """
-        @summary: demance à l'effet s'il a été lancé pour une prévisualisation
-        @return: bool
-        """
-        return self.kwargs.get("isPrevisu", False)
 
     def setNomSortTF(self, val):
         """
@@ -206,7 +259,6 @@ class Effet(object):
             joueurCibleUid = joueurCible.uid
             joueurCibleClasse = joueurCible.classe
             joueurCibleInvocateur = joueurCible.invocateur
-
         if (joueurCibleTeam == joueurLanceur.team and joueurCibleUid != joueurLanceur.uid
                 and "Allies" in self.ciblesPossibles) \
             or (joueurCibleTeam == joueurLanceur.team and joueurCibleUid == joueurLanceur.uid
@@ -301,3 +353,218 @@ class Effet(object):
               " consommeEtat:"+str(self.consommeEtat) +
               " ciblesPossibles:"+str(self.ciblesPossibles) +
               " cibles_exclues:"+str(self.ciblesExclues))
+
+class EffetToDo(Effet):
+    def __init__(self, effectStr, **kwargs):
+        self.kwargs = kwargs
+        self.effectStr = effectStr
+
+    def __deepcopy__(self, memo):
+        """
+        @summary: implémente une copie profonde de l'état
+        @return: Renvoie une copie profonde exacte de l'effet
+        """
+        return EffetToDo(self.effectStr, **self.kwargs)
+
+    def __str__(self):
+        return "TODO : "+str(self.effectStr)
+
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        return False
+
+    @classmethod
+    def craftEffect(cls, effectStr, **kwargs):
+        return EffetToDo(effectStr, **kwargs)
+    
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["effectStr"] = self.effectStr
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetToDo(infos["effectStr"], **infos["kwargs"])
+
+
+class ChildDialogEffect:
+    """
+    Open a child dialog of a tkinter application to fill effects
+    """
+    def __init__(self, parent, effect=None):
+        """
+        Open a child dialog of a tkinter application to edit an effect.
+
+        Args:
+            parent: the tkinter parent view to use for this window construction.
+            effect: Effect to edit.
+        """
+        self.parent = parent
+        self.app = tk.Toplevel(parent)
+        self.app.resizable(False, False)
+        self.rvalue = None
+        self.parent = parent
+        self.effect = effect if effect is not None else Effet()
+        self.initUI(self.effect)
+        try:
+            self.app.wait_visibility()
+            self.app.transient(parent)
+            self.app.grab_set()
+        except tk.TclError:
+            pass
+
+    def effectTypeModified(self, _event=None):
+        for widget in self.effectFrame.winfo_children():
+            widget.destroy()
+        if self.effect.__class__.__name__.replace("Effet", "") == self.typeEffetCombobox.get():
+            self.effectWidgets = self.effect.buildUI(self.effectFrame, self.callbackModifiedVal)
+        else:
+            typeEffet = self.typeEffetCombobox.get()
+            effect = Effet.getObjectFromName(typeEffet)
+            self.effectWidgets = effect.buildUI(self.effectFrame, self.callbackModifiedVal)
+            self.effect = effect
+
+    def callbackModifiedVal(self, modifiedValue):
+        for effetWidget_key, effetWidget_val in modifiedValue.items():
+            self.effectWidgets[effetWidget_key] = effetWidget_val
+        
+    
+    def initUI(self, effect):
+        appFrame = ttk.Frame(self.app)
+        typeEffetFrame = ttk.Frame(appFrame)
+        typeEffetLbl = ttk.Label(typeEffetFrame, text="Effet :")
+        typeEffetLbl.pack(side="left")
+        self.typeEffetCombobox = ttk.Combobox(typeEffetFrame, values=sorted(Effet.getEffectList()), state="readonly")
+        self.typeEffetCombobox.set(effect.__class__.__name__.replace("Effet", ""))
+        self.typeEffetCombobox.bind('<<ComboboxSelected>>', self.effectTypeModified) 
+        self.typeEffetCombobox.pack(side="left")
+        typeZoneLbl = ttk.Label(typeEffetFrame, text="Zone :")
+        typeZoneLbl.pack(side="left")
+        self.typeZoneCombobox = ttk.Combobox(typeEffetFrame, values=sorted(Zones.TypeZone.getZoneList()), state="readonly")
+        self.typeZoneCombobox.pack(side="left")
+        if effect.kwargs.get("zone", None) is not None:
+            self.typeZoneCombobox.set(effect.kwargs.get("zone").__class__.__name__.replace("TypeZone", ""))
+        else:
+            self.typeZoneCombobox.set(effect.kwargs.get("typeZone", "Cercle"))
+        self.tailleZoneSpinbox = tk.Spinbox(typeEffetFrame, from_=0, to=99, width=3)
+        self.tailleZoneSpinbox.delete(0, 'end')
+        if effect.kwargs.get("zone", None) is not None:
+            self.tailleZoneSpinbox.insert(0, int(effect.kwargs.get("zone").zonePO))
+        else:
+            self.tailleZoneSpinbox.insert(0, int(effect.kwargs.get("tailleZone", 0)))
+        self.tailleZoneSpinbox.pack(side="left")
+        typeEffetFrame.pack(side="top", fill=tk.X)
+
+        self.effectFrame = ttk.LabelFrame(appFrame, text="Caractéristiques de l'effet")
+        self.effectTypeModified()
+        self.effectFrame.pack(side="top", fill=tk.X)
+
+        etatsFrame = ttk.LabelFrame(appFrame, text="Etats")
+        helpStr = ttk.Label(etatsFrame, text="Utilisez le pipe '|' comme séparateur. Le '!' devant un état pour l'interdire.")
+        helpStr.grid(row=0, column=0, columnspan=2)
+        etatCibleDirectLbl = ttk.Label(etatsFrame, text="Condition état sur la cible:")
+        etatCibleDirectLbl.grid(row=1, column=0, sticky="e")
+        self.etatCibleDirectEntry = ttk.Entry(etatsFrame, width=100)
+        self.etatCibleDirectEntry.grid(row=1, column=1, sticky="w")
+        self.etatCibleDirectEntry.insert(0, effect.kwargs.get("etat_requis", ""))
+        etatCibleLbl = ttk.Label(etatsFrame, text="Condition état requis sur les cibles en zone:")
+        etatCibleLbl.grid(row=2, column=0, sticky="e")
+        self.etatCibleEntry = ttk.Entry(etatsFrame, width=100)
+        self.etatCibleEntry.grid(row=2, column=1, sticky="w")
+        self.etatCibleEntry.insert(0, effect.kwargs.get("etat_requis_cibles", ""))
+        etatLanceurLbl = ttk.Label(etatsFrame, text="Condition état requis sur le lanceur:")
+        etatLanceurLbl.grid(row=3, column=0, sticky="e")
+        self.etatLanceurEntry = ttk.Entry(etatsFrame, width=100)
+        self.etatLanceurEntry.grid(row=3, column=1, sticky="w")
+        self.etatLanceurEntry.insert(0, effect.kwargs.get("etat_requis_lanceur", ""))
+        consommeEtatLbl = ttk.Label(etatsFrame, text="Consomme les états requis:")
+        consommeEtatLbl.grid(row=4, column=0)
+        self.consommeVar = tk.BooleanVar()
+        self.consommeVar.set(effect.kwargs.get("consomme_etat", False))
+        consommeEtatCheckbutton = ttk.Checkbutton(etatsFrame, variable=self.consommeVar)
+        consommeEtatCheckbutton.grid(row=4, column=1, sticky="w")
+        etatsFrame.pack(side="top", fill=tk.X)
+
+        ciblesFrame = ttk.LabelFrame(appFrame, text="Cibles")
+        cibleRequiseLbl = ttk.Label(ciblesFrame, text="Cible requise:")
+        cibleRequiseLbl.grid(row=0, column=0, sticky="e")
+        self.cibleRequiseVar = tk.BooleanVar()
+        self.cibleRequiseVar.set(not effect.kwargs.get("cible_non_requise", False))
+        cibleRequiseCheckbutton = ttk.Checkbutton(ciblesFrame, variable=self.cibleRequiseVar)
+        cibleRequiseCheckbutton.grid(row=0, column=1, sticky="w")
+        ciblesPossiblesDirectLbl = ttk.Label(ciblesFrame, text="Cible Direct doit être:")
+        ciblesPossiblesDirectLbl.grid(row=1, column=0, sticky="e")
+        self.ciblesPossiblesDirectEntry = ttk.Entry(ciblesFrame, width=100)
+        self.ciblesPossiblesDirectEntry.grid(row=1, column=1, sticky="w")
+        self.ciblesPossiblesDirectEntry.insert(tk.END, effect.kwargs.get("cibles_possibles_direct", ""))
+        ciblesPossiblesDirectHelpLbl = ttk.Label(ciblesFrame, text="(Defaut = cible affectées)")
+        ciblesPossiblesDirectHelpLbl.grid(row=1, column=2)
+        ciblesPossiblesLbl = ttk.Label(ciblesFrame, text="Cible Affectés:")
+        ciblesPossiblesLbl.grid(row=2, column=0, sticky="e")
+        self.ciblesPossiblesEntry = ttk.Entry(ciblesFrame, width=100)
+        self.ciblesPossiblesEntry.grid(row=2, column=1, sticky="w")
+        self.ciblesPossiblesEntry.insert(tk.END, effect.kwargs.get("cibles_possibles", "Allies|Ennemis|Lanceur"))
+        ciblesPossiblesHelpLbl = ttk.Label(ciblesFrame, text="(Allies, Ennemis, Lanceur, nom de classe, Invoc)")
+        ciblesPossiblesHelpLbl.grid(row=2, column=2)
+        ciblesExcluesLbl = ttk.Label(ciblesFrame, text="Cibles exclues:")
+        ciblesExcluesLbl.grid(row=3, column=0, sticky="e")
+        self.ciblesExcluesEntry = ttk.Entry(ciblesFrame, width=100)
+        self.ciblesExcluesEntry.grid(row=3, column=1, sticky="w")
+        self.ciblesExcluesEntry.insert(tk.END, effect.kwargs.get("cibles_exclues", ""))
+        ciblesExcluesHelpLbl = ttk.Label(ciblesFrame, text="(Lanceur, nom de classe, Invocateur, Invoc)")
+        ciblesExcluesHelpLbl.grid(row=3, column=2)
+        ciblesFrame.pack(side="top", fill=tk.X)
+        nonpileFrame = ttk.Frame(appFrame)
+        nonpileLbl = ttk.Label(nonpileFrame, text="Résoudre immédiatement:")
+        nonpileLbl.pack(side="left")
+        self.nonpileVar = tk.BooleanVar()
+        self.nonpileVar.set(not effect.kwargs.get("pile", True))
+        nonpileCheckbutton = ttk.Checkbutton(nonpileFrame, variable=self.nonpileVar)
+        nonpileCheckbutton.pack(side="left")
+        reverseTreatmentOrderLbl = ttk.Label(nonpileFrame, text="Effet appliqué ext. vers int.:")
+        reverseTreatmentOrderLbl.pack(side="left")
+        self.reverseTreatmentOrderVar = tk.BooleanVar()
+        self.reverseTreatmentOrderVar.set(effect.kwargs.get("reverseTreatmentOrder", False))
+        reverseTreatmentOrderCheckbutton = ttk.Checkbutton(nonpileFrame, variable=self.reverseTreatmentOrderVar)
+        reverseTreatmentOrderCheckbutton.pack(side="left")
+        nonpileFrame.pack(side="top")
+        self.ok_button = ttk.Button(appFrame, text="OK", command=self.onOk)
+        self.ok_button.pack(pady=10)
+        appFrame.pack(ipadx=10, ipady=10)
+
+    def setAttributesWithWidgetDict(self, obj, widgets):
+        for attr_name, widget in widgets.items():
+            if attr_name.startswith("kwargs:"):
+                obj.kwargs[attr_name.replace("kwargs:", "")] = widget.get()
+            else:
+                if isinstance(widget, dict):
+                    sub_object = getattr(obj, attr_name)
+                    self.setAttributesWithWidgetDict(sub_object, widget)
+                else:
+                    try:
+                        attr_value = widget.get()
+                    except AttributeError: #was not a widget
+                        attr_value = widget
+                    setattr(obj, attr_name, attr_value)
+
+    def onOk(self):
+        """
+        Called when the user clicked the validation button.
+        """
+        typeEffet = self.typeEffetCombobox.get()
+        self.setAttributesWithWidgetDict(self.effect, self.effectWidgets)
+        self.effect.kwargs["typeZone"] = self.typeZoneCombobox.get()
+        self.effect.kwargs["tailleZone"] = self.tailleZoneSpinbox.get()
+        if self.effect.kwargs.get("zone", None) is not None:
+            self.effect.kwargs.remove("zone")
+        self.effect.kwargs["etat_requis"] = self.etatCibleDirectEntry.get()
+        self.effect.kwargs["etat_requis_cibles"] = self.etatCibleEntry.get()
+        self.effect.kwargs["etat_requis_lanceur"] = self.etatLanceurEntry.get()
+        self.effect.kwargs["consomme_etat"] = self.consommeVar.get()
+        self.effect.kwargs["cible_non_requise"] = not self.cibleRequiseVar.get()
+        self.effect.kwargs["cibles_possibles"] = self.ciblesPossiblesEntry.get()
+        self.effect.kwargs["cibles_possibles_direct"] = self.ciblesPossiblesDirectEntry.get()
+        self.effect.kwargs["cibles_exclues"] = self.ciblesExcluesEntry.get()
+        self.effect.kwargs["pile"] = not self.nonpileVar.get()
+        self.rvalue = self.effect
+        self.app.destroy()

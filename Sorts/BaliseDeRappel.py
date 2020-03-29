@@ -17,7 +17,7 @@ def getSortsDebutCombat(lvl):
 
 
 def getSorts(lvl):
-    """@summary: charge les sorts de début de combat
+    """@summary: charge les sorts
     @return: List <Sort>
     """
     # pylint: disable=unused-argument

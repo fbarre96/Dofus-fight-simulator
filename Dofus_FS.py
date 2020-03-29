@@ -17,11 +17,12 @@ from tkinter.ttk import Notebook
 
 import json
 from pygame.locals import QUIT, RESIZABLE
-
+import os
 import pygame
 import constantes
 import Niveau
 import Personnages
+from importlib import import_module
 
 
 def boucleEvenement(niveau, mouseXY, sortSelectionne):
@@ -91,7 +92,16 @@ def launchSimu(persosToSave):
     @persosToSave: list of persos
     @type: list
     """
+    
     pygame.init()
+    effectlist = os.listdir("Effets")
+    for effect in effectlist:
+        if not effect.startswith("__") and effect.endswith(".py"):
+            import_module("Effets."+effect[:-3])
+    etatlist = os.listdir("Etats")
+    for etat in etatlist:
+        if not etat.startswith("__") and etat.endswith(".py"):
+            import_module("Etats."+etat[:-3])
     persos = []
     for persoVw in persosToSave:
         perso = persoVw.perso
@@ -99,6 +109,7 @@ def launchSimu(persosToSave):
                                         perso["Perso"]["Level"], perso["Perso"]["Team"],
                                         perso["Primaires"], perso["Secondaires"], perso["Dommages"],
                                         perso["Resistances"], perso["Perso"]["Classe"]+".png")
+        joueur.faireChargerSort()
         persos.append(joueur)
     commenceCombat(persos)
 

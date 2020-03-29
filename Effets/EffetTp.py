@@ -257,6 +257,9 @@ class EffetEchangePlace(Effet):
 
     def __deepcopy__(self, memo):
         return EffetEchangePlace(self.persoADeplace, **self.kwargs)
+    
+    def __str__(self):
+        return "Echange de place avec la cible"
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -270,6 +273,8 @@ class EffetEchangePlace(Effet):
                  les options cible_traitees et nom_sort doivent être mentionnées.
                  L'option genererTF peut être mentionnée.
         @type: **kwargs"""
+        if joueurCaseEffet is None:
+            return
         perso1AEchange = None
         if self.persoADeplace == "lanceur":
             perso1AEchange = joueurLanceur

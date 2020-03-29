@@ -45,6 +45,7 @@ class JoueurIA:
                     for sort in niveau.tourDe.sorts:
                         if sort.vue.isMouseOver(mouseXY):
                             sortSelectionne = joueur.selectionSort(sort, niveau)
+                            niveau.setPrevisu(True)
                             break
                 # Clic gauche grille de jeu = tentative de lancé un sort
                 #  si un sort est selectionné ou tentative de déplacement sinon
@@ -55,6 +56,7 @@ class JoueurIA:
                             mouseXY[0]/constantes.taille_sprite)
                         caseCibleY = int(
                             mouseXY[1]/constantes.taille_sprite)
+                        niveau.setPrevisu(False)
                         sortSelectionne.lance(
                             niveau.tourDe.posX, niveau.tourDe.posY, niveau, caseCibleX, caseCibleY)
                         sortSelectionne = None
@@ -93,5 +95,6 @@ class JoueurIA:
                                           etat.nom+" dans "+str(etat.debuteDans)+" tour(s)")
                             print("--------------------------------")
                     if sortSelectionne is not None:
+                        niveau.setPrevisu(False)
                         sortSelectionne = None
         return sortSelectionne

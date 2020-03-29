@@ -7,7 +7,7 @@ class EtatModSoinPer(Etat):
     """@summary: Classe décrivant un état qui multiplie par un pourcentage les soins totaux
                  que devrait subir le porteur."""
 
-    def __init__(self, nom, debDans, duree, pourcentage, provenance="", lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, pourcentage=0, provenance="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -22,14 +22,48 @@ class EtatModSoinPer(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.pourcentage = pourcentage
         self.provenance = provenance
         super().__init__(nom, debDans, duree, lanceur, desc)
+        
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        pourcentageLbl = ttk.Label(frame, text="% modification du soin:")
+        pourcentageLbl.grid(row=0, column=0, sticky="e")
+        self.pourcentageSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        self.pourcentageSpinbox.delete(0, 'end')
+        self.pourcentageSpinbox.insert(0, self.pourcentage)
+        self.pourcentageSpinbox.grid(row=0, column=1, sticky="w")
+        ret["pourcentage"] = self.pourcentageSpinbox
+        provenanceLbl = ttk.Label(frame, text="De provenance :")
+        provenanceLbl.grid(row=1, column=0, sticky="e")
+        self.provenanceCombobox = ttk.Combobox(frame, values=("Allies", "Ennemis"), state="readonly")
+        self.provenanceCombobox.set(self.provenance)
+        self.provenanceCombobox.grid(row=1, column=1, sticky="w")
+        ret["provenance"] = self.provenanceCombobox
+        return ret
 
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatModSoinPer(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), int(infos["pourcentage"]), infos["provenance"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage"] = self.pourcentage
+        ret["provenance"] = self.provenance
+        return ret
+    
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""

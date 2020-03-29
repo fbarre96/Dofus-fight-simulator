@@ -33,4 +33,22 @@ class EffetDevoilePiege(Effet):
         for piege in niveau.pieges:
             if piege.aPorteDeclenchement(caseEffetX, caseEffetY):
                 piege.invisible = False
-                
+
+    def __str__(self):
+        return "Dévoile les pièges"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        frame.pack(fill=tk.BOTH)
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetDevoilePiege(**infos["kwargs"])

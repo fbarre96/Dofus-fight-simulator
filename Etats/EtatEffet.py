@@ -1,11 +1,11 @@
 """@summary: Rassemble les états qui déclenche un effet."""
 
 from Etats.Etat import Etat
+from Effets.Effet import Effet, ChildDialogEffect
+from copy import deepcopy
 
-
-class EtatEffetFinTour(Etat):
-    """@summary: Classe décrivant un état qui active un Effet quand le porteur termine son tour."""
-
+class EtatEffet(Etat):
+    """Abstraction: claase pour tout les etats qui appliquent des effets"""
     def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -26,7 +26,6 @@ class EtatEffetFinTour(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
@@ -35,10 +34,99 @@ class EtatEffetFinTour(Etat):
         self.quiLancera = quiLancera
         super().__init__(nom, debDans, duree, lanceur, desc)
 
+    def buildUI(self, topframe, callbackDict, quiLanceraValues):
+        from tkinter import ttk
+        self.parent = topframe
+        self.modCallback = callbackDict
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        effetBuilderlbl = ttk.Label(frame, text="Crafter un effet:")
+        effetBuilderlbl.grid(row=0, column=0, sticky="e")
+        self.effetDescEntry = ttk.Entry(frame, width=50, state="normal")
+        self.effetDescEntry.delete(0, "end")
+        self.effetDescEntry.insert(0, str(self.effet))
+        self.effetDescEntry.grid(row=0, column=1, sticky="w")
+        self.effetDescEntry.configure(state="readonly")
+        effetBuilderButton = ttk.Button(frame, text="Craft effet", command=lambda: self.openEffectDialog())
+        effetBuilderButton.grid(row=0, column=2, sticky="w")
+        ret["effet"] = self.effet
+        nomSortLbl = ttk.Label(frame, text="Nom du sort:")
+        nomSortLbl.grid(row=1, column=0, sticky="e")
+        self.nomSortEntry = ttk.Entry(frame, width=50)
+        self.nomSortEntry.delete(0, "end")
+        self.nomSortEntry.insert(0, self.nomSort)
+        self.nomSortEntry.grid(row=1, column=1, sticky="w")
+        ret["nomSort"] = self.nomSortEntry
+        quiLanceraLbl = ttk.Label(frame, text="Qui lancera l'effet:")
+        quiLanceraLbl.grid(row=2, column=0, sticky="e")
+        self.quiLanceraCombobox = ttk.Combobox(frame, values=quiLanceraValues, state="readonly")
+        self.quiLanceraCombobox.set(self.quiLancera)
+        self.quiLanceraCombobox.grid(row=2, column=1, sticky="w")
+        ret["quiLancera"] = self.quiLanceraCombobox
+        return ret
+
+    def openEffectDialog(self, _event=None):
+        effectDialog = ChildDialogEffect(self.parent, self.effet)
+        self.parent.wait_window(effectDialog.app)
+        self.effet = effectDialog.rvalue
+        self.effetDescEntry.delete(0, "end")
+        self.effetDescEntry.configure(state="normal")
+        self.effetDescEntry.insert(0, str(self.effet))
+        self.effetDescEntry.configure(state="readonly")
+        self.modCallback({"effet": self.effet})
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), infos["nomSort"], infos["quiLancera"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc+" ("+str(self.effet)+")"
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["effet"] = self.effet.getAllInfos()
+        ret["nomSort"] = self.nomSort
+        ret["quiLancera"] = self.quiLancera
+        return ret
+
+class EtatEffetFinTour(EtatEffet):
+    """@summary: Classe décrivant un état qui active un Effet quand le porteur termine son tour."""
+
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="lanceur", lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: int
+
+        @effet: l'effet qui sera lancé lorsque le joueur terminera son tour
+        @type: Effet
+        @nomSort: le nom de sort à l'origine de l'effet
+        @type: string
+        @quiLancera: Le Personnage qui lancera l'effet
+        @type: string ("lanceur" pour que le lanceur soit le poseur de l'état ou
+                "cible" pour que ce soit celui qui possède l'état)
+
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+
+    def buildUI(self, topframe, callbackDict):
+        return super().buildUI(topframe, callbackDict, ["lanceur", "cible"])
+
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetFinTour(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetFinTour(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                 self.nomSort, self.quiLancera, self.lanceur, self.desc)
 
     def triggerFinTour(self, personnage, niveau):
@@ -58,10 +146,10 @@ class EtatEffetFinTour(Etat):
                                self.nomSort, personnage.posX, personnage.posY, personnage)
 
 
-class EtatEffetDebutTour(Etat):
+class EtatEffetDebutTour(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur débute son tour."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="cible", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -81,20 +169,18 @@ class EtatEffetDebutTour(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetDebutTour(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetDebutTour(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                   self.nomSort, self.quiLancera, self.lanceur, self.desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        return super().buildUI(topframe, callbackDict, ["lanceur", "cible"])
 
     def triggerDebutTour(self, personnage, niveau):
         """@summary: Un trigger appelé pour tous les états d'un joueur lorsque son tour commence.
@@ -113,11 +199,11 @@ class EtatEffetDebutTour(Etat):
                                self.nomSort, personnage.posX, personnage.posY, personnage)
 
 
-class EtatEffetSiSubit(Etat):
+class EtatEffetSiSubit(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur subit des dégâts."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
-                 cible, typeDeg="", provenance="", lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="cible",
+                 cible="cible", typeDeg="", provenance="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -137,22 +223,54 @@ class EtatEffetSiSubit(Etat):
         @type: string ("attaquant" ou "cible")
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
         self.cible = cible
         self.typeDeg = typeDeg
         self.provenance = provenance
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict, ("lanceur", "cible"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        ciblelbl = ttk.Label(frame, text="Cible de l'effet:")
+        ciblelbl.grid(row=0, column=0, sticky="e")
+        self.cibleCombobox = ttk.Combobox(frame, values=("attaquant", "cible"), state="readonly")
+        self.cibleCombobox.set(self.cible)
+        self.cibleCombobox.grid(row=0, column=1, sticky="w")
+        ret["cible"] = self.cibleCombobox
+        typeDegLbl = ttk.Label(frame, text="Seulement de type :")
+        typeDegLbl.grid(row=1, column=0, sticky="e")
+        self.typeDegCombobox = ttk.Combobox(frame, values=("", "doPou", "feu", "terre", "air", "eau", "neutre"), state="readonly")
+        self.typeDegCombobox.set(self.typeDeg)
+        self.typeDegCombobox.grid(row=1, column=1, sticky="w")
+        ret["typeDeg"] = self.typeDegCombobox
+        provenanceLbl = ttk.Label(frame, text="Seulement de provenance:")
+        provenanceLbl.grid(row=2, column=0, sticky="e")
+        self.provenanceCombobox = ttk.Combobox(frame, values=("", "Allies", "Ennemis"), state="readonly")
+        self.provenanceCombobox.set(self.provenance)
+        self.provenanceCombobox.grid(row=2, column=1, sticky="w")
+        ret["provenance"] = self.provenanceCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiSubit(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["cible"], infos["typeDeg"], infos["provenance"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["cible"] = self.cible
+        ret["typeDeg"] = self.typeDeg
+        ret["provenance"] = self.provenance
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiSubit(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
+        return EtatEffetSiSubit(self.nom, self.debuteDans, self.duree, deepcopy(self.effet), self.nomSort,
                                 self.quiLancera, self.cible, self.typeDeg,
                                 self.provenance, self.lanceur, self.desc)
 
@@ -179,13 +297,11 @@ class EtatEffetSiSubit(Etat):
             validate = True
         if not validate:
             return
-        print("Effet si subit check provenance")
         if self.provenance != "":
             if self.provenance == "Allies" and cibleAttaque.team != attaquant.team:
                 return False
             elif self.provenance == "Ennemis" and cibleAttaque.team == attaquant.team:
                 return False
-        print("Effet si subit avant cible")
         self.effet.setDegatsSubits(totalPerdu, typeDegats)
         joueurCible = cibleAttaque
         if self.cible == "attaquant":
@@ -197,11 +313,11 @@ class EtatEffetSiSubit(Etat):
             niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
                                self.nomSort, joueurCible.posX, joueurCible.posY, attaquant)
 
-class EtatEffetSiMeurt(Etat):
+class EtatEffetSiMeurt(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur meurt."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
-                 cible, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="porteur",
+                 cible="porteur", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -216,25 +332,43 @@ class EtatEffetSiMeurt(Etat):
         @nomSort: le nom du sort qui inflige les dégâts
         @type: string
         @quiLancera: le personnage qui lancera l'effet
-        @type: string ("lanceur" ou "cible")
+        @type: string ("lanceur" ou "meurtrier" ou "mouru")
         @cible: Le personnage qui subira l'effet
-        @type: string ("attaquant" ou "cible")
+        @type: string ("meurtrier" ou "mouru")
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
         self.cible = cible
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict, ("porteur", "lanceur", "meurtrier", "mouru"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        ciblelbl = ttk.Label(frame, text="Cible de l'effet:")
+        ciblelbl.grid(row=0, column=0, sticky="e")
+        self.cibleCombobox = ttk.Combobox(frame, values=("meurtrier", "mouru", "porteur"), state="readonly")
+        self.cibleCombobox.set(self.cible)
+        self.cibleCombobox.grid(row=0, column=1, sticky="w")
+        ret["cible"] = self.cibleCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiMeurt(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["cible"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["cible"] = self.cible
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiMeurt(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
+        return EtatEffetSiMeurt(self.nom, self.debuteDans, self.duree, deepcopy(self.effet), self.nomSort,
                                 self.quiLancera, self.cible, self.lanceur, self.desc)
 
     def triggerAvantMort(self, niveau, porteur, mouru, meurtrier):
@@ -266,10 +400,10 @@ class EtatEffetSiMeurt(Etat):
         niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
                            self.nomSort, joueurCible.posX, joueurCible.posY, celuiQuiLance)
 
-class EtatEffetSiPousse(Etat):
+class EtatEffetSiDeplace(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="lanceur", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -287,52 +421,41 @@ class EtatEffetSiPousse(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiPousse(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
+        return EtatEffetSiDeplace(self.nom, self.debuteDans, self.duree, deepcopy(self.effet), self.nomSort,
                                  self.quiLancera, self.lanceur, self.desc)
 
-    def triggerCalculPousser(self, doPou, rePou, niveau, pousseur, joueurCible):
-        """@summary: Un trigger appelé pour tous les états du pousseur qui aura
-                     poussé sa cible contre un obstacle.
-                     Active un effet sur le lanceur ou la cible au choix si
-                     le joueur portant l'état est poussé
-        @doPou: La caractéristique dommage de poussée du pousseur +
-                les états l'ayant déjà éventuellement modifiée.
-        @type: int
-        @niveau: La grille de jeu
-        @type: Niveau
-        @pousseur: Le joueur qui à pousser
-        @type: Personnage
-        @joueurCible: Le joueur qui s'est fait pousser
-        @type: Personnage
+    def buildUI(self, topframe, callbackDict):
+        return super().buildUI(topframe, callbackDict, ["lanceur", "cible"])
 
-        @return: La nouvelle valeur de dommage de poussé"""
+    def triggerApresDeplacementForce(self, niveau, deplace, deplaceur):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
         if self.quiLancera == "lanceur":
             niveau.lancerEffet(self.effet, self.lanceur.posX, self.lanceur.posY,
-                               self.nomSort, joueurCible.posX, joueurCible.posY, self.lanceur)
+                               self.nomSort, deplace.posX, deplace.posY, self.lanceur)
         elif self.quiLancera == "cible":
-            niveau.lancerEffet(self.effet, joueurCible.posX, joueurCible.posY,
-                               self.nomSort, joueurCible.posX, joueurCible.posY, joueurCible)
-        return doPou, rePou
+            niveau.lancerEffet(self.effet, deplace.posX, deplace.posY,
+                               self.nomSort, deplace.posX, deplace.posY, deplace)
 
 
-class EtatEffetSiPiegeDeclenche(Etat):
+class EtatEffetSiPiegeDeclenche(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet
                  quand un joueur marche dans un piege."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort,
-                 quiLancera, cible, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="",
+                 quiLancera="porteur", cible="declencheur", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -351,21 +474,39 @@ class EtatEffetSiPiegeDeclenche(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
         self.cible = cible
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort,
+                 quiLancera, lanceur, desc)
+
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict, ("porteur", "cible", "lanceur"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        ciblelbl = ttk.Label(frame, text="Cible de l'effet:")
+        ciblelbl.grid(row=0, column=0, sticky="e")
+        self.cibleCombobox = ttk.Combobox(frame, values=("porteur", "declencheur", "lanceur"), state="readonly")
+        self.cibleCombobox.set(self.cible)
+        self.cibleCombobox.grid(row=0, column=1, sticky="w")
+        ret["cible"] = self.cibleCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiPiegeDeclenche(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["cible"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["cible"] = self.cible
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetSiPiegeDeclenche(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                          self.nomSort, self.quiLancera, self.cible,
                                          self.lanceur, self.desc)
 
@@ -387,11 +528,11 @@ class EtatEffetSiPiegeDeclenche(Etat):
                                self.nomSort, joueurCible.posX, joueurCible.posY, porteur)
 
 
-class EtatEffetSiTFGenere(Etat):
+class EtatEffetSiTFGenere(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand un joueur est téléfragé."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
-                 cible, porteurEstTF=False, sortInterdit="", lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="joueurOrigineTF",
+                 cible="joueurEchangeTF", porteurEstTF=False, sortInterdit="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -408,22 +549,57 @@ class EtatEffetSiTFGenere(Etat):
         @type: string ("lanceur" ou "cible")
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
         self.porteurEstTF = porteurEstTF
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
         self.cible = cible
         self.sortInterdit = sortInterdit
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict, ("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur", "lanceur"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        ciblelbl = ttk.Label(frame, text="Cible de l'effet:")
+        ciblelbl.grid(row=0, column=0, sticky="e")
+        self.cibleCombobox = ttk.Combobox(frame, values=("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur", "lanceur"), state="readonly")
+        self.cibleCombobox.set(self.cible)
+        self.cibleCombobox.grid(row=0, column=1, sticky="w")
+        ret["cible"] = self.cibleCombobox
+        porteurEstTFlbl = ttk.Label(frame, text="Si porteur est TF:")
+        porteurEstTFlbl.grid(row=1, column=0, sticky="e")
+        self.porteurEstTFVar = tk.BooleanVar()
+        self.porteurEstTFVar.set(self.porteurEstTF)
+        porteurEstTFCheckbutton = ttk.Checkbutton(frame, variable=self.porteurEstTFVar)
+        porteurEstTFCheckbutton.grid(row=1, column=1, sticky="w")
+        ret["porteurEstTF"] = self.porteurEstTFVar
+        sortInterditlbl = ttk.Label(frame, text="Si porteur est TF:")
+        sortInterditlbl.grid(row=2, column=0, sticky="e")
+        self.sortInterditEntry = ttk.Entry(frame, width=50)
+        self.sortInterditEntry.delete(0, 'end')
+        self.sortInterditEntry.insert(0, self.sortInterdit)
+        self.sortInterditEntry.grid(row=2, column=1, sticky="w")
+        ret["sortInterdit"] = self.sortInterditEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiTFGenere(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["cible"], infos["porteurEstTF"], infos["sortInterdit"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["cible"] = self.cible
+        ret["porteurEstTF"] = self.porteurEstTF
+        ret["sortInterdit"] = self.sortInterdit
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiTFGenere(self.nom, self.debuteDans, self.duree, self.effet, self.nomSort,
+        return EtatEffetSiTFGenere(self.nom, self.debuteDans, self.duree, deepcopy(self.effet), self.nomSort,
                                    self.quiLancera, self.cible, self.porteurEstTF,
                                    self.sortInterdit, self.lanceur, self.desc)
 
@@ -468,10 +644,10 @@ class EtatEffetSiTFGenere(Etat):
             niveau.lancerEffet(self.effet, joueurLanceur.posX, joueurLanceur.posY,
                                self.nomSort, joueurCible.posX, joueurCible.posY, joueurLanceur)
 
-class EtatEffetSiNouvelEtat(Etat):
+class EtatEffetSiNouvelEtat(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera,
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="placeur",
                  nomEtatRequis="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
@@ -490,20 +666,41 @@ class EtatEffetSiNouvelEtat(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
         self.nomEtatRequis = nomEtatRequis
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict, ("placeur", "cible", "lanceur"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomEtatRequislbl = ttk.Label(frame, text="Seulement si nom nouvel état:")
+        nomEtatRequislbl.grid(row=0, column=0, sticky="e")
+        self.nomEtatRequisEntry = ttk.Entry(frame, width=50)
+        self.nomEtatRequisEntry.delete(0, "end")
+        self.nomEtatRequisEntry.insert(0, self.nomEtatRequis)
+        self.nomEtatRequisEntry.grid(row=0, column=1, sticky="w")
+        ret["nomEtatRequis"] = self.nomEtatRequisEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiNouvelEtat(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["nomEtatRequis"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomEtatRequis"] = self.nomEtatRequis
+        return ret
+
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiNouvelEtat(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetSiNouvelEtat(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                      self.nomSort, self.quiLancera, self.nomEtatRequis,
                                      self.lanceur, self.desc)
 
@@ -523,11 +720,11 @@ class EtatEffetSiNouvelEtat(Etat):
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
 
 
-class EtatEffetSiRetraitEtat(Etat):
+class EtatEffetSiRetraitEtat(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait pousser."""
 
-    def __init__(self, nom, debDans, duree, effet, etatAccepte, nomSort, quiLancera,
-                 nomEtatRequis="", lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="porteur", etatAccepte="",
+                 lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -545,23 +742,42 @@ class EtatEffetSiRetraitEtat(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
         self.etatAccepte = etatAccepte
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
-        self.nomEtatRequis = nomEtatRequis
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict, ("porteur"))
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        etatAccepteLbl = ttk.Label(frame, text="Seulement si nom état retiré:")
+        etatAccepteLbl.grid(row=0, column=0, sticky="e")
+        self.etatAccepteEntry = ttk.Entry(frame, width=50)
+        self.etatAccepteEntry.delete(0, "end")
+        self.etatAccepteEntry.insert(0, self.etatAccepte)
+        self.etatAccepteEntry.grid(row=0, column=1, sticky="w")
+        ret["etatAccepte"] = self.etatAccepteEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatEffetSiRetraitEtat(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
+                infos["nomSort"], infos["quiLancera"], infos["etatAccepte"], None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["etatAccepte"] = self.etatAccepte
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiRetraitEtat(self.nom, self.debuteDans, self.duree, self.effet,
-                                      self.etatAccepte, self.nomSort, self.quiLancera,
-                                      self.nomEtatRequis,
+        return EtatEffetSiRetraitEtat(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
+                                      self.nomSort, self.quiLancera,
+                                      self.etatAccepte,
                                       self.lanceur, self.desc)
 
     def triggerApresRetrait(self, niveau, personnage, porteur, etatRetire):
@@ -574,16 +790,15 @@ class EtatEffetSiRetraitEtat(Etat):
         @type: Personnage"""
         if self.etatAccepte != "" and self.etatAccepte != etatRetire.nom:
             return
-        print("TRIGGERED APRES RETRAIT DE "+str(etatRetire.nom)+" sur "+str(porteur.nomPerso))
         cible = porteur
         joueurQuiLance = porteur
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
 
-class EtatEffetSiPorte(Etat):
+class EtatEffetSiPorte(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
 
-    def __init__(self, nom, debDans, duree, effet, nomSort, quiLancera, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="porte", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -600,15 +815,18 @@ class EtatEffetSiPorte(Etat):
         @type: Personnage ou None
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        self.quiLancera = quiLancera
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict, ("porte", "porteur"))
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiPorte(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetSiPorte(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                 self.nomSort, self.quiLancera,
                                 self.lanceur, self.desc)
 
@@ -627,7 +845,7 @@ class EtatEffetSiPorte(Etat):
         niveau.lancerEffet(self.effet, celuiQuiLancera.posX, celuiQuiLancera.posY,
                            self.nomSort, porte.posX, porte.posY, celuiQuiLancera)
 
-class EtatEffetSiLance(Etat):
+class EtatEffetSiLance(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
     def __init__(self, nom, debDans, duree, effet, nomSort, lanceur=None, desc=""):
         """@summary: Initialise l'état.
@@ -646,16 +864,20 @@ class EtatEffetSiLance(Etat):
         @type: Personnage ou None
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.effet = effet
-        self.nomSort = nomSort
-        super().__init__(nom, debDans, duree, lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, "", lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return EtatEffetSiLance(self.nom, self.debuteDans, self.duree, self.effet,
+        return EtatEffetSiLance(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
                                 self.nomSort,
                                 self.lanceur, self.desc)
+
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict, [])
+        return ret
 
     def triggerApresLance(self, niveau, lanceur, celuiLance):
         # pylint: disable=unused-argument

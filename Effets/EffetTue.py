@@ -26,5 +26,35 @@ class EffetTue(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-        niveau.tue(joueurCaseEffet, joueurLanceur)
-        
+        if joueurCaseEffet is not None:
+            if niveau.isPrevisu():
+                joueurCaseEffet.msgsPrevisu.append("Tue")
+            else:
+                niveau.tue(joueurCaseEffet, joueurLanceur)
+    
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        return "Tue la cible" in effectStr
+
+    @classmethod
+    def craftEffect(cls, effectStr, **kwargs):
+        return EffetTue(**kwargs)
+    
+    def __str__(self):
+        return "Tue la cible"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetTue(**infos["kwargs"])

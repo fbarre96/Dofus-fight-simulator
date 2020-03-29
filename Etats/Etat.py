@@ -2,13 +2,90 @@
 """@summary: Décrit un état de base qui sera appliqué à un personnage."""
 
 
-class Etat():
+class Etat:
     """@summary: Classe décrivant un état.
                  Cette classe est utile pour les états 'passifs' qui sont seulement
                  là pour vérification de présense.
                  Mais elle doit être héritée par tous les autres types d'états."""
+    subclasses = []
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.subclasses.append(cls)
 
-    def __init__(self, nom, debDans, duree, lanceur=None, tabCarac=None, desc=""):
+    @classmethod
+    def getListEtat(cls):
+        return [str(classe.__name__) for classe in cls.subclasses]+["Etat"]
+    
+    @classmethod
+    def getObjectFromName(cls, name):
+        for classe in cls.subclasses:
+            if str(classe.__name__) == name:
+                return classe("nom etat", 0, 1)
+        return None
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return Etat(infos["nom"], infos["debuteDans"], infos["duree"], None, infos["desc"])
+        
+    @classmethod
+    def factory(cls, etat_infos, **kwargs):
+        if isinstance(etat_infos, dict):
+            for classe in cls.subclasses + [Etat]:
+                if classe.__name__ == etat_infos["etatType"]:
+                    return classe.craftFromInfos(etat_infos)
+        else:
+            raise TypeError("Etat factory attend un etat sous forme de json dict")
+
+    def getAllInfos(self):
+        ret = {}
+        ret["etatType"] = self.__class__.__name__
+        ret["nom"] = self.nom
+        ret["duree"] = self.duree
+        ret["debuteDans"] = self.debuteDans
+        ret["desc"] = self.desc
+        return ret
+
+    def __str__(self):
+        return self.nom+" ("+str(self.duree)+(" tours)" if int(self.duree) > 1 else " tour)")
+    
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nomLbl = ttk.Label(frame, text="Nom:")
+        nomLbl.grid(row=0, column=0, sticky="e")
+        self.nomEntry = ttk.Entry(frame, width=40)
+        self.nomEntry.delete(0, 'end')
+        self.nomEntry.insert(0, self.nom)
+        self.nomEntry.grid(row=0, column=1, sticky="w")
+        ret["nom"] = self.nomEntry
+        debDansLbl = ttk.Label(frame, text="Débute dans ? tours:")
+        debDansLbl.grid(row=1, column=0, sticky="e")
+        self.debDansSpinbox = tk.Spinbox(frame, from_=0, to=999, width=4)
+        self.debDansSpinbox.delete(0, 'end')
+        self.debDansSpinbox.insert(0, int(self.debuteDans))
+        self.debDansSpinbox.grid(row=1, column=1, sticky="w")
+        ret["debuteDans"] = self.debDansSpinbox
+        dureeLbl = ttk.Label(frame, text="Durée:")
+        dureeLbl.grid(row=2, column=0, sticky="e")
+        self.dureeSpinbox = tk.Spinbox(frame, from_=-1, to=999, width=4)
+        self.dureeSpinbox.delete(0, 'end')
+        self.dureeSpinbox.insert(0, int(self.duree))
+        self.dureeSpinbox.grid(row=2, column=1, sticky="w")
+        ret["duree"] = self.dureeSpinbox
+        descLbl = ttk.Label(frame, text="Description:")
+        descLbl.grid(row=3, column=0, sticky="e")
+        self.descEntry = ttk.Entry(frame, width=100)
+        self.descEntry.delete(0, 'end')
+        self.descEntry.insert(0, self.desc)
+        self.descEntry.grid(row=3, column=1, sticky="w")
+        ret["desc"] = self.descEntry
+        frame.pack()
+        return ret
+
+
+    def __init__(self, nom, debDans, duree, lanceur=None, desc=""):
         """@summary: Initialise un état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -19,17 +96,11 @@ class Etat():
         @type: int
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.nom = nom
-        self.duree = duree
-        self.debuteDans = debDans
-        if tabCarac is None:
-            self.tabCarac = []
-        else:
-            self.tabCarac = tabCarac
+        self.duree = int(duree)
+        self.debuteDans = int(debDans)
         self.description = desc
         self.lanceur = lanceur
         self.desc = desc
@@ -37,7 +108,7 @@ class Etat():
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
-        return Etat(self.nom, self.debuteDans, self.duree, self.lanceur, self.tabCarac, self.desc)
+        return Etat(self.nom, self.debuteDans, self.duree, self.lanceur, self.desc)
 
     def actif(self):
         """@summary: Test si un état est actif.
@@ -269,6 +340,16 @@ class Etat():
         # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour le joueur qui obtient un nouvel état.
                      Active un effet sur le lanceur ou la cible"""
+        return
+
+    def triggerApresDeplacementForce(self, niveau, deplace, deplaceur):
+        # pylint: disable=unused-argument
+        """@summary:
+        Un trigger appelé au moment ou un personnage se fait porté
+        Utile pour les modifications de caractéristiques qui disparaissent à la fin de l'état
+        Cet état de base ne fait rien (comportement par défaut hérité).
+        @personnage: les options non prévisibles selon les états.
+        @type: Personnage"""
         return
 
     def triggerApresPorte(self, niveau, porteur, porte):

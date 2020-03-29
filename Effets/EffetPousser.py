@@ -6,7 +6,7 @@ class EffetPousser(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet pousse un joueur à l'opposé une position donnée."""
 
-    def __init__(self, int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
+    def __init__(self, int_nbCase=0, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """@summary: Initialise un effet poussant un joueur à l'opposé d'une position donnée
         @int_nbCase: le nombre de case dont le joueur cible va être poussé.
         @type: int
@@ -27,6 +27,47 @@ class EffetPousser(Effet):
         self.caseToY = None
         self.joueurAPousser = None
         super().__init__(**kwargs)
+
+    def __str__(self):
+        return "Pousser de "+str(self.nbCase)+" case(s) depuis "+str(self.source)+" vers "+str(self.cible)
+
+    def buildUI(self, topframe,callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nbCaseLbl = ttk.Label(frame, text="Nb cases:")
+        nbCaseLbl.pack(side="left")
+        nbCaseLblSpinbox = tk.Spinbox(frame, from_=0, to=99, width=3)
+        nbCaseLblSpinbox.delete(0, 'end')
+        nbCaseLblSpinbox.insert(0, int(self.nbCase))
+        nbCaseLblSpinbox.pack(side="left")
+        ret["nbCase"] = nbCaseLblSpinbox
+        sourceLbl = ttk.Label(frame, text="Source poussé:")
+        sourceLbl.pack(side="left")
+        sourceCombobox = ttk.Combobox(frame, values=("CaseCible", "Lanceur", "JoueurCaseEffet"), state="readonly")
+        sourceCombobox.set(self.source)
+        sourceCombobox.pack(side="left")
+        ret["source"] = sourceCombobox
+        cibleLbl = ttk.Label(frame, text="Cible poussée:")
+        cibleLbl.pack(side="left")
+        cibleCombobox = ttk.Combobox(frame, values=("Lanceur", "JoueurCaseEffet"), state="readonly")
+        cibleCombobox.set(self.cible)
+        cibleCombobox.pack(side="left")
+        ret["cible"] = cibleCombobox
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nbCase"] = self.nbCase
+        ret["source"] = self.source
+        ret["cible"] = self.cible
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetPousser(int(infos["nbCase"]), infos["source"], infos["cible"], **infos["kwargs"])
 
     def __deepcopy__(self, memo):
         return EffetPousser(self.nbCase, self.source, self.cible, **self.kwargs)
@@ -193,7 +234,7 @@ class EffetAttire(EffetPousser):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet attire un joueur vers la position du lanceur."""
 
-    def __init__(self, int_nbCase, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
+    def __init__(self, int_nbCase=0, source="Lanceur", cible="JoueurCaseEffet", **kwargs):
         """
         @summary: Initialise un effet repoussant un joueur à l'opposé de la position du lanceur
         @int_nbCase: le nombre de case dont le joueur cible va être attiré.
@@ -210,6 +251,40 @@ class EffetAttire(EffetPousser):
         self.kwargs = kwargs
         self.joueurAAttirer = None
         super().__init__(int_nbCase, source, cible, **kwargs)
+
+    def __str__(self):
+        return "Attire de "+str(self.nbCase)+" vers "+str(self.source)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nbCaseLbl = ttk.Label(frame, text="Nb cases:")
+        nbCaseLbl.pack(side="left")
+        nbCaseLblSpinbox = tk.Spinbox(frame, from_=0, to=99, width=3)
+        nbCaseLblSpinbox.delete(0, 'end')
+        nbCaseLblSpinbox.insert(0, int(self.nbCase))
+        nbCaseLblSpinbox.pack(side="left")
+        ret["nbCase"] = nbCaseLblSpinbox
+        sourceLbl = ttk.Label(frame, text="Source attirance:")
+        sourceLbl.pack(side="left")
+        sourceCombobox = ttk.Combobox(frame, values=("CaseCible", "Lanceur", "JoueurCaseEffet"), state="readonly")
+        sourceCombobox.set(self.source)
+        sourceCombobox.pack(side="left")
+        ret["source"] = sourceCombobox
+        cibleLbl = ttk.Label(frame, text="Cible attiré:")
+        cibleLbl.pack(side="left")
+        cibleCombobox = ttk.Combobox(frame, values=("Lanceur", "JoueurCaseEffet"), state="readonly")
+        cibleCombobox.set(self.cible)
+        cibleCombobox.pack(side="left")
+        ret["cible"] = cibleCombobox
+        frame.pack()
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetAttire(int(infos["nbCase"]), infos["source"], infos["cible"], **infos["kwargs"])
 
     def __deepcopy__(self, memo):
         return EffetAttire(self.nbCase, self.source, self.cible, **self.kwargs)

@@ -27,20 +27,55 @@ def getDistanceX(point1, point2):
     return abs(point1[0]-point2[0])
 
 
-class TypeZone(object):
+class TypeZone:
     """@summary: Définit une zone d'action pour un effet. Classe de basse héritée"""
+    subclasses = []
 
-    def __init__(self):
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.subclasses.append(cls)
+    
+    @classmethod
+    def getZoneList(cls):
+        return [str(classe.__name__).replace("TypeZone", "") for classe in cls.subclasses]
+    
+    @classmethod
+    def getZoneFromName(cls,name, zonepo):
+        for classe in cls.subclasses:
+            if classe.__name__.replace("TypeZone", "") == name:
+                return classe(int(zonepo))
+    @classmethod
+    def factory(cls, zoneStr, desc):
+        ret = TypeZoneCercle(0)
+        if zoneStr.strip() != "":
+            if "jusqu'à la cellule ciblée" in desc:
+                zone = "ligne jusque de 0 cases"
+                return TypeZoneLigneJusque()
+            elif "Tout le monde" in zoneStr:
+                return TypeZoneCercle(99)
+            else:
+                tailleZone = zoneStr.split(" ")[-2].strip()
+                typeZone = " ".join(zoneStr.split(" ")[:-3]).strip().lower()
+                typeZone = map(lambda x: x[0].upper() + x[1:].lower(), typeZone.split(" "))
+                nomZone = "".join(typeZone)
+                for classe in cls.subclasses:
+                    if nomZone in classe.__name__:
+                        return classe(tailleZone)
+        return ret
+    def __init__(self, zonePO=0):
         # pylint: disable=unused-argument
         """@summary: Constructeur de base d'une zone"""
-        return
+        self.zonePO = zonePO
+    
+    def __str__(self):
+        return str(self.__class__.__name__).replace("TypeZone", "") + " de "+str(self.zonePO)+" case(s)"
 
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
         # pylint: disable=unused-argument
         """@summary: Fonction qui renvoie si une case donnée est dans la zone"""
         print("zone inconnue")
         return False
-
+        
 
 class TypeZoneCercle(TypeZone):
     """@summary: Définit une zone d'action circulaire pour un effet. Hérite de TypeZone"""

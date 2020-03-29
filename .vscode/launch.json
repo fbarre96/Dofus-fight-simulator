@@ -8,8 +8,12 @@
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
             "request": "launch",
-            "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\Dofus_FS.py",
-            "console": "integratedTerminal"
+            "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\editeur_sorts_gui.py",
+            "console": "integratedTerminal",
+            "args":[
+                "2020-03-23\\sorts_cra.json",
+                "2020-03-23\\sorts_icones"
+            ]
         },
         {
             "name": "Python: Remote Attach",

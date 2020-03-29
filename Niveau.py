@@ -55,6 +55,7 @@ class Niveau:
         self.joueurs = sorted(joueurs, key=lambda x: x.ini, reverse=True)
         # Le joueur qui commence est à la position 0 du tableau des joueurs
         self.tourIndex = 0
+        self.enPrevisu = False
         # Le joueur dont c'est le tour
         self.tourDe = self.joueurs[self.tourIndex]
         # liste des glyphes
@@ -77,11 +78,18 @@ class Niveau:
         # path finding class
         self.pathfinder = PathFinder()
         self.cachedPrevisu = [None, 0, 0, None]
+    
+    def isPrevisu(self):
+        return self.enPrevisu
+
+    def setPrevisu(self, bVal):
+        self.enPrevisu = bVal
 
     def __deepcopy__(self, memo):
         toReturn = Niveau(None, None, None)
         toReturn.fenetre = None
         toReturn.taille = self.taille
+        toReturn.enPrevisu = self.enPrevisu
         toReturn.bloquerFile = self.bloquerFile
         toReturn.fileEffets = deepcopy(self.fileEffets)
         toReturn.joueurs = deepcopy(self.joueurs)
@@ -558,13 +566,14 @@ class Niveau:
         for i in range(len(self.joueurs)):
             if self.joueurs[i] == self.tourDe:
                 self.joueurs.insert(i+1, invoc)
+                if not self.isPrevisu():
+                    print("Invocation "+invoc.nomPerso)
                 invoc.lancerSortsDebutCombat(self)
                 found = True
                 break
         if not found:
             raise Exception("Impossible d'invoquer si ce n'est pas votre tour.")
         else:
-            print("Invocation "+invoc.nomPerso)
             invoc.bouge(self, caseX, caseY, False)
 
     def getZoneEffet(self, effet, caseX, caseY):
@@ -732,7 +741,10 @@ class Niveau:
                 if not(effetPousser.coordonnees[0] == 0 and effetPousser.coordonnees[1] == 0):
                     self.effectuerPousser(
                         joueurCible, pousseur, effetPousser.nbCase, doDeg, effetPousser.coordonnees)
-
+        for etat in joueurCible.etats:
+            if etat.actif():
+                etat.triggerApresDeplacementForce(self, joueurCible, pousseur)
+    
     def attire(self, effetAttire, joueurCible, attireur):
         """@summary: Fonction à appeler pour attirer un joueur.
         @nbCases: le nombre de case dont il faut attirer la cible
@@ -938,8 +950,6 @@ class Niveau:
         @type: int
         @provY: Coordonné y de la case d'origine de l'effet
         @type: int
-        @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
-        @type: bool
         @previsu: Un objet de type previsualisation a remplir
         @type: Previsu
         @return: -Renvoie True si l'effet a été appliqué, False sinon
@@ -957,7 +967,7 @@ class Niveau:
             msg, res = effet.estLancable(joueurLanceur, joueurCibleDirect)
             if not res:
                 return False, ciblesTraitees
-            if joueurCibleDirect is not None:
+            if joueurCaseEffet is not None:
 
                 # Si le joueur sur la case est une cible valide
                 msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
@@ -1014,8 +1024,6 @@ class Niveau:
         @type: int
         @lanceur: le lanceur de l'effet, None si le lanceur est sur provX;provY
         @type: Personnage, ou None
-        @isPrevisu: Indique si l'effet doit etre vraiment effectué ou si c'est une prévisualisation
-        @type: bool
         @previsu: Un objet de type previsualisation a remplir
         @type: Previsu
         @return: -Renvoie True si l'effet a été appliqué, False sinon
@@ -1109,7 +1117,8 @@ class Niveau:
                             or (lanceur.invocateur is not None and "Invocateur" in ciblesExclues
                                 and joueur.uid == lanceur.invocateur.uid):
                             if not(joueur.classe in ciblesExclues or \
-                                (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues)):
+                                (joueur.uid == lanceur.uid and "Lanceur" in ciblesExclues) or\
+                                (joueur.invocateur is not None and "Invoc" in ciblesExclues)):
                                 # Test sur l'etat requis.
                                 if joueur.aEtatsRequis(etatRequisCibles):
                                     # Test si le joueur ciblé à déjà été impacté
@@ -1200,7 +1209,7 @@ class Niveau:
                                     previsuToShow = sortSelectionne.lance(self.tourDe.posX,
                                                                           self.tourDe.posY,
                                                                           self, caseX, caseY,
-                                                                          self.tourDe, True)
+                                                                          self.tourDe)
                                     self.cachedPrevisu = [
                                         sortSelectionne, caseX, caseY, previsuToShow]
                     # Afficher les cases glyphees
@@ -1325,9 +1334,11 @@ class Niveau:
                     self.fenetre, pixelX, pixelY, 30, 30, joueur)
                 for joueurPrevisualiser in previsuToShow:
                     if joueurPrevisualiser.uid == joueur.uid:
-                        if joueurPrevisualiser.msgsPrevisu:
+                        if len(joueurPrevisualiser.msgsPrevisu) > 0:
                             joueur.setOverlayTextGenerique(
                                 "\n".join(joueurPrevisualiser.msgsPrevisu))
+                            joueur.overlay.afficher(
+                                joueur.posX*constantes.taille_sprite, joueur.posY*constantes.taille_sprite)
                 fenetre.blit(pygame.image.load(
                     joueur.icone).convert_alpha(), (pixelX, pixelY))
             else:
@@ -1353,7 +1364,8 @@ class Niveau:
                     if sortSelectionne is None:
                         joueur.setOverlayText()
                     joueur.overlay.afficher(
-                        joueur.posX*constantes.taille_sprite, joueur.posY*constantes.taille_sprite)
+                        joueur.posX*constantes.taille_sprite, joueur.posY*constantes.taille_sprite)                    
+
 
     def poseGlyphe(self, glyphe):
         """@summary: Méthode permettant de poser une glyphe

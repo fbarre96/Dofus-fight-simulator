@@ -2,24 +2,100 @@
 
 from copy import deepcopy
 from Effets.Effet import Effet
-
+from Etats.Etat import Etat
 
 class EffetEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet applique un état à la cible."""
 
-    def __init__(self, etat_etat, **kwargs):
+    def buildUI(self, topframe, callbackMod):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        self.callbackMod = callbackMod
+        frame = ttk.Frame(topframe)
+        typeEtatLbl = ttk.Label(frame, text="Type d'état:")
+        typeEtatLbl.pack(side="left")
+        self.typeEtatCombobox = ttk.Combobox(frame, values=sorted(Etat.getListEtat()), state="readonly")
+        self.typeEtatCombobox.set(self.etat.__class__.__name__)
+        self.typeEtatCombobox.pack(side="left")
+        self.typeEtatCombobox.bind('<<ComboboxSelected>>', self.etatTypeModified) 
+        self.etatCaracsFrame = ttk.LabelFrame(frame, text="Caractéristiques de l'état")
+        self.etatCaracsFrame.pack(side="top")
+        self.etatTypeModified()
+        etatOptionFrame = ttk.Frame(frame)
+        cumulMaxLbl = ttk.Label(etatOptionFrame, text="Cumul max:")
+        cumulMaxLbl.grid(row=0, column=0, sticky="e")
+        cumulMaxSpinbox = tk.Spinbox(etatOptionFrame, from_=-1, to=99, width=3)
+        cumulMaxSpinbox.delete(0, 'end')
+        cumulMaxSpinbox.insert(0, int(self.kwargs.get("cumulMax", -1)))
+        cumulMaxSpinbox.grid(row=0, column=1, sticky="w")
+        ret["kwargs:cumulMax"] = cumulMaxSpinbox
+        remplaceNomLbl = ttk.Label(etatOptionFrame, text="Remplace le nom de l'état par le nom du sort:")
+        remplaceNomLbl.grid(row=1, column=0, sticky="e")
+        remplaceNomVar = tk.BooleanVar()
+        remplaceNomVar.set(self.kwargs.get("remplaceNom", False))
+        replaceNomCheckbutton = ttk.Checkbutton(etatOptionFrame, variable=remplaceNomVar)
+        replaceNomCheckbutton.grid(row=1, column=1, sticky="w")
+        ret["kwargs:remplaceNom"] = remplaceNomVar
+        ret["etat"] = self.etatWidgets
+        etatOptionFrame.pack(side="bottom")
+        frame.pack()
+        return ret
+    
+    def __str__(self):
+        return "Etat "+str(self.etat)
+    
+    def callbackModifiedRetValue(self, newDict):
+        for etatWidget_key, etatWidget_val in newDict.items():
+            self.etatWidgets[etatWidget_key] = etatWidget_val
+        self.callbackMod({"etat":self.etatWidgets})
+   
+    def etatTypeModified(self, _event=None):
+        for widget in self.etatCaracsFrame.winfo_children():
+            widget.destroy()
+        if self.etat.__class__.__name__ == self.typeEtatCombobox.get():
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+        else:
+            typeEtat = self.typeEtatCombobox.get()
+            etat = Etat.getObjectFromName(typeEtat)
+            etat.nom = self.etat.nom
+            etat.debuteDans = self.etat.debuteDans
+            etat.duree = self.etat.duree
+            self.etat = etat
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["etat"] = self.etat.getAllInfos()
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetEtat(Etat.factory(infos["etat"]), **infos["kwargs"])
+
+    def __init__(self, etat_etat=None, **kwargs):
         """@summary: Initialise un effet appliquant un état.
         @etat_etat: l'état qui va être appliqué
         @type: Etat
         @kwargs: Options de l'effets
         @type: **kwargs"""
         self.kwargs = kwargs
-        self.etat = etat_etat
+        self.etatWidgets = {}
+        if etat_etat is not None:
+            self.etat = etat_etat
+        else:
+            self.etat = Etat("TODO", 0, 1)
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetEtat(self.etat, **self.kwargs)
+        return EffetEtat(deepcopy(self.etat), **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -41,24 +117,90 @@ class EffetEtat(Effet):
         # On copie l'état parce que l'effet peut être appliquer plusieurs fois.
         etatCopier = deepcopy(self.etat)
         return joueurCaseEffet.appliquerEtat(etatCopier, joueurLanceur,
-                                             self.kwargs.get("cumulMax", -1), niveau)
+                                             int(self.kwargs.get("cumulMax", -1)), niveau)
 
 class EffetEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur."""
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        typeEtatLbl = ttk.Label(frame, text="Type d'état:")
+        typeEtatLbl.pack(side="left")
+        self.typeEtatCombobox = ttk.Combobox(frame, values=sorted(Etat.getListEtat()), state="readonly")
+        self.typeEtatCombobox.set(self.etat.__class__.__name__)
+        self.typeEtatCombobox.pack(side="left")
+        self.typeEtatCombobox.bind('<<ComboboxSelected>>', self.etatTypeModified) 
+        self.etatCaracsFrame = ttk.LabelFrame(frame, text="Caractéristiques de l'état")
+        self.etatCaracsFrame.pack(side="top")
+        self.etatTypeModified()
+        etatOptionFrame = ttk.Frame(frame)
+        cumulMaxLbl = ttk.Label(etatOptionFrame, text="Cumul max:")
+        cumulMaxLbl.grid(row=0, column=0, sticky="e")
+        cumulMaxSpinbox = tk.Spinbox(etatOptionFrame, from_=-1, to=99, width=3)
+        cumulMaxSpinbox.delete(0, 'end')
+        cumulMaxSpinbox.insert(0, int(self.kwargs.get("cumulMax", -1)))
+        cumulMaxSpinbox.grid(row=0, column=1, sticky="w")
+        ret["kwargs:cumulMax"] = cumulMaxSpinbox
+        ret["etat"] = self.etatWidgets
+        etatOptionFrame.pack(side="bottom")
+        frame.pack()
+        return ret
+    
+    def __str__(self):
+        return "EtatSelf "+str(self.etat)
 
-    def __init__(self, etat_etat, **kwargs):
+    def callbackModifiedRetValue(self, newDict):
+        for etatWidget_key, etatWidget_val in newDict.items():
+            self.etatWidgets[etatWidget_key] = etatWidget_val
+    
+    def etatTypeModified(self, _event=None):
+        for widget in self.etatCaracsFrame.winfo_children():
+            widget.destroy()
+        if self.etat.__class__.__name__ == self.typeEtatCombobox.get():
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+        else:
+            typeEtat = self.typeEtatCombobox.get()
+            etat = Etat.getObjectFromName(typeEtat)
+            etat.nom = self.etat.nom
+            etat.debuteDans = self.etat.debuteDans
+            etat.duree = self.etat.duree
+            self.etat = etat
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["etat"] = self.etat.getAllInfos()
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetEtatSelf(Etat.factory(infos["etat"]), **infos["kwargs"])
+
+    def __init__(self, etat_etat=None, **kwargs):
         """@summary: Initialise un effet placant un état sur le lanceur
         @etat_etat: l'état à placer sur le lanceur
         @type: Etat
         @kwargs: Options de l'effets
         @type: **kwargs"""
-        self.etat = etat_etat
         self.kwargs = kwargs
+        self.etatWidgets = {}
+        if etat_etat is not None:
+            self.etat = etat_etat
+        else:
+            self.etat = Etat("TODO", 0, 1)
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetEtatSelf(self.etat, **self.kwargs)
+        return EffetEtatSelf(deepcopy(self.etat), **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -91,7 +233,7 @@ class EffetEtatSelfTF(Effet):
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
-        return EffetEtatSelfTF(self.etat, self.sortsExclus, **self.kwargs)
+        return EffetEtatSelfTF(deepcopy(self.etat), self.sortsExclus, **self.kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -184,7 +326,7 @@ class EffetRetireEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire les états de la cible qui portent un nom donné."""
 
-    def __init__(self, str_nomEtat, **kwargs):
+    def __init__(self, str_nomEtat="", **kwargs):
         """@summary: Initialise un effet retirant les états de la cible selon un paramètre donné.
         @str_nomEtat: le nom de l'état qui va être retiré de la cible.
         @type: str
@@ -196,6 +338,34 @@ class EffetRetireEtat(Effet):
 
     def __deepcopy__(self, memo):
         return EffetRetireEtat(self.nomEtat, **self.kwargs)
+
+    def __str__(self):
+        return "Retire état "+str(self.nomEtat)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nomLbl = ttk.Label(frame, text="Nom état à retirer:")
+        nomLbl.pack(side="left")
+        nomEntry = ttk.Entry(frame, width=50)
+        nomEntry.delete(0, 'end')
+        nomEntry.insert(0, self.nomEtat)
+        nomEntry.pack(side="left")
+        ret["nomEtat"] = nomEntry
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomEtat"] = self.nomEtat
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetRetireEtat(infos["nomEtat"], **infos["kwargs"])
+
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

@@ -16,7 +16,7 @@ class DumbIA():
         casesPOSort = niveau.getZonePorteSort(sort, joueurLanceur.posX, joueurLanceur.posY,
                                               joueurLanceur.PO)
         for case in casesPOSort:
-            res, _ = sort.estLancableSurCible(niveau, joueurLanceur, case[0], case[1])
+            res, msg = sort.estLancableSurCible(niveau, joueurLanceur, case[0], case[1])
             if res:
                 return case[0], case[1]
         return None, None
@@ -35,8 +35,11 @@ class DumbIA():
         @type: int
         @sortSelectionne: Le sort sélectionné plus tôt dans la partie s'il y en a un
         @type: Sort"""
+        print("Nié! a moi de jouer")
         for sort in joueur.sorts:
+            print(str(sort))
             cibleX, cibleY = self.getCible(niveau, sort, joueur)
+            print("Cible trouvée :"+str(cibleX)+" ; "+str(cibleY))
             while cibleX is not None:
                 sort.lance(niveau.tourDe.posX,
                            niveau.tourDe.posY, niveau, cibleX, cibleY)

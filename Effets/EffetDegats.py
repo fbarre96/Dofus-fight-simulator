@@ -10,7 +10,8 @@ class EffetDegats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet inflige des dégâts à une cible."""
 
-    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
+
+    def __init__(self, int_minJet=0, int_maxJet=0, str_typeDegats="neutre", **kwargs):
         """@summary: Initialise un effet de dégâts.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -27,6 +28,77 @@ class EffetDegats(Effet):
         self.kwargs = kwargs
         self.total = 0
         super().__init__(**kwargs)
+
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        if "a utilisé de PM" in kwargs.get("desc", ""):
+            return False
+        return "(dommages " in effectStr
+
+    @classmethod
+    def craftEffect(cls, effectStr, **kwargs):
+        effetsCaracs = effectStr.split(" ")
+        degMin = effetsCaracs[0]
+        if effetsCaracs[1] == "à":
+            degMax = effetsCaracs[2]
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        else:
+            degMax = degMin
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        kwargs["effectStr"] = effectStr
+        return EffetDegats(int(degMin), int(degMax), degType, **kwargs)
+    
+    def __str__(self):
+        return str(self.minJet)+" à "+str(self.maxJet)+" (dommages "+self.typeDegats.capitalize()+")"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        jetMinLbl = ttk.Label(frame, text="Jet min:")
+        jetMinLbl.pack(side="left")
+        jetMinSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        jetMinSpinbox.delete(0, 'end')
+        jetMinSpinbox.insert(0, int(self.minJet))
+        jetMinSpinbox.pack(side="left")
+        ret["minJet"] = jetMinSpinbox
+        jetMaxLbl = ttk.Label(frame, text="Jet max:")
+        jetMaxLbl.pack(side="left")
+        jetMaxSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        jetMaxSpinbox.delete(0, 'end')
+        jetMaxSpinbox.insert(0, int(self.maxJet))
+        jetMaxSpinbox.pack(side="left")
+        ret["maxJet"] = jetMaxSpinbox
+        degTypeLbl = ttk.Label(frame, text="Type:")
+        degTypeLbl.pack(side="left")
+        degTypeCombobox = ttk.Combobox(frame, values=("terre", "feu", "air", "chance", "neutre"), state="readonly")
+        degTypeCombobox.set(self.typeDegats)
+        degTypeCombobox.pack(side="left")
+        ret["typeDegats"] = degTypeCombobox
+        bypassDmgCalcLbl = ttk.Label(frame, text="Bypass dommage calc (!):")
+        bypassDmgCalcLbl.pack(side="left")
+        bypassDmgCalcVar = tk.BooleanVar()
+        bypassDmgCalcVar.set(self.kwargs.get("bypassDmgCalc", False))
+        bypassDmgCalcCheckbutton = ttk.Checkbutton(frame, variable=bypassDmgCalcVar)
+        bypassDmgCalcCheckbutton.pack(side="left")
+        ret["kwargs:bypassDmgCalc"] = bypassDmgCalcVar
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["minJet"] = self.minJet
+        ret["maxJet"] = self.maxJet
+        ret["typeDegats"] = self.typeDegats
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["minJet"]), int(infos["maxJet"]), infos["typeDegats"], **infos["kwargs"])
+
 
     def __deepcopy__(self, memo):
         cpy = EffetDegats(self.minJet, self.maxJet,
@@ -160,7 +232,7 @@ class EffetDegats(Effet):
 
         @return: Le total de dégâts infligés"""
         joueurCaseEffet.subit(joueurLanceur, niveau,
-                              self.total, self.typeDegats, not self.isPrevisu())
+                              self.total, self.typeDegats)
         return self.total
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
@@ -175,7 +247,7 @@ class EffetDegats(Effet):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            if self.isPrevisu():
+            if niveau.isPrevisu():
                 totalMin = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
                     "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"), "min")
                 totalMax = self.calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
@@ -202,7 +274,7 @@ class EffetVolDeVie(EffetDegats):
     Cet effet inflige des dégâts à une cible et soigne le lanceur de la moitié des dégâts infligés.
     """
 
-    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
+    def __init__(self, int_minJet=0, int_maxJet=0, str_typeDegats="neutre", **kwargs):
         """@summary: Initialise un effet de vol de vie.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -216,6 +288,29 @@ class EffetVolDeVie(EffetDegats):
         self.kwargs = kwargs
         super().__init__(
             int_minJet, int_maxJet, str_typeDegats, **kwargs)
+
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        return "(vol " in effectStr
+    
+    @classmethod
+    def craftEffect(cls, effectStr, **kwargs):
+        #10 à 12 (vol Eau)
+        effetsCaracs = effectStr.split(" ")
+        degMin = effetsCaracs[0]
+        if effetsCaracs[1] == "à":
+            degMax = effetsCaracs[2]
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        else:
+            degMax = degMin
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        kwargs["effectStr"] = effectStr
+        return EffetVolDeVie(int(degMin), int(degMax), degType, **kwargs)
+    
+    def __str__(self):
+        return str(self.minJet)+" à "+str(self.maxJet)+" (vol "+self.typeDegats.capitalize()+")"
 
     def __deepcopy__(self, memo):
         return EffetVolDeVie(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
@@ -252,7 +347,7 @@ class EffetVolDeVie(EffetDegats):
 
             joueurLanceur.vie += (self.total/2)
             joueurLanceur.vie = int(joueurLanceur.vie)
-            if not self.isPrevisu():
+            if not niveau.isPrevisu():
                 print(joueurLanceur.nomPerso+" vol " +
                       str(int(self.total/2)) + "PV")
 
@@ -262,7 +357,7 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
     Hérite de EffetsDegats.
     Cet effet inflige des dégâts à une cible divisés selon le ratio PM."""
 
-    def __init__(self, int_minJet, int_maxJet, str_typeDegats, **kwargs):
+    def __init__(self, int_minJet=0, int_maxJet=0, str_typeDegats="neutre", **kwargs):
         """@summary: Initialise un effet de vol de vie.
         @int_minJet: le jet minimum possible de dégâts de base de l'effet
         @type: int
@@ -279,6 +374,26 @@ class EffetDegatsSelonPMUtilises(EffetDegats):
 
     def __deepcopy__(self, memo):
         return EffetDegatsSelonPMUtilises(self.minJet, self.maxJet, self.typeDegats, **self.kwargs)
+
+    @classmethod
+    def isAffected(cls, effectStr, **kwargs):
+        return "a utilisé de PM" in kwargs.get("desc", "") and "(dommages " in effectStr
+
+    @classmethod
+    def craftEffect(cls, effectStr, **kwargs):
+        #10 à 12 (vol Eau)
+        effetsCaracs = effectStr.split(" ")
+        degMin = effetsCaracs[0]
+        if effetsCaracs[1] == "à":
+            degMax = effetsCaracs[2]
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        else:
+            degMax = degMin
+            # enleve la parenthese de fin d'effet de dommage
+            degType = effetsCaracs[-1][:-1]
+        kwargs["effectStr"] = effectStr
+        return EffetDegatsSelonPMUtilises(int(degMin), int(degMax), degType, **kwargs)
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.
@@ -342,8 +457,8 @@ class EffetDegatsPerPv(Effet):
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
             joueurCaseEffet.subit(joueurLanceur, niveau,
-                                  self.total, "", not self.isPrevisu())
-            if not self.isPrevisu():
+                                  self.total, "")
+            if not niveau.isPrevisu():
                 print(joueurLanceur.nomPerso+" perd " +
                       str(int(self.total)) + "PV")
             

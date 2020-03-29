@@ -6,7 +6,7 @@ from Etats.Etat import Etat
 class EtatBoostCaracFixe(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur d'une caractéristique."""
 
-    def __init__(self, nom, debDans, duree, nomAttributCarac, boostCarac, lanceur=None, desc=""):
+    def __init__(self, nom="Pas de nom", debDans=0, duree=1, nomAttributCarac="", boostCarac=0, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -22,12 +22,11 @@ class EtatBoostCaracFixe(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.nomAttributCarac = nomAttributCarac
-        self.boostCarac = boostCarac
+        self.boostCarac = int(boostCarac)
         super().__init__(nom, debDans, duree, lanceur, desc)
 
     def __deepcopy__(self, memo):
@@ -36,6 +35,44 @@ class EtatBoostCaracFixe(Etat):
         return EtatBoostCaracFixe(self.nom, self.debuteDans, self.duree, self.nomAttributCarac,
                                   self.boostCarac, self.lanceur, self.desc)
 
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        import Personnages
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomAttributLbl = ttk.Label(frame, text="Nom de l'attribut à modifier:")
+        nomAttributLbl.grid(row=0, column=0, sticky="e")
+        self.nomAttributCombobox = ttk.Combobox(frame, values=Personnages.Personnage.getAttributesList(), state="readonly")
+        if self.nomAttributCarac != "":
+            self.nomAttributCombobox.set(self.nomAttributCarac)
+        self.nomAttributCombobox.grid(row=0, column=1, sticky="w")
+        ret["nomAttributCarac"] = self.nomAttributCombobox
+        modValueLbl = ttk.Label(frame, text="Modificateur :")
+        modValueLbl.grid(row=1, column=0, sticky="e")
+        self.modValueEntry = ttk.Entry(frame, width=5)
+        self.modValueEntry.delete(0, "end")
+        self.modValueEntry.insert(0, self.boostCarac)
+        self.modValueEntry.grid(row=1, column=1, sticky="w")
+        ret["boostCarac"] = self.modValueEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBoostCaracFixe(infos["nom"], infos["debuteDans"], infos["duree"], infos["nomAttributCarac"], infos["boostCarac"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomAttributCarac"] = self.nomAttributCarac
+        ret["boostCarac"] = self.boostCarac
+        return ret
+
     def triggerInstantane(self, **kwargs):
         """@summary: Un trigger appelé au moment ou un état est appliqué.
                      change la carac du joueur selon le boost carac et le nom de l'attribut a boost
@@ -43,7 +80,9 @@ class EtatBoostCaracFixe(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         caracValue = getattr(personnage, self.nomAttributCarac)
-        if isinstance(self.boostCarac, bool):
+        if isinstance(caracValue, bool):
+            if isinstance(self.boostCarac, int):
+                self.boostCarac = self.boostCarac == 1
             setattr(personnage, self.nomAttributCarac,
                     self.boostCarac)
             print("Modification de "+self.nomAttributCarac+":" +
@@ -70,7 +109,9 @@ class EtatBoostCaracFixe(Etat):
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
         caracValue = getattr(personnage, self.nomAttributCarac)
-        if isinstance(self.boostCarac, bool):
+        if isinstance(caracValue, bool):
+            if isinstance(self.boostCarac, int):
+                self.boostCarac = self.boostCarac == 1
             setattr(personnage, self.nomAttributCarac,
                     not self.boostCarac)
             print("Fin de modification de "+self.nomAttributCarac+":" +
@@ -80,6 +121,12 @@ class EtatBoostCaracFixe(Etat):
                     caracValue - self.boostCarac)
             print("Fin de modification de "+self.nomAttributCarac+":" +
                   str(caracValue)+" -> "+str(caracValue - self.boostCarac))
+    
+    def triggerFinTour(self, personnage, niveau):
+        print("Trigger fin de tour "+str(self.nomAttributCarac))
+        if self.nomAttributCarac == "PM" or self.nomAttributCarac == "PA":
+            setattr(personnage, self.nomAttributCarac,
+                    getattr(personnage, self.nomAttributCarac) + self.boostCarac)
 
 
 
@@ -103,7 +150,6 @@ class EtatBoostCaracPer(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""

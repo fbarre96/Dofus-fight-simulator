@@ -6,7 +6,7 @@ from Etats.Etat import Etat
 class EtatBoostBaseDeg(Etat):
     """@summary: décrit un état qui modifie les dégâts de base d'un sort pour le porteur."""
 
-    def __init__(self, nom, debDans, duree, nomSort, boostbaseDeg, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, nomSort="", boostbaseDeg=0, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -23,11 +23,10 @@ class EtatBoostBaseDeg(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        self.boostbaseDeg = boostbaseDeg
+        self.boostbaseDeg = int(boostbaseDeg)
         self.nomSort = nomSort
         super().__init__(nom, debDans, duree, lanceur, desc)
 
@@ -36,6 +35,43 @@ class EtatBoostBaseDeg(Etat):
         @return: Le clone de l'état"""
         return EtatBoostBaseDeg(self.nom, self.debuteDans, self.duree, self.nomSort,
                                 self.boostbaseDeg, self.lanceur, self.desc)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomSortLbl = ttk.Label(frame, text="Nom du sort a boost:")
+        nomSortLbl.grid(row=0, column=0, sticky="e")
+        self.nomSortEntry = ttk.Entry(frame, width=40)
+        self.nomSortEntry.delete(0, 'end')
+        self.nomSortEntry.insert(0, self.nomSort)
+        self.nomSortEntry.grid(row=0, column=1, sticky="w")
+        ret["nomSort"] = self.nomSortEntry
+        modValueLbl = ttk.Label(frame, text="Modificateur :")
+        modValueLbl.grid(row=1, column=0, sticky="e")
+        self.modValueEntry = ttk.Entry(frame, width=5)
+        self.modValueEntry.delete(0, "end")
+        self.modValueEntry.insert(0, self.boostbaseDeg)
+        self.modValueEntry.grid(row=1, column=1, sticky="w")
+        ret["boostbaseDeg"] = self.modValueEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBoostBaseDeg(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), infos["nomSort"], infos["boostbaseDeg"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomSort"] = self.nomSort
+        ret["boostbaseDeg"] = self.boostbaseDeg
+        return ret
 
     def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués

@@ -52,4 +52,5 @@ def normaliser(chaine):
     chaine = chaine.replace("î", "i")
     chaine = chaine.replace("ç", "c")
     chaine = chaine.replace("â", "a")
+    chaine = chaine.replace("œ", "oe")
     return chaine

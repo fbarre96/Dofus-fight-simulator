@@ -7,7 +7,7 @@ class EtatModDegPer(Etat):
     """@summary: Classe décrivant un état qui multiplie par un pourcentage les dégâts totaux
                  que devrait subir le porteur."""
 
-    def __init__(self, nom, debDans, duree, pourcentage, provenance="", lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, pourcentage=0, provenance="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -22,8 +22,6 @@ class EtatModDegPer(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
-        @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.pourcentage = pourcentage
@@ -35,6 +33,42 @@ class EtatModDegPer(Etat):
         @return: Le clone de l'état"""
         return EtatModDegPer(self.nom, self.debuteDans, self.duree, self.pourcentage,
                              self.provenance, self.lanceur, self.desc)
+
+    def buildUI(self, topframe,callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        pourcentageLbl = ttk.Label(frame, text="Modificateur en pourcent:")
+        pourcentageLbl.grid(row=0, column=0, sticky="e")
+        pourcentageSpinbox = tk.Spinbox(frame, from_=-1000, to=1000, width=5)
+        pourcentageSpinbox.delete(0, 'end')
+        pourcentageSpinbox.insert(0, self.pourcentage)
+        pourcentageSpinbox.grid(row=0, column=1, sticky="w")
+        ret["pourcentage"] = pourcentageSpinbox
+        provenanceLbl = ttk.Label(frame, text="En provenance de:")
+        provenanceLbl.grid(row=1, column=0, sticky="e")
+        provenanceCombobox = ttk.Combobox(frame, values=("Tout", "Allies", "Ennemis", "melee"))
+        provenanceCombobox.set(self.provenance)
+        provenanceCombobox.grid(row=1, column=1, sticky="w")
+        ret["provenance"] = provenanceCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatModDegPer(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), int(infos["pourcentage"]), infos["provenance"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage"] = self.pourcentage
+        ret["provenance"] = self.provenance
+        return ret
 
     def triggerApresCalculDegats(self, total, typeDeg, cible, attaquant):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués

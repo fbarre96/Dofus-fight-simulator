@@ -21,7 +21,6 @@ class EtatActiveSort(Etat):
 
         @lanceur: le joueur ayant placé cet état
         @type: Personnage ou None
-        @tabCarac: le tableau de donné dont dispose chaque état pour décrire ses données
         @type: tableau
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""

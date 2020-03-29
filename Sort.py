@@ -2,7 +2,7 @@
 """@summary: Regroupe toutes les classes liées aux Sorts.
 """
 from copy import deepcopy
-
+from Effets.Effet import Effet
 import random
 
 import constantes
@@ -18,22 +18,25 @@ class Sort:
                  POMod, typeLancer, ldv, **kwargs):
         # pylint: disable=invalid-name
         self.nom = nom
-        self.lvl = lvl
-        self.coutPA = coutPA
-        self.POMin = POMin
-        self.POMax = POMax
+        self.lvl = int(lvl)
+        self.coutPA = int(coutPA)
+        self.POMin = int(POMin)
+        self.POMax = int(POMax)
         self.effets = tableauEffets
         self.effetsCC = tableauEffetsCC
-        self.POMod = POMod
+        self.POMod = int(POMod)
         self.typeLancer = typeLancer
-        self.probaCC = probaCC
+        self.probaCC = int(probaCC)
         self.ldv = ldv
         self.image = "images/"+constantes.normaliser(nom.lower())+".jpg"
         self.hitbox = None
         self.chaine = kwargs.get("chaine", True)
-        self.nbLancerParTour = nbLancerParTour
-        self.nbLancerParTourParJoueur = nbLancerParTourParJoueur
-        self.nbTourEntreDeux = nbTourEntreDeux
+        self.nbLancerParTour = int(nbLancerParTour)
+        self.nbLancerParTourParJoueur = int(nbLancerParTourParJoueur)
+        self.nbTourEntreDeux = int(nbTourEntreDeux)
+        if self.nbTourEntreDeux > 0:
+            self.nbLancerParTour = 1
+            self.nbLancerParTourParJoueur = 1
         self.compteLancerParTour = 0
         self.compteLancerParTourParJoueur = {}
         self.compteTourEntreDeux = nbTourEntreDeux
@@ -54,6 +57,35 @@ class Sort:
         toReturn.hitbox = self.hitbox
         toReturn.image = self.image
         return toReturn
+
+    @classmethod
+    def craftSort(cls, sortInfos):
+        sortsLevels = []
+        for i in range(1, 4):
+            if str(i) not in sortInfos.keys():
+                continue
+            s = sortInfos[str(i)]
+            tabEffets = []
+            for effet in s["Effets"]:
+                craftedEffet = Effet.effectFactory(effet)
+                tabEffets.append(craftedEffet)
+            tabEffetsCritiques = []
+            for effet in s["EffetsCritiques"]:
+                tabEffetsCritiques.append(Effet.effectFactory(effet))
+            cc = int(s["Autres"]["Probabilit\u00e9 de coup critique"][:-1])
+            if s["Autres"].get("Lancer en diagonale", "Non") == "Oui":
+                typeLance = "diagonale"
+            elif s["Autres"].get("Lancer en ligne", "Non") == "Oui":
+                typeLance = "ligne"
+            else:
+                typeLance = "cercle"
+            lvl = int(s["level"]) if s["level"] != "N/A" else 201
+            sortsLevels.append(Sort(sortInfos["nom"], int(lvl), int(s["PA"]), int(s["PO_min"]), int(s["PO_max"]), tabEffets, tabEffetsCritiques, \
+                cc, int(s["Autres"].get("Nb. de lancers par tour", 1)), int(s["Autres"].get("Nb. de lancers par tour par joueur", 1)), \
+                int(s["Autres"].get("Nb. de tours entre deux lancers", 0)), int(1 if s["Autres"].get("Portée modifiable", "Non") == "Oui" else 0), \
+                    typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui", desc=sortInfos["desc"], chaine=s["Autres"].get("Chaîné", "Oui") == "Oui"))
+        print("RETURNED "+str(sortsLevels))
+        return sortsLevels
 
     def aPorte(self, j1x, j1y, ciblex, cibley, PO):
         """@summary: calcul si le point j1 et a portée du point cible
@@ -79,15 +111,15 @@ class Sort:
     def testLancableParJoueur(self, joueurLanceur):
         """@summary: vérifie si les conditions de lancabilité du joueur. Sans cible
         """
+        res, delaiRestant = self.testLancableDelai()
+        if not res:
+            return False, "Delai avant prochain lance:"+str(delaiRestant)
         res = self.testLancablePA(joueurLanceur)
         if not res:
             return False, "Pa insuffisant"
         res = self.testLancableCeTour()
         if not res:
             return False, "Ce sort ne peut plus etre utilise ce tour."
-        res, delaiRestant = self.testLancableDelai()
-        if not res:
-            return False, "Delai avant prochain lance:"+str(delaiRestant)
         return True, ""
 
     def estLancableSurCible(self, niveau, joueurLanceur, cibleX, cibleY):
@@ -139,7 +171,7 @@ class Sort:
         """@summary: Renvoie True si le sort a dépassé son délai de cooldown
         """
         calcul = self.nbTourEntreDeux-self.compteTourEntreDeux
-        res = calcul >= 0
+        res = calcul <= 0
         return res, calcul
 
     def testLancableForEffets(self, joueurLanceur, joueurCibleDirect):
@@ -169,7 +201,7 @@ class Sort:
         self.compteTourEntreDeux = 0
 
     def lance(self, origineX, origineY, niveau, caseCibleX, caseCibleY,
-              caraclanceur=None, isPrevisu=False):
+              caraclanceur=None):
         """@summary: Lance un sort
         @origineX: la pos x d'où est lancé le sort
         @type: int
@@ -186,6 +218,7 @@ class Sort:
         @type: Personnage (ou None pour prendre le lanceur)"""
         caseCibleX = int(caseCibleX)
         caseCibleY = int(caseCibleY)
+        isPrevisu = niveau.isPrevisu()
         saveLanceur = None
         if isPrevisu:
             save = niveau
@@ -206,7 +239,7 @@ class Sort:
                 caraclanceur = niveau.getJoueurAvecUid(caraclanceur.porteUid)
 
         if self.ldv and not self.aLigneDeVue(niveau, origineX, origineY, caseCibleX, caseCibleY):
-            if caraclanceur.checkLdv:
+            if caraclanceur.checkLdv and not isPrevisu:
                 print("Pas de ligne de vue !")
                 return niveau.joueurs
         # Get toutes les cases dans la zone d'effet
@@ -241,7 +274,7 @@ class Sort:
                 # Application des effets
                 for effet in effetsSort:
                     effet.setCritique(isCC)
-                    effet.setPrevisu(isPrevisu)
+                    effet.setSort(self)
                     # Test si les effets sont dépendants les uns à la suite des autres
                     if self.chaine:
                         if sestApplique:  # Si l'effet a été appliqué, on continue
