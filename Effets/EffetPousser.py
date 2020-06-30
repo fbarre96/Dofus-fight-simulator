@@ -157,10 +157,13 @@ class EffetPousserJusque(EffetPousser):
         @type: **kwargs"""
         self.kwargs = kwargs
         self.nbCase = 0
-        super().__init__(0, "", "", **kwargs)
+        super().__init__(0, "lanceur", "JoueurCaseEffet", **kwargs)
 
     def __deepcopy__(self, memo):
         return EffetPousserJusque(**self.kwargs)
+
+    def __str__(self):
+        return "Pousse la cible jusqu'à la case ciblée"
 
     def determinerSensPousser(self, cible, sourceX, sourceY):
         """@summary: Retourne des données permettant de calculer le sens dans

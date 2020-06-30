@@ -386,7 +386,20 @@ class EffetToDo(Effet):
     def craftFromInfos(cls, infos):
         return EffetToDo(infos["effectStr"], **infos["kwargs"])
 
-
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        effetLbl = ttk.Label(frame, text="TODO:")
+        effetLbl.pack(side="left")
+        effetEntry = ttk.Entry(frame, width=100)
+        effetEntry.delete(0, 'end')
+        effetEntry.insert(0, self.effectStr)
+        effetEntry.pack(side="left")
+        frame.pack()
+        return ret
+    
 class ChildDialogEffect:
     """
     Open a child dialog of a tkinter application to fill effects
@@ -496,7 +509,7 @@ class ChildDialogEffect:
         ciblesPossiblesDirectLbl.grid(row=1, column=0, sticky="e")
         self.ciblesPossiblesDirectEntry = ttk.Entry(ciblesFrame, width=100)
         self.ciblesPossiblesDirectEntry.grid(row=1, column=1, sticky="w")
-        self.ciblesPossiblesDirectEntry.insert(tk.END, effect.kwargs.get("cibles_possibles_direct", ""))
+        self.ciblesPossiblesDirectEntry.insert(tk.END, effect.kwargs.get("cibles_possibles_direct", "Allies|Ennemis|Lanceur"))
         ciblesPossiblesDirectHelpLbl = ttk.Label(ciblesFrame, text="(Defaut = cible affectées)")
         ciblesPossiblesDirectHelpLbl.grid(row=1, column=2)
         ciblesPossiblesLbl = ttk.Label(ciblesFrame, text="Cible Affectés:")

@@ -74,7 +74,7 @@ class EffetDegats(Effet):
         ret["maxJet"] = jetMaxSpinbox
         degTypeLbl = ttk.Label(frame, text="Type:")
         degTypeLbl.pack(side="left")
-        degTypeCombobox = ttk.Combobox(frame, values=("terre", "feu", "air", "chance", "neutre"), state="readonly")
+        degTypeCombobox = ttk.Combobox(frame, values=("terre", "feu", "air", "chance", "neutre", "meilleur"), state="readonly")
         degTypeCombobox.set(self.typeDegats)
         degTypeCombobox.pack(side="left")
         ret["typeDegats"] = degTypeCombobox
@@ -128,6 +128,17 @@ class EffetDegats(Effet):
         dos = 0
         resFixes = 0
         rePer = 0
+        if self.typeDegats == "meilleur":
+            if joueurLanceur.agi >= joueurLanceur.int and joueurLanceur.agi >= joueurLanceur.cha and joueurLanceur.agi >= joueurLanceur.fo:
+                self.typeDegats = "air"
+            elif joueurLanceur.int >= joueurLanceur.agi and joueurLanceur.int >= joueurLanceur.cha and joueurLanceur.int >= joueurLanceur.fo:
+                self.typeDegats = "feu"
+            elif joueurLanceur.cha >= joueurLanceur.agi and joueurLanceur.cha >= joueurLanceur.int and joueurLanceur.cha >= joueurLanceur.fo:
+                self.typeDegats = "eau"
+            elif joueurLanceur.fo >= joueurLanceur.agi and joueurLanceur.fo >= joueurLanceur.cha and joueurLanceur.fo >= joueurLanceur.int:
+                self.typeDegats = "terre"
+            else:
+                self.typeDegats = "neutre"
         if self.typeDegats == "eau":
             if not self.kwargs.get("bypassDmgCalc", False):
                 carac += joueurLanceur.cha
@@ -185,7 +196,7 @@ class EffetDegats(Effet):
         for etat in joueurLanceur.etats:
             if etat.actif():
                 dos, baseDeg, carac = etat.triggerAvantCalculDegats(
-                    dos, baseDeg, carac, nomSort)
+                    dos, baseDeg, carac, nomSort, self.minJet, self.maxJet+1)
         total += baseDeg + (baseDeg * int(carac / 100.0)) + dos
         if not self.kwargs.get("bypassDmgCalc", False):
             if nomSort != "cac":
@@ -207,6 +218,7 @@ class EffetDegats(Effet):
 
         vaSubir = total - resFixes
         vaSubir = (vaSubir) - int((rePer/100)*vaSubir)
+        
         for etat in joueurLanceur.etats:
             if etat.actif():
                 vaSubir = etat.triggerApresCalculDegats(
@@ -214,8 +226,10 @@ class EffetDegats(Effet):
 
         for etat in joueurCaseEffet.etats:
             if etat.actif():
+                print("Allait subir : "+str(vaSubir))
                 vaSubir = etat.triggerApresCalculDegats(
                     vaSubir, self.typeDegats, joueurCaseEffet, joueurLanceur)
+                print("Changer a subit : "+str(vaSubir))
         if vaSubir < 0:
             vaSubir = 0
 

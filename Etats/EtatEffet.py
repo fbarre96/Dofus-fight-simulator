@@ -288,7 +288,6 @@ class EtatEffetSiSubit(EtatEffet):
         @type: string
         @attaquant:  Le joueur à l'origine de l'attaque
         @type: Personnage"""
-        print("Effet si subit entree")
         validate = False
         if totalPerdu > 0 and (self.typeDeg == typeDegats or self.typeDeg == ""):
             validate = True
@@ -442,6 +441,7 @@ class EtatEffetSiDeplace(EtatEffet):
         Cet état de base ne fait rien (comportement par défaut hérité).
         @personnage: les options non prévisibles selon les états.
         @type: Personnage"""
+        print("Effet si deplace entree")
         if self.quiLancera == "lanceur":
             niveau.lancerEffet(self.effet, self.lanceur.posX, self.lanceur.posY,
                                self.nomSort, deplace.posX, deplace.posY, self.lanceur)

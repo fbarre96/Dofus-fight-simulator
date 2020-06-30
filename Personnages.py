@@ -163,6 +163,11 @@ class Personnage(object):
         self.sorts, self.sortsDebutCombat = Personnage.chargerSorts(
             self.classe, self.lvl, loadToutPersonnages)  # la liste des sorts du personnage
 
+    def getSort(self, nomSort):
+        for sort in self.sorts:
+            if sort.nom == nomSort:
+                return sort
+    
     def __deepcopy__(self, memo):
         toReturn = Personnage(self.nomPerso, self.classe, self.lvl, self.team,
                               {"PA": self.PA, "PM": self.PM, "PO": self.PO, "Vitalite": self.vie,
@@ -273,14 +278,18 @@ class Personnage(object):
             data = f.read()
         sortsData = json.loads(data)
         sorts = []
+        sortsDebutCombat = []
         for sortName, sortData in sortsData.items():
             sortData["nom"] = sortName
             tabSorts = Sort.craftSort(sortData)
             rightLvlSort = Personnage.getSortRightLvl(lvl, tabSorts)
-            sorts.append(rightLvlSort)
+            if sortData.get("debutCombat", False):
+                sortsDebutCombat.append(rightLvlSort)
+            else:
+                sorts.append(rightLvlSort)
         if not sorts:
             raise ValueError("Sorts non trouvés")
-        return sorts
+        return sorts,sortsDebutCombat
 
 
     @staticmethod
@@ -350,8 +359,9 @@ class Personnage(object):
     
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sortfile = os.path.join(dir_path, "Sorts/"+classe.lower().replace(" ", "_") +".json")
-        sorts += Personnage.loadSorts(sortfile, lvl)
-        print("Loaded sorts:"+str(sorts))
+        tsorts, tsortsDebutCombat = Personnage.loadSorts(sortfile, lvl)
+        sorts += tsorts
+        sortsDebutCombat += tsortsDebutCombat
         # elif classe == "Sram":
         #     import Sorts.Sram
         #     sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)

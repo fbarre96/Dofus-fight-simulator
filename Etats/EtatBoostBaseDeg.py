@@ -73,7 +73,7 @@ class EtatBoostBaseDeg(Etat):
         ret["boostbaseDeg"] = self.boostbaseDeg
         return ret
 
-    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
+    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués
                      lorsque des dommages sont en train d'être calculés.
              Les dégâts de base du sort sont boostés si le nom du sort correspond à l'état
@@ -110,7 +110,7 @@ class EtatBoostBaseDegLvlBased(EtatBoostBaseDeg):
         return EtatBoostBaseDegLvlBased(self.nom, self.debuteDans, self.duree, self.nomSort,
                                         self.boostbaseDeg, self.lanceur, self.desc)
 
-    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
+    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués
                      lorsque des dommages sont en train d'être calculés.
                      Les dégâts de base du sort sont boostés si le nom du sort correspond à l'état
@@ -131,3 +131,85 @@ class EtatBoostBaseDegLvlBased(EtatBoostBaseDeg):
         if nomSort == self.nomSort:
             baseDeg += int((self.boostbaseDeg/100.0)*(self.lanceur.lvl))
         return dommages, baseDeg, caracs
+
+
+
+class EtatMinMaxBaseDeg(Etat):
+    """@summary: décrit un état qui minimise les dégâts de base d'un sort pour le porteur."""
+
+    def __init__(self, nom, debDans, duree, howToChoose="min", nomSort="", lanceur=None, desc=""):
+        """@summary: Initialise l'état.
+        @nom: le nom de l'état, servira également d'identifiant
+        @type: string
+        @debDans: le nombre de début de tour qui devront passés pour que l'état s'active.
+        @type: int
+        @duree: le nombre de début de tour après activation qui devront passés
+                pour que l'état se désactive.
+        @type: int
+
+        @nomSort: le nom du sort dont les dégâts de base seront boostés
+        @type: string
+        @lanceur: le joueur ayant placé cet état
+        @type: Personnage ou None
+        @type: tableau
+        @desc: la description de ce que fait l'états pour affichage.
+        @type: string"""
+        self.howToChoose = howToChoose
+        super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def __deepcopy__(self, memo):
+        """@summary: Duplique un état (clone)
+        @return: Le clone de l'état"""
+        return EtatMinMaxBaseDeg(self.nom, self.debuteDans, self.duree,
+                                self.howToChoose, self.lanceur, self.desc)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        modValueLbl = ttk.Label(frame, text="Modificateur :")
+        modValueLbl.grid(row=1, column=0, sticky="e")
+        self.modValueCombobox = ttk.Combobox(frame, values=("min", "max"), state="readonly")
+        self.modValueCombobox.set("min")
+        self.modValueCombobox.grid(row=1, column=1, sticky="w")
+        ret["howToChoose"] = self.modValueCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatMinMaxBaseDeg(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), infos["howToChoose"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["howToChoose"] = self.howToChoose
+        return ret
+
+    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
+        """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués
+                     lorsque des dommages sont en train d'être calculés.
+             Les dégâts de base du sort sont boostés si le nom du sort correspond à l'état
+        @dommages: La somme des dommages bonus qui ont été calculé jusque là
+                   (panoplie et autres états)
+        @type: int
+        @baseDeg: Le dégât de base aléatoire qui a été calculé jusque là
+                  (jet aléatoire plus autres états)
+        @type: int
+        @caracs: La somme de point de caractéristiques calculé jusque là (panoplie et autres états)
+        @type: int
+        @nomSort: Le sort qui est provoque les dégâts.
+                  (utile pour les états modifiant les dégâts de base d'un seul sort)
+        @type: string
+
+        @return: la nouvelle valeur dommages, la nouvelle valeur dégâts de base,
+                 la nouvelle valeur point de caractéristiques."""
+        if self.howToChoose == "min":
+            return dommages, minjet, caracs
+        else:
+            return dommages, maxjet, caracs

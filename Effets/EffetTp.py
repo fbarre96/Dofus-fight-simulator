@@ -260,6 +260,30 @@ class EffetEchangePlace(Effet):
     
     def __str__(self):
         return "Echange de place avec la cible"
+    
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        persoADeplaceLbl = ttk.Label(frame, text="Personnage à déplacer:")
+        persoADeplaceLbl.pack(side="left")
+        persoADeplaceCombobox = ttk.Combobox(frame, values=("lanceur", "cible"), state="readonly")
+        persoADeplaceCombobox.delete(0, 'end')
+        persoADeplaceCombobox.insert(0, self.persoADeplace)
+        persoADeplaceCombobox.pack(side="left")
+        ret["persoADeplace"] = persoADeplaceCombobox
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["persoADeplace"] = self.persoADeplace
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(infos["persoADeplace"], **infos["kwargs"])
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

@@ -65,7 +65,8 @@ class EtatBoostSortsPer(Etat):
 
     def triggerApresCalculDegats(self, total, typeDeg, cible, attaquant):
         if typeDeg != "arme":
-            return int((total * self.pourcentage)/100)
+            print("Changer les degats : par "+str(self.pourcentage))
+            return int(total * (1+(self.pourcentage/100.0)))
         else:
             return total
 
@@ -127,7 +128,7 @@ class EtatBoostPuissanceSorts(Etat):
         return EtatBoostPuissanceSorts(self.nom, self.debuteDans, self.duree,
                                  self.boostPui, self.lanceur, self.desc)
 
-    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
+    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
         if nomSort != "arme":
             caracs += self.boostPui
         return dommages, baseDeg, caracs

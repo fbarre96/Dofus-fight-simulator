@@ -212,6 +212,8 @@ class EffetEtatSelf(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
+        if joueurCaseEffet is None:
+            return
         etatCopie = deepcopy(self.etat)
         return joueurLanceur.appliquerEtat(etatCopie, joueurLanceur,
                                            self.kwargs.get("cumulMax", -1), niveau)
@@ -290,7 +292,7 @@ class EffetSetDureeEtat(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet set la durée des états de la cible."""
 
-    def __init__(self, nomEtat, nouveauDebut, nouvelleDuree, **kwargs):
+    def __init__(self, nomEtat="", nouveauDebut=0, nouvelleDuree=1, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
         @int_deXTours: le nombre de tour qui vont être additionés (dans Z)
                        à chaque état de la cible.
@@ -302,6 +304,50 @@ class EffetSetDureeEtat(Effet):
         self.nouveauDebut = nouveauDebut
         self.nouvelleDuree = nouvelleDuree
         super().__init__(**kwargs)
+
+    def __str__(self):
+        return "Modifie la durée de l'état "+str(self.nomEtat)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nomEtatLbl = ttk.Label(frame, text="Nom état à modifier:")
+        nomEtatLbl.pack(side="left")
+        nomEtatEntry = ttk.Entry(frame, width=30)
+        nomEtatEntry.delete(0, 'end')
+        nomEtatEntry.insert(0, self.nomEtat)
+        nomEtatEntry.pack(side="left")
+        ret["nomEtat"] = nomEtatEntry
+        nouveauDebutLbl = ttk.Label(frame, text="Nouveau début:")
+        nouveauDebutLbl.pack(side="left")
+        nouveauDebutSpinbox = tk.Spinbox(frame, from_=0, to=999, width=3)
+        nouveauDebutSpinbox.delete(0, 'end')
+        nouveauDebutSpinbox.insert(0, int(self.nouveauDebut))
+        nouveauDebutSpinbox.pack(side="left")
+        ret["nouveauDebut"] = nouveauDebutSpinbox
+        nouvelleDureeLbl = ttk.Label(frame, text="Nouvelle durée:")
+        nouvelleDureeLbl.pack(side="left")
+        nouvelleDureeSpinbox = tk.Spinbox(frame, from_=0, to=999, width=3)
+        nouvelleDureeSpinbox.delete(0, 'end')
+        nouvelleDureeSpinbox.insert(0, int(self.nouvelleDuree))
+        nouvelleDureeSpinbox.pack(side="left")
+        ret["nouvelleDuree"] = nouvelleDureeSpinbox
+       
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomEtat"] = self.nomEtat
+        ret["nouveauDebut"] = self.nouveauDebut
+        ret["nouvelleDuree"] = self.nouvelleDuree
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(infos["nomEtat"], int(infos["nouveauDebut"]), int(infos["nouvelleDuree"]), **infos["kwargs"])
 
     def __deepcopy__(self, memo):
         return EffetSetDureeEtat(self.nomEtat, self.nouveauDebut, self.nouvelleDuree, **self.kwargs)
@@ -391,7 +437,7 @@ class EffetRetireEtatSelf(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet retire les états de la cible qui portent un nom donné."""
 
-    def __init__(self, str_nomEtat, **kwargs):
+    def __init__(self, str_nomEtat="", **kwargs):
         """@summary: Initialise un effet retirant les états de la cible selon un paramètre donné.
         @str_nomEtat: le nom de l'état qui va être retiré de la cible.
         @type: str
@@ -403,6 +449,33 @@ class EffetRetireEtatSelf(Effet):
 
     def __deepcopy__(self, memo):
         return EffetRetireEtatSelf(self.nomEtat, **self.kwargs)
+
+    def __str__(self):
+        return "Retire état du lanceur "+str(self.nomEtat)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nomLbl = ttk.Label(frame, text="Nom état à retirer:")
+        nomLbl.pack(side="left")
+        nomEntry = ttk.Entry(frame, width=50)
+        nomEntry.delete(0, 'end')
+        nomEntry.insert(0, self.nomEtat)
+        nomEntry.pack(side="left")
+        ret["nomEtat"] = nomEntry
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomEtat"] = self.nomEtat
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetRetireEtatSelf(infos["nomEtat"], **infos["kwargs"])
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

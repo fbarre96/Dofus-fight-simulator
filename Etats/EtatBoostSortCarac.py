@@ -1,13 +1,13 @@
 """@summary: Rassemble les états boostant une caractéristique d'un sort."""
 
 from Etats.Etat import Etat
-
+from Sort import Sort
 
 class EtatBoostSortCarac(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur d'une Sort."""
 
-    def __init__(self, nom, debDans, duree, nomSort, nomAttributCarac,
-                 boostCarac, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, nomSort="", nomAttributCarac="",
+                 boostCarac=0, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -29,9 +29,55 @@ class EtatBoostSortCarac(Etat):
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.nomAttributCarac = nomAttributCarac
-        self.boostCarac = boostCarac
+        self.boostCarac = int(boostCarac)
         self.nomSort = nomSort
         super().__init__(nom, debDans, duree, lanceur, desc)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        import Personnages
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomSortLbl = ttk.Label(frame, text="Nom du sort à modifier:")
+        nomSortLbl.grid(row=0, column=0, sticky="e")
+        self.nomSortEntry = ttk.Entry(frame, width=50)
+        self.nomSortEntry.delete(0, 'end')
+        self.nomSortEntry.insert(0, self.nomSort)
+        self.nomSortEntry.grid(row=0, column=1, sticky="w")
+        ret["nomSort"] = self.nomSortEntry
+        nomCaracLbl = ttk.Label(frame, text="Nom de la carac à modifier:")
+        nomCaracLbl.grid(row=1, column=0, sticky="e")
+        self.nomCaracCombobox = ttk.Combobox(frame, values=Sort.getCaracList(), state="readonly")
+        if self.nomAttributCarac != "":
+            self.nomCaracCombobox.set(self.nomAttributCarac)
+        self.nomCaracCombobox.grid(row=1, column=1, sticky="w")
+        ret["nomAttributCarac"] = self.nomCaracCombobox
+        boostCaracLbl = ttk.Label(frame, text="Valeur du boost:")
+        boostCaracLbl.grid(row=2, column=0, sticky="e")
+        self.boostCaracSpinbox = tk.Spinbox(frame, from_=-999, to=999, width=4)
+        self.boostCaracSpinbox.delete(0, 'end')
+        self.boostCaracSpinbox.insert(0, int(self.boostCarac))
+        self.boostCaracSpinbox.grid(row=2, column=1, sticky="w")
+        ret["boostCarac"] = self.boostCaracSpinbox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBoostSortCarac(infos["nom"], infos["debuteDans"], infos["duree"], infos["nomSort"], infos["nomAttributCarac"], infos["boostCarac"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomSort"] = self.nomSort
+        ret["nomAttributCarac"] = self.nomAttributCarac
+        ret["boostCarac"] = self.boostCarac
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)

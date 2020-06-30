@@ -150,16 +150,18 @@ class EffetRetPM(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is not None:
             totalRet = 0
+            print(str(self.retrait))
             for _ in range(self.retrait):
                 esqPm = joueurCaseEffet.esqPM if joueurCaseEffet.esqPM != 0 else 1
                 basePm = joueurCaseEffet.PMBase if joueurCaseEffet.PMBase != 0 else 1
                 probaRet = 0.5 * (float(joueurLanceur.retPM)/float(esqPm)) * \
                     (float(joueurCaseEffet.PM)/float(basePm))
                 rand = random.random()
+                print(str(rand)+ " <= "+str(probaRet))
                 if rand <= probaRet:
                     totalRet += 1
+            nomSort = kwargs.get("nom_sort", "Retrait PM")
             if self.pourNbTour > 1:
-                nomSort = kwargs.get("nom_sort", "Retrait PM")
                 joueurCaseEffet.appliquerEtat(EtatBoostCaracFixe(
                     nomSort, 0, self.pourNbTour, "PM", -1*totalRet), joueurLanceur, -1, niveau)
                 if not niveau.isPrevisu():

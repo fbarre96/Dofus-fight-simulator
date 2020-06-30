@@ -290,6 +290,8 @@ class Niveau:
         # Pour chaque sort du joueur dont c'est le tour on va afficher
         # son icône + son état de jouabilité
         for sort in self.tourDe.sorts:
+            if not sort.lancableParJoueur:
+                continue
             # On ajoute l'overlay sur le sort,
             # l'overlay est ce qui s'affichera lorsque le sort sera survolé avec la souris.
             sort.vue = Overlays.VueForOverlay(self.fenetre, posSortsX, posSortsY, 30, 30, sort)
@@ -436,6 +438,8 @@ class Niveau:
         # On annonce au joueur la fin de son tour
         if self is not None:
             self.tourDe.finTour(self)
+        if self.isPrevisu:
+            return
         # calcul du prochain joueur
         self.tourIndex = (self.tourIndex + 1) % len(self.joueurs)
         self.tourDe = self.joueurs[self.tourIndex]
@@ -676,6 +680,8 @@ class Niveau:
         fait = 0
         startPosX = joueurCible.posX
         startPosY = joueurCible.posY
+        posPouX = -1
+        posPouY = -1
         while fait < nbCases:
             # Calcul de la case d'arrivée après une poussée de 1 case
             posPouX = joueurCible.posX + coordonnes[0]
@@ -737,14 +743,17 @@ class Niveau:
                 (L'attirance étant une poussé inversé, elle ne cause pas de dommage)
         @type: booléen, True pas défaut"""
         if joueurCible is not None:
+            startX = joueurCible.posX
+            startY = joueurCible.posY
             if effetPousser.coordonnees is not None:
                 if not(effetPousser.coordonnees[0] == 0 and effetPousser.coordonnees[1] == 0):
-                    self.effectuerPousser(
+                    posX, posY, nbCogne = self.effectuerPousser(
                         joueurCible, pousseur, effetPousser.nbCase, doDeg, effetPousser.coordonnees)
-        for etat in joueurCible.etats:
-            if etat.actif():
-                etat.triggerApresDeplacementForce(self, joueurCible, pousseur)
-    
+        if nbCogne < effetPousser.nbCase:
+            for etat in joueurCible.etats:
+                if etat.actif():
+                    etat.triggerApresDeplacementForce(self, joueurCible, pousseur)
+        
     def attire(self, effetAttire, joueurCible, attireur):
         """@summary: Fonction à appeler pour attirer un joueur.
         @nbCases: le nombre de case dont il faut attirer la cible
@@ -1352,6 +1361,8 @@ class Niveau:
         # AfficherOverlays
         if mouseXY[1] > constantes.y_sorts:
             for sort in self.tourDe.sorts:
+                if not sort.lancableParJoueur:
+                    continue
                 try:
                     if sort.vue.isMouseOver(mouseXY):
                         sort.overlay.afficher(sort.vue.posX, constantes.y_sorts)

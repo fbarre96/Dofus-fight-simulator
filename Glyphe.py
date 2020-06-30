@@ -1,12 +1,14 @@
 """@summary: décrit la classe Glyphe
 """
+from Sort import Sort
+
 
 class Glyphe:
     """@summary: Classe décrivant une glyphe dans le jeu Dofus.
      Une glyphe est une zone au sol qui déclenche un effet sur les joueurs
      se trouvant dessus au début de leur tour."""
 
-    def __init__(self, zoneAction, nomSort, sortMono, sortDeplacement, sortSortie, dureeGlyphe,
+    def __init__(self, zoneAction, nomSort, sortEntre, sortDeplacement, sortSortie, dureeGlyphe,
                  centreX, centreY, lanceur, couleur):
         """@summary: Initialise une glyphe.
         @nomSort: le nom du sort à l'origine de la glyphe
@@ -30,7 +32,7 @@ class Glyphe:
         @type: tuple (R,G,B)"""
         self.zoneAction = zoneAction
         self.nomSort = nomSort
-        self.sortMono = sortMono
+        self.sortMono = sortEntre
         self.sortDeplacement = sortDeplacement
         self.sortSortie = sortSortie
         self.duree = dureeGlyphe

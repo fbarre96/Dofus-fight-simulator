@@ -4,7 +4,7 @@
 from copy import deepcopy
 from Effets.Effet import Effet
 import random
-
+import os
 import constantes
 import Overlays
 
@@ -28,7 +28,11 @@ class Sort:
         self.typeLancer = typeLancer
         self.probaCC = int(probaCC)
         self.ldv = ldv
-        self.image = "images/"+constantes.normaliser(nom.lower())+".jpg"
+        nomImageSort = "images/"+constantes.normaliser(nom.lower())+".jpg"
+        if os.path.isfile(nomImageSort):
+            self.image = nomImageSort
+        else:
+            self.image = "images/undefined.jpg"
         self.hitbox = None
         self.chaine = kwargs.get("chaine", True)
         self.nbLancerParTour = int(nbLancerParTour)
@@ -41,15 +45,20 @@ class Sort:
         self.compteLancerParTourParJoueur = {}
         self.compteTourEntreDeux = nbTourEntreDeux
         self.description = kwargs.get("description", "")
+        self.lancableParJoueur = kwargs.get("lancableParJoueur", True)
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText(
             "nom", (210, 105, 30)), Overlays.ColoredText(
                 "description", (224, 238, 238)), (56, 56, 56))
+    
+    @classmethod
+    def getCaracList(cls):
+        return ["lvl", "coutPA", "POMin", "POMax", "POMod", "probaCC", "ldv", "nbTourEntreDeux"]
 
     def __deepcopy__(self, memo):
         toReturn = Sort(self.nom, self.lvl, self.coutPA, self.POMin, self.POMax,
                         self.effets, self.effetsCC, self.probaCC,
                         self.nbLancerParTour, self.nbLancerParTourParJoueur,
-                        self.nbTourEntreDeux, self.POMod, self.typeLancer, self.ldv)
+                        self.nbTourEntreDeux, self.POMod, self.typeLancer, self.ldv, lancableParJoueur=self.lancableParJoueur)
         toReturn.description = self.description
         toReturn.compteTourEntreDeux = self.compteTourEntreDeux
         toReturn.compteLancerParTourParJoueur = self.compteLancerParTourParJoueur
@@ -80,11 +89,20 @@ class Sort:
             else:
                 typeLance = "cercle"
             lvl = int(s["level"]) if s["level"] != "N/A" else 201
-            sortsLevels.append(Sort(sortInfos["nom"], int(lvl), int(s["PA"]), int(s["PO_min"]), int(s["PO_max"]), tabEffets, tabEffetsCritiques, \
-                cc, int(s["Autres"].get("Nb. de lancers par tour", 1)), int(s["Autres"].get("Nb. de lancers par tour par joueur", 1)), \
-                int(s["Autres"].get("Nb. de tours entre deux lancers", 0)), int(1 if s["Autres"].get("Portée modifiable", "Non") == "Oui" else 0), \
-                    typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui", desc=sortInfos["desc"], chaine=s["Autres"].get("Chaîné", "Oui") == "Oui"))
-        print("RETURNED "+str(sortsLevels))
+            newSort = Sort(
+                    sortInfos["nom"], int(lvl), int(s["PA"]),\
+                    int(s["PO_min"]), int(s["PO_max"]),\
+                    tabEffets, tabEffetsCritiques,\
+                    cc, int(s["Autres"].get("Nb. de lancers par tour", 1)),\
+                    int(s["Autres"].get("Nb. de lancers par tour par joueur", 1)),\
+                    int(s["Autres"].get("Nb. de tours entre deux lancers", 0)),\
+                    int(1 if s["Autres"].get("Portée modifiable", "Non") == "Oui" else 0),\
+                    typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui",\
+                    desc=sortInfos["desc"],\
+                    chaine=s["Autres"].get("Chaîné", "Oui") == "Oui",\
+                    lancableParJoueur=s.get("lancableParJoueur", True)\
+                )
+            sortsLevels.append(newSort)
         return sortsLevels
 
     def aPorte(self, j1x, j1y, ciblex, cibley, PO):

@@ -150,7 +150,7 @@ class EffetSoinSelonSubit(EffetSoin):
     Cet effet soinges une cible à hauteur d'un pourcentage des dégats subits
     DOIT AVOIR UN SETTER DEGATS SUBITS ."""
 
-    def __init__(self, pourcentage, **kwargs):
+    def __init__(self, pourcentage=50, **kwargs):
         """@summary: Initialise un effet de soin.
         @pourcentage: le pourcentage de la vie max à soigner
         @type: int (1 à 100)
@@ -163,6 +163,34 @@ class EffetSoinSelonSubit(EffetSoin):
     def __deepcopy__(self, memo):
         cpy = EffetSoinSelonSubit(self.pourcentage, **self.kwargs)
         return cpy
+
+    def __str__(self):
+        return "Soigne "+str(self.pourcentage)+"% des dégâts subits"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        pourcentageLbl = ttk.Label(frame, text="Pourcentage:")
+        pourcentageLbl.pack(side="left")
+        pourcentageSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        pourcentageSpinbox.delete(0, 'end')
+        pourcentageSpinbox.insert(0, int(self.pourcentage))
+        pourcentageSpinbox.pack(side="left")
+        ret["pourcentage"] = pourcentageSpinbox
+        frame.pack()
+        return ret
+    
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage"] = self.pourcentage
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["pourcentage"]), **infos["kwargs"])
+
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet,

@@ -7,6 +7,7 @@ import os
 from importlib import import_module
 from dofus_sorts_downloader import normaliser
 from Effets.Effet import Effet, ChildDialogEffect
+from EffectsTreeview import EffectsTreeview
 from copy import deepcopy
 import Zones
 
@@ -66,8 +67,6 @@ class OpeningPage:
         self.poModValues = {}
         self.chaineValues = {}
         self.ldvValues = {}
-        self.effectsValues = {}
-        self.effectsCritValues = {}
         self.normalEffectTables = {}
         self.criticalEffectTables = {}
         self.typeLancerComboboxs = {}
@@ -75,6 +74,7 @@ class OpeningPage:
         self.nbLanceTourSpinboxs = {}
         self.nbLanceTourParJoueurSpinboxs = {}
         self.nbTourEntreDeuxLancerSpinboxs = {}
+        self.levelObtentionValues = {}
         self.levelNotebook = None
         self.imgLbl = None
         self.titleLbl = None
@@ -103,7 +103,20 @@ class OpeningPage:
         self.descLbl = ttk.Label(descFrame, text="description du sort", font=("Helvetica", 12))
         self.descLbl.pack(side="left", expand="yes")
         descFrame.pack(side="top", fill=tk.X)
-        
+        debutCombatFrame = ttk.Frame(self.editframe)
+        debutCombatLabel = ttk.Label(debutCombatFrame, text="Sort de début de combat:")
+        debutCombatLabel.pack(side="left")
+        self.debutCombatValue = tk.BooleanVar()
+        debutCombatCheckbutton = ttk.Checkbutton(debutCombatFrame, variable=self.debutCombatValue)
+        debutCombatCheckbutton.pack(side="left")
+        debutCombatFrame.pack(side="top")
+        lancableParJoueurFrame = ttk.Frame(self.editframe)
+        lancableParJoueurLabel = ttk.Label(lancableParJoueurFrame, text="Sort lancable par le joueur:")
+        lancableParJoueurLabel.pack(side="left")
+        self.lancableParJoueurValue = tk.BooleanVar()
+        lancableParJoueurCheckbutton = ttk.Checkbutton(lancableParJoueurFrame, variable=self.lancableParJoueurValue)
+        lancableParJoueurCheckbutton.pack(side="left")
+        lancableParJoueurFrame.pack(side="top")
         self.levelNotebook = ttk.Notebook(self.editframe)
         for i in range(1, 4):
             levelFrame = ttk.Frame(self.levelNotebook)
@@ -133,27 +146,17 @@ class OpeningPage:
             effectsFrame.columnconfigure(0, weight=6)
             effectsFrame.columnconfigure(1, weight=1)
             effectsFrame.columnconfigure(2, weight=6)
-            self.normalEffectTables[str(i)] = ttk.Treeview(effectsFrame)
-            self.normalEffectTables[str(i)].heading("#0", text="Effets normaux:")
+            self.normalEffectTables[str(i)] = EffectsTreeview(effectsFrame, "Effets normaux:")
             self.normalEffectTables[str(i)].grid(row=0, column=0, sticky=tk.NSEW, padx=5, pady=5)
-            self.normalEffectTables[str(i)].bind("<Double-1>", self.onNormalEffectDoubleClick)
-            self.normalEffectTables[str(i)].bind("<Delete>", self.onNormalEffectDelete)
-            self.normalEffectTables[str(i)].bind("<Alt-Up>", self.onNormalEffectUp)
-            self.normalEffectTables[str(i)].bind("<Alt-Down>", self.onNormalEffectDown)
-            self.normalEffectTables[str(i)].bind("<Delete>", self.onNormalEffectDelete)
+
             buttonsEffectFrame = ttk.Frame(effectsFrame)
             normalToCritButton = ttk.Button(buttonsEffectFrame, text=">>", command=lambda:self.normalToCrit())
             normalToCritButton.pack()
             precLvlImportButton = ttk.Button(buttonsEffectFrame, text="<<Lvl-1", command=lambda: self.importFromPrecLevel())
             precLvlImportButton.pack()
             buttonsEffectFrame.grid(row=0, column=1, padx=5, pady=5)
-            self.criticalEffectTables[str(i)] = ttk.Treeview(effectsFrame)
-            self.criticalEffectTables[str(i)].heading("#0", text="Effets critiques:")
+            self.criticalEffectTables[str(i)] = EffectsTreeview(effectsFrame, "Effets critiques:")
             self.criticalEffectTables[str(i)].grid(row=0, column=2, sticky=tk.NSEW, padx=5, pady=5)
-            self.criticalEffectTables[str(i)].bind("<Double-1>", self.onCriticalEffectDoubleClick)
-            self.criticalEffectTables[str(i)].bind("<Delete>", self.onCriticalEffectDelete)
-            self.criticalEffectTables[str(i)].bind("<Alt-Up>", self.onCriticalEffectUp)
-            self.criticalEffectTables[str(i)].bind("<Alt-Down>", self.onCriticalEffectDown)
             effectsFrame.pack(fill=tk.X, side="top")
             subCaracsFrame = ttk.Frame(levelFrame)
             chaineLabel = ttk.Label(subCaracsFrame, text="Effets chainés:")
@@ -196,10 +199,18 @@ class OpeningPage:
             
             self.nbTourEntreDeuxLancerSpinboxs[str(i)].grid(row=6, column=1, sticky="w", pady=5)
             
+            levelObtentionLbl = ttk.Label(subCaracsFrame, text="Change level to:")
+            levelObtentionLbl.grid(row=7, column=0, sticky="e", pady=15)
+            self.levelObtentionValues[str(i)] = tk.StringVar()
+            self.levelObtentionValues[str(i)].trace("w", lambda name, index, mode, var=self.levelObtentionValues[str(i)], i=i: 
+                self.levelModified(var, i))
+            levelObtentionEntry = ttk.Entry(subCaracsFrame, width=3, textvariable=self.levelObtentionValues[str(i)])
+            levelObtentionEntry.grid(row=7, column=1, sticky="w", pady=15)
+
             subCaracsFrame.pack(side="top", fill=tk.BOTH, padx=10, pady=5)
             levelFrame.pack(fill=tk.BOTH, padx=10, pady=5)
             self.levelNotebook.add(levelFrame, text="  "+"lvl"+" ")
-            
+        
         self.levelNotebook.pack(side="top", fill=tk.BOTH, expand="yes")
         okButton = ttk.Button(self.editframe, text="Appliquer", command=lambda: self.saveSpell())
         okButton.pack(anchor="center", side="bottom")
@@ -207,16 +218,21 @@ class OpeningPage:
         if spellname != "":
             self.openSpell(spellname)
 
+    def levelModified(self, var, indexLevel):
+        newValue = var.get()
+        self.levelNotebook.tab(int(indexLevel)-1, text="   "+str(newValue)+"   ")
+
+
     def normalToCrit(self):
         lvl = self.levelNotebook.index(self.levelNotebook.select())+1
         children = self.criticalEffectTables[str(lvl)].get_children()
         for child in children:
             self.criticalEffectTables[str(lvl)].delete(child)
-        self.effectsCritValues[str(lvl)].clear()
-        effetDict = self.effectsValues[str(lvl)]
+        self.criticalEffectTables[str(lvl)].effectsValues.clear()
+        effetDict = self.normalEffectTables[str(lvl)].effectsValues
         for key, val in effetDict.items():
-            self.effectsCritValues[str(lvl)][key] = deepcopy(val)
-            self.criticalEffectTables[str(lvl)].insert('', 'end', str(lvl)+'|'+str(key), text=str(self.effectsCritValues[str(lvl)][key]))
+            self.criticalEffectTables[str(lvl)].effectsValues[key] = deepcopy(val)
+            self.criticalEffectTables[str(lvl)].insert('', 'end', str(key), text=str(self.criticalEffectTables[str(lvl)].effectsValues[key]))
     
     def importFromPrecLevel(self):
         precLvl = self.levelNotebook.index(self.levelNotebook.select())
@@ -226,163 +242,28 @@ class OpeningPage:
         children = self.normalEffectTables[str(currentLvl)].get_children()
         for child in children:
             self.normalEffectTables[str(currentLvl)].delete(child)
-        self.effectsValues[str(currentLvl)].clear()
-        effetDict = self.effectsValues[str(precLvl)]
+        self.normalEffectTables[str(currentLvl)].effectsValues.clear()
+        effetDict = self.normalEffectTables[str(precLvl)].effectsValues
         for key, val in effetDict.items():
-            self.effectsValues[str(currentLvl)][key] = deepcopy(val)
-            self.normalEffectTables[str(currentLvl)].insert('', 'end', str(currentLvl)+'|'+str(key), text=str(self.effectsValues[str(currentLvl)][key]))
+            self.normalEffectTables[str(currentLvl)].effectsValues[key] = deepcopy(val)
+            self.normalEffectTables[str(currentLvl)].insert('', 'end', str(key), text=str(self.normalEffectTables[str(currentLvl)].effectsValues[key]))
     
-    def onCriticalEffectUp(self, event):
-        treeview = event.widget
-        selected = treeview.selection()[0]
-        currentIndice = 0
-        children = treeview.get_children()
-        for i, child in enumerate(children):
-            if child == selected:
-                currentIndice = i
-                break
-        if currentIndice != 0:
-            item_moved = selected
-            moved_by_side_effect = children[currentIndice-1]
-            self.effectsCritValues = self.swapTreeviewItem(treeview, item_moved, moved_by_side_effect, self.effectsCritValues)
-        return "break"
-
-    def onCriticalEffectDown(self, event):
-        treeview = event.widget
-        selected = treeview.selection()[0]
-        len_max = len(treeview.get_children())
-        currentIndice = len_max-1
-        children = treeview.get_children()
-        for i, child in enumerate(children):
-            if child == selected:
-                currentIndice = i
-                break
-        if currentIndice < len_max-1:
-            item_moved = selected
-            moved_by_side_effect = children[currentIndice+1]
-            self.effectsCritValues = self.swapTreeviewItem(treeview, item_moved, moved_by_side_effect, self.effectsCritValues)
-        return "break"
-
-    def onNormalEffectUp(self, event):
-        treeview = event.widget
-        selected = treeview.selection()[0]
-        currentIndice = 0
-        children = treeview.get_children()
-        for i, child in enumerate(children):
-            if child == selected:
-                currentIndice = i
-                break
-        if currentIndice != 0:
-            item_moved = selected
-            moved_by_side_effect = children[currentIndice-1]
-            self.effectsValues= self.swapTreeviewItem(treeview, item_moved, moved_by_side_effect, self.effectsValues)
-        return "break"
-
-    def onNormalEffectDown(self, event):
-        treeview = event.widget
-        selected = treeview.selection()[0]
-        len_max = len(treeview.get_children())
-        currentIndice = len_max-1
-        children = treeview.get_children()
-        for i, child in enumerate(children):
-            if child == selected:
-                currentIndice = i
-                break
-        if currentIndice < len_max-1:
-            item_moved = selected
-            moved_by_side_effect = children[currentIndice+1]
-            self.effectsValues = self.swapTreeviewItem(treeview, item_moved, moved_by_side_effect, self.effectsValues)
-        return "break"
-    
-    def swapTreeviewItem(self, treeview, item_moved, moved_by_side_effect, values):
-        parts_moved = item_moved.split('|')
-        lvl_moved = parts_moved[0]
-        index_moved = parts_moved[1]
-        parts_moved_side_effect = moved_by_side_effect.split('|')
-        lvl_moved_side_effect = parts_moved_side_effect[0]
-        index_moved_side_effect = parts_moved_side_effect[1]
-        save = values[str(lvl_moved_side_effect)][str(index_moved_side_effect)]
-        values[str(lvl_moved_side_effect)][str(index_moved_side_effect)] = values[str(lvl_moved)][str(index_moved)]
-        values[str(lvl_moved)][str(index_moved)] = save
-        treeview.item(item_moved, text=str(values[str(lvl_moved)][str(index_moved)]))
-        treeview.item(moved_by_side_effect, text=str(values[str(lvl_moved_side_effect)][str(index_moved_side_effect)]))
-        treeview.selection_set(moved_by_side_effect)
-        return values
-    
-    def onNormalEffectDoubleClick(self, event):
-        treeview = event.widget
-        item = treeview.identify('item', event.x, event.y)
-        if item == "":
-            lvl = self.levelNotebook.index(self.levelNotebook.select())+1
-            parts = str(max([int(x) for x in self.effectsValues[str(lvl)].keys()]+[0])+1)
-            effect = self.openEffectModifyWindow()
-            if effect is not None:
-                self.effectsValues[str(lvl)][parts] = effect
-                treeview.insert('', 'end', str(lvl)+"|"+parts, text=str(effect))
-        else:
-            parts = item.split('|')
-            lvl = parts[0]
-            index = parts[1]
-
-            effect = self.effectsValues[lvl][index]
-            effect = self.openEffectModifyWindow(effect)
-            if effect is not None:
-                self.effectsValues[lvl][index] = effect
-                treeview.item(item, text=str(self.effectsValues[lvl][index]))
-   
-    def onCriticalEffectDoubleClick(self, event):
-        treeview = event.widget
-        item = treeview.identify('item', event.x, event.y)
-        if item == "":
-            lvl = self.levelNotebook.index(self.levelNotebook.select())+1
-            parts = str(max([int(x) for x in self.effectsCritValues[str(lvl)].keys()])+1)
-            effect = self.openEffectModifyWindow()
-            if effect is not None:
-                self.effectsCritValues[str(lvl)][parts] = effect
-                treeview.insert('', 'end', str(lvl)+"|"+parts, text=str(effect))
-        else:
-            parts = item.split('|')
-            lvl = parts[0]
-            index = parts[1]
-            effect = self.effectsCritValues[lvl][index]
-            effect = self.openEffectModifyWindow(effect)
-            if effect is not None:
-                self.effectsCritValues[lvl][index] = effect
-                treeview.item(item, text=str(effect))
-    
-    def onNormalEffectDelete(self, event):
-        treeview = event.widget
-        item = treeview.identify('item', event.x, event.y)
-        parts = item.split('|')
-        lvl = parts[0]
-        index = parts[1]
-        del self.effectsValues[lvl][index]
-        treeview.delete(item)
-
-    def onCriticalEffectDelete(self, event):
-        treeview = event.widget
-        item = treeview.identify('item', event.x, event.y)
-        parts = item.split('|')
-        lvl = parts[0]
-        index = parts[1]
-        del self.effectsCritValues[lvl][index]
-        treeview.delete(item)
-
-    def openEffectModifyWindow(self, effect=None):
-        effectDialog = ChildDialogEffect(self.fenetre, effect)
-        self.fenetre.wait_window(effectDialog.app)
-        return effectDialog.rvalue
-
     def saveSpell(self):
         spellname = self.lastOpenSpell
         spell = self.sorts_values[spellname]
         spell["desc"] = self.descLbl.cget("text")
+        spell["debutCombat"] = self.debutCombatValue.get()
+        spell["lancableParJoueur"] = self.lancableParJoueurValue.get()
         for i in range(1, 4):
-            if str(i) not in spell.keys():
+            level = self.levelNotebook.tab(i-1, option="text")
+            if str(i) not in spell.keys() and level == "N/A":
                 continue
+            elif str(i) not in spell.keys():
+                spell[str(i)] = {"Autres":{}, "level":level}
+                spellAtLevel = spell[str(i)]
             else:
                 spellAtLevel = spell[str(i)]
-            spellAtLevel["level"] = self.levelNotebook.tab(i-1, option="text")
+            spellAtLevel["level"] = level
             if spellAtLevel["level"] == "N/A":
                 del self.sorts_values[spellname][str(i)]
                 continue
@@ -399,11 +280,11 @@ class OpeningPage:
             spellAtLevel["Autres"]["Nb. de lancers par tour par joueur"] = str(self.nbLanceTourParJoueurSpinboxs[str(i)].get())
             spellAtLevel["Autres"]["Nb. de tours entre deux lancers"] = str(self.nbTourEntreDeuxLancerSpinboxs[str(i)].get())
             spellAtLevel["Effets"] = []
-            for effectsValue in self.effectsValues[str(i)].values():
+            for effectsValue in self.normalEffectTables[str(i)].effectsValues.values():
                 if effectsValue is not None:
                     spellAtLevel["Effets"].append(effectsValue.getAllInfos())
             spellAtLevel["EffetsCritiques"] = []
-            for effectsValue in self.effectsCritValues[str(i)].values():
+            for effectsValue in self.criticalEffectTables[str(i)].effectsValues.values():
                 if effectsValue is not None:
                     spellAtLevel["EffetsCritiques"].append(effectsValue.getAllInfos())
             self.sorts_values[spellname][str(i)] = spellAtLevel
@@ -424,9 +305,15 @@ class OpeningPage:
 
         self.treevw = ttk.Treeview(self.frameTw, show="tree", style="new.Treeview")
         for spellname in self.sorts_values.keys():
-            root_pic1 = Image.open(os.path.join(self.iconFolder, normaliser(spellname)+".png"))                       # Open the image like this first
-            self.spellIcons[spellname] = ImageTk.PhotoImage(root_pic1)      # Then with PhotoImage. NOTE: self.root_pic2 =     and not     root_pic2 =
-            self.treevw.insert('', 'end', spellname, text=spellname, image=self.spellIcons[spellname])
+            try:
+                root_pic1 = Image.open(os.path.join(self.iconFolder, normaliser(spellname)+".png"))                       # Open the image like this first
+                self.spellIcons[spellname] = ImageTk.PhotoImage(root_pic1)      # Then with PhotoImage. NOTE: self.root_pic2 =     and not     root_pic2 =
+            except:
+                self.spellIcons[spellname] = None
+            if self.spellIcons[spellname] is not None:
+                self.treevw.insert('', 'end', spellname, text=spellname, image=self.spellIcons[spellname])
+            else:
+                self.treevw.insert('', 'end', spellname, text=spellname)
         scbVSel = ttk.Scrollbar(self.frameTw,
                                 orient=tk.VERTICAL,
                                 command=self.treevw.yview)
@@ -473,9 +360,11 @@ class OpeningPage:
         self.imgLbl.configure(image=self.spellIcons.get(spellname))
         self.titleLbl.configure(text=spellname)
         self.descLbl.configure(text=spell.get("desc", ""))
+        self.debutCombatValue.set(spell.get("debutCombat", False))
+        self.lancableParJoueurValue.set(spell.get("lancableParJoueur", True))
         lastLevel = 0
-        for i in range(1,4):
-            self.levelNotebook.tab(i-1, text=str("N/A"), state="disabled")
+        for i in range(1, 4):
+            self.levelNotebook.tab(i-1, text=str("N/A"))
             if str(i) not in spell.keys():
                 spellAtLevel= {"Autres":{}, "level":"1"}
             else:
@@ -498,14 +387,14 @@ class OpeningPage:
             for effect_i, effect_infos in enumerate(spellAtLevel.get("Effets", [])):
                 craftedEffect = Effet.effectFactory(effect_infos, tailleZone=tailleZone, typeZone=typeZone, desc=spell.get("desc", ""), nomSort=spellname)
                 listOfEffect[str(effect_i)] = craftedEffect
-                self.normalEffectTables[str(i)].insert('', 'end', str(i)+'|'+str(effect_i), text=str(craftedEffect))
-            self.effectsValues[str(i)] = listOfEffect
+                self.normalEffectTables[str(i)].insert('', 'end', str(effect_i), text=str(craftedEffect))
+            self.normalEffectTables[str(i)].effectsValues = listOfEffect
             listOfEffect = {}
             for effect_i, effect_infos in enumerate(spellAtLevel.get("EffetsCritiques", [])):
                 craftedEffect = Effet.effectFactory(effect_infos, tailleZone=tailleZone, typeZone=typeZone, desc=spell.get("desc", ""), nomSort=spellname)
                 listOfEffect[str(effect_i)] = craftedEffect
-                self.criticalEffectTables[str(i)].insert('', 'end', str(i)+'|'+str(effect_i), text=str(craftedEffect))
-            self.effectsCritValues[str(i)] = listOfEffect
+                self.criticalEffectTables[str(i)].insert('', 'end', str(effect_i), text=str(craftedEffect))
+            self.criticalEffectTables[str(i)].effectsValues = listOfEffect
             self.chaineValues[str(i)].set(1 if spellAtLevel["Autres"].get("Chaîné", "Oui") == "Oui" else 0) # N'existe pas sur le site officiel
             self.ldvValues[str(i)].set(1 if spellAtLevel["Autres"].get("Ligne de vue", "Oui") == "Oui" else 0)
             if spellAtLevel["Autres"].get("Lancer en diagonale", "Non") == "Oui": # N'existe pas sur le site officiel
@@ -531,6 +420,7 @@ class OpeningPage:
                     lastLevel = int(spellAtLevel.get("level", "1"))
             except ValueError:
                 pass
+
         self.levelNotebook.select(0)
 
     def main(self):

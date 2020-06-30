@@ -158,7 +158,7 @@ class Etat:
         @type: Niveau"""
         return
 
-    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort):
+    def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
         # pylint: disable=unused-argument
         """@summary:
             Un trigger appelé pour tous les états des 2 joueurs impliqués lorsque des dommages
