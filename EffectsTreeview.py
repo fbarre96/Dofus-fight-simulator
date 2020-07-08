@@ -9,8 +9,13 @@ class EffectsTreeview(ttk.Treeview):
         self.effectsValues = {}
         for i, effect in enumerate(effects):
             if effect is not None:
-                self.effectsValues[str(i)] = effect
-                self.insert('', 'end', str(i), text=str(effect))
+                if isinstance(effect, Effet):
+                    self.effectsValues[str(i)] = effect
+                    self.insert('', 'end', str(i), text=str(effect))
+                else:
+                    effect_obj = Effet.effectFactory(effect)
+                    self.effectsValues[str(i)] = effect_obj
+                    self.insert('', 'end', str(i), text=str(effect_obj))
         self.bind("<Double-1>", self.onNormalEffectDoubleClick)
         self.bind("<Delete>", self.onNormalEffectDelete)
         self.bind("<Alt-Up>", self.onNormalEffectUp)

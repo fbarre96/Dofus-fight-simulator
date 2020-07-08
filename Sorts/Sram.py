@@ -152,8 +152,8 @@ def getSorts(lvl):
             EffetEtatSelf(EtatEffetSiPiegeDeclenche("Toxines", 0, 2, EffetSetDureeEtat(
                 "Toxines", 0, 2, zone=Zones.TypeZoneInfini()), "Toxines", "lanceur", "declencheur"), etat_requis_cibles="Toxines")
         ], [], 0, 1, 1, 2, 1, "cercle", True, description="""L'ennemi ciblé subit un poison Air pendant 2 tours.
-    Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
     Il ne peut y avoir qu'un seul ennemi sous l'effet de Toxines.""", chaine=False)
+    Si la cible subit un piège alors qu'elle est sous les effets de Toxines, les dommages du poison sont augmentés et sa durée est réinitialisée.
     ]))
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Fourvoiement", 6, 4, 0, 0, [

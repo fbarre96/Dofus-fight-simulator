@@ -11,8 +11,9 @@
             "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\editeur_sorts_gui.py",
             "console": "integratedTerminal",
             "args":[
-                "2020-03-23\\sorts_cra.json",
-                "2020-03-23\\sorts_icones"
+                "Sorts/sram_save.json",
+                "Sorts/sram_save2.json",
+                "2020-03-23/sorts_icones/"
             ]
         },
         {

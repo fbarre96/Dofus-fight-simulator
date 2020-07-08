@@ -93,7 +93,15 @@ class EffetPiege(Effet):
         ret["couleur_r"] = self.couleur_r
         ret["couleur_g"] = self.couleur_g
         ret["couleur_b"] = self.couleur_b
-        ret["effets"] = self.effets
+        effects = []
+        for effet in self.effets:
+            if isinstance(effet, Effet):
+                effects.append(effet.getAllInfos())
+            elif isinstance(effet, dict):
+                effects.append(effet)
+            else:
+                raise Exception("Wrong type of object in effect piege treeview")
+        ret["effets"] = effects
         return ret
 
     @classmethod
