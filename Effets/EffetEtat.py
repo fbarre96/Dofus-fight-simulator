@@ -218,7 +218,6 @@ class EffetEtatSelf(Effet):
         return joueurLanceur.appliquerEtat(etatCopie, joueurLanceur,
                                            self.kwargs.get("cumulMax", -1), niveau)
 
-
 class EffetEtatSelfTF(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur portant le nom du sort à l'origine d'un TF."""

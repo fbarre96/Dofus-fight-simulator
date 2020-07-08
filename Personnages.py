@@ -263,7 +263,6 @@ class Personnage(object):
         """
         closestLvlSort = None
         for sort in tabSorts[0:]:
-            print("Sortlvl  "+str(sort.lvl)+" <= "+str(lvl))
             if int(sort.lvl) <= int(lvl):
                 if closestLvlSort is not None:
                     if int(closestLvlSort.lvl) < int(sort.lvl):

@@ -365,6 +365,137 @@ class EffetVolDeVie(EffetDegats):
                 print(joueurLanceur.nomPerso+" vol " +
                       str(int(self.total/2)) + "PV")
 
+class EffetDegatsSelonPVRestants(EffetDegats):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    Hérite de EffetsDegats.
+    Cet effet inflige des dégâts si les pv restants de la cible sont dans le seuil défini.
+    """
+
+    def __init__(self, int_minJet=0, int_maxJet=0, str_typeDegats="neutre", int_seuil_bas=0, int_seuil_haut=100, **kwargs):
+        """@summary: Initialise un effet de vol de vie.
+        @int_minJet: le jet minimum possible de dégâts de base de l'effet
+        @type: int
+        @int_maxJet: le jet maximum possible de dégâts de base de l'effet
+        @type: int
+        @str_typeDegats: l'élément dans lequel les dégâts seront infligés
+                         parmi [terre,feu,air,chance,neutre]
+        @type: int
+        @int_seuil_bas: le seuil de santé minimal ou le joueur doit etre strictement supérieur
+        @type: int
+        @int_seuil_haut: le seuil de santé maximal ou le joueur doit etre inférieur ou égal
+        @type: int
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.kwargs = kwargs
+        self.seuilBas = int_seuil_bas
+        self.seuilHaut = int_seuil_haut
+        super().__init__(
+            int_minJet, int_maxJet, str_typeDegats, **kwargs)
+
+    def __str__(self):
+        return str(self.minJet)+" à "+str(self.maxJet)+" ("+self.typeDegats.capitalize()+")"
+
+    def __deepcopy__(self, memo):
+        return EffetDegatsSelonPVRestants(self.minJet, self.maxJet, self.typeDegats, self.seuilBas, self.seuilHaut, **self.kwargs)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        jetMinLbl = ttk.Label(frame, text="Jet min:")
+        jetMinLbl.pack(side="left")
+        jetMinSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        jetMinSpinbox.delete(0, 'end')
+        jetMinSpinbox.insert(0, int(self.minJet))
+        jetMinSpinbox.pack(side="left")
+        ret["minJet"] = jetMinSpinbox
+        jetMaxLbl = ttk.Label(frame, text="Jet max:")
+        jetMaxLbl.pack(side="left")
+        jetMaxSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        jetMaxSpinbox.delete(0, 'end')
+        jetMaxSpinbox.insert(0, int(self.maxJet))
+        jetMaxSpinbox.pack(side="left")
+        ret["maxJet"] = jetMaxSpinbox
+        degTypeLbl = ttk.Label(frame, text="Type:")
+        degTypeLbl.pack(side="left")
+        degTypeCombobox = ttk.Combobox(frame, values=("terre", "feu", "air", "chance", "neutre", "meilleur"), state="readonly")
+        degTypeCombobox.set(self.typeDegats)
+        degTypeCombobox.pack(side="left")
+        ret["typeDegats"] = degTypeCombobox
+        jetSeuilMinLbl = ttk.Label(frame, text="Seuil bas en % >:")
+        jetSeuilMinLbl.pack(side="left")
+        jetSeuilMinSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        jetSeuilMinSpinbox.delete(0, 'end')
+        jetSeuilMinSpinbox.insert(0, int(self.seuilBas))
+        jetSeuilMinSpinbox.pack(side="left")
+        ret["seuilBas"] = jetSeuilMinSpinbox
+        jetSeuilMaxLbl = ttk.Label(frame, text="Seuil max en % <=:")
+        jetSeuilMaxLbl.pack(side="left")
+        jetSeuilMaxSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        jetSeuilMaxSpinbox.delete(0, 'end')
+        jetSeuilMaxSpinbox.insert(0, int(self.seuilHaut))
+        jetSeuilMaxSpinbox.pack(side="left")
+        ret["seuilHaut"] = jetSeuilMaxSpinbox
+        bypassDmgCalcLbl = ttk.Label(frame, text="Bypass dommage calc (!):")
+        bypassDmgCalcLbl.pack(side="left")
+        bypassDmgCalcVar = tk.BooleanVar()
+        bypassDmgCalcVar.set(self.kwargs.get("bypassDmgCalc", False))
+        bypassDmgCalcCheckbutton = ttk.Checkbutton(frame, variable=bypassDmgCalcVar)
+        bypassDmgCalcCheckbutton.pack(side="left")
+        ret["kwargs:bypassDmgCalc"] = bypassDmgCalcVar
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["minJet"] = self.minJet
+        ret["maxJet"] = self.maxJet
+        ret["typeDegats"] = self.typeDegats
+        ret["seuilBas"] = self.seuilBas
+        ret["seuilHaut"] = self.seuilHaut
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["minJet"]), int(infos["maxJet"]), infos["typeDegats"], int(infos["seuilBas"]), int(infos["seuilHaut"]), **infos["kwargs"])
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        """@summary: Appelé lors de l'application de l'effet.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+
+        # Utilisation du parent EffetDegats
+        if joueurCaseEffet is not None:
+            if (joueurCaseEffet.vie / joueurCaseEffet.vieMax)*100 < self.seuilBas and (joueurCaseEffet.vie / joueurCaseEffet.vieMax)*100 <= self.seuilHaut:
+                self.total = super().calculDegats(joueurCaseEffet, joueurLanceur, kwargs.get(
+                    "nom_sort", ""), kwargs.get("caseCibleX"), kwargs.get("caseCibleY"))
+                if self.pile:
+                    niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+                else:
+                    self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        # Et enfin le vol de  vie
+
+        if joueurCaseEffet is not None:
+            # Le soin est majoré à la vie de début du combat
+            if joueurLanceur.vie > joueurLanceur.vieMax:
+                joueurLanceur.vie = joueurLanceur.vieMax
+            self.appliquerDegats(niveau, joueurCaseEffet, joueurLanceur)
+            # Soin
+
+            joueurLanceur.vie += (self.total/2)
+            joueurLanceur.vie = int(joueurLanceur.vie)
+            if not niveau.isPrevisu():
+                print(joueurLanceur.nomPerso+" vol " +
+                      str(int(self.total/2)) + "PV")
 
 class EffetDegatsSelonPMUtilises(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

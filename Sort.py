@@ -100,8 +100,10 @@ class Sort:
                     typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui",\
                     desc=sortInfos["desc"],\
                     chaine=s["Autres"].get("Chaîné", "Oui") == "Oui",\
-                    lancableParJoueur=s.get("lancableParJoueur", True)\
+                    lancableParJoueur=sortInfos.get("lancableParJoueur", True)\
                 )
+            if sortInfos["nom"] == "Activation de Brume":
+                print("debg")
             sortsLevels.append(newSort)
         return sortsLevels
 

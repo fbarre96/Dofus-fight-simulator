@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File (Integrated Terminal)",
+            "name": "Python: editeur",
             "type": "python",
             "request": "launch",
             "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\editeur_sorts_gui.py",
@@ -15,6 +15,13 @@
                 "Sorts/sram_save2.json",
                 "2020-03-23/sorts_icones/"
             ]
+        },
+        {
+            "name": "Python: dofus fs",
+            "type": "python",
+            "request": "launch",
+            "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\Dofus_FS.py",
+            "console": "integratedTerminal"
         },
         {
             "name": "Python: Remote Attach",

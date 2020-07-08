@@ -243,7 +243,7 @@ class EtatEffetSiSubit(EtatEffet):
         ret["cible"] = self.cibleCombobox
         typeDegLbl = ttk.Label(frame, text="Seulement de type :")
         typeDegLbl.grid(row=1, column=0, sticky="e")
-        self.typeDegCombobox = ttk.Combobox(frame, values=("", "doPou", "feu", "terre", "air", "eau", "neutre"), state="readonly")
+        self.typeDegCombobox = ttk.Combobox(frame, values=("", "doPou", "feu", "terre", "air", "eau", "neutre", "melee", "distance"), state="readonly")
         self.typeDegCombobox.set(self.typeDeg)
         self.typeDegCombobox.grid(row=1, column=1, sticky="w")
         ret["typeDeg"] = self.typeDegCombobox

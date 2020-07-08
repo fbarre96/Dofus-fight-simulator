@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
 import sys
 import json
 from PIL import Image, ImageTk
@@ -332,6 +333,7 @@ class OpeningPage:
         self.frameTw.rowconfigure(0, weight=1) # Weight 1 sur un layout grid, sans ça le composant ne changera pas de taille en cas de resize
         self.frameTw.columnconfigure(0, weight=1) # Weight 1 sur un layout grid, sans ça le composant ne changera pas de taille en cas de resize
         self.treevw.bind("<<TreeviewSelect>>", self.onTreeviewSelect)
+        self.treevw.bind("<Delete>", self.delSort)
 
     def addSort(self, event=None):
         sortDialog = ChildDialogNouveauSort(self.fenetre)
@@ -340,7 +342,15 @@ class OpeningPage:
             self.sorts_values[sortDialog.rvalue] = {}
             self.treevw.insert("", "end", sortDialog.rvalue, text=sortDialog.rvalue)
        
-        
+    def delSort(self, event=None):
+        selection = self.treevw.selection()
+        if len(selection) == 1:
+            rep = messagebox.askquestion("Delete "+str(selection[0]), "Confirm deletion of "+str(selection[0]), icon="warning")
+            if rep.lower() == "yes":
+                del self.sorts_values[str(selection[0])]
+                self.treevw.delete(str(selection[0]))
+                with open(outfilename, "w") as f:
+                    f.write(json.dumps(self.sorts_values))
         
 
     def onTreeviewSelect(self, _event=None):
