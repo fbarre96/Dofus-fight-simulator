@@ -27,13 +27,13 @@ class JoueurIA:
         @return: Le nouveau sortSelectionne éventuel"""
 
         # Clic souris
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYUP:
             if event.key == K_F1:  # touche F1 = fin du tour
                 sortSelectionne = None
-                niveau.finTour()
-            if event.key == K_ESCAPE:  # touche échap = déselection de sort.
+                niveau.finTour(force=True)
+            elif event.key == K_ESCAPE:  # touche échap = déselection de sort.
                 sortSelectionne = None
-            if event.key >= K_1 and event.key <= K_9:
+            elif event.key >= K_1 and event.key <= K_9:
                 aLance = niveau.tourDe.sorts[event.key - K_1]
                 sortSelectionne = joueur.selectionSort(aLance, niveau)
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -43,10 +43,11 @@ class JoueurIA:
                 # Clic gauche sort = tentative de sélection de sort
                 if mouseXY[1] > constantes.y_sorts:
                     for sort in niveau.tourDe.sorts:
-                        if sort.vue.isMouseOver(mouseXY):
-                            sortSelectionne = joueur.selectionSort(sort, niveau)
-                            niveau.setPrevisu(True)
-                            break
+                        if sort.lancableParJoueur:
+                            if sort.vue.isMouseOver(mouseXY):
+                                sortSelectionne = joueur.selectionSort(sort, niveau)
+                                niveau.setPrevisu(True)
+                                break
                 # Clic gauche grille de jeu = tentative de lancé un sort
                 #  si un sort est selectionné ou tentative de déplacement sinon
                 else:

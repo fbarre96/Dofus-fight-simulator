@@ -113,6 +113,7 @@ class EtatBoostSortCarac(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         sortToUpdate = self.getSortToUpdate(personnage)
+        print("Boost sort "+str(self.nomSort)+" d perso "+str(personnage.classe))
         caracValue = getattr(sortToUpdate, self.nomAttributCarac)
         setattr(sortToUpdate, self.nomAttributCarac,
                 caracValue + self.boostCarac)

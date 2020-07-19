@@ -98,7 +98,7 @@ class Sort:
                     int(s["Autres"].get("Nb. de tours entre deux lancers", 0)),\
                     int(1 if s["Autres"].get("Portée modifiable", "Non") == "Oui" else 0),\
                     typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui",\
-                    desc=sortInfos["desc"],\
+                    description=sortInfos["desc"],\
                     chaine=s["Autres"].get("Chaîné", "Oui") == "Oui",\
                     lancableParJoueur=sortInfos.get("lancableParJoueur", True)\
                 )

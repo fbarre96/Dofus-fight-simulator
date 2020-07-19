@@ -32,7 +32,7 @@ class Piege:
         self.centreY = centreY
         self.lanceur = lanceur
         self.invisible = True
-        self.couleur = couleur
+        self.couleur = (int(couleur[0]), int(couleur[1]), int(couleur[2]))
         if icone is not None:
             self.icone = icone
         else:

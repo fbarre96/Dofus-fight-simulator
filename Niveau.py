@@ -433,14 +433,15 @@ class Niveau:
             longueurTab = len(self.runes)
             i += 1
 
-    def finTour(self):
+    def finTour(self, **kwargs):
         """@summary: Appelé lorsqu'un joueur finit son tour."""
         # On annonce au joueur la fin de son tour
         if self is not None:
             self.tourDe.finTour(self)
-        if self.isPrevisu:
+        if self.isPrevisu and not kwargs.get("force", False):
             return
         # calcul du prochain joueur
+        print("Prochain joueur calc "+str((self.tourIndex + 1) % len(self.joueurs)))
         self.tourIndex = (self.tourIndex + 1) % len(self.joueurs)
         self.tourDe = self.joueurs[self.tourIndex]
         # On annonce au joueur son début de tour
