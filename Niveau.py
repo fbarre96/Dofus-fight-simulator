@@ -174,10 +174,10 @@ class Niveau:
             posX = fuyard.posX
             posY = fuyard.posY
         tacleurs = []
-        tacleurs.append(self.getJoueurSur(posX, posY+1))
-        tacleurs.append(self.getJoueurSur(posX, posY-1))
-        tacleurs.append(self.getJoueurSur(posX+1, posY))
-        tacleurs.append(self.getJoueurSur(posX-1, posY))
+        tacleurs.append(self.getJoueurSur(posX, posY+1, False))
+        tacleurs.append(self.getJoueurSur(posX, posY-1, False))
+        tacleurs.append(self.getJoueurSur(posX+1, posY, False))
+        tacleurs.append(self.getJoueurSur(posX-1, posY, False))
 
         ratio = 1
         for tacleur in tacleurs:
@@ -515,7 +515,7 @@ class Niveau:
         # On sauvegarde cette structure
         self.structure = structureNiveau
 
-    def getJoueurSur(self, caseX, caseY):
+    def getJoueurSur(self, caseX, caseY, getInvisible=True):
         """@summary: Retourne le joueur se trouvant sur la case donnée.
         @caseX: La coordonnée x de la case dont on veut récupérer le joueur
         @type: int
@@ -524,8 +524,9 @@ class Niveau:
 
         @return: Personnage si la case est occupée, None sinon"""
         for i, joueur in enumerate(self.joueurs):
-            if joueur.posX == caseX and joueur.posY == caseY:
-                return self.joueurs[i]
+            if not joueur.aEtat("Invisible") or getInvisible:
+                if joueur.posX == caseX and joueur.posY == caseY:
+                    return self.joueurs[i]
         return None
 
     def getVisualationJoueurSur(self, caseX, caseY):
@@ -1372,7 +1373,11 @@ class Niveau:
                         " du joueur "+str(self.tourDe.classe)+" / "+str(exception))
         else:
             for joueur in self.joueurs:
-                if joueur.vue.isMouseOver(mouseXY):
+                afficherLeJoueur = True
+                if joueur.aEtat("Invisible"):
+                    if joueur.team != self.tourDe.team:
+                        afficherLeJoueur = False
+                if joueur.vue.isMouseOver(mouseXY) and afficherLeJoueur:
                     if sortSelectionne is None:
                         joueur.setOverlayText()
                     joueur.overlay.afficher(
