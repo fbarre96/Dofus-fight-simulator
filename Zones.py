@@ -42,7 +42,7 @@ class TypeZone:
     @classmethod
     def getZoneFromName(cls,name, zonepo):
         for classe in cls.subclasses:
-            if classe.__name__.replace("TypeZone", "") == name:
+            if classe.__name__.replace("TypeZone", "").lower() == name.lower():
                 return classe(int(zonepo))
     @classmethod
     def factory(cls, zoneStr, desc):

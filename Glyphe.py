@@ -35,11 +35,11 @@ class Glyphe:
         self.sortMono = sortEntre
         self.sortDeplacement = sortDeplacement
         self.sortSortie = sortSortie
-        self.duree = dureeGlyphe
+        self.duree = int(dureeGlyphe)
         self.centreX = centreX
         self.centreY = centreY
         self.lanceur = lanceur
-        self.couleur = couleur
+        self.couleur = (int(couleur[0]), int(couleur[1]), int(couleur[2]))
 
     def actif(self):
         """@summary: Test si la glyphe est encore active

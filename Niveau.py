@@ -403,6 +403,13 @@ class Niveau:
                     # Test si la glyphe est terminée
                     if self.glyphes[i].duree <= 0:
                         # Si c'est le cas on la supprime
+                        glyphe = self.glyphes[i]
+                        for joueur in self.joueurs:
+                            if self.glyphes[i].aPorte(joueur.posX, joueur.posY):
+                                for effet in glyphe.sortSortie.effets:
+                                    self.lancerEffet(
+                                        effet, glyphe.centreX, glyphe.centreY, glyphe.nomSort,
+                                        joueur.posX, joueur.posY, glyphe.lanceur)
                         del self.glyphes[i]
                         i -= 1
             # On recalcule la taille du tableau
@@ -1043,8 +1050,7 @@ class Niveau:
             joueurLanceur = self.getJoueurSur(provX, provY)
         else:
             joueurLanceur = lanceur
-        joueurLanceur.derniere_action_posX = joueurLanceur.posX
-        joueurLanceur.derniere_action_posY = joueurLanceur.posY
+        
         ciblesTraitees = []  # initialisation des cibles déjà traitées
         # Le joueur cible direct est celui ciblé pour lancer le sort.
         joueurCibleDirect = self.getJoueurSur(caseCibleX, caseCibleY)

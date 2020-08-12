@@ -276,6 +276,8 @@ class Sort:
                 # Lancer du sort
                 if not isPrevisu:
                     caraclanceur.PA -= self.coutPA
+                    caraclanceur.derniere_action_posX = caraclanceur.posX
+                    caraclanceur.derniere_action_posY = caraclanceur.posY
                     self.marquerLancer(joueurCible)
                     print(caraclanceur.nomPerso+": -"+str(self.coutPA) +
                           " PA (reste "+str(caraclanceur.PA)+"PA)")

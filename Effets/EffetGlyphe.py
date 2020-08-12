@@ -153,6 +153,7 @@ class EffetGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires, caseCibleX et caseCibleY doivent être mentionés
         @type: **kwargs"""
+        print("Create zone action "+str(self.typeZoneStr)+ " size : "+str(self.tailleZoneGlyphe))
         self.zoneAction = TypeZone.getZoneFromName(self.typeZoneStr, self.tailleZoneGlyphe)
         sortEntre = joueurLanceur.getSort(self.nomSortEntre)
         sortDeplacement = joueurLanceur.getSort(self.nomSortDeplacement)
