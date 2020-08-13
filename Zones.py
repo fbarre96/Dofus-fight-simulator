@@ -66,6 +66,7 @@ class TypeZone:
         # pylint: disable=unused-argument
         """@summary: Constructeur de base d'une zone"""
         self.zonePO = zonePO
+        self.showPrevisu = True
     
     def __str__(self):
         return str(self.__class__.__name__).replace("TypeZone", "") + " de "+str(self.zonePO)+" case(s)"
@@ -144,6 +145,9 @@ class TypeZoneDemiCercle(TypeZone):
 class TypeZoneInfini(TypeZone):
     """@summary: Définit une zone d'action circulaire pour un effet. Hérite de TypeZone"""
 
+    def __init__(self, zonePO):
+        super().__init__()
+        self.showPrevisu = False
     def testCaseEstDedans(self, departZone, caseTestee, joueurLanceur):
         """@summary: Retourne un booléen disant si un case est dans la zone circulaire
         @departZone: case de depart de la zone (ici le centre du cercle).

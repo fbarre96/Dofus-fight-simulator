@@ -1212,8 +1212,7 @@ class Niveau:
                                                     [nCase, nLigne])
                                     else:
                                         if not effet.etatRequisCibleDirect:
-                                            if effet.aPorteZone(caseX, caseY, nCase, nLigne,
-                                                                self.tourDe.posX, self.tourDe.posY):
+                                            if effet.aPorteZone(caseX, caseY, nCase, nLigne, self.tourDe.posX, self.tourDe.posY) and effet.typeZone.showPrevisu:
                                                 tabCasesPrevi.append(
                                                     [nCase, nLigne])
                                 if self.cachedPrevisu[0] == sortSelectionne and \
