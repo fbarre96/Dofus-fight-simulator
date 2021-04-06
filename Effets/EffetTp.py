@@ -47,7 +47,7 @@ class EffetTeleportePosPrec(Effet):
     Cet effet téléporte un ennemi vers sa position précedente.
     L'historique des 2 derniers tours seulement est gardé."""
 
-    def __init__(self, int_nbCase, **kwargs):
+    def __init__(self, int_nbCase=1, **kwargs):
         """@summary: Initialise un effet téléportant sa cible vers sa position précédente.
         L'historique des 2 derniers tours seulement est gardé.
         @int_nbCase: le nombre de retour en arrière effectué.
@@ -61,6 +61,33 @@ class EffetTeleportePosPrec(Effet):
 
     def __deepcopy__(self, memo):
         return EffetTeleportePosPrec(self.nbCase, **self.kwargs)
+
+    def __str__(self):
+        return "Téléporte la cible  à "+str(self.nbCase)+" précédente(s)"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nbCaseLbl = ttk.Label(frame, text="Nb pos prec:")
+        nbCaseLbl.pack(side="left")
+        nbCaseSpinbox = tk.Spinbox(frame, from_=1, to=9999, width=4)
+        nbCaseSpinbox.delete(0, 'end')
+        nbCaseSpinbox.insert(0, int(self.nbCase))
+        nbCaseSpinbox.pack(side="left")
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nbCase"] = self.nbCase
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["nbCase"]), **infos["kwargs"])
+
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

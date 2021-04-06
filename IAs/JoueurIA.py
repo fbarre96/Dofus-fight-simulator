@@ -31,11 +31,14 @@ class JoueurIA:
             if event.key == K_F1:  # touche F1 = fin du tour
                 sortSelectionne = None
                 niveau.finTour(force=True)
+                niveau.setPrevisu(False)
             elif event.key == K_ESCAPE:  # touche échap = déselection de sort.
                 sortSelectionne = None
+                niveau.setPrevisu(False)
             elif event.key >= K_1 and event.key <= K_9:
                 aLance = niveau.tourDe.sorts[event.key - K_1]
                 sortSelectionne = joueur.selectionSort(aLance, niveau)
+                niveau.setPrevisu(True)
         if event.type == pygame.MOUSEBUTTONDOWN:
             clicGauche, _, clicDroit = pygame.mouse.get_pressed()
             # Clic gauche

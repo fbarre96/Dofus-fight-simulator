@@ -197,18 +197,22 @@ class EffetDegats(Effet):
             if etat.actif():
                 dos, baseDeg, carac = etat.triggerAvantCalculDegats(
                     dos, baseDeg, carac, nomSort, self.minJet, self.maxJet+1)
-        total += baseDeg + (baseDeg * int(carac / 100.0)) + dos
+        carac += 100
+        total +=  int((baseDeg * int(carac) / 100.0) + dos)
         if not self.kwargs.get("bypassDmgCalc", False):
             if nomSort != "cac":
-                total += int((joueurLanceur.doSorts/100.0) * total)
+                total = ((joueurLanceur.doSorts+100) * total)/100.0
             else:
-                total += int((joueurLanceur.doArmes/100.0) * total)
+                total = ((joueurLanceur.doArmes+100.0) * total)/100.0
+            total = int(total)
             if distance == 1:
-                total += int((joueurLanceur.doMelee/100.0) * total)
+                total = ((joueurLanceur.doMelee+100.0) * total)/100.0
                 rePer += joueurCaseEffet.reMelee
             else:
-                total += int((joueurLanceur.doDist/100.0) * total)
+                total = ((joueurLanceur.doDist+100.0) * total)/100.0
                 rePer += joueurCaseEffet.reDist
+            total = int(total)
+            
 
         # appliquer les effets des etats sur les degats total du joueur cible
         eloignement = Zones.getDistancePoint(
@@ -226,10 +230,8 @@ class EffetDegats(Effet):
 
         for etat in joueurCaseEffet.etats:
             if etat.actif():
-                print("Allait subir : "+str(vaSubir))
                 vaSubir = etat.triggerApresCalculDegats(
                     vaSubir, self.typeDegats, joueurCaseEffet, joueurLanceur)
-                print("Changer a subit : "+str(vaSubir))
         if vaSubir < 0:
             vaSubir = 0
 

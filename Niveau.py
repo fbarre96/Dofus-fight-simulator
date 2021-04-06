@@ -445,10 +445,9 @@ class Niveau:
         # On annonce au joueur la fin de son tour
         if self is not None:
             self.tourDe.finTour(self)
-        if self.isPrevisu and not kwargs.get("force", False):
+        if self.isPrevisu() and not kwargs.get("force", False):
             return
         # calcul du prochain joueur
-        print("Prochain joueur calc "+str((self.tourIndex + 1) % len(self.joueurs)))
         self.tourIndex = (self.tourIndex + 1) % len(self.joueurs)
         self.tourDe = self.joueurs[self.tourIndex]
         # On annonce au joueur son début de tour
@@ -865,9 +864,9 @@ class Niveau:
             joueurBougeant.retirerEtats(self, "Telefrag")
             joueurASwap.retirerEtats(self, "Telefrag")
             joueurBougeant.appliquerEtat(Etat(
-                "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
+                "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur, 1, self)
             joueurASwap.appliquerEtat(Etat(
-                "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur)
+                "Telefrag", 0, 2, [nomSort], reelLanceur), reelLanceur, 1, self)
 
     def gereDeplacementTF(self, joueurBougeant, posAtteinte, lanceur,
                           nomSort, ajouteHistorique=True, genereTF=True):
@@ -990,7 +989,7 @@ class Niveau:
                 # Si le joueur sur la case est une cible valide
                 msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
                                                    ciblesTraitees)
-                if not estValide:
+                if not estValide and not self.isPrevisu():
                     print(msg)
                 else:
                     # On appliquer l'effet

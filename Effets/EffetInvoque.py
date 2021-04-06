@@ -138,7 +138,6 @@ class EffetInvoque(Effet):
                                 "Eau%":0, "Air%":0},
                                 "bambou.jpg", PasseIA()),
         }
-        print("Invoque une "+str(self.nomInvoque))
         invocs_liste[self.nomInvoque].faireChargerSort(False)
         invoc = deepcopy(invocs_liste[self.nomInvoque])
         invoc.invocateur = joueurLanceur

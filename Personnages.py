@@ -286,8 +286,6 @@ class Personnage(object):
                 sortsDebutCombat.append(rightLvlSort)
             else:
                 sorts.append(rightLvlSort)
-        if not sorts:
-            raise ValueError("Sorts non trouvés")
         return sorts,sortsDebutCombat
 
 

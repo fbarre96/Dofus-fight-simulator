@@ -532,7 +532,7 @@ class EtatEffetSiTFGenere(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand un joueur est téléfragé."""
 
     def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="joueurOrigineTF",
-                 cible="joueurEchangeTF", porteurEstTF=False, sortInterdit="", lanceur=None, desc=""):
+                 cible="joueurEchangeTF", porteurEstTF=False, sortInterdit="", limiteParTour=99, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -554,6 +554,8 @@ class EtatEffetSiTFGenere(EtatEffet):
         self.porteurEstTF = porteurEstTF
         self.cible = cible
         self.sortInterdit = sortInterdit
+        self.limiteParTour = limiteParTour
+        self.n_limiteParTour = 0
         super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
     
     def buildUI(self, topframe, callbackDict):
@@ -575,25 +577,33 @@ class EtatEffetSiTFGenere(EtatEffet):
         porteurEstTFCheckbutton = ttk.Checkbutton(frame, variable=self.porteurEstTFVar)
         porteurEstTFCheckbutton.grid(row=1, column=1, sticky="w")
         ret["porteurEstTF"] = self.porteurEstTFVar
-        sortInterditlbl = ttk.Label(frame, text="Si porteur est TF:")
+        sortInterditlbl = ttk.Label(frame, text="Sort interdit:")
         sortInterditlbl.grid(row=2, column=0, sticky="e")
         self.sortInterditEntry = ttk.Entry(frame, width=50)
         self.sortInterditEntry.delete(0, 'end')
         self.sortInterditEntry.insert(0, self.sortInterdit)
         self.sortInterditEntry.grid(row=2, column=1, sticky="w")
         ret["sortInterdit"] = self.sortInterditEntry
+        limiteParTourLbl = ttk.Label(frame, text="Limite par tour:")
+        limiteParTourLbl.grid(row=3, column=0, sticky="e")
+        self.limiteParTourSpinbox = tk.Spinbox(frame, from_=-1, to=99999, width=5)
+        self.limiteParTourSpinbox.delete(0, 'end')
+        self.limiteParTourSpinbox.insert(-1, int(self.limiteParTour))
+        self.limiteParTourSpinbox.grid(row=3, column=1, sticky="w")
+        ret["limiteParTour"] = self.limiteParTourSpinbox
         return ret
 
     @classmethod
     def craftFromInfos(cls, infos):
         return EtatEffetSiTFGenere(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), Effet.effectFactory(infos["effet"]), 
-                infos["nomSort"], infos["quiLancera"], infos["cible"], infos["porteurEstTF"], infos["sortInterdit"], None, infos["desc"])
+                infos["nomSort"], infos["quiLancera"], infos["cible"], infos["porteurEstTF"], infos["sortInterdit"], int(infos.get("limiteParTour", 99)), None, infos["desc"])
 
     def getAllInfos(self):
         ret = super().getAllInfos()
         ret["cible"] = self.cible
         ret["porteurEstTF"] = self.porteurEstTF
         ret["sortInterdit"] = self.sortInterdit
+        ret["limiteParTour"] = self.limiteParTour
         return ret
 
     def __deepcopy__(self, memo):
@@ -601,7 +611,7 @@ class EtatEffetSiTFGenere(EtatEffet):
         @return: Le clone de l'état"""
         return EtatEffetSiTFGenere(self.nom, self.debuteDans, self.duree, deepcopy(self.effet), self.nomSort,
                                    self.quiLancera, self.cible, self.porteurEstTF,
-                                   self.sortInterdit, self.lanceur, self.desc)
+                                   self.sortInterdit, self.limiteParTour, self.lanceur, self.desc)
 
     def triggerApresTF(self, niveau, joueurOrigineTF, joueurEchangeTF,
                        porteur, reelLanceur, nomSort):
@@ -630,6 +640,9 @@ class EtatEffetSiTFGenere(EtatEffet):
             joueurLanceur = self.lanceur
         if nomSort == self.sortInterdit:
             return
+        if self.n_limiteParTour >= self.limiteParTour:
+            return
+        self.n_limiteParTour += 1
         if isinstance(self.effet, list):
             for eff in self.effet:
                 eff.setNomSortTF(nomSort)

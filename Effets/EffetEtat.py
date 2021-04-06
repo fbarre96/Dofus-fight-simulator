@@ -222,13 +222,88 @@ class EffetEtatSelfTF(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet place un état sur le lanceur portant le nom du sort à l'origine d'un TF."""
 
-    def __init__(self, etat_etat, sortsExclus, **kwargs):
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        typeEtatLbl = ttk.Label(frame, text="Type d'état:")
+        typeEtatLbl.pack(side="left")
+        self.typeEtatCombobox = ttk.Combobox(frame, values=sorted(Etat.getListEtat()), state="readonly")
+        self.typeEtatCombobox.set(self.etat.__class__.__name__)
+        self.typeEtatCombobox.pack(side="left")
+        self.typeEtatCombobox.bind('<<ComboboxSelected>>', self.etatTypeModified) 
+        self.etatCaracsFrame = ttk.LabelFrame(frame, text="Caractéristiques de l'état")
+        self.etatCaracsFrame.pack(side="top")
+        self.etatTypeModified()
+        etatOptionFrame = ttk.Frame(frame)
+        cumulMaxLbl = ttk.Label(etatOptionFrame, text="Cumul max:")
+        cumulMaxLbl.grid(row=0, column=0, sticky="e")
+        cumulMaxSpinbox = tk.Spinbox(etatOptionFrame, from_=-1, to=99, width=3)
+        cumulMaxSpinbox.delete(0, 'end')
+        cumulMaxSpinbox.insert(0, int(self.kwargs.get("cumulMax", -1)))
+        cumulMaxSpinbox.grid(row=0, column=1, sticky="w")
+        sortsExclusLbl = ttk.Label(frame, text="Sorts exclus:")
+        sortsExclusLbl.pack(side="left")
+        sortsExclusEntry = ttk.Entry(frame, width=30)
+        sortsExclusEntry.delete(0, 'end')
+        sortsExclusEntry.insert(0, self.sortsExclus)
+        sortsExclusEntry.pack(side="left")
+        ret["sortsExclus"] = sortsExclusEntry
+        ret["kwargs:cumulMax"] = cumulMaxSpinbox
+        ret["etat"] = self.etatWidgets
+        etatOptionFrame.pack(side="bottom")
+        frame.pack()
+        return ret
+    
+    def __str__(self):
+        return "EtatSelfTF "+str(self.etat)
+
+    def callbackModifiedRetValue(self, newDict):
+        for etatWidget_key, etatWidget_val in newDict.items():
+            self.etatWidgets[etatWidget_key] = etatWidget_val
+    
+    def etatTypeModified(self, _event=None):
+        for widget in self.etatCaracsFrame.winfo_children():
+            widget.destroy()
+        if self.etat.__class__.__name__ == self.typeEtatCombobox.get():
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+        else:
+            typeEtat = self.typeEtatCombobox.get()
+            etat = Etat.getObjectFromName(typeEtat)
+            etat.nom = self.etat.nom
+            etat.debuteDans = self.etat.debuteDans
+            etat.duree = self.etat.duree
+            self.etat = etat
+            self.etatWidgets.clear()
+            new_etatWidgets = self.etat.buildUI(self.etatCaracsFrame, self.callbackModifiedRetValue)
+            for etatWidget_key, etatWidget_val in new_etatWidgets.items():
+                self.etatWidgets[etatWidget_key] = etatWidget_val
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["etat"] = self.etat.getAllInfos()
+        ret["sortsExclus"] = self.sortsExclus
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetEtatSelfTF(Etat.factory(infos["etat"]), infos["sortsExclus"], **infos["kwargs"])
+
+    def __init__(self, etat_etat=None, sortsExclus="", **kwargs):
         """@summary: Initialise un effet placant un état sur le lanceur
         @etat_etat: l'état à placer sur le lanceur
         @type: Etat
         @kwargs: Options de l'effets
         @type: **kwargs"""
-        self.etat = etat_etat
+        if etat_etat is not None:
+            self.etat = etat_etat
+        else:
+            self.etat = Etat("TODO", 0, 1)
+        self.etatWidgets = {}
         self.sortsExclus = sortsExclus
         self.kwargs = kwargs
         super().__init__(**kwargs)
