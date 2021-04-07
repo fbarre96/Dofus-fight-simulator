@@ -10,7 +10,7 @@ class EtatContre(Etat):
     """@summary: Classe décrivant un état qui renvoie une partie
                  des dégâts subits au corps à corps."""
 
-    def __init__(self, nom, debDans, duree, pourcentage, tailleZone, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, pourcentage=50, tailleZone=0, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -34,6 +34,43 @@ class EtatContre(Etat):
         self.pourcentage = pourcentage
         self.tailleZone = tailleZone
         super().__init__(nom, debDans, duree, lanceur, desc)
+    
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        pourcentageLbl = ttk.Label(frame, text="Pourcentage de renvoi:")
+        pourcentageLbl.grid(row=0, column=0, sticky="e")
+        pourcentageSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        pourcentageSpinbox.delete(0, 'end')
+        pourcentageSpinbox.insert(0, int(self.pourcentage))
+        pourcentageSpinbox.grid(row=0, column=1, sticky="w")
+        ret["pourcentage"] = pourcentageSpinbox
+        tailleZoneLbl = ttk.Label(frame, text="Taille cercle de renvoi:")
+        tailleZoneLbl.grid(row=1, column=0, sticky="e")
+        tailleZoneSpinbox = tk.Spinbox(frame, from_=0, to=99, width=2)
+        tailleZoneSpinbox.delete(0, 'end')
+        tailleZoneSpinbox.insert(0, int(self.tailleZone))
+        tailleZoneSpinbox.grid(row=1, column=1, sticky="w")
+        ret["tailleZone"] = tailleZoneSpinbox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatContre(infos["nom"], infos["debuteDans"], infos["duree"], infos["pourcentage"], infos["tailleZone"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage"] = self.pourcentage
+        ret["tailleZone"] = self.tailleZone
+        return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)

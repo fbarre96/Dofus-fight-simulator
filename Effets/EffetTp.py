@@ -14,6 +14,34 @@ class EffetTp(Effet):
         self.kwargs = kwargs
         super().__init__(**kwargs)
 
+    def __str__(self):
+        return "Téléporte sur la cible"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        genererTFLbl = ttk.Label(frame, text="Peut Telefrag:")
+        genererTFLbl.pack(side="left")
+        genererTFVar = tk.BooleanVar()
+        genererTFVar.set(self.kwargs.get("genererTF", False))
+        genererTFCheckbutton = ttk.Checkbutton(frame, variable=genererTFVar)
+        genererTFCheckbutton.pack(side="left")
+        ret["kwargs:genererTF"] = genererTFVar
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(**infos["kwargs"])
+
+
     def __deepcopy__(self, memo):
         return EffetTp(**self.kwargs)
 

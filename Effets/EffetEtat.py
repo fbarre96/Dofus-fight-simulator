@@ -335,7 +335,7 @@ class EffetRafraichirEtats(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet change la durée des états de la cible."""
 
-    def __init__(self, int_deXTours, **kwargs):
+    def __init__(self, int_deXTours=1, **kwargs):
         """@summary: Initialise un effet changeant la durée des états de la cible
         @int_deXTours: le nombre de tour qui vont être additionés (dans Z)
                        à chaque état de la cible.
@@ -345,6 +345,34 @@ class EffetRafraichirEtats(Effet):
         self.kwargs = kwargs
         self.deXTours = int_deXTours
         super().__init__(**kwargs)
+
+    def __str__(self):
+        return "-"+str(self.deXTours)+" à la durée des états"
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nbTourLbl = ttk.Label(frame, text="Retire à la durée des états:")
+        nbTourLbl.pack(side="left")
+        nbTourSpinbox = tk.Spinbox(frame, from_=1, to=99999, width=5)
+        nbTourSpinbox.delete(0, 'end')
+        nbTourSpinbox.insert(0, int(self.deXTours))
+        nbTourSpinbox.pack(side="left")
+        ret["deXTours"] = nbTourSpinbox
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["deXTours"] = self.deXTours
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["deXTours"]), **infos["kwargs"])
+
 
     def __deepcopy__(self, memo):
         return EffetRafraichirEtats(self.deXTours, **self.kwargs)

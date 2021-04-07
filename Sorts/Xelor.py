@@ -69,6 +69,7 @@ def getSorts(lvl):
     activationDesynchro = [EffetTpSymCentre(
         zone=Zones.TypeZoneCercleSansCentre(3))]
     activationRune = [EffetTp(genererTF=True, cible_non_requise=True)]
+    
     sorts.append(Personnages.Personnage.getSortRightLvl(lvl, [
         Sort.Sort("Ralentissement", 1, 2, 1, 4, [EffetDegats(4, 5, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], [EffetDegats(7, 8, "Eau"), EffetRetPA(1, cibles_possibles="Allies|Ennemis"), EffetRetPA(1, cibles_possibles="Allies|Ennemis", etat_requis_cibles="Telefrag")], 5, 4, 2, 0, 1, "cercle", True, description="""Occasionne des dommages Eau et retire 1 PA à la cible.
     Retire 1 PA supplémentaire aux ennemis dans l'état Téléfrag.

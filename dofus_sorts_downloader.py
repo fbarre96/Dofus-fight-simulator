@@ -8,8 +8,13 @@ from random import choice
 import sys
 import os
 
-
-proxies = {}
+debug=True
+if debug:
+    proxies = {"http":"http://127.0.0.1:8080", "https":"https://127.0.0.1:8080"}
+    verify = False
+else:
+    proxies = {}
+    verify = True
 
 def normaliser(chaine):
     """@summary: enlève les accents d'une chaîne de caractère et la met en minuscule. Remplace également les espaces et apostrophes par un underscore.
@@ -31,7 +36,7 @@ def normaliser(chaine):
     chaine = chaine.replace("œ", "oe")
     return chaine
 
-def load_requests(session, source_url, sink_path, headers, cookies):
+def load_requests(session, source_url, sink_path, headers):
     """
     Load a file from an URL (e.g. http).
 
@@ -43,7 +48,7 @@ def load_requests(session, source_url, sink_path, headers, cookies):
         Where the loaded file is stored.
     """
     newurl = os.path.normpath(source_url).replace("\\","/").replace("https:/", "https://")
-    resp = session.get(newurl, headers=headers, cookies=cookies, proxies=proxies, verify=True)
+    resp = session.get(newurl, headers=headers, proxies=proxies, verify=verify)
     with open(sink_path, 'wb') as fd:
         fd.write(resp.content)
 
@@ -75,11 +80,9 @@ def main():
     print("Cela va prendre un moment car un délai est ajouté pour prévenir l'anti-bruteforce de dofus.com")
     headers={}
     session = requests.Session()
-    res = session.get("https://www.dofus.com/fr/")
-    if res.status_code != 200:
-        print(res.content)
-        raise Exception(str(res.status_code) + " Could not reach dofus.com")
-    cookies = dict(res.cookies)
+    res = session.get("https://www.dofus.com/fr/", headers=random_headers(), proxies=proxies, verify=verify)
+    sessionAnkama = requests.Session()
+    res = sessionAnkama.get("https://account.ankama.com/sso?from=https%3A%2F%2Fwww.dofus.com%2Ffr", headers=random_headers(), proxies=proxies, verify=verify)
     for classe in classes:
         print("Récupération des sorts "+str(classe))
         url_classe = None
@@ -88,11 +91,11 @@ def main():
                 break
         if url_classe is None:
             break
-        resp = session.get(url+url_classe, headers=random_headers(), cookies=cookies, proxies=proxies, verify=True)
+        resp = sessionAnkama.get(url+url_classe, headers=random_headers(), proxies=proxies, verify=verify)
         while resp.status_code == 429:
             print("Le serveur indique qu'il recoit trop de requetes, attente de 5 sec.")
             time.sleep(5)
-            resp = session.get(url+url_classe,headers=random_headers(), cookies=cookies, proxies=proxies, verify=True)
+            resp = sessionAnkama.get(url+url_classe,headers=random_headers(), proxies=proxies, verify=verify)
         if resp.status_code != 200:
             print(resp.content)
             raise Exception("Status code :"+str(resp.status_code) +" pour l'url "+url+url_classe)
@@ -111,11 +114,11 @@ def main():
                 levels = range(1,3)
             for level in levels:
                 crafted_link = url_sorts+"id="+idSpell+"&level="+str(level)+"&selector=1"
-                resp = session.get(crafted_link,headers=random_headers(), cookies=cookies, proxies=proxies, verify=True)
+                resp = sessionAnkama.get(crafted_link,headers=random_headers(), proxies=proxies, verify=verify)
                 while resp.status_code == 429:
                     print("Le serveur indique qu'il recoit trop de requetes, attente de 5 sec.")
                     time.sleep(5)
-                    resp = session.get(crafted_link,headers=random_headers(), cookies=cookies, proxies=proxies, verify=True)
+                    resp = sessionAnkama.get(crafted_link,headers=random_headers(), proxies=proxies, verify=verify)
                 if resp.status_code != 200:
                     raise Exception("Status code :"+str(resp.status_code) +" pour l'url "+crafted_link)
                 soup_sort = BeautifulSoup.BeautifulSoup(resp.text, 'html.parser')
@@ -126,7 +129,7 @@ def main():
                 img_div = soup_sort.find("div", {"class": "ak-spell-details-illu"})
                 img_src = img_div.span.img.get("src")
                 if level == levels[0]:
-                    load_requests(session, img_src,outfolder+"/""sorts_icones/"+normaliser(nom_sort.lower())+".png",random_headers(), cookies)
+                    load_requests(sessionAnkama, img_src,outfolder+"/""sorts_icones/"+normaliser(nom_sort.lower())+".png",random_headers())
                     sorts[nom_sort] = dict()
                     sorts[nom_sort]["img"] = img_src
                     sorts[nom_sort]["id"] = idSpell

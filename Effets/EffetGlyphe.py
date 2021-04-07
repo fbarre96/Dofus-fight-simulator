@@ -168,7 +168,7 @@ class EffetActiveGlyphe(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet relance les effets d'une glyphe"""
 
-    def __init__(self, strNomGlyphe, **kwargs):
+    def __init__(self, strNomGlyphe="", **kwargs):
         """@summary: Initialise un effet lançant un sort à une entité/joueur
         @strNomGlyphe: la glyphe devant être réactivé
         @type: string
@@ -178,6 +178,33 @@ class EffetActiveGlyphe(Effet):
         self.kwargs = kwargs
         self.strNomGlyphe = strNomGlyphe
         super().__init__(**kwargs)
+
+    def __str__(self):
+        return "Déclenche la glyphe "+str(self.strNomGlyphe)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        nomGlypheLbl = ttk.Label(frame, text="Nom de la glyphe:")
+        nomGlypheLbl.pack(side="left")
+        nomGlypheEntry = ttk.Entry(frame, width=50)
+        nomGlypheEntry.delete(0, 'end')
+        nomGlypheEntry.insert(0, self.strNomGlyphe)
+        nomGlypheEntry.pack(side="left")
+        ret["strNomGlyphe"] = nomGlypheEntry
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["strNomGlyphe"] = self.strNomGlyphe
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(infos["strNomGlyphe"], **infos["kwargs"])
 
     def __deepcopy__(self, memo):
         return EffetActiveGlyphe(self.strNomGlyphe, **self.kwargs)
@@ -192,5 +219,4 @@ class EffetActiveGlyphe(Effet):
         @type: Personnage
         @kwargs: options supplémentaires
         @type: **kwargs"""
-
         niveau.activerGlyphe(self.strNomGlyphe)
