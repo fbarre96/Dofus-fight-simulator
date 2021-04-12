@@ -667,6 +667,6 @@ class EffetEtatSelonVie(EffetEtat):
         @kwargs: options supplémentaires
         @type: **kwargs"""
         if joueurCaseEffet is not None:
-            print("Effet etat selon subit : "+str(self.getDegatsSubits())+", reste "+str(joueurCaseEffet.vie)+" hp")
-            subitDegats, _ = self.getDegatsSubits()
-            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+            pourcentage_vie = (joueurCaseEffet.vie / joueurCaseEffet.vieMax)*100
+            if  pourcentage_vie >= self.pourcentage_seuil_min and pourcentage_vie <= self.pourcentage_seuil_max:
+                niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)

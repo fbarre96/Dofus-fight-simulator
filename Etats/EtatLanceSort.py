@@ -109,8 +109,8 @@ class EtatLanceSortSiChangementDeVie(Etat):
                      lorsque des dommages viennent d'être subits.
                      Le personnage subissant les dégâts lance le sort donné.
         """
-        sortALance = porteur.getSort(self.sort)
+        sortALancer = porteur.getSort(self.sort)
         print("Lancement du sort par trigger changement de vie"+sortALancer.nom)
-        sortALance.lance(porteur.posX, porteur.posY,
+        sortALancer.lance(porteur.posX, porteur.posY,
                         niveau, porteur.posX, porteur.posY)
         

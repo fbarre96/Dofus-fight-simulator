@@ -167,6 +167,10 @@ class Personnage(object):
         for sort in self.sorts:
             if sort.nom == nomSort:
                 return sort
+        for sort in self.sortsDebutCombat:
+            if sort.nom == nomSort:
+                return sort
+            
     
     def __deepcopy__(self, memo):
         toReturn = Personnage(self.nomPerso, self.classe, self.lvl, self.team,
@@ -570,6 +574,8 @@ class Personnage(object):
         @nomsEtatCherche: Les noms des états cherchés à supprimer
         @type: tableau de string"""
         i = 0
+        if isinstance(nomsEtatCherche, str):
+            nomsEtatCherche = nomsEtatCherche.split("|")
         print("Retire état "+str(nomsEtatCherche)+" de "+str(self.classe))
         nbEtats = len(self.etats)
         while i < nbEtats:
