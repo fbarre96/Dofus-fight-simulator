@@ -8,12 +8,12 @@
             "name": "Python: editeur",
             "type": "python",
             "request": "launch",
-            "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\editeur_sorts_gui.py",
+            "program": "editeur_sorts_gui.py",
             "console": "integratedTerminal",
             "args":[
-                "Sorts/sram_save.json",
-                "Sorts/sram_save2.json",
-                "2020-03-23/sorts_icones/"
+                "Sorts/sacrieur.json",
+                "Sorts/sacrieur.json",
+                "2021-04-07/sorts_icones/"
             ]
         },
         {

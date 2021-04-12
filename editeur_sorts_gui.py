@@ -227,12 +227,12 @@ class OpeningPage:
 
     def duplicateSelected(self):
         lvl = self.levelNotebook.index(self.levelNotebook.select())+1
-        lineSelected = self.normalEffectTables[str(lvl)].selection()[0]
+        childSelected = self.normalEffectTables[str(lvl)].selection()[0]
         effetDict = self.normalEffectTables[str(lvl)].effectsValues
-        key = str(lineSelected)
-        new = str(len(self.normalEffectTables[str(lvl)].effectsValues))
-        self.normalEffectTables[str(lvl)].effectsValues[new] = effetDict[key]
-        self.normalEffectTables[str(lvl)].insert('', 'end', str(new), text=str(self.normalEffectTables[str(lvl)].effectsValues[str(new)]))
+        new = str(len(effetDict))
+        key = childSelected
+        self.normalEffectTables[str(lvl)].effectsValues[new] = deepcopy(effetDict[key])
+        self.normalEffectTables[str(lvl)].insert('', int(new), str(new), text=str(self.normalEffectTables[str(lvl)].effectsValues[str(new)]))
 
     def normalToCrit(self):
         lvl = self.levelNotebook.index(self.levelNotebook.select())+1

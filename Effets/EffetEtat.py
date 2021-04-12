@@ -616,7 +616,7 @@ class EffetEtatSelonVie(EffetEtat):
         super().__init__(etat_etat, **kwargs)
 
     def __deepcopy__(self, memo):
-        cpy = EffetEtatSelonVie(self.etat, self.pourcentage_seuil_min, self.pourcentage_seuil_max, **self.kwargs)
+        cpy = EffetEtatSelonVie(deepcopy(self.etat), self.pourcentage_seuil_min, self.pourcentage_seuil_max, **self.kwargs)
         return cpy
 
     def __str__(self):

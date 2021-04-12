@@ -134,7 +134,7 @@ class EtatBoostCaracPer(Etat):
     """@summary: Classe décrivant un état qui modifie la valeur
                     d'une caractéristique selon un pourcentage."""
 
-    def __init__(self, nom, debDans, duree, nomAttributCarac, boostCaracPer, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, nomAttributCarac="vie", boostCaracPer=0, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -164,6 +164,44 @@ class EtatBoostCaracPer(Etat):
         return EtatBoostCaracPer(self.nom, self.debuteDans, self.duree, self.nomAttributCarac,
                                  self.boostCaracPer, self.lanceur, self.desc)
 
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        import Personnages
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomAttributLbl = ttk.Label(frame, text="Nom de l'attribut à modifier:")
+        nomAttributLbl.grid(row=0, column=0, sticky="e")
+        self.nomAttributCombobox = ttk.Combobox(frame, values=Personnages.Personnage.getAttributesList(), state="readonly")
+        if self.nomAttributCarac != "":
+            self.nomAttributCombobox.set(self.nomAttributCarac)
+        self.nomAttributCombobox.grid(row=0, column=1, sticky="w")
+        ret["nomAttributCarac"] = self.nomAttributCombobox
+        modValueLbl = ttk.Label(frame, text="Modificateur %:")
+        modValueLbl.grid(row=1, column=0, sticky="e")
+        self.modValueEntry = ttk.Entry(frame, width=5)
+        self.modValueEntry.delete(0, "end")
+        self.modValueEntry.insert(0, self.boostCaracPer)
+        self.modValueEntry.grid(row=1, column=1, sticky="w")
+        ret["boostCaracPer"] = self.modValueEntry
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBoostCaracPer(infos["nom"], infos["debuteDans"], infos["duree"], infos["nomAttributCarac"], int(infos["boostCaracPer"]), None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomAttributCarac"] = self.nomAttributCarac
+        ret["boostCaracPer"] = self.boostCaracPer
+        return ret
+
     def triggerRafraichissement(self, personnage, niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit
                      (au début de chaque tour ou quand sa durée est modifiée).
@@ -181,7 +219,7 @@ class EtatBoostCaracPer(Etat):
         @type: **kwargs"""
         personnage = kwargs.get("joueurCaseEffet")
         caracValue = getattr(personnage, self.nomAttributCarac)
-        pourcentageBoost = self.boostCaracPer
+        pourcentageBoost = int(self.boostCaracPer)
         self.boostCarac = int(caracValue * (pourcentageBoost/100.0))
         setattr(personnage, self.nomAttributCarac,
                 caracValue + self.boostCarac)
