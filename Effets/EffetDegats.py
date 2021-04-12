@@ -48,8 +48,10 @@ class EffetDegats(Effet):
             # enleve la parenthese de fin d'effet de dommage
             degType = effetsCaracs[-1][:-1]
         kwargs["effectStr"] = effectStr
-        return EffetDegats(int(degMin), int(degMax), degType, **kwargs)
-    
+        try:
+            return EffetDegats(int(degMin), int(degMax), degType, **kwargs)
+        except:
+            pass
     def __str__(self):
         return str(self.minJet)+" à "+str(self.maxJet)+" (dommages "+self.typeDegats.capitalize()+")"
 
@@ -360,12 +362,14 @@ class EffetVolDeVie(EffetDegats):
                 joueurLanceur.vie = joueurLanceur.vieMax
             self.appliquerDegats(niveau, joueurCaseEffet, joueurLanceur)
             # Soin
-
             joueurLanceur.vie += (self.total/2)
             joueurLanceur.vie = int(joueurLanceur.vie)
             if not niveau.isPrevisu():
                 print(joueurLanceur.nomPerso+" vol " +
                       str(int(self.total/2)) + "PV")
+            for etat in joueurLanceur.etats:
+                if etat.actif():
+                    etat.triggerApresChangementDeVie(joueurLanceur, niveau)
 
 class EffetDegatsSelonPVRestants(EffetDegats):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.

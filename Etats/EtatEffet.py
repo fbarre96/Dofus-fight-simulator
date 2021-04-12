@@ -902,4 +902,4 @@ class EtatEffetSiLance(EtatEffet):
         @type: Personnage"""
         niveau.lancerEffet(self.effet, celuiLance.posX, celuiLance.posY,
                            self.nomSort, celuiLance.posX, celuiLance.posY, lanceur)
-                           
+                         

@@ -155,6 +155,8 @@ class OpeningPage:
             normalToCritButton.pack()
             precLvlImportButton = ttk.Button(buttonsEffectFrame, text="<<Lvl-1", command=lambda: self.importFromPrecLevel())
             precLvlImportButton.pack()
+            duplicateButton = ttk.Button(buttonsEffectFrame, text="Duplicate", command=lambda: self.duplicateSelected())
+            duplicateButton.pack()
             buttonsEffectFrame.grid(row=0, column=1, padx=5, pady=5)
             self.criticalEffectTables[str(i)] = EffectsTreeview(effectsFrame, "Effets critiques:")
             self.criticalEffectTables[str(i)].grid(row=0, column=2, sticky=tk.NSEW, padx=5, pady=5)
@@ -223,6 +225,14 @@ class OpeningPage:
         newValue = var.get()
         self.levelNotebook.tab(int(indexLevel)-1, text="   "+str(newValue)+"   ")
 
+    def duplicateSelected(self):
+        lvl = self.levelNotebook.index(self.levelNotebook.select())+1
+        lineSelected = self.normalEffectTables[str(lvl)].selection()[0]
+        effetDict = self.normalEffectTables[str(lvl)].effectsValues
+        key = str(lineSelected)
+        new = str(len(self.normalEffectTables[str(lvl)].effectsValues))
+        self.normalEffectTables[str(lvl)].effectsValues[new] = effetDict[key]
+        self.normalEffectTables[str(lvl)].insert('', 'end', str(new), text=str(self.normalEffectTables[str(lvl)].effectsValues[str(new)]))
 
     def normalToCrit(self):
         lvl = self.levelNotebook.index(self.levelNotebook.select())+1

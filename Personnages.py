@@ -613,6 +613,7 @@ class Personnage(object):
         for etat in self.etats:
             if etat.actif():
                 soins = etat.triggerApresCalculSoins(soins, self, soigneur)
+                etat.triggerApresChangementDeVie(self, niveau)
         soins = min(soins, self.vieMax-self.vie)
         self.vie += soins
         if shouldprint:
@@ -677,7 +678,7 @@ class Personnage(object):
             if etat.actif():
                 etat.triggerApresSubirDegats(
                     self, niveau, attaquant, totalPerdu)
-
+                etat.triggerApresChangementDeVie(self, niveau)
     def finTour(self, niveau):
         """@summary: Termine le tour du personnage,
         récupération des PA et PM, sorts utilisés,

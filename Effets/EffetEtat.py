@@ -598,3 +598,75 @@ class EffetRetireEtatSelf(Effet):
     def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
         if joueurCaseEffet is not None:
             joueurCaseEffet.retirerEtats(niveau, self.nomEtat)
+
+
+class EffetEtatSelonVie(EffetEtat):
+    """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
+    lance un etat si les degats subits sont dans un seuil précis
+    DOIT AVOIR UN SETTER DEGATS SUBITS ."""
+
+    def __init__(self, etat_etat=None, pourcentage_seuil_min=0, pourcentage_seuil_max=0, **kwargs):
+        """@summary: Initialise un effet qui lance un etat selon les degats subits
+        @pourcentage_seuil_min: le pourcentage de la vie min qui déclenche l'effet
+        @type: int (1 à 100)
+        @kwargs: Options de l'effets
+        @type: **kwargs"""
+        self.pourcentage_seuil_min = pourcentage_seuil_min
+        self.pourcentage_seuil_max = pourcentage_seuil_max
+        super().__init__(etat_etat, **kwargs)
+
+    def __deepcopy__(self, memo):
+        cpy = EffetEtatSelonVie(self.etat, self.pourcentage_seuil_min, self.pourcentage_seuil_max, **self.kwargs)
+        return cpy
+
+    def __str__(self):
+        return "Applique l'etat "+str(self.etat)+" si la vie de l'utilisateur est entre "+str(self.pourcentage_seuil_min)+ " et "+str(self.pourcentage_seuil_max)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        pourcentageMinLbl = ttk.Label(frame, text="Pourcentage seuil min:")
+        pourcentageMinLbl.pack(side="left")
+        pourcentageMinSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        pourcentageMinSpinbox.delete(0, 'end')
+        pourcentageMinSpinbox.insert(0, int(self.pourcentage_seuil_min))
+        pourcentageMinSpinbox.pack(side="left")
+        ret["pourcentage_seuil_min"] = pourcentageMinSpinbox
+        pourcentageMaxLbl = ttk.Label(frame, text="Pourcentage seuil max:")
+        pourcentageMaxLbl.pack(side="left")
+        pourcentageMaxSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        pourcentageMaxSpinbox.delete(0, 'end')
+        pourcentageMaxSpinbox.insert(0, int(self.pourcentage_seuil_max))
+        pourcentageMaxSpinbox.pack(side="left")
+        ret["pourcentage_seuil_max"] = pourcentageMaxSpinbox
+        frame.pack()
+        return ret
+    
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage_seuil_min"] = self.pourcentage_seuil_min
+        ret["pourcentage_seuil_max"] = self.pourcentage_seuil_max
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(Etat.factory(infos["etat"]), int(infos["pourcentage_seuil_min"]),int(infos["pourcentage_seuil_max"]), **infos["kwargs"])
+
+
+    def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
+        """@summary: Appelé lors de l'application de l'effet,
+                    wrapper pour la fonction appliquer soin.
+        @niveau: la grille de simulation de combat
+        @type: Niveau
+        @joueurCaseEffet: le joueur se tenant sur la case dans la zone d'effet
+        @type: Personnage
+        @joueurLanceur: le joueur lançant l'effet
+        @type: Personnage
+        @kwargs: options supplémentaires
+        @type: **kwargs"""
+        if joueurCaseEffet is not None:
+            print("Effet etat selon subit : "+str(self.getDegatsSubits())+", reste "+str(joueurCaseEffet.vie)+" hp")
+            subitDegats, _ = self.getDegatsSubits()
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)

@@ -20,7 +20,7 @@
             "name": "Python: dofus fs",
             "type": "python",
             "request": "launch",
-            "program": "C:\\Users\\barre\\Desktop\\Dofus_Fight_Simulator\\Dofus_FS.py",
+            "program": "Dofus_FS.py",
             "console": "integratedTerminal"
         },
         {

@@ -243,7 +243,7 @@ class OpeningPage():
                     classesDisponibles = \
                         Combobox(frameCaracs,
                                  textvariable=StringVar(),
-                                 values=["Cra", "Xelor", "Iop",
+                                 values=["Cra", "Xelor", "Iop", "Sacrieur",
                                          "Sram", "Poutch", "Eniripsa", "Pandawa"],
                                  state='readonly')
                     persoVw.inputs[inputsCategory][inputName] = classesDisponibles

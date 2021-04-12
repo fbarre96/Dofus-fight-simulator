@@ -7,7 +7,7 @@ class EtatBoostSortsPer(Etat):
     """@summary: Classe décrivant un état qui multiplie par un pourcentage les
                  dégats totaux des sorts que devrait donné le lanceur."""
 
-    def __init__(self, nom, debDans, duree, pourcentage=100, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, pourcentage=100, exclusType="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -26,6 +26,7 @@ class EtatBoostSortsPer(Etat):
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
         self.pourcentage = pourcentage
+        self.exclusType = exclusType
         super().__init__(nom, debDans, duree, lanceur, desc)
     
     def buildUI(self, topframe, callbackDict):
@@ -41,11 +42,17 @@ class EtatBoostSortsPer(Etat):
         pourcentageSpinbox.insert(0, self.pourcentage)
         pourcentageSpinbox.grid(row=1, column=1, sticky="w")
         ret["pourcentage"] = pourcentageSpinbox
+        exclusTypeLbl = ttk.Label(frame, text="Type de degat exclus:")
+        exclusTypeLbl.grid(row=2, column=0, sticky="e")
+        exclusTypeCombobox = ttk.Combobox(frame, values=("arme", ""), state="readonly")
+        exclusTypeCombobox.set(self.exclusType)
+        exclusTypeCombobox.grid(row=2, column=1, sticky="w")
+        ret["exclusType"] = exclusTypeCombobox
         return ret
 
     @classmethod
     def craftFromInfos(cls, infos):
-        return EtatBoostSortsPer(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), int(infos["pourcentage"]), None, infos["desc"])
+        return EtatBoostSortsPer(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), int(infos["pourcentage"]), infos["exclusType"], None, infos["desc"])
 
     def __str__(self):
         ret = super().__str__()
@@ -55,16 +62,17 @@ class EtatBoostSortsPer(Etat):
     def getAllInfos(self):
         ret = super().getAllInfos()
         ret["pourcentage"] = self.pourcentage
+        ret["exclusType"] = self.exclusType
         return ret
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostSortsPer(self.nom, self.debuteDans, self.duree,
-                                 self.pourcentage, self.lanceur, self.desc)
+                                 self.pourcentage, self.exclusType, self.lanceur, self.desc)
 
     def triggerApresCalculDegats(self, total, typeDeg, cible, attaquant):
-        if typeDeg != "arme":
+        if typeDeg != self.exclusType:
             print("Changer les degats : par "+str(self.pourcentage))
             return int(total * (1+(self.pourcentage/100.0)))
         else:
