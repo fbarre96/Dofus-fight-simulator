@@ -556,17 +556,18 @@ class EtatEffetSiTFGenere(EtatEffet):
         self.sortInterdit = sortInterdit
         self.limiteParTour = limiteParTour
         self.n_limiteParTour = 0
+        self.sortsDejaTraites = []
         super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
     
     def buildUI(self, topframe, callbackDict):
         from tkinter import ttk
         import tkinter as tk
-        ret = super().buildUI(topframe, callbackDict, ("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur", "lanceur"))
+        ret = super().buildUI(topframe, callbackDict, ("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur"))
         frame = ttk.Frame(topframe)
         frame.pack()
         ciblelbl = ttk.Label(frame, text="Cible de l'effet:")
         ciblelbl.grid(row=0, column=0, sticky="e")
-        self.cibleCombobox = ttk.Combobox(frame, values=("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur", "lanceur"), state="readonly")
+        self.cibleCombobox = ttk.Combobox(frame, values=("joueurOrigineTF", "joueurEchangeTF", "porteur", "reelLanceur"), state="readonly")
         self.cibleCombobox.set(self.cible)
         self.cibleCombobox.grid(row=0, column=1, sticky="w")
         ret["cible"] = self.cibleCombobox
@@ -627,7 +628,7 @@ class EtatEffetSiTFGenere(EtatEffet):
         elif self.cible == "reelLanceur":
             joueurCible = reelLanceur
         else:
-            joueurCible = self.lanceur
+            joueurCible = reelLanceur
         if self.quiLancera == "joueurOrigineTF":
             joueurLanceur = joueurOrigineTF
         elif self.quiLancera == "joueurEchangeTF":
@@ -637,12 +638,15 @@ class EtatEffetSiTFGenere(EtatEffet):
         elif self.quiLancera == "reelLanceur":
             joueurLanceur = reelLanceur
         else:
-            joueurLanceur = self.lanceur
+            joueurLanceur = reelLanceur
         if nomSort == self.sortInterdit:
             return
         if self.n_limiteParTour >= self.limiteParTour:
             return
         self.n_limiteParTour += 1
+        if nomSort in self.sortsDejaTraites:
+            return
+        self.sortsDejaTraites.append(nomSort)
         if isinstance(self.effet, list):
             for eff in self.effet:
                 eff.setNomSortTF(nomSort)

@@ -572,7 +572,7 @@ class EffetDegatsPerPv(Effet):
     Hérite de EffetsDegats.
     Cet effet inflige des dégâts à une cible égal à un pourcentage de sa vie restante."""
 
-    def __init__(self, pourcentage, **kwargs):
+    def __init__(self, pourcentage=10, **kwargs):
         """@summary: Initialise un effet de dégat fixe.
         @pourcentage: Le porucentage de la vie qui sera enlevé à la cible
         @type: int
@@ -584,7 +584,45 @@ class EffetDegatsPerPv(Effet):
         super().__init__(**kwargs)
 
     def __deepcopy__(self, memo):
+        return EffetDegatsPerPv(int(self.pourcentage), **self.kwargs)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        pourcentageLbl = ttk.Label(frame, text="Pourcentage:")
+        pourcentageLbl.pack(side="left")
+        pourcentageSpinbox = tk.Spinbox(frame, from_=0, to=99999, width=5)
+        pourcentageSpinbox.delete(0, 'end')
+        pourcentageSpinbox.insert(0, int(self.pourcentage))
+        pourcentageSpinbox.pack(side="left")
+        ret["pourcentage"] = pourcentageSpinbox
+        bypassDmgCalcLbl = ttk.Label(frame, text="Bypass dommage calc (!):")
+        bypassDmgCalcLbl.pack(side="left")
+        bypassDmgCalcVar = tk.BooleanVar()
+        bypassDmgCalcVar.set(self.kwargs.get("bypassDmgCalc", False))
+        bypassDmgCalcCheckbutton = ttk.Checkbutton(frame, variable=bypassDmgCalcVar)
+        bypassDmgCalcCheckbutton.pack(side="left")
+        ret["kwargs:bypassDmgCalc"] = bypassDmgCalcVar
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["pourcentage"] = self.pourcentage
+        
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return cls(int(infos["pourcentage"]), **infos["kwargs"])
+
+    def __deepcopy__(self, memo):
         return EffetDegatsPerPv(self.pourcentage, **self.kwargs)
+
+    def __str__(self):
+        return "Inflige "+str(self.pourcentage)+"% de dégâts"
 
     def appliquerEffet(self, niveau, joueurCaseEffet, joueurLanceur, **kwargs):
         """@summary: Appelé lors de l'application de l'effet.

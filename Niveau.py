@@ -224,46 +224,54 @@ class Niveau:
         # Obligé de faire delta 0 (colonne centrale) a la main pour éviter
         # l'ajout de la ligne de delta +0 et delta -0
         # Test si la coordonnée x est dans le grille de jeu
-        if departX-delta >= 0:
-            # Test si la case haute de la colonne centre de l'anneau est dans le grille de jeu
-            if departY-distance+delta >= 0:
-                retour.append([departX-delta, departY-distance+delta])
-            # Test si la case basse de la colonne centre de l'anneau est dans le grille de jeu
-            if departY+distance-delta < constantes.taille_carte:
-                retour.append([departX-delta, departY+distance-delta])
+        # if departX-delta >= 0:
+        #     # Test si la case haute de la colonne centre de l'anneau est dans le grille de jeu
+        #     if departY-distance+delta >= 0:
+        #         retour.append([departX-delta, departY-distance+delta])
+        #     # Test si la case basse de la colonne centre de l'anneau est dans le grille de jeu
+        #     if departY+distance-delta < constantes.taille_carte:
+        #         retour.append([departX-delta, departY+distance-delta])
 
-        # Eloignement du centre de 1 en 1 jusqu'au rayon donné -1
+        # # Eloignement du centre de 1 en 1 jusqu'au rayon donné -1
+        # for delta in range(1, distance):
+        #     # On test si la colonne souhaitée à gauche du centre est dans la grille de jeu
+        #     if departX-delta >= 0:
+        #         # On test si la ligne souhaitée en haut à gauche du centre est dans la grille de jeu
+        #         if departY-distance+delta >= 0:
+        #             retour.append([departX-delta, departY-distance+delta])
+        #         # On test si la ligne souhaitée en bas à gauche du centre est dans la grille de jeu
+        #         if departY+distance-delta < constantes.taille_carte:
+        #             retour.append([departX-delta, departY+distance-delta])
+        #     # On test si la colonne souhaitée à droite est dans la grille de jeu
+        #     if departX+delta < constantes.taille_carte:
+        #         # On test si la ligne souhaitée en haut à droite du centre est dans la grille de jeu
+        #         if departY-distance+delta >= 0:
+        #             retour.append([departX+delta, departY-distance+delta])
+        #         # On test si la ligne souhaitée en bas à droite du centre est dans la grille de jeu
+        #         if departY+distance-delta < constantes.taille_carte:
+        #             retour.append([departX+delta, departY+distance-delta])
+        # delta = distance
+        # # Oblige de faire delta distance à la main car sur les colonnes les plus loins
+        # #  du centre il ny à q'une ligne à ajouter.
+        # # Test si la coordonnée x extême gauche est dans le grille de jeu
+        # if departX-delta >= 0:
+        #     # Test si la cooficherrdonnée y est dans le grille de jeu
+        #     if departY-distance+delta >= 0:
+        #         retour.append([departX-delta, departY-distance+delta])
+        # # Test si la coordonnée extême drotie x est dans le grille de jeu
+        # if departX+delta < constantes.taille_carte:
+        #     # Test si la coordonnée y est dans le grille de jeu
+        #     if departY-distance+delta >= 0:
+        #         retour.append([departX+delta, departY-distance+delta])
+
+        for delta in range(0, distance+1):
+            retour.append([departX+distance-delta, departY+delta])
+        for delta in range(1, distance+1):
+            retour.append([departX-delta, departY+distance-delta])
+        for delta in range(1, distance+1):
+            retour.append([departX-distance+delta, departY-delta])
         for delta in range(1, distance):
-            # On test si la colonne souhaitée à gauche du centre est dans la grille de jeu
-            if departX-delta >= 0:
-                # On test si la ligne souhaitée en haut à gauche du centre est dans la grille de jeu
-                if departY-distance+delta >= 0:
-                    retour.append([departX-delta, departY-distance+delta])
-                # On test si la ligne souhaitée en bas à gauche du centre est dans la grille de jeu
-                if departY+distance-delta < constantes.taille_carte:
-                    retour.append([departX-delta, departY+distance-delta])
-            # On test si la colonne souhaitée à droite est dans la grille de jeu
-            if departX+delta < constantes.taille_carte:
-                # On test si la ligne souhaitée en haut à droite du centre est dans la grille de jeu
-                if departY-distance+delta >= 0:
-                    retour.append([departX+delta, departY-distance+delta])
-                # On test si la ligne souhaitée en bas à droite du centre est dans la grille de jeu
-                if departY+distance-delta < constantes.taille_carte:
-                    retour.append([departX+delta, departY+distance-delta])
-        delta = distance
-        # Oblige de faire delta distance à la main car sur les colonnes les plus loins
-        #  du centre il ny à q'une ligne à ajouter.
-        # Test si la coordonnée x extême gauche est dans le grille de jeu
-        if departX-delta >= 0:
-            # Test si la cooficherrdonnée y est dans le grille de jeu
-            if departY-distance+delta >= 0:
-                retour.append([departX-delta, departY-distance+delta])
-        # Test si la coordonnée extême drotie x est dans le grille de jeu
-        if departX+delta < constantes.taille_carte:
-            # Test si la coordonnée y est dans le grille de jeu
-            if departY-distance+delta >= 0:
-                retour.append([departX+delta, departY-distance+delta])
-
+            retour.append([departX+delta, departY-distance+delta])
         # Return Les cases trouvées
         return retour
 
@@ -972,6 +980,7 @@ class Niveau:
         @return: -Renvoie True si l'effet a été appliqué, False sinon
                  -Les cibles traitées avec les nouveaux joueurs ajoutés dedans"""
 
+        
         sestApplique = False
         # Pour chaque case dans la zone
         for caseEffet in zoneEffet:
@@ -989,8 +998,9 @@ class Niveau:
                 # Si le joueur sur la case est une cible valide
                 msg, estValide = effet.cibleValide(joueurLanceur, joueurCaseEffet,
                                                    ciblesTraitees)
-                if not estValide and not self.isPrevisu():
-                    print(msg)
+                if not estValide:
+                    if not self.isPrevisu():
+                        print(msg)
                 else:
                     # On appliquer l'effet
                     ciblesTraitees.append(joueurCaseEffet)
