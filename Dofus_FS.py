@@ -281,7 +281,7 @@ class OpeningPage():
                     classesDisponibles = \
                         Combobox(frameCaracs,
                                  textvariable=StringVar(),
-                                 values=["Cra", "Xelor", "Iop",
+                                 values=["Cra", "Xelor", "Iop", "Sacrieur",
                                          "Sram", "Poutch", "Eniripsa", "Pandawa"],
                                  state='readonly')
                     classesDisponibles.bind('<<ComboboxSelected>>', self.onClassChange)

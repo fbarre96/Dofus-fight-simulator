@@ -23,7 +23,9 @@ class Effet(object):
         if isinstance(effect_infos, str):
             for classe in cls.subclasses:
                 if classe.isAffected(effect_infos, **kwargs):
-                    return classe.craftEffect(effect_infos, **kwargs)
+                    crafted = classe.craftEffect(effect_infos, **kwargs)
+                    if crafted is not None:
+                        return crafted
 
             return EffetToDo.craftEffect(str(effect_infos), **kwargs)
         elif isinstance(effect_infos, dict):

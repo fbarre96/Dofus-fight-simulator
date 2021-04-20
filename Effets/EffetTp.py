@@ -129,8 +129,16 @@ class EffetTeleportePosPrec(Effet):
         @type: **kwargs"""
         if joueurCaseEffet is None:
             return
-        joueurCaseEffet.tpPosPrec(
-            self.nbCase, niveau, joueurLanceur, kwargs.get("nom_sort"))
+        self.nomSort = kwargs.get("nom_sort")
+        if self.pile:
+            niveau.ajoutFileEffets(self, joueurCaseEffet, joueurLanceur)
+        else:
+            self.activerEffet(niveau, joueurCaseEffet, joueurLanceur)
+
+    def activerEffet(self, niveau, joueurCaseEffet, joueurLanceur):
+        if joueurCaseEffet is not None:
+            joueurCaseEffet.tpPosPrec(
+                self.nbCase, niveau, joueurLanceur, self.nomSort)
 
 
 class EffetTeleporteDebutTour(Effet):

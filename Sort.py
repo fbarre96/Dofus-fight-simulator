@@ -82,7 +82,7 @@ class Sort:
             tabEffetsCritiques = []
             for effet in s["EffetsCritiques"]:
                 tabEffetsCritiques.append(Effet.effectFactory(effet))
-            cc = int(s["Autres"]["Probabilit\u00e9 de coup critique"][:-1])
+            cc = int(s["Autres"].get("Probabilit\u00e9 de coup critique", "0%")[:-1])
             if s["Autres"].get("Lancer en diagonale", "Non") == "Oui":
                 typeLance = "diagonale"
             elif s["Autres"].get("Lancer en ligne", "Non") == "Oui":

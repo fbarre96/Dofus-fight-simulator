@@ -214,6 +214,14 @@ class Etat:
         @return: la nouvelle valeur du total de dégâts."""
         return total
 
+    def triggerApresChangementDeVie(self, porteur, niveau):
+        # pylint: disable=unused-argument
+        """@summary: Un trigger appelé orsque la vie du porteur a changé.
+                     Cet état de base ne fait rien.
+
+        @return: rien"""
+        
+
     def triggerAvantSubirDegats(self, cibleAttaque, niveau, totalPerdu, typeDegats, attaquant):
         # pylint: disable=unused-argument
         """@summary: Un trigger appelé pour tous les états du joueur attaqué
