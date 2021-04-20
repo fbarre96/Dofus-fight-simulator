@@ -3,18 +3,11 @@
 Dofus_FS est un simulateur de combat pour Dofus.
 """
 from tkinter import Tk
-from tkinter import StringVar
-from tkinter import LabelFrame
-from tkinter import Entry
-from tkinter import Button
-from tkinter import Label
-from tkinter import Frame
-from tkinter import END
-from tkinter import filedialog
+from tkinter import *
 
 from tkinter.ttk import Combobox
-from tkinter.ttk import Notebook
-
+from tkinter.ttk import Notebook, Scrollbar
+from PIL import Image, ImageTk
 import json
 from pygame.locals import QUIT, RESIZABLE
 import os
@@ -92,7 +85,6 @@ def launchSimu(persosToSave):
     @persosToSave: list of persos
     @type: list
     """
-    
     pygame.init()
     effectlist = os.listdir("Effets")
     for effect in effectlist:
@@ -109,7 +101,7 @@ def launchSimu(persosToSave):
                                         perso["Perso"]["Level"], perso["Perso"]["Team"],
                                         perso["Primaires"], perso["Secondaires"], perso["Dommages"],
                                         perso["Resistances"], perso["Perso"]["Classe"]+".png")
-        joueur.faireChargerSort()
+        joueur.faireChargerSort(perso["Sorts"])
         persos.append(joueur)
     commenceCombat(persos)
 
@@ -136,6 +128,8 @@ class PersoView():
     """
     def __init__(self, values):
         self.perso = values
+        self.caracTab = None
+        self.framePerso = None
         self.inputs = dict()
 
     def save(self):
@@ -170,16 +164,17 @@ class PersoView():
         """
         for valuesCategory, valueDict in self.perso.items():
             for valueName, value in valueDict.items():
-                if valueName == "Classe":
+                if valueName == "Classe" or valuesCategory == "Sorts":
                     self.inputs[valuesCategory][valueName].set(value)
                 else:
                     self.inputs[valuesCategory][valueName].delete(0, 'end')
                     self.inputs[valuesCategory][valueName].insert(END, value)
+            
     def load(self):
         """@summary: charge dans le perso donné au constructeur
                      un fichier json demandé à l'utilisateur
         """
-        filename = filedialog.askopenfilename(initialdir="./persos/", title="Chosir une sauvegarde",
+        filename = filedialog.askopenfilename(initialdir="./persos/", title="Choisir une sauvegarde",
                                               filetypes=(("json files", "*.json"),
                                                          ("all files", "*.*")))
         if filename.strip() != "":
@@ -223,21 +218,64 @@ class OpeningPage():
         self.notebk.forget(self.notebk.select())
         del self.persoViews[indPanneau-1]
 
+    def addPageSorts(self, persoVw):
+        tab_names = [persoVw.caracsNotebk.tab(i, option="text") for i in persoVw.caracsNotebk.tabs()]
+        if "Sorts" in tab_names:
+            persoVw.caracsNotebk.forget(tab_names.index("Sorts"))
+        classe = persoVw.perso["Perso"]["Classe"]
+        lvl = persoVw.perso["Perso"]["Level"]
+        frameSorts = LabelFrame(persoVw.framePerso, text="Sorts")
+        sorts, sortsDebtCombat = Personnages.Personnage.chargerSorts(classe, lvl, {}, True)
+        variantesFrame = ScrolledWindow(frameSorts, width=400, height=400)
+        persoVw.images = []
+        if "Sorts" not in persoVw.inputs:
+            persoVw.inputs["Sorts"] = dict()
+        addedSpells = {}
+        for sort in sorts:
+            if not sort.lancableParJoueur:
+                continue
+            isVariante = sort.nom_variante != "" and sort.nom_variante in addedSpells
+            root_pic1 = Image.open(sort.image)                       # Open the image like this first
+            persoVw.images.append(ImageTk.PhotoImage(root_pic1))
+            ind = len(addedSpells)
+            imgLbl = Label(variantesFrame.scrollwindow, image=persoVw.images[-1], anchor="nw")
+            imgLbl.grid(row=addedSpells[sort.nom_variante] if isVariante else ind, column=2 if isVariante else 0, sticky="e")
+            varSort = IntVar()
+            varSort.set(persoVw.perso["Sorts"].get(sort.nom, 0))
+            persoVw.inputs["Sorts"][sort.nom] = varSort
+            cbSort = Checkbutton(variantesFrame.scrollwindow, text=sort.nom, variable=varSort, onvalue=1, offvalue=0, anchor="w")
+            cbSort.grid(row=addedSpells[sort.nom_variante] if isVariante else ind, column=3 if isVariante else 1, sticky="w")
+            
+            addedSpells[sort.nom] = ind
+        persoVw.caracsNotebk.add(frameSorts, text="Sorts")
+
+    def onClassChange(self, event):
+        nomPanneau = self.notebk.tab(self.notebk.select())["text"]
+        indPanneau = int(nomPanneau.split(" ")[1])
+        persoVw = self.persoViews[indPanneau-1]
+        self.addPageSorts(persoVw)
+        
+
     def addPage(self, values):
         """@summary: Ajoute un onglet avec les valeurs de personnages données.
         """
-        self.framesPersos.append(Frame(self.notebk))
-        framePerso = self.framesPersos[-1]
         self.persoViews.append(PersoView(values))
         persoVw = self.persoViews[-1]
+        self.framesPersos.append(Frame(self.notebk))
+        framePerso = self.framesPersos[-1]
+        persoVw.framePerso = framePerso
         self.caracsNotebk.append(Notebook(framePerso))
         caracNotebk = self.caracsNotebk[-1]
         caracNotebk.pack()
+        persoVw.caracsNotebk = caracNotebk
         for inputsCategory, inputValues in persoVw.perso.items():
             frameCaracs = LabelFrame(framePerso, text=inputsCategory)
             if persoVw.inputs.get(inputsCategory, None) is None:
                 persoVw.inputs[inputsCategory] = dict()
             j = 0
+            if inputsCategory == "Sorts":
+                self.addPageSorts(persoVw)
+                continue
             for inputName, inputValue in inputValues.items():
                 if inputName == "Classe":
                     classesDisponibles = \
@@ -246,6 +284,7 @@ class OpeningPage():
                                  values=["Cra", "Xelor", "Iop",
                                          "Sram", "Poutch", "Eniripsa", "Pandawa"],
                                  state='readonly')
+                    classesDisponibles.bind('<<ComboboxSelected>>', self.onClassChange)
                     persoVw.inputs[inputsCategory][inputName] = classesDisponibles
                     persoVw.inputs[inputsCategory][inputName].set(inputValue)
 
@@ -294,6 +333,86 @@ class OpeningPage():
         addPersoBtn.bind("<Button-1>", self.addEmptyPage)
         addPersoBtn.pack(side="right")
 
+class ScrolledWindow(Frame):
+    """
+    1. Master widget gets scrollbars and a canvas. Scrollbars are connected 
+    to canvas scrollregion.
+
+    2. self.scrollwindow is created and inserted into canvas
+
+    Usage Guideline:
+    Assign any widgets as children of <ScrolledWindow instance>.scrollwindow
+    to get them inserted into canvas
+
+    __init__(self, parent, canv_w = 400, canv_h = 400, *args, **kwargs)
+    docstring:
+    Parent = master of scrolled window
+    canv_w - width of canvas
+    canv_h - height of canvas
+
+    """
+
+
+    def __init__(self, parent, *args, **kwargs):
+        """Parent = master of scrolled window
+        canv_w - width of canvas
+        canv_h - height of canvas
+
+       """
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.canv_w  = kwargs.get("width", 10)
+        self.canv_h  = kwargs.get("height", 10)
+        # creating a scrollbars
+        self.yscrlbr = Scrollbar(self.parent)
+        self.yscrlbr.grid(column = 1, row = 0, sticky = 'ns')         
+        # creating a canvas
+        self.canv = Canvas(self.parent)
+        self.canv.config(relief = 'flat',
+                         width = self.canv_w,
+                         heigh = self.canv_h, bd = 2)
+        # placing a canvas into frame
+        self.canv.grid(column = 0, row = 0, sticky = 'nsew')
+        # accociating scrollbar comands to canvas scroling
+        self.yscrlbr.config(command = self.canv.yview)
+
+        # creating a frame to inserto to canvas
+        self.scrollwindow = Frame(self.parent)
+
+        self.canv.create_window(0, 0, window = self.scrollwindow, anchor = 'nw')
+
+        self.canv.config(yscrollcommand = self.yscrlbr.set,
+                         scrollregion = (0, 0, self.canv_w, self.canv_h))
+
+        self.yscrlbr.lift(self.scrollwindow)        
+        self.scrollwindow.bind('<Configure>', self._configure_window)  
+        self.scrollwindow.bind('<Enter>', self._bound_to_mousewheel)
+        self.scrollwindow.bind('<Leave>', self._unbound_to_mousewheel)
+
+        return
+
+    def _bound_to_mousewheel(self, event):
+        self.canv.bind_all("<MouseWheel>", self._on_mousewheel)   
+
+    def _unbound_to_mousewheel(self, event):
+        self.canv.unbind_all("<MouseWheel>") 
+
+    def _on_mousewheel(self, event):
+        self.canv.yview_scroll(int(-1*(event.delta/120)), "units")  
+
+    def _configure_window(self, event):
+        # update the scrollbars to match the size of the inner frame
+        size = (self.scrollwindow.winfo_reqwidth(), self.scrollwindow.winfo_reqheight())
+        try:
+            self.canv.config(scrollregion='0 0 %s %s' % size)
+        except:
+            return
+        if self.scrollwindow.winfo_reqwidth() != self.canv.winfo_width():
+            # update the canvas's width to fit the inner frame
+            self.canv.config(width = min(self.scrollwindow.winfo_reqwidth(), self.canv_w))
+        if self.scrollwindow.winfo_reqheight() != self.canv.winfo_height():
+            # update the canvas's width to fit the inner frame
+            self.canv.config(height = min(self.scrollwindow.winfo_reqheight(), self.canv_h))
 
 if __name__ == "__main__":
     # Importation des bibliothèques nécessaires

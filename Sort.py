@@ -46,6 +46,7 @@ class Sort:
         self.compteTourEntreDeux = nbTourEntreDeux
         self.description = kwargs.get("description", "")
         self.lancableParJoueur = kwargs.get("lancableParJoueur", True)
+        self.nom_variante = kwargs.get("nom_variante", "")
         self.overlay = Overlays.Overlay(self, Overlays.ColoredText(
             "nom", (210, 105, 30)), Overlays.ColoredText(
                 "description", (224, 238, 238)), (56, 56, 56))
@@ -100,7 +101,8 @@ class Sort:
                     typeLance, s["Autres"].get("Ligne de vue", "Non") == "Oui",\
                     description=sortInfos["desc"],\
                     chaine=s["Autres"].get("Chaîné", "Oui") == "Oui",\
-                    lancableParJoueur=sortInfos.get("lancableParJoueur", True)\
+                    lancableParJoueur=sortInfos.get("lancableParJoueur", True),\
+                    nom_variante=sortInfos.get("nom_variante", None)\
                 )
             if sortInfos["nom"] == "Activation de Brume":
                 print("debg")

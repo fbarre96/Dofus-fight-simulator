@@ -28,7 +28,7 @@ class Personnage(object):
         return ret
 
     def __init__(self, nomPerso, classe, lvl, team, caracsPrimaires,
-                 caracsSecondaires, dommages, resistances, icone="", objIA=None):
+                 caracsSecondaires, dommages, resistances, icone="", objIA=None, choixSorts={}):
         """@summary: Initialise un personnage.
         @classe: la classe du personnage (les 18 classes de Dofus).
                  Pour l'instant sert d'identifiant étant donné que 1v1 vs Poutch.
@@ -159,9 +159,9 @@ class Personnage(object):
                                                              (224, 238, 238)),
                                         (56, 56, 56))
 
-    def faireChargerSort(self, loadToutPersonnages=True):
+    def faireChargerSort(self, choixSorts, loadToutPersonnages=True):
         self.sorts, self.sortsDebutCombat = Personnage.chargerSorts(
-            self.classe, self.lvl, loadToutPersonnages)  # la liste des sorts du personnage
+            self.classe, self.lvl, choixSorts, loadToutPersonnages)  # la liste des sorts du personnage
 
     def getSort(self, nomSort):
         for sort in self.sorts:
@@ -273,9 +273,13 @@ class Personnage(object):
 
     @staticmethod
     def loadSorts(sortfile, lvl):
-        with open(sortfile) as f:
-            data = f.read()
-        sortsData = json.loads(data)
+        try:
+            with open(sortfile) as f:
+                data = f.read()
+                sortsData = json.loads(data)
+        except:
+            sortsData = {}
+        
         sorts = []
         sortsDebutCombat = []
         for sortName, sortData in sortsData.items():
@@ -290,7 +294,7 @@ class Personnage(object):
 
 
     @staticmethod
-    def chargerSorts(classe, lvl, loadToutPersonnages=True):
+    def chargerSorts(classe, lvl, choixSorts={}, loadToutPersonnages=True):
         """@summary: Méthode statique qui initialise les sorts du personnage selon sa classe.
         @classe: le nom de classe dont on souhaite récupérer les sorts
         @type: string
@@ -386,8 +390,9 @@ class Personnage(object):
             sorts += Sorts.ToutPersonnage.getSorts(lvl)
         totalNbSorts = len(sorts)
         i = 0
+        
         while i < totalNbSorts:
-            if sorts[i] is None:
+            if sorts[i] is None or choixSorts.get(sorts[i].nom, 1) == 0:
                 sorts.remove(sorts[i])
                 totalNbSorts -= 1
                 i -= 1
