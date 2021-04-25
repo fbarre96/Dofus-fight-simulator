@@ -298,7 +298,7 @@ class Personnage(object):
 
 
     @staticmethod
-    def chargerSorts(classe, lvl, choixSorts={}, loadToutPersonnages=True):
+    def chargerSorts(classe, lvl, choixSorts={}, loadToutPersonnages=True, default=1):
         """@summary: Méthode statique qui initialise les sorts du personnage selon sa classe.
         @classe: le nom de classe dont on souhaite récupérer les sorts
         @type: string
@@ -363,10 +363,36 @@ class Personnage(object):
         #     sorts += Sorts.Iop.getSorts(lvl)
     
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        sortfile = os.path.join(dir_path, "Sorts/"+classe.lower().replace(" ", "_") +".json")
-        tsorts, tsortsDebutCombat = Personnage.loadSorts(sortfile, lvl)
-        sorts += tsorts
-        sortsDebutCombat += tsortsDebutCombat
+        classe_file = classe.lower().replace(" ", "_")
+        files_to_load = {classe_file:[]}
+        for nom_sort in choixSorts:
+            tabs = nom_sort.split("::")
+            if len(tabs) == 2:
+                files_to_load[tabs[0]] = files_to_load.get(tabs[0], []) + [tabs[1]]
+            else:
+                files_to_load[classe_file] = files_to_load.get(classe_file, []) + [nom_sort]
+        for files in files_to_load:
+            sortfile = os.path.join(dir_path, "Sorts/"+os.path.splitext(files)[0]+".json")
+            tsorts, tsortsDebutCombat = Personnage.loadSorts(sortfile, lvl)
+            totalNbSorts = len(tsorts)
+            i = 0
+            while i < totalNbSorts:
+                if tsorts[i] is None or choixSorts.get(tsorts[i].nom, default) == 0:
+                    tsorts.remove(tsorts[i])
+                    totalNbSorts -= 1
+                    i -= 1
+                i += 1
+            totalNbSorts = len(tsortsDebutCombat)
+            i = 0
+            while i < totalNbSorts:
+                if tsortsDebutCombat[i] is None or choixSorts.get(tsortsDebutCombat[i].nom, default) == 0:
+                    tsortsDebutCombat.remove(tsortsDebutCombat[i])
+                    totalNbSorts -= 1
+                    i -= 1
+                i += 1
+            sorts += tsorts
+            sortsDebutCombat += tsortsDebutCombat
+
         # elif classe == "Sram":
         #     import Sorts.Sram
         #     sortsDebutCombat += Sorts.Sram.getSortsDebutCombat(lvl)
@@ -389,18 +415,7 @@ class Personnage(object):
         #     sorts += Sorts.Bambou.getSorts(lvl)
         # elif classe == "Double":
         #     return sorts, sortsDebutCombat
-        if loadToutPersonnages:
-            import Sorts.ToutPersonnage
-            sorts += Sorts.ToutPersonnage.getSorts(lvl)
-        totalNbSorts = len(sorts)
-        i = 0
         
-        while i < totalNbSorts:
-            if sorts[i] is None or choixSorts.get(sorts[i].nom, 1) == 0:
-                sorts.remove(sorts[i])
-                totalNbSorts -= 1
-                i -= 1
-            i += 1
         return sorts, sortsDebutCombat
 
     def lancerSortsDebutCombat(self, niveau):

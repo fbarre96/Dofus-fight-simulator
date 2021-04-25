@@ -5,8 +5,8 @@ Dofus_FS est un simulateur de combat pour Dofus.
 from tkinter import Tk
 from tkinter import *
 
-from tkinter.ttk import Combobox
-from tkinter.ttk import Notebook, Scrollbar
+from tkinter.ttk import Combobox, Button
+from tkinter.ttk import Notebook
 from PIL import Image, ImageTk
 import json
 from pygame.locals import QUIT, RESIZABLE
@@ -15,8 +15,9 @@ import pygame
 import constantes
 import Niveau
 import Personnages
+from ScrolledWindow import ScrolledWindow
 from importlib import import_module
-
+from ChildDialogChooseSpell import ChildDialogChooseSpell
 
 def boucleEvenement(niveau, mouseXY, sortSelectionne):
     """@summary: Parours et dispatch les événements pygame
@@ -218,7 +219,7 @@ class OpeningPage():
         self.notebk.forget(self.notebk.select())
         del self.persoViews[indPanneau-1]
 
-    def addPageSorts(self, persoVw):
+    def addPageSorts(self, persoVw, sortsSuppl=[], sortsDebtCombatSuppl=[]):
         tab_names = [persoVw.caracsNotebk.tab(i, option="text") for i in persoVw.caracsNotebk.tabs()]
         if "Sorts" in tab_names:
             persoVw.caracsNotebk.forget(tab_names.index("Sorts"))
@@ -226,28 +227,62 @@ class OpeningPage():
         lvl = persoVw.perso["Perso"]["Level"]
         frameSorts = LabelFrame(persoVw.framePerso, text="Sorts")
         sorts, sortsDebtCombat = Personnages.Personnage.chargerSorts(classe, lvl, {}, True)
-        variantesFrame = ScrolledWindow(frameSorts, width=400, height=400)
+        sorts += sortsSuppl
+        sortsDebtCombat += sortsDebtCombatSuppl
+        for extSort in [x for x in persoVw.perso["Sorts"] if "::" in x]:
+            classe, nom_sort = extSort.split("::")
+            sortsSuppl, sortsDebtCombatSuppl = Personnages.Personnage.chargerSorts(classe, lvl, {nom_sort:1}, False, 1)
+            for sortSuppl in sortsSuppl:
+                sortSuppl.nom = classe+"::"+nom_sort
+            for sortDebtCombatSuppl in sortsDebtCombatSuppl:
+                sortDebtCombatSuppl.nom = classe+"::"+nom_sort
+            sorts += sortsSuppl
+            sortsDebtCombat += sortsDebtCombatSuppl
+        self.variantesFrame = ScrolledWindow(frameSorts, width=400, height=400)
+        persoVw.sortsLignes = 0
         persoVw.images = []
         if "Sorts" not in persoVw.inputs:
             persoVw.inputs["Sorts"] = dict()
         addedSpells = {}
-        for sort in sorts:
+        for sort in sorts+sortsDebtCombat:
             if not sort.lancableParJoueur:
                 continue
             isVariante = sort.nom_variante != "" and sort.nom_variante in addedSpells
             root_pic1 = Image.open(sort.image)                       # Open the image like this first
             persoVw.images.append(ImageTk.PhotoImage(root_pic1))
-            ind = len(addedSpells)
-            imgLbl = Label(variantesFrame.scrollwindow, image=persoVw.images[-1], anchor="nw")
-            imgLbl.grid(row=addedSpells[sort.nom_variante] if isVariante else ind, column=2 if isVariante else 0, sticky="e")
+            if not isVariante:
+                persoVw.sortsLignes += 1
+            ind = persoVw.sortsLignes
+            imgLbl = Label(self.variantesFrame.scrollwindow, image=persoVw.images[-1], anchor="nw")
+            imgLbl.grid(row=ind, column=2 if isVariante else 0, sticky="e")
             varSort = IntVar()
             varSort.set(persoVw.perso["Sorts"].get(sort.nom, 0))
             persoVw.inputs["Sorts"][sort.nom] = varSort
-            cbSort = Checkbutton(variantesFrame.scrollwindow, text=sort.nom, variable=varSort, onvalue=1, offvalue=0, anchor="w")
-            cbSort.grid(row=addedSpells[sort.nom_variante] if isVariante else ind, column=3 if isVariante else 1, sticky="w")
-            
+            cbSort = Checkbutton(self.variantesFrame.scrollwindow, text=sort.nom, variable=varSort, onvalue=1, offvalue=0, anchor="w")
+            cbSort.grid(row=ind, column=3 if isVariante else 1, sticky="w")
             addedSpells[sort.nom] = ind
+        
+        addSortButton = Button(frameSorts, text="Ajout Sort/Item", command=self.ajoutSort)
+        addSortButton.grid()
         persoVw.caracsNotebk.add(frameSorts, text="Sorts")
+
+    def ajoutSort(self):
+        nomPanneau = self.notebk.tab(self.notebk.select())["text"]
+        indPanneau = int(nomPanneau.split(" ")[1])
+        persoVw = self.persoViews[indPanneau-1]
+        dialog = ChildDialogChooseSpell(self.fenetre, persoVw)
+        self.fenetre.wait_window(dialog.app)
+        filename, sort_name = tuple(dialog.rvalue.split("::"))
+        perso = persoVw.perso
+        classename = os.path.splitext(filename)[0]
+        sorts, sortsDebtCombat = Personnages.Personnage.chargerSorts(classename, int(perso["Perso"]["Level"]), {sort_name:1}, False, 0)
+        current = persoVw.caracsNotebk.index("current")
+        for sort in sorts:
+            sort.nom = filename+"::"+sort_name
+        for sort in sortsDebtCombat:
+            sort.nom = filename+"::"+sort_name
+        self.addPageSorts(persoVw, sorts, sortsDebtCombat)
+        persoVw.caracsNotebk.select(current)
 
     def onClassChange(self, event):
         nomPanneau = self.notebk.tab(self.notebk.select())["text"]
@@ -332,87 +367,6 @@ class OpeningPage():
         addPersoBtn = Button(self.fenetre, text='Ajouter un perso')
         addPersoBtn.bind("<Button-1>", self.addEmptyPage)
         addPersoBtn.pack(side="right")
-
-class ScrolledWindow(Frame):
-    """
-    1. Master widget gets scrollbars and a canvas. Scrollbars are connected 
-    to canvas scrollregion.
-
-    2. self.scrollwindow is created and inserted into canvas
-
-    Usage Guideline:
-    Assign any widgets as children of <ScrolledWindow instance>.scrollwindow
-    to get them inserted into canvas
-
-    __init__(self, parent, canv_w = 400, canv_h = 400, *args, **kwargs)
-    docstring:
-    Parent = master of scrolled window
-    canv_w - width of canvas
-    canv_h - height of canvas
-
-    """
-
-
-    def __init__(self, parent, *args, **kwargs):
-        """Parent = master of scrolled window
-        canv_w - width of canvas
-        canv_h - height of canvas
-
-       """
-        super().__init__(parent, *args, **kwargs)
-        self.parent = parent
-        self.canv_w  = kwargs.get("width", 10)
-        self.canv_h  = kwargs.get("height", 10)
-        # creating a scrollbars
-        self.yscrlbr = Scrollbar(self.parent)
-        self.yscrlbr.grid(column = 1, row = 0, sticky = 'ns')         
-        # creating a canvas
-        self.canv = Canvas(self.parent)
-        self.canv.config(relief = 'flat',
-                         width = self.canv_w,
-                         heigh = self.canv_h, bd = 2)
-        # placing a canvas into frame
-        self.canv.grid(column = 0, row = 0, sticky = 'nsew')
-        # accociating scrollbar comands to canvas scroling
-        self.yscrlbr.config(command = self.canv.yview)
-
-        # creating a frame to inserto to canvas
-        self.scrollwindow = Frame(self.parent)
-
-        self.canv.create_window(0, 0, window = self.scrollwindow, anchor = 'nw')
-
-        self.canv.config(yscrollcommand = self.yscrlbr.set,
-                         scrollregion = (0, 0, self.canv_w, self.canv_h))
-
-        self.yscrlbr.lift(self.scrollwindow)        
-        self.scrollwindow.bind('<Configure>', self._configure_window)  
-        self.scrollwindow.bind('<Enter>', self._bound_to_mousewheel)
-        self.scrollwindow.bind('<Leave>', self._unbound_to_mousewheel)
-
-        return
-
-    def _bound_to_mousewheel(self, event):
-        self.canv.bind_all("<MouseWheel>", self._on_mousewheel)   
-
-    def _unbound_to_mousewheel(self, event):
-        self.canv.unbind_all("<MouseWheel>") 
-
-    def _on_mousewheel(self, event):
-        self.canv.yview_scroll(int(-1*(event.delta/120)), "units")  
-
-    def _configure_window(self, event):
-        # update the scrollbars to match the size of the inner frame
-        size = (self.scrollwindow.winfo_reqwidth(), self.scrollwindow.winfo_reqheight())
-        try:
-            self.canv.config(scrollregion='0 0 %s %s' % size)
-        except:
-            return
-        if self.scrollwindow.winfo_reqwidth() != self.canv.winfo_width():
-            # update the canvas's width to fit the inner frame
-            self.canv.config(width = min(self.scrollwindow.winfo_reqwidth(), self.canv_w))
-        if self.scrollwindow.winfo_reqheight() != self.canv.winfo_height():
-            # update the canvas's width to fit the inner frame
-            self.canv.config(height = min(self.scrollwindow.winfo_reqheight(), self.canv_h))
 
 if __name__ == "__main__":
     # Importation des bibliothèques nécessaires

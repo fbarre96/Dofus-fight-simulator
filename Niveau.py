@@ -671,8 +671,9 @@ class Niveau:
                     joueur.posX, joueur.posY, tailleCercle)
             for case in casesAXDistance:
                 joueurSurCase = self.getJoueurSur(case[0], case[1])
-                if (self.structure[case[1]][case[0]].type == "v" and joueurSurCase is None):
-                    tabCasesZone.append(case)
+                if case[1] > 0 and case[1] < len(self.structure) and case[0] > 0 and case[0] < len(self.structure[0]):
+                    if (self.structure[case[1]][case[0]].type == "v" and joueurSurCase is None):
+                        tabCasesZone.append(case)
                 if joueurSurCase is not None:
                     if joueurSurCase.team != self.tourDe.team and joueurSurCase.aEtat("Invisible"):
                         tabCasesZone.append(case)

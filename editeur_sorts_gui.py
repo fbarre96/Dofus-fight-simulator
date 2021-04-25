@@ -176,7 +176,7 @@ class OpeningPage:
 
             typeLancerLabel = ttk.Label(subCaracsFrame, text="Type de lancer:")
             typeLancerLabel.grid(row=2, column=0, sticky="e", pady=5)
-            self.typeLancerComboboxs[str(i)] = ttk.Combobox(subCaracsFrame, values=["cercle", "ligne", "diagonale"], state="readonly")
+            self.typeLancerComboboxs[str(i)] = ttk.Combobox(subCaracsFrame, values=["cercle", "ligne", "diagonale", "carre"], state="readonly")
             
             self.typeLancerComboboxs[str(i)].grid(row=2, column=1, sticky="w", pady=5)
 
@@ -286,6 +286,7 @@ class OpeningPage:
             spellAtLevel["Autres"]["Ligne de vue"] = "Oui" if self.ldvValues[str(i)].get() == 1 else "Non"
             spellAtLevel["Autres"]["Lancer en diagonale"] = "Oui" if self.typeLancerComboboxs[str(i)].get() == "diagonale" else "Non"
             spellAtLevel["Autres"]["Lancer en ligne"] = "Oui" if self.typeLancerComboboxs[str(i)].get() == "ligne" else "Non"
+            spellAtLevel["Autres"]["Lancer en carré"] = "Oui" if self.typeLancerComboboxs[str(i)].get() == "carre" else "Non"
             spellAtLevel["Autres"]["Probabilité de coup critique"] = str(self.probaCritSpinboxs[str(i)].get())+"%"
             spellAtLevel["Autres"]["Nb. de lancers par tour"] = str(self.nbLanceTourSpinboxs[str(i)].get())
             spellAtLevel["Autres"]["Nb. de lancers par tour par joueur"] = str(self.nbLanceTourParJoueurSpinboxs[str(i)].get())
@@ -417,7 +418,9 @@ class OpeningPage:
             self.criticalEffectTables[str(i)].effectsValues = listOfEffect
             self.chaineValues[str(i)].set(1 if spellAtLevel["Autres"].get("Chaîné", "Oui") == "Oui" else 0) # N'existe pas sur le site officiel
             self.ldvValues[str(i)].set(1 if spellAtLevel["Autres"].get("Ligne de vue", "Oui") == "Oui" else 0)
-            if spellAtLevel["Autres"].get("Lancer en diagonale", "Non") == "Oui": # N'existe pas sur le site officiel
+            if spellAtLevel["Autres"].get("Lancer en carré", "Non") == "Oui":
+                self.typeLancerComboboxs[str(i)].set("carre")
+            elif spellAtLevel["Autres"].get("Lancer en diagonale", "Non") == "Oui": # N'existe pas sur le site officiel
                 self.typeLancerComboboxs[str(i)].set("diagonale")
             elif spellAtLevel["Autres"].get("Lancer en ligne", "Non") == "Oui":
                 self.typeLancerComboboxs[str(i)].set("ligne")

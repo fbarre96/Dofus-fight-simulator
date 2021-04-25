@@ -21,7 +21,8 @@
             "type": "python",
             "request": "launch",
             "program": "Dofus_FS.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "python": "C:\\Users\\barre\\AppData\\Local\\Programs\\Python\\Python36\\python3.exe",
         },
         {
             "name": "Python: Remote Attach",

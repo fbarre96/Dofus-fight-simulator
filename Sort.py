@@ -85,6 +85,8 @@ class Sort:
             cc = int(s["Autres"].get("Probabilit\u00e9 de coup critique", "0%")[:-1])
             if s["Autres"].get("Lancer en diagonale", "Non") == "Oui":
                 typeLance = "diagonale"
+            elif s["Autres"].get("Lancer en carré", "Non") == "Oui":
+                typeLance = "carre"
             elif s["Autres"].get("Lancer en ligne", "Non") == "Oui":
                 typeLance = "ligne"
             else:
@@ -125,6 +127,11 @@ class Sort:
                 return False
         elif self.typeLancer == "diagonale":
             if distanceY != distanceX:
+                return False
+            sortPoMin *= 2
+            sortPoMax *= 2
+        elif self.typeLancer == "carre":
+            if distanceY > 1 or distanceX > 1:
                 return False
             sortPoMin *= 2
             sortPoMax *= 2
