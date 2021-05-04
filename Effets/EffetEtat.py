@@ -249,8 +249,17 @@ class EffetEtatSelfTF(Effet):
         sortsExclusEntry.delete(0, 'end')
         sortsExclusEntry.insert(0, self.sortsExclus)
         sortsExclusEntry.pack(side="left")
+        remplaceNomFrame = ttk.Frame(frame)
+        remplaceNomLbl = ttk.Label(remplaceNomFrame, text="Remplace le nom de l'état par le sort:")
+        remplaceNomLbl.pack(side="left")
+        remplaceNomVar = tk.BooleanVar()
+        remplaceNomVar.set(self.kwargs.get("kwargs:remplaceNom", True))
+        remplaceNomCheckbutton = ttk.Checkbutton(remplaceNomFrame, variable=remplaceNomVar)
+        remplaceNomCheckbutton.pack(side="left")
+        remplaceNomFrame.pack(side="bottom")
         ret["sortsExclus"] = sortsExclusEntry
         ret["kwargs:cumulMax"] = cumulMaxSpinbox
+        ret["kwargs:remplaceNom"] = remplaceNomVar
         ret["etat"] = self.etatWidgets
         etatOptionFrame.pack(side="bottom")
         frame.pack()

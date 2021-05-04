@@ -864,7 +864,7 @@ class EtatEffetSiPorte(EtatEffet):
 
 class EtatEffetSiLance(EtatEffet):
     """@summary: Classe décrivant un état qui active un Effet quand le porteur se fait porté."""
-    def __init__(self, nom, debDans, duree, effet, nomSort, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, effet=None, nomSort="", quiLancera="lance", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -881,13 +881,13 @@ class EtatEffetSiLance(EtatEffet):
         @type: Personnage ou None
         @desc: la description de ce que fait l'états pour affichage.
         @type: string"""
-        super().__init__(nom, debDans, duree, effet, nomSort, "", lanceur, desc)
+        super().__init__(nom, debDans, duree, effet, nomSort, quiLancera, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatEffetSiLance(self.nom, self.debuteDans, self.duree, deepcopy(self.effet),
-                                self.nomSort,
+                                self.nomSort, self.quiLancera,
                                 self.lanceur, self.desc)
 
     def buildUI(self, topframe, callbackDict):

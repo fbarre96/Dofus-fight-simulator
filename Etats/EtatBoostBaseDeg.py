@@ -101,14 +101,29 @@ class EtatBoostBaseDegLvlBased(EtatBoostBaseDeg):
                  pour le porteur selon son lvl.
     Hérite de EtatBoostBaseDeg"""
 
-    def __init__(self, nom, debDans, duree, nomSort, boostbaseDeg, lanceur=None, desc=""):
-        super().__init__(nom, debDans, duree, boostbaseDeg, nomSort, lanceur, desc)
+    def __init__(self, nom, debDans, duree, nomSort="", boostbaseDeg=0, lanceur=None, desc=""):
+        super().__init__(nom, debDans, duree, nomSort, boostbaseDeg, lanceur, desc)
 
     def __deepcopy__(self, memo):
         """@summary: Duplique un état (clone)
         @return: Le clone de l'état"""
         return EtatBoostBaseDegLvlBased(self.nom, self.debuteDans, self.duree, self.nomSort,
-                                        self.boostbaseDeg, self.lanceur, self.desc)
+                                        int(self.boostbaseDeg), self.lanceur, self.desc)
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBoostBaseDegLvlBased(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), infos["nomSort"], int(infos["boostbaseDeg"]), None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["nomSort"] = self.nomSort
+        ret["boostbaseDeg"] = int(self.boostbaseDeg)
+        return ret
 
     def triggerAvantCalculDegats(self, dommages, baseDeg, caracs, nomSort, minjet, maxjet):
         """@summary: Un trigger appelé pour tous les états des 2 joueurs impliqués

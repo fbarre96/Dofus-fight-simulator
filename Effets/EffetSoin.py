@@ -7,7 +7,7 @@ class EffetSoin(Effet):
     """@summary: Classe décrivant un effet de sort. Les sorts sont découpés en 1 ou + effets.
     Cet effet soinges une cible."""
 
-    def __init__(self, valSoinMin, valSoinMax, **kwargs):
+    def __init__(self, valSoinMin=0, valSoinMax=0, **kwargs):
         """@summary: Initialise un effet de dégâts.
         @valSoinMin: jet de soin minimum
         @type: int
@@ -25,6 +25,38 @@ class EffetSoin(Effet):
     def __deepcopy__(self, memo):
         cpy = EffetSoin(self.valSoinMin, self.valSoinMax, **self.kwargs)
         return cpy
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter.ttk as ttk
+        import tkinter as tk
+        ret = {}
+        frame = ttk.Frame(topframe)
+        valSoinMinLbl = ttk.Label(frame, text="Val soin min:")
+        valSoinMinLbl.pack(side="left")
+        valSoinMinSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        valSoinMinSpinbox.delete(0, 'end')
+        valSoinMinSpinbox.insert(0, int(self.valSoinMin))
+        valSoinMinSpinbox.pack(side="left")
+        ret["valSoinMin"] = valSoinMinSpinbox
+        valSoinMaxLbl = ttk.Label(frame, text="Val soin max:")
+        valSoinMaxLbl.pack(side="left")
+        valSoinMaxSpinbox = tk.Spinbox(frame, from_=0, to=100, width=3)
+        valSoinMaxSpinbox.delete(0, 'end')
+        valSoinMaxSpinbox.insert(0, int(self.valSoinMax))
+        valSoinMaxSpinbox.pack(side="left")
+        ret["valSoinMax"] = valSoinMaxSpinbox
+        frame.pack()
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["valSoinMin"] = self.valSoinMin
+        ret["valSoinMax"] = self.valSoinMax
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EffetSoin(int(infos["valSoinMin"]),int(infos["valSoinMax"]), **infos["kwargs"])
 
     def calculSoin(self, joueurCaseEffet, joueurLanceur, howToChoose="alea"):
         """@summary: Calcul les soins qui seront donnés.

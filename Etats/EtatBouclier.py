@@ -7,7 +7,7 @@ from Etats.Etat import Etat
 class EtatBouclierPerLvl(Etat):
     """@summary: Classe décrivant un état qui modifie les points de bouclier par niveau."""
 
-    def __init__(self, nom, debDans, duree, boostBouclier, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, boostBouclier=100, lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -33,6 +33,36 @@ class EtatBouclierPerLvl(Etat):
         @return: Le clone de l'état"""
         return EtatBouclierPerLvl(self.nom, self.debuteDans, self.duree,
                                   self.boostBouclier, self.lanceur, self.desc)
+
+    def buildUI(self, topframe, callbackDict):
+        import tkinter as tk
+        from tkinter import ttk
+        import Personnages
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        boostBouclierLbl = ttk.Label(frame, text="bouclier en % du level:")
+        boostBouclierLbl.grid(row=2, column=0, sticky="e")
+        self.boostBouclierSpinbox = tk.Spinbox(frame, from_=-999, to=999, width=4)
+        self.boostBouclierSpinbox.delete(0, 'end')
+        self.boostBouclierSpinbox.insert(0, int(self.boostBouclier))
+        self.boostBouclierSpinbox.grid(row=2, column=1, sticky="w")
+        ret["boostBouclier"] = self.boostBouclierSpinbox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatBouclierPerLvl(infos["nom"], infos["debuteDans"], infos["duree"], infos["boostBouclier"], None, infos["desc"])
+
+    def __str__(self):
+        ret = super().__str__()
+        ret += " "+self.desc
+        return ret
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["boostBouclier"] = self.boostBouclier
+        return ret
 
     def triggerRafraichissement(self, personnage, niveau):
         """@summary: Un trigger appelé pour tous les états du joueur dont les états sont rafraichit

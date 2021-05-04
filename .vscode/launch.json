@@ -11,8 +11,8 @@
             "program": "editeur_sorts_gui.py",
             "console": "integratedTerminal",
             "args":[
-                "Sorts/sacrieur.json",
-                "Sorts/sacrieur.json",
+                "Sorts/Synchro.json",
+                "Sorts/Synchro.json",
                 "2021-04-07/sorts_icones/"
             ]
         },

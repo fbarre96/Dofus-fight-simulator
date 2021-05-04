@@ -21,7 +21,7 @@ class Etat:
         for classe in cls.subclasses:
             if str(classe.__name__) == name:
                 return classe("nom etat", 0, 1)
-        return None
+        return cls("nom etat", 0, 1)
 
     @classmethod
     def craftFromInfos(cls, infos):
