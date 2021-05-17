@@ -6,7 +6,7 @@ from Etats.Etat import Etat
 class EtatLanceSortSiSubit(Etat):
     """@summary: Classe décrivant un état qui fait active un sort si le porteur subit des dégâts."""
 
-    def __init__(self, nom, debDans, duree, sort, lanceurDuSort, lanceur=None, desc=""):
+    def __init__(self, nom, debDans, duree, sort="", lanceurDuSort="", lanceur=None, desc=""):
         """@summary: Initialise l'état.
         @nom: le nom de l'état, servira également d'identifiant
         @type: string
@@ -33,6 +33,38 @@ class EtatLanceSortSiSubit(Etat):
         @return: Le clone de l'état"""
         return EtatLanceSortSiSubit(self.nom, self.debuteDans, self.duree, self.sort,
                                     self.lanceurDuSort, self.lanceur, self.desc)
+
+    def buildUI(self, topframe, callbackDict):
+        from tkinter import ttk
+        import tkinter as tk
+        ret = super().buildUI(topframe, callbackDict)
+        frame = ttk.Frame(topframe)
+        frame.pack()
+        nomSortlbl = ttk.Label(frame, text="Nom sort à lancer:")
+        nomSortlbl.grid(row=0, column=0, sticky="e")
+        self.nomSortEntry = ttk.Entry(frame, width=50)
+        self.nomSortEntry.delete(0, "end")
+        self.nomSortEntry.insert(0, self.sort)
+        self.nomSortEntry.grid(row=0, column=1, sticky="w")
+        ret["sort"] = self.nomSortEntry
+        lanceurDuSortLbl = ttk.Label(frame, text="Lanceur du sort sera:")
+        lanceurDuSortLbl.grid(row=1, column=0, sticky="e")
+        lanceurDuSortCombobox = ttk.Combobox(frame, values=("Porteur", "Attaquant"), state="readonly")
+        lanceurDuSortCombobox.set(self.lanceurDuSort)
+        lanceurDuSortCombobox.grid(row=1, column=1, sticky="w")
+        ret["lanceurDuSort"] = lanceurDuSortCombobox
+        return ret
+
+    @classmethod
+    def craftFromInfos(cls, infos):
+        return EtatLanceSortSiSubit(infos["nom"], int(infos["debuteDans"]), int(infos["duree"]), infos["sort"], infos["lanceurDuSort"],
+              None, infos["desc"])
+
+    def getAllInfos(self):
+        ret = super().getAllInfos()
+        ret["sort"] = self.sort
+        ret["lanceurDuSort"] = self.lanceurDuSort
+        return ret
 
     def triggerApresSubirDegats(self, cibleAttaque, niveau, attaquant, totalPerdu):
         """@summary: Un trigger appelé pour tous les états du joueur attaqué

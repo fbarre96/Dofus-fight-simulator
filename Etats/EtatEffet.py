@@ -767,15 +767,15 @@ class EtatEffetSiRetraitEtat(EtatEffet):
     def buildUI(self, topframe, callbackDict):
         from tkinter import ttk
         import tkinter as tk
-        ret = super().buildUI(topframe, callbackDict, ("porteur"))
+        ret = super().buildUI(topframe, callbackDict, ("porteur", "lanceur"))
         frame = ttk.Frame(topframe)
         frame.pack()
         etatAccepteLbl = ttk.Label(frame, text="Seulement si nom état retiré:")
-        etatAccepteLbl.grid(row=0, column=0, sticky="e")
+        etatAccepteLbl.grid(row=1, column=0, sticky="e")
         self.etatAccepteEntry = ttk.Entry(frame, width=50)
         self.etatAccepteEntry.delete(0, "end")
         self.etatAccepteEntry.insert(0, self.etatAccepte)
-        self.etatAccepteEntry.grid(row=0, column=1, sticky="w")
+        self.etatAccepteEntry.grid(row=1, column=1, sticky="w")
         ret["etatAccepte"] = self.etatAccepteEntry
         return ret
 
@@ -808,7 +808,10 @@ class EtatEffetSiRetraitEtat(EtatEffet):
         if self.etatAccepte != "" and self.etatAccepte != etatRetire.nom:
             return
         cible = porteur
-        joueurQuiLance = porteur
+        if self.quiLancera == "lanceur":
+            joueurQuiLance = personnage
+        else:
+            joueurQuiLance = porteur
         niveau.lancerEffet(self.effet, cible.posX, cible.posY,
                            self.nomSort, cible.posX, cible.posY, joueurQuiLance)
 
