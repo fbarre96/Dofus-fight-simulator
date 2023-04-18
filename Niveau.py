@@ -33,6 +33,17 @@ class Case:
 class Niveau:
     """@summary: Classe permettant de créer un niveau"""
 
+    def load_images(self):
+        self.vide1 = pygame.image.load(constantes.image_vide_1).convert()
+        self.vide2 = pygame.image.load(constantes.image_vide_2).convert()
+        self.team1 = pygame.image.load(constantes.image_team_1).convert_alpha()
+        self.team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
+        self.previsionDeplacement = pygame.image.load(constantes.image_prevision_deplacement).convert()
+        self.previsionSort = pygame.image.load(constantes.image_prevision_sort).convert()
+        self.previsionLdv = pygame.image.load(constantes.image_prevision_ldv).convert()
+        self.previsionTacle = pygame.image.load(constantes.image_prevision_tacle).convert()
+        self.zone = pygame.image.load(constantes.image_prevision_zone).convert()
+    
     def __init__(self, fenetre, joueurs, font):
         """@summary: initialise le niveau.
             @fenetre: la fenêtre créé par pygame
@@ -44,6 +55,7 @@ class Niveau:
             @type: Font de pygame"""
         if fenetre is None:
             return
+        self.load_images()
         # Le double tableau qui décrit les lignes de case la grilel de jeus
         self.structure = None
         # le nombre de case sur un côté de la carte (carré)
@@ -125,8 +137,7 @@ class Niveau:
                       Un déplacement vers cette case est tenté
             @mouseXY: la position de la souris sur la fenêtre pygame
             @type: tableau [int,int] cordonnées x,y de la souris."""
-        caseX = int(mouseXY[0]/constantes.taille_sprite)
-        caseY = int(mouseXY[1]/constantes.taille_sprite)
+        caseX, caseY = self.pixel2grid(mouseXY)
         if caseX >= constantes.taille_carte or caseY >= constantes.taille_carte or \
             caseY < 0 or caseX < 0:
             return False
@@ -165,6 +176,11 @@ class Niveau:
                 print("Deplacement  impossible ("+str(joueur.PM)+" PM restants).")
         else:
             print("Deplacement impossible ("+str(joueur.PM)+" PM restants).")
+
+    def pixel2grid(self, mouseXY):
+        caseX = int(mouseXY[0]/constantes.taille_sprite)
+        caseY = int(mouseXY[1]/constantes.taille_sprite)
+        return caseX,caseY
 
     def calculTacle(self, fuyard, posX=None, posY=None):
         """@summary: calcul le nombre de PA et PM a utilisé
@@ -516,8 +532,7 @@ class Niveau:
         for i in range(self.taille):
             ligneNiveau = []
             for j in range(self.taille):
-                coordX = j * constantes.taille_sprite
-                coordY = i * constantes.taille_sprite
+                coordX, coordY = self.grid2pixel(j, i)
 
                 ligneNiveau.append(Case("v", pygame.draw.rect(self.fenetre, (0, 0, 0),
                                                               [coordX,
@@ -528,6 +543,11 @@ class Niveau:
             structureNiveau.append(ligneNiveau)
         # On sauvegarde cette structure
         self.structure = structureNiveau
+
+    def grid2pixel(self, x, y):
+        coordX = x * constantes.taille_sprite
+        coordY = y * constantes.taille_sprite
+        return coordX,coordY
 
     def getJoueurSur(self, caseX, caseY, getInvisible=True):
         """@summary: Retourne le joueur se trouvant sur la case donnée.
@@ -1156,15 +1176,7 @@ class Niveau:
     def afficher(self, fenetre, sortSelectionne, mouseXY):
         """@summary: Méthode permettant d'afficher le niveau"""
         # Chargement des images (seule celle de team contiennent de la transparence)
-        vide1 = pygame.image.load(constantes.image_vide_1).convert()
-        vide2 = pygame.image.load(constantes.image_vide_2).convert()
-        team1 = pygame.image.load(constantes.image_team_1).convert_alpha()
-        team2 = pygame.image.load(constantes.image_team_2).convert_alpha()
-        previsionDeplacement = pygame.image.load(constantes.image_prevision_deplacement).convert()
-        previsionSort = pygame.image.load(constantes.image_prevision_sort).convert()
-        previsionLdv = pygame.image.load(constantes.image_prevision_ldv).convert()
-        previsionTacle = pygame.image.load(constantes.image_prevision_tacle).convert()
-        zone = pygame.image.load(constantes.image_prevision_zone).convert()
+        
         # On parcourt la liste du niveau
         nLigne = 0
         tabCasesPrevi = []
@@ -1174,13 +1186,12 @@ class Niveau:
             nCase = 0
             for sprite in ligne:
                 # On calcule la position réelle en pixels
-                pixelX = nCase * constantes.taille_sprite
-                pixelY = nLigne * constantes.taille_sprite
+                pixelX,pixelY = self.grid2pixel(nCase, nLigne)
                 if sprite.type == 'v':  # v = Vide
                     if (nCase+(nLigne*len(ligne))) % 2 == 0:
-                        fenetre.blit(vide1, (pixelX, pixelY))
+                        fenetre.blit(self.vide1, (pixelX, pixelY))
                     else:
-                        fenetre.blit(vide2, (pixelX, pixelY))
+                        fenetre.blit(self.vide2, (pixelX, pixelY))
 
                     # Afficher previsualation portee du sort selectionne
                     if sortSelectionne is not None:
@@ -1191,13 +1202,12 @@ class Niveau:
                                not self.tourDe.checkLdv or \
                                sortSelectionne.aLigneDeVue(self, self.tourDe.posX,
                                                            self.tourDe.posY, nCase, nLigne):
-                                fenetre.blit(previsionSort, (pixelX, pixelY))
+                                fenetre.blit(self.previsionSort, (pixelX, pixelY))
                             else:
-                                fenetre.blit(previsionLdv, (pixelX, pixelY))
+                                fenetre.blit(self.previsionLdv, (pixelX, pixelY))
                         # Si la souris est sur la grille de jeu (et non pas dans les sorts)
                         if mouseXY[1] < constantes.y_sorts:
-                            caseX = int(mouseXY[0]/constantes.taille_sprite)
-                            caseY = int(mouseXY[1]/constantes.taille_sprite)
+                            caseX, caseY = self.pixel2grid(mouseXY)
                             # Si on cible une case dans la porte du sort il faut afficher la zone
                             if sortSelectionne.aPorte(self.tourDe.posX, self.tourDe.posY,
                                                       caseX, caseY, self.tourDe.PO):
@@ -1270,22 +1280,22 @@ class Niveau:
                 if joueurOnCase is not None:
                     if joueurOnCase.aEtat("Invisible"):
                         if joueurOnCase.team == self.tourDe.team:
-                            fenetre.blit(team1, (pixelX, pixelY))
+                            fenetre.blit(self.team1, (pixelX, pixelY))
                     else:
-                        fenetre.blit(team1, (pixelX, pixelY))
+                        fenetre.blit(self.team1, (pixelX, pixelY))
                 nCase += 1
             nLigne += 1
 
         # Affichage des cases dans la zone d'impact
         if sortSelectionne is not None:
             for case in tabCasesPrevi:
+                pixelX, pixelY = self.grid2pixel(case[0], case[1])
                 fenetre.blit(
-                    zone, (case[0]*constantes.taille_sprite, case[1]*constantes.taille_sprite))
+                    self.zone, (pixelX, pixelY))
         else:
             # si pas de sort sélectionné et souris sur la grille on prévisualise un déplacement.
             if mouseXY[1] < constantes.y_sorts:
-                caseX = int(mouseXY[0]/constantes.taille_sprite)
-                caseY = int(mouseXY[1]/constantes.taille_sprite)
+                caseX, caseY = self.pixel2grid(mouseXY)
                 # Calcul du déplacement
                 joueurPointe = self.getVisualationJoueurSur(caseX, caseY)
                 if joueurPointe is None:
@@ -1296,28 +1306,31 @@ class Niveau:
                             nbPATacle, nbPMTacle = self.calculTacle(self.tourDe)
                             cumulTacle = [0, 0]
                             for i, case in enumerate(tabCasesPrevi):
+                                pxl_x, pxl_y = self.grid2pixel(case[0], case[1])
                                 if nbPMTacle > 0 or nbPATacle > 0:
                                     cumulTacle[0] += nbPMTacle
                                     cumulTacle[1] += nbPATacle
                                 if cumulTacle[0] + i+1 > self.tourDe.PM or \
                                    cumulTacle[1] > self.tourDe.PA:
-                                    fenetre.blit(previsionTacle,
-                                                 (case[0]*constantes.taille_sprite,
-                                                  case[1]*constantes.taille_sprite))
+                                    fenetre.blit(self.previsionTacle,
+                                                 (pxl_x,
+                                                  pxl_y))
                                 else:
-                                    fenetre.blit(previsionDeplacement,
-                                                 (case[0]*constantes.taille_sprite,
-                                                  case[1]*constantes.taille_sprite))
+                                    fenetre.blit(self.previsionDeplacement,
+                                                 (pxl_x,
+                                                  pxl_y))
                                 if cumulTacle[0] != 0 or cumulTacle[1] != 0:
+                                    pixelX, pixelY = self.grid2pixel(caseX, caseY)
                                     self.tourDe.vue = Overlays.VueForOverlay(
-                                        self.fenetre, caseX*constantes.taille_sprite,
-                                        caseY*constantes.taille_sprite,
+                                        self.fenetre, pixelX,
+                                        pixelY,
                                         30, 30, self.tourDe)
                                     self.tourDe.setOverlayTextGenerique(
                                         "-"+str(cumulTacle[0])+"PM\n-"+str(cumulTacle[1])+"PA")
+                                    pixelX, pixelY = self.grid2pixel(self.tourDe.posX, self.tourDe.posY)
                                     self.tourDe.overlay.afficher(
-                                        self.tourDe.posX*constantes.taille_sprite,
-                                        self.tourDe.posY*constantes.taille_sprite)
+                                        pixelX,
+                                        pixelY)
                                 nbPATacle, nbPMTacle = self.calculTacle(
                                     self.tourDe, case[0], case[1])
                 else:
@@ -1325,14 +1338,14 @@ class Niveau:
                         joueurPointe)
                     if tabCasesPrevi is not None:
                         for case in tabCasesPrevi:
-                            fenetre.blit(previsionDeplacement,
-                                         (case[0]*constantes.taille_sprite,
-                                          case[1]*constantes.taille_sprite))
+                            pixelX, pixelY = self.grid2pixel(case[0], case[1])
+                            fenetre.blit(self.previsionDeplacement,
+                                         (pixelX,
+                                          pixelY))
 
         for jdp in previsuToShow:
             joueur = jdp
-            pixelX = jdp.posX*constantes.taille_sprite
-            pixelY = jdp.posY*constantes.taille_sprite
+            pixelX, pixelY = self.grid2pixel(jdp.posX, jdp.posY)
             afficherLeJoueur = True
             if joueur.aEtat("Invisible"):
                 if joueur.team != self.tourDe.team:
@@ -1344,17 +1357,16 @@ class Niveau:
 
         # Afficher joueurs
         for joueur in self.joueurs:
-            pixelX = joueur.posX*constantes.taille_sprite
-            pixelY = joueur.posY*constantes.taille_sprite
+            pixelX, pixelY = self.grid2pixel(joueur.posX, joueur.posY)
             afficherLeJoueur = True
             if joueur.aEtat("Invisible"):
                 if joueur.team != self.tourDe.team:
                     afficherLeJoueur = False
             if afficherLeJoueur:
                 if joueur.team == 1:
-                    fenetre.blit(team1, (pixelX, pixelY))
+                    fenetre.blit(self.team1, (pixelX, pixelY))
                 else:
-                    fenetre.blit(team2, (pixelX, pixelY))
+                    fenetre.blit(self.team2, (pixelX, pixelY))
 
                 joueur.vue = Overlays.VueForOverlay(
                     self.fenetre, pixelX, pixelY, 30, 30, joueur)
@@ -1363,13 +1375,13 @@ class Niveau:
                         if len(joueurPrevisualiser.msgsPrevisu) > 0:
                             joueur.setOverlayTextGenerique(
                                 "\n".join(joueurPrevisualiser.msgsPrevisu))
+                            pixelX, pixelY = self.grid2pixel(joueur.posX, joueur.posY)
                             joueur.overlay.afficher(
-                                joueur.posX*constantes.taille_sprite, joueur.posY*constantes.taille_sprite)
+                                pixelX, pixelY)
                 fenetre.blit(pygame.image.load(
                     joueur.icone).convert_alpha(), (pixelX, pixelY))
             else:
-                pixelX = joueur.derniere_action_posX * constantes.taille_sprite
-                pixelY = joueur.derniere_action_posY * constantes.taille_sprite
+                pixelX, pixelY = self.grid2pixel(joueur.derniere_action_posX, joueur.derniere_action_posY)
                 joueur.vue = Overlays.VueForOverlay(
                     self.fenetre, pixelX, pixelY, 30, 30, joueur)
                 fenetre.blit(pygame.image.load(
@@ -1395,8 +1407,9 @@ class Niveau:
                 if joueur.vue.isMouseOver(mouseXY) and afficherLeJoueur:
                     if sortSelectionne is None:
                         joueur.setOverlayText()
+                    pixelX, pixelY = self.grid2pixel(joueur.posX, joueur.posY)
                     joueur.overlay.afficher(
-                        joueur.posX*constantes.taille_sprite, joueur.posY*constantes.taille_sprite)                    
+                        pixelX, pixelY)                    
 
 
     def poseGlyphe(self, glyphe):

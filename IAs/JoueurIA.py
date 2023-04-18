@@ -56,10 +56,8 @@ class JoueurIA:
                 else:
                     # Un sort est selectionne
                     if sortSelectionne is not None:
-                        caseCibleX = int(
-                            mouseXY[0]/constantes.taille_sprite)
-                        caseCibleY = int(
-                            mouseXY[1]/constantes.taille_sprite)
+                        caseCibleX, caseCibleY = niveau.pixel2grid(mouseXY)
+                       
                         niveau.setPrevisu(False)
                         sortSelectionne.lance(
                             niveau.tourDe.posX, niveau.tourDe.posY, niveau, caseCibleX, caseCibleY)
@@ -71,8 +69,7 @@ class JoueurIA:
             elif clicDroit:
                 # Clic droit grille de jeu = affichage détaillé de l'état d'un personnage.
                 if mouseXY[1] < constantes.y_sorts:
-                    caseX = int(mouseXY[0]/constantes.taille_sprite)
-                    caseY = int(mouseXY[1]/constantes.taille_sprite)
+                    caseX, caseY = niveau.pixel2grid(mouseXY)
                     joueurInfo = niveau.getJoueurSur(caseX, caseY)
                     if joueurInfo is not None:
                         print("--------------------------------")
